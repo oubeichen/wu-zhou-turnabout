@@ -66,7 +66,7 @@ Success means:
 
 - Intent: create the playable website.
 - Required artifacts: `index.html`, `styles.css`, `script.js`, `assets/palace-bg.png`, `assets/wu-portrait.png`.
-- Implemented features: typewriter text, 18-scene route, choice effects, four meters, review dialog, local save/load, restart, generated palace background, generated character portrait, particle drift, scene transition, synthesized palace-style music.
+- Implemented features: typewriter text, 18-scene route, three text passages before each major choice, choice effects, four meters, review dialog, local save/load, restart, generated palace background, generated character portrait, particle drift, scene transition, synthesized palace-style music, and a dedicated ending summary screen.
 - Status: done.
 
 ### Phase 5: verification
@@ -79,7 +79,7 @@ Success means:
   - browser verification through temporary `http://127.0.0.1:8765/`
   - desktop viewport 1440x900
   - mobile viewport 390x844
-- Observed results: assets load, choices appear after typewriter completion, first choice advances to second scene, meters update, save/load works, review dialog records route, music button toggles, no browser console warnings/errors, no horizontal overflow on tested viewports.
+- Observed results: assets load, intermediate text passages show no choice buttons, choices appear only after the third passage in a scene, first choice advances to second scene, meters update, save/load works, review dialog records route, music button toggles, a full 18-choice route reaches the dedicated ending summary screen, no browser console warnings/errors, no horizontal overflow on tested viewports.
 - Status: done.
 
 ## Subagent matrix
@@ -92,6 +92,7 @@ None blocking. Possible future expansion: add more route-specific middle scenes,
 
 ## Log
 
+- 2026-06-15: Revised AVG pacing so each scene presents multiple passages before choices; added dedicated ending summary screen with route stats and major-choice recap.
 - 2026-06-15: First playable static AVG delivered with generated background/portrait assets, local synthesized music, 18 scenes, three endings, save/load, review dialog, and responsive browser verification.
 - 2026-06-15: Parsed `武则天正传.epub` into `.john/parsed/wuzetian/doc.md` using a stdlib EPUB spine parser after confirming `lxml`, `bs4`, and `ebooklib` were unavailable.
 - 2026-06-15: Copied `武则天正传.epub` into `.john/input/` and created app-first intent/display contracts.

@@ -53,6 +53,37 @@
         </section>
       </section>
 
+      <section id="endingScreen" class="ending-screen" hidden>
+        <div class="ending-card">
+          <p class="kicker">终局评定</p>
+          <h2 id="endingTitle"></h2>
+          <p id="endingText" class="ending-text"></p>
+          <div id="endingStats" class="ending-stats"></div>
+          <div class="ending-summary">
+            <article>
+              <span>路线气质</span>
+              <strong id="routeStyle"></strong>
+            </article>
+            <article>
+              <span>关键抉择</span>
+              <strong id="choiceCount"></strong>
+            </article>
+            <article>
+              <span>最高倾向</span>
+              <strong id="topTrait"></strong>
+            </article>
+          </div>
+          <div>
+            <h3>主要抉择</h3>
+            <ol id="endingChoices" class="ending-choices"></ol>
+          </div>
+          <div class="ending-actions">
+            <button id="endingMemoryBtn" type="button">查看回想</button>
+            <button id="endingRestartBtn" type="button">重新开局</button>
+          </div>
+        </div>
+      </section>
+
       <div id="toast" class="toast" role="status" aria-live="polite"></div>
     </main>
 

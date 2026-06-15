@@ -1,5 +1,5 @@
 {
-  "verified_at": "2026-06-15T10:30:00Z",
+  "verified_at": "2026-06-15T10:45:00Z",
   "site": "曌影：武后抉择",
   "checks": [
     {
@@ -43,11 +43,14 @@
       "name": "Core interactions",
       "result": "pass",
       "observations": [
+        "intermediate passages showed no visible continue button",
+        "choices appeared only after the third passage in the first scene",
         "first choice advanced to second scene",
         "route meters updated",
         "save and load restored current scene",
         "review dialog recorded route",
-        "music button toggled without console errors"
+        "music button toggled without console errors",
+        "a full 18-choice route reached a dedicated ending summary screen with four stat cards, route style, top trait, and major-choice recap"
       ]
     }
   ]
