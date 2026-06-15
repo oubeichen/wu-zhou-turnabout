@@ -22,4 +22,5 @@ Claude Code reads John through the Claude plugin manifest and `CLAUDE.md`. Keep 
 - Scaffolded by John init on 2026-06-15
 - First playable AVG interface delivered on 2026-06-15: `index.html`, `styles.css`, `script.js`, `assets/palace-bg.png`, `assets/wu-portrait.png`
 - AVG pacing and ending summary revised on 2026-06-15: no visible continue/progress hints, choices appear after several variable-length text passages, ending screen summarizes route stats and key choices while hiding the normal interface.
+- Mobile ending layout fixed on 2026-06-15: ending mode removes the normal stage/header from layout and aligns the ending card to the top of the mobile viewport.
 - Verified on 2026-06-15 with syntax checks, JSON checks, public UI leak scan, and browser checks at desktop 1440x900 plus mobile 390x844.

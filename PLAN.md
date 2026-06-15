@@ -94,6 +94,7 @@ None blocking. Possible future expansion: add more route-specific middle scenes,
 
 - 2026-06-15: Revised AVG pacing so each scene presents multiple passages before choices; added dedicated ending summary screen with route stats and major-choice recap.
 - 2026-06-15: Removed visible advance/progress hints and expanded scene prose with variable passage counts so the pacing is closer to common AVG presentation.
+- 2026-06-15: Fixed mobile ending layout so the normal interface exits layout in ending mode and the ending card starts from the mobile viewport top.
 - 2026-06-15: First playable static AVG delivered with generated background/portrait assets, local synthesized music, 18 scenes, three endings, save/load, review dialog, and responsive browser verification.
 - 2026-06-15: Parsed `武则天正传.epub` into `.john/parsed/wuzetian/doc.md` using a stdlib EPUB spine parser after confirming `lxml`, `bs4`, and `ebooklib` were unavailable.
 - 2026-06-15: Copied `武则天正传.epub` into `.john/input/` and created app-first intent/display contracts.

@@ -305,9 +305,7 @@ h1 {
 
 .game-shell.ending-mode .topbar,
 .game-shell.ending-mode .stage {
-  visibility: hidden;
-  opacity: 0;
-  pointer-events: none;
+  display: none;
 }
 
 .ending-screen {
@@ -614,7 +612,14 @@ h1 {
   .ending-screen {
     position: relative;
     inset: auto;
-    padding: 18px;
+    align-items: start;
+    justify-items: center;
+    min-height: 100dvh;
+    padding: 14px;
+  }
+
+  .ending-card {
+    max-height: calc(100dvh - 28px);
   }
 }
 
@@ -655,6 +660,19 @@ h1 {
 
   .ending-actions {
     flex-direction: column;
+  }
+
+  .ending-screen {
+    padding: 10px;
+  }
+
+  .ending-card {
+    max-height: calc(100dvh - 20px);
+    padding: 18px;
+  }
+
+  .ending-card h2 {
+    font-size: 2rem;
   }
 
   .story-text {
