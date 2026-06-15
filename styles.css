@@ -278,9 +278,7 @@ h1 {
 }
 
 .hint {
-  margin: 12px 0 0;
-  color: rgba(247, 234, 209, 0.58);
-  font-size: 0.82rem;
+  display: none;
 }
 
 .toast {
@@ -305,9 +303,16 @@ h1 {
   transform: translate(-50%, 0);
 }
 
+.game-shell.ending-mode .topbar,
+.game-shell.ending-mode .stage {
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+}
+
 .ending-screen {
   position: absolute;
-  inset: 94px clamp(18px, 4vw, 52px) 30px;
+  inset: 30px clamp(18px, 4vw, 52px);
   z-index: 4;
   display: grid;
   place-items: center;
