@@ -1,0 +1,54 @@
+{
+  "verified_at": "2026-06-15T10:30:00Z",
+  "site": "曌影：武后抉择",
+  "checks": [
+    {
+      "name": "JavaScript syntax",
+      "command": "node --check script.js",
+      "result": "pass"
+    },
+    {
+      "name": "John JSON artifacts",
+      "command": "python3 -m json.tool",
+      "result": "pass"
+    },
+    {
+      "name": "Public UI forbidden-term scan",
+      "command": "rg forbidden terms over index.html styles.css script.js",
+      "result": "pass"
+    },
+    {
+      "name": "Browser desktop layout",
+      "viewport": "1440x900",
+      "result": "pass",
+      "observations": [
+        "assets loaded",
+        "choices visible after typewriter completion",
+        "no horizontal overflow",
+        "no button text overflow",
+        "portrait and dialogue did not overlap"
+      ]
+    },
+    {
+      "name": "Browser mobile layout",
+      "viewport": "390x844",
+      "result": "pass",
+      "observations": [
+        "two choices visible after typewriter completion",
+        "no horizontal overflow",
+        "no button text overflow"
+      ]
+    },
+    {
+      "name": "Core interactions",
+      "result": "pass",
+      "observations": [
+        "first choice advanced to second scene",
+        "route meters updated",
+        "save and load restored current scene",
+        "review dialog recorded route",
+        "music button toggled without console errors"
+      ]
+    }
+  ]
+}

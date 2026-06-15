@@ -1,0 +1,14 @@
+{
+  "source_path": "/Users/oubeichen/Projects/wuzetian2/.john/input/武则天正传.epub",
+  "source_name": "武则天正传.epub",
+  "source_size_bytes": 971127,
+  "parser": "stdlib_epub_spine",
+  "parsed_at": "2026-06-15T10:11:08.752817+00:00",
+  "documents": [
+    "OEBPS/Text/cover.xhtml",
+    "OEBPS/Text/TOC.xhtml",
+    "OEBPS/Text/Section0001_split_000.xhtml",
+    "OEBPS/Text/Section0001_split_001.xhtml"
+  ],
+  "character_count": 117286
+}

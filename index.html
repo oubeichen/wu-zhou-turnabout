@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>曌影：武后抉择</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="game-shell" aria-label="曌影：武后抉择">
+      <img class="backdrop" src="assets/palace-bg.png" alt="" />
+      <div class="shade"></div>
+      <div class="petals" aria-hidden="true">
+        <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+      </div>
+
+      <header class="topbar">
+        <div>
+          <p class="kicker">唐宫文字演义</p>
+          <h1>曌影：武后抉择</h1>
+        </div>
+        <div class="systems" aria-label="系统菜单">
+          <button id="musicBtn" type="button">宫乐</button>
+          <button id="autoBtn" type="button">自动</button>
+          <button id="logBtn" type="button">回想</button>
+          <button id="saveBtn" type="button">存档</button>
+          <button id="loadBtn" type="button">读档</button>
+          <button id="restartBtn" type="button">重开</button>
+        </div>
+      </header>
+
+      <section class="stage" aria-live="polite">
+        <aside class="status-panel">
+          <p class="panel-title">统治倾向</p>
+          <div class="meter" data-key="威望"><span>威望</span><b></b><em></em></div>
+          <div class="meter" data-key="权谋"><span>权谋</span><b></b><em></em></div>
+          <div class="meter" data-key="民心"><span>民心</span><b></b><em></em></div>
+          <div class="meter" data-key="亲缘"><span>亲缘</span><b></b><em></em></div>
+          <p id="windText" class="wind"></p>
+        </aside>
+
+        <img class="portrait" src="assets/wu-portrait.png" alt="武后立绘" />
+
+        <section class="dialogue">
+          <div class="scene-head">
+            <span id="actText"></span>
+            <strong id="placeText"></strong>
+          </div>
+          <div class="speaker">武曌</div>
+          <p id="storyText" class="story-text"></p>
+          <div id="choices" class="choices"></div>
+          <p id="hintText" class="hint">点击正文可立即显现文字。</p>
+        </section>
+      </section>
+
+      <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    </main>
+
+    <dialog id="memoryBox" class="memory-box">
+      <form method="dialog">
+        <header>
+          <h2>回想</h2>
+          <button type="submit" aria-label="关闭回想">关闭</button>
+        </header>
+        <div id="memoryList" class="memory-list"></div>
+      </form>
+    </dialog>
+
+    <script src="script.js"></script>
+  </body>
+</html>

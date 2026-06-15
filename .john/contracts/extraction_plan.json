@@ -1,0 +1,61 @@
+{
+  "version": "john.extraction_plan.v1",
+  "source_blueprint_version": "john.app_blueprint.v1",
+  "targets": [
+    {
+      "ui_slot": "剧情幕",
+      "extract": [
+        "关键历史阶段",
+        "第一人称心理压力",
+        "当幕冲突",
+        "可选择行动"
+      ],
+      "citation_required": false,
+      "minimum_viable_content": "每幕需要时代位置、主冲突、至少两个行动选项和后果提示。"
+    },
+    {
+      "ui_slot": "宫廷风向",
+      "extract": [
+        "朝臣态度",
+        "后宫关系",
+        "民间舆论",
+        "继承人风险"
+      ],
+      "citation_required": false,
+      "minimum_viable_content": "每幕需要一条短提示，让玩家理解选择的政治代价。"
+    },
+    {
+      "ui_slot": "统治倾向",
+      "extract": [
+        "威望变化",
+        "权谋变化",
+        "民心变化",
+        "亲缘变化"
+      ],
+      "citation_required": false,
+      "minimum_viable_content": "每个选项至少影响一项数值，结局根据数值合流判定。"
+    },
+    {
+      "ui_slot": "结局判定",
+      "extract": [
+        "神龙政变后的政治余波",
+        "身后评价",
+        "无字碑意象",
+        "玩家路线总结"
+      ],
+      "citation_required": false,
+      "minimum_viable_content": "至少三个结局，覆盖强权、平衡、宽政三种路线。"
+    }
+  ],
+  "source_survey": {
+    "corpus_profile": "单本中文 EPUB，约 11.7 万字符，45 章加附录；叙事集中于武则天从入宫、争后、二圣临朝、称制、称帝到神龙政变。",
+    "representative_threads": [
+      "回宫与争后",
+      "元老反对与权力清洗",
+      "封禅和二圣临朝",
+      "高宗驾崩后的临朝称制",
+      "徐敬业起兵、铜匦和酷吏政治",
+      "狄仁杰、继承人问题与神龙政变"
+    ]
+  }
+}

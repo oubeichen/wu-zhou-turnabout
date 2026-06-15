@@ -1,0 +1,31 @@
+{
+  "version": "john.user_intent.v1",
+  "site_form": "historical_avg_visual_novel",
+  "audience": "喜欢中文历史互动叙事的普通读者与玩家",
+  "content_priorities": [
+    "第一人称代入武则天本人",
+    "宫廷权力选择与后果反馈",
+    "覆盖从入宫到神龙政变的长线故事",
+    "AVG文字游戏式演出、选项、配乐和存档"
+  ],
+  "style_preferences": {
+    "language": "zh-CN",
+    "tone": "克制、宫廷感、可读性优先",
+    "visual_density": "medium"
+  },
+  "must_hide": [
+    "raw_json",
+    "internal_ids",
+    "skill_names",
+    "schema_keys",
+    "chunk_ids",
+    "file_paths",
+    "english_variable_names"
+  ],
+  "assumptions": [
+    "用户已明确要求生成 AVG 文字类网站，因此不再消耗一次产品问题预算。",
+    "运行时不依赖在线模型，所有剧情、立绘、背景和音乐控制都可在静态网页中离线使用。",
+    "书籍内容只用于改编和结构参考，公开页面不大段复刻原文。"
+  ],
+  "question_batch_used": false
+}
