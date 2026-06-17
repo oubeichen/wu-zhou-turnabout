@@ -78,6 +78,7 @@
     speaker: "系统",
     dramaticCue: "",
     investigationBeat: null,
+    objectionReveal: null,
     impactCue: null,
     stageFocus: "center",
     stageNotice: "",
@@ -199,6 +200,7 @@
     state.selectedEvidenceId = "";
     state.selectedProfileName = "";
     state.recordOpen = false;
+    state.objectionReveal = null;
     setMessage("读档", `已读取存档 ${index + 1}。`, "");
     save();
     renderHome();
@@ -1140,6 +1142,7 @@
     state.selectedEvidenceId = "";
     state.selectedProfileName = "";
     state.recordOpen = false;
+    state.objectionReveal = null;
     state.homeView = ["menu", "cases", "archive", "saves"].includes(state.homeView) ? state.homeView : "menu";
     state.homeFocusIndex = Math.min(Math.max(state.homeFocusIndex, 0), data.cases.length - 1);
     const focusedCase = data.cases[state.homeFocusIndex] || data.cases[0];
@@ -1787,6 +1790,7 @@
         ${renderRecordPanel(caseData, progress, true)}
       </section>
       ${renderCue()}
+      ${renderObjectionReveal()}
       ${renderGuidePanel()}${renderSettings()}
     `;
     syncAudioForScreen();
@@ -2256,6 +2260,25 @@
     `;
   }
 
+  function renderObjectionReveal() {
+    const reveal = state.objectionReveal;
+    if (!reveal) return "";
+    return `
+      <div class="objection-reveal" role="dialog" aria-live="assertive" aria-label="异议揭示">
+        <div class="objection-reveal-inner">
+          <span class="hero-kicker">异议切入</span>
+          <strong>${escapeHtml(reveal.title || "异议成立")}</strong>
+          <p>${escapeHtml(reveal.line || "证物与证词正面冲突。")}</p>
+          <div class="reveal-record">
+            <em>${escapeHtml(reveal.record || "法庭记录")}</em>
+            <small>${escapeHtml(reveal.target || "当前证词")}</small>
+          </div>
+          <button class="primary-button" type="button" data-reveal-objection>揭示矛盾</button>
+        </div>
+      </div>
+    `;
+  }
+
   function renderImpactFrames(cue) {
     const frames = Array.isArray(cue.frames) ? cue.frames.slice(0, 3) : [];
     if (!frames.length) return "";
@@ -2571,6 +2594,85 @@
     return item.name;
   }
 
+  function prepareObjectionReveal(caseData, progress, statement, rawIndex, presentedLabel) {
+    const turnabout = !statement.optionalRecovery && pressureLevel(progress) !== "stable" ? turnaboutBeat(caseData) : null;
+    const title = turnabout ? "逆转" : statement.answerProfile ? "档案击破" : "异议成立";
+    const subtitle = turnabout ? turnabout.title : statement.answerProfile ? "人物档案刺穿证词" : "证物与证词正面冲突";
+    setStage("clash", "异议切入", { left: "confident", right: "stagger" });
+    setImpactCue("objection", title, presentedLabel, subtitle);
+    state.objectionReveal = {
+      caseId: caseData.id,
+      testimonyIndex: progress.testimonyIndex,
+      rawIndex,
+      title,
+      record: presentedLabel,
+      target: statement.text,
+      line: subtitle,
+    };
+    setMessage("辩方", `异议！${presentedLabel || "这份记录"}和这句证词对不上。`, "objection");
+    playCue("objection");
+    save();
+    renderTrial();
+  }
+
+  function resolveObjectionReveal() {
+    const reveal = state.objectionReveal;
+    if (!reveal) return;
+    const caseData = currentCase();
+    const progress = caseProgress(caseData.id);
+    const testimony = caseData.testimony[Number(reveal.testimonyIndex) || 0];
+    const statement = testimony?.statements?.[Number(reveal.rawIndex) || 0];
+    const key = statementKey(Number(reveal.testimonyIndex) || 0, Number(reveal.rawIndex) || 0);
+    const presentedLabel = reveal.record || selectedRecordLabel(caseData);
+    state.objectionReveal = null;
+    if (!statement || progress.solved.includes(key)) {
+      renderTrial();
+      return;
+    }
+    applyCorrectPresent(caseData, progress, testimony, statement, key, presentedLabel);
+  }
+
+  function applyCorrectPresent(caseData, progress, testimony, statement, key, presentedLabel) {
+    const rescuedFromPressure = !statement.optionalRecovery && pressureLevel(progress) !== "stable";
+    const turnabout = rescuedFromPressure ? turnaboutBeat(caseData) : null;
+    progress.solved.push(key);
+    setStage("clash", turnabout ? turnabout.title : statement.answerProfile ? "人物档案击中矛盾" : "证物击中矛盾", { left: "shock", right: "stagger" });
+    setImpactCue(
+      "objection",
+      turnabout ? "逆转" : statement.answerProfile ? "档案击破" : "异议成立",
+      presentedLabel,
+      turnabout ? turnabout.title : statement.answerProfile ? "人物档案刺穿证词" : "证物与证词正面冲突"
+    );
+    if (statement.optionalRecovery && statement.recoveryCredibility) {
+      const recovered = Math.max(0, Number(statement.recoveryCredibility) || 0);
+      progress.credibility = Math.min(5, progress.credibility + recovered);
+      progress.recoveries += 1;
+    }
+    if (turnabout) {
+      const recovered = Math.max(0, Number(turnabout.recovery) || 0);
+      progress.credibility = Math.min(5, progress.credibility + recovered);
+      progress.turnabouts += 1;
+      progress.lastTurnabout = turnabout.title;
+    }
+    const turnaboutText = turnabout
+      ? ` ${turnabout.title}：${turnabout.body}${turnabout.opponentLine ? ` ${turnabout.opponentLine}` : ""}`
+      : "";
+    if (testimonyFullySolved(testimony, progress.testimonyIndex, progress)) {
+      advanceTestimony(caseData, progress, `${statement.objection}${turnaboutText}`);
+    } else {
+      state.selectedEvidenceId = "";
+      state.selectedProfileName = "";
+      const recoveryText = statement.optionalRecovery && statement.recoveryCredibility ? ` 信誉恢复 ${statement.recoveryCredibility} 点。` : "";
+      if (statement.optionalRecovery) {
+        progress.statementIndex = Math.max(0, progress.statementIndex - 1);
+      }
+      setMessage("辩方", `${statement.objection}${recoveryText}${turnaboutText} 但这段证词还有未解释的矛盾。`, "objection");
+      playCue("objection");
+      save();
+      renderTrial();
+    }
+  }
+
   function presentEvidence() {
     const caseData = currentCase();
     const progress = caseProgress(caseData.id);
@@ -2579,6 +2681,10 @@
     const key = statementKey(progress.testimonyIndex, rawIndex);
     const presentedLabel = selectedRecordLabel(caseData);
     state.recordOpen = false;
+    if (state.objectionReveal) {
+      resolveObjectionReveal();
+      return;
+    }
     if (statementHasAnswer(statement) && !progress.pressed.includes(key)) {
       setStage("opponent", "举证时机不足", { left: "stagger", right: "attack" });
       setImpactCue("penalty", "追问不足", presentedLabel, "先追问，再举证");
@@ -2596,44 +2702,7 @@
       return;
     }
     if (statementHasAnswer(statement) && statementAnswerMatched(statement)) {
-      const rescuedFromPressure = !statement.optionalRecovery && pressureLevel(progress) !== "stable";
-      const turnabout = rescuedFromPressure ? turnaboutBeat(caseData) : null;
-      progress.solved.push(key);
-      setStage("clash", turnabout ? turnabout.title : statement.answerProfile ? "人物档案击中矛盾" : "证物击中矛盾", { left: "shock", right: "stagger" });
-      setImpactCue(
-        "objection",
-        turnabout ? "逆转" : statement.answerProfile ? "档案击破" : "异议成立",
-        presentedLabel,
-        turnabout ? turnabout.title : statement.answerProfile ? "人物档案刺穿证词" : "证物与证词正面冲突"
-      );
-      if (statement.optionalRecovery && statement.recoveryCredibility) {
-        const recovered = Math.max(0, Number(statement.recoveryCredibility) || 0);
-        progress.credibility = Math.min(5, progress.credibility + recovered);
-        progress.recoveries += 1;
-      }
-      if (turnabout) {
-        const recovered = Math.max(0, Number(turnabout.recovery) || 0);
-        progress.credibility = Math.min(5, progress.credibility + recovered);
-        progress.turnabouts += 1;
-        progress.lastTurnabout = turnabout.title;
-      }
-      const turnaboutText = turnabout
-        ? ` ${turnabout.title}：${turnabout.body}${turnabout.opponentLine ? ` ${turnabout.opponentLine}` : ""}`
-        : "";
-      if (testimonyFullySolved(testimony, progress.testimonyIndex, progress)) {
-        advanceTestimony(caseData, progress, `${statement.objection}${turnaboutText}`);
-      } else {
-        state.selectedEvidenceId = "";
-        state.selectedProfileName = "";
-        const recoveryText = statement.optionalRecovery && statement.recoveryCredibility ? ` 信誉恢复 ${statement.recoveryCredibility} 点。` : "";
-        if (statement.optionalRecovery) {
-          progress.statementIndex = Math.max(0, progress.statementIndex - 1);
-        }
-        setMessage("辩方", `${statement.objection}${recoveryText}${turnaboutText} 但这段证词还有未解释的矛盾。`, "objection");
-        playCue("objection");
-        save();
-        renderTrial();
-      }
+      prepareObjectionReveal(caseData, progress, statement, rawIndex, presentedLabel);
     } else {
       const countered = statementCounterMatched(statement);
       const penalty = countered ? Number(statement.counterPenalty) || 2 : 1;
@@ -2742,6 +2811,7 @@
     };
     state.selectedEvidenceId = "";
     state.selectedProfileName = "";
+    state.objectionReveal = null;
     state.recordTab = "evidence";
     setStage("witness", `${caseData.testimony[0].speaker}重新入庭`, { left: "enter", right: "observe" });
     setMessage("审判长", message || "庭审重新开始。调查证物保留，信誉恢复。", "");
@@ -2797,6 +2867,7 @@
     state.completed = state.completed.filter((id) => id !== caseData.id);
     state.selectedEvidenceId = "";
     state.selectedProfileName = "";
+    state.objectionReveal = null;
     state.settingsOpen = false;
     state.homeView = "menu";
     setMessage("系统", "当前案件已重置，结案记录也已清除。", "");
@@ -2864,6 +2935,7 @@
     if (target.dataset.nextStatement !== undefined) moveStatement(1);
     if (target.dataset.press !== undefined) pressStatement();
     if (target.dataset.present !== undefined) presentEvidence();
+    if (target.dataset.revealObjection !== undefined) resolveObjectionReveal();
     if (target.dataset.continueTestimony !== undefined) continueTestimony();
     if (target.dataset.retryTrial !== undefined) retryTrial();
     if (target.dataset.home !== undefined) renderHome();
@@ -2932,6 +3004,11 @@
       playCue("click");
       state.guideOpen = false;
       rerender();
+      return;
+    }
+    if (state.objectionReveal && (event.key === "Enter" || event.key === " ")) {
+      event.preventDefault();
+      resolveObjectionReveal();
       return;
     }
     if (event.key.toLowerCase() === "s") {
@@ -3093,6 +3170,10 @@
       impactRecord: state.impactCue?.record || "",
       impactSubtitle: state.impactCue?.subtitle || "",
       impactFrames: (state.impactCue?.frames || []).map((frame) => `${frame.role}:${frame.label}:${frame.pose || "idle"}`),
+      objectionReveal: Boolean(state.objectionReveal),
+      objectionRevealTitle: state.objectionReveal?.title || "",
+      objectionRevealRecord: state.objectionReveal?.record || "",
+      objectionRevealLine: state.objectionReveal?.line || "",
       counterattacks: progress.counterattacks || 0,
       recoveries: progress.recoveries || 0,
       testimony: testimony?.title || "",
