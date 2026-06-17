@@ -65,6 +65,7 @@
     screen: "home",
     caseIndex: 0,
     homeFocusIndex: 0,
+    homeView: "menu",
     selectedEvidenceId: "",
     selectedProfileName: "",
     recordTab: "evidence",
@@ -790,6 +791,29 @@
     return caseData.locations[progress.locationIndex] || caseData.locations[0];
   }
 
+  function caseHasProgress(caseData) {
+    return Boolean(
+      state.completed.includes(caseData.id) ||
+        (state.collected[caseData.id] || []).length ||
+        state.trial[caseData.id] ||
+        state.investigation[caseData.id]
+    );
+  }
+
+  function continueCaseIndex() {
+    const active = data.cases.findIndex((caseData) => caseHasProgress(caseData) && !state.completed.includes(caseData.id));
+    if (active >= 0) return active;
+    const firstUnfinished = data.cases.findIndex((caseData) => !state.completed.includes(caseData.id));
+    if (firstUnfinished >= 0) return firstUnfinished;
+    return Math.max(0, data.cases.length - 1);
+  }
+
+  function continueLabel(caseData) {
+    if (caseHasProgress(caseData) && !state.completed.includes(caseData.id)) return "继续审理";
+    if (state.completed.includes(caseData.id)) return "重看终案";
+    return "开始新案";
+  }
+
   function currentGuideContext() {
     const caseData = currentCase();
     if (state.screen === "home") {
@@ -966,31 +990,87 @@
     state.selectedEvidenceId = "";
     state.selectedProfileName = "";
     state.recordOpen = false;
+    state.homeView = ["menu", "cases", "archive"].includes(state.homeView) ? state.homeView : "menu";
     state.homeFocusIndex = Math.min(Math.max(state.homeFocusIndex, 0), data.cases.length - 1);
     const focusedCase = data.cases[state.homeFocusIndex] || data.cases[0];
     renderStatus();
     app.innerHTML = `
-      <section class="hero">
-        <div class="hero-copy">
-          <span class="hero-kicker">宫廷法庭推理</span>
-          <h1>${escapeHtml(data.title)}</h1>
-          <p>${escapeHtml(data.subtitle)}。调查现场、询问证人、整理法庭记录，在庭审中追问并举出矛盾。</p>
-          <div class="hero-actions">
-            <button class="primary-button" type="button" data-open-case="0">开始第一案</button>
-            <button class="secondary-button" type="button" data-toggle-settings>设置</button>
-          </div>
-          ${renderCoachCard()}
-        </div>
-        ${renderFocusedCasePanel(focusedCase)}
-        <div class="case-gallery" aria-label="案件章节画廊">
-          ${data.cases.map(renderCaseCard).join("")}
-        </div>
-        ${renderCaseArchive()}
+      <section class="hero home-shell view-${state.homeView}">
+        ${renderHomeMenu()}
+        ${state.homeView === "cases" ? renderHomeCases(focusedCase) : ""}
+        ${state.homeView === "archive" ? renderHomeArchiveView() : ""}
       </section>
       ${renderGuidePanel()}${renderSettings()}
     `;
     syncAudioForScreen();
     if (!wasHome) window.scrollTo(0, 0);
+  }
+
+  function renderHomeMenu() {
+    const index = continueCaseIndex();
+    const caseData = data.cases[index] || data.cases[0];
+    const solved = data.cases.filter((entry) => state.completed.includes(entry.id)).length;
+    const gold = data.cases.filter((entry) => caseRecord(entry.id).bestMedal === "金章").length;
+    const hasProgress = data.cases.some(caseHasProgress);
+    return `
+      <div class="main-menu">
+        <div class="menu-copy">
+          <span class="hero-kicker">宫廷法庭推理</span>
+          <h1>${escapeHtml(data.title)}</h1>
+          <p>${escapeHtml(data.subtitle)}。调查现场、询问证人、整理法庭记录，在庭审中追问并举出矛盾。</p>
+          <div class="menu-progress">
+            <span class="tag">结案 ${solved}/${data.cases.length}</span>
+            <span class="tag">金章 ${gold}/${data.cases.length}</span>
+            <span class="tag">${hasProgress ? `最近：${escapeHtml(caseData.title)}` : "尚未开案"}</span>
+          </div>
+        </div>
+        <nav class="menu-actions" aria-label="主菜单">
+          <button class="primary-button menu-button" type="button" data-continue-case>${escapeHtml(continueLabel(caseData))}</button>
+          <button class="secondary-button menu-button" type="button" data-home-view="cases">案件选择</button>
+          <button class="secondary-button menu-button" type="button" data-home-view="archive">结案档案</button>
+          <button class="secondary-button menu-button" type="button" data-toggle-settings>设置</button>
+        </nav>
+        <div class="menu-preview scene-${escapeHtml(caseData.scene?.key || "archive")}" data-motif="${escapeHtml(caseData.scene?.motif || "")}">
+          <span class="hero-kicker">当前继续</span>
+          <strong>${escapeHtml(caseData.title)}</strong>
+          <p>${escapeHtml(caseData.openingLines?.[0]?.text || caseData.goal || caseData.theme)}</p>
+          <small>${escapeHtml(caseData.scene?.name || caseData.location)}｜${escapeHtml(caseData.theme)}</small>
+        </div>
+      </div>
+    `;
+  }
+
+  function renderHomeCases(focusedCase) {
+    return `
+      <div class="home-subview">
+        <div class="subview-header">
+          <div>
+            <span class="hero-kicker">案件选择</span>
+            <h2>选择要调查的案件</h2>
+          </div>
+          <button class="secondary-button" type="button" data-home-view="menu">返回主菜单</button>
+        </div>
+        ${renderFocusedCasePanel(focusedCase)}
+        <div class="case-gallery" aria-label="案件章节画廊">
+          ${data.cases.map(renderCaseCard).join("")}
+        </div>
+      </div>
+    `;
+  }
+
+  function renderHomeArchiveView() {
+    return `
+      <div class="home-subview">
+        <div class="subview-header">
+          <div>
+            <span class="hero-kicker">结案档案</span>
+            <h2>奖章、重审与完成度</h2>
+          </div>
+          <button class="secondary-button" type="button" data-home-view="menu">返回主菜单</button>
+        </div>
+        ${renderCaseArchive()}
+      </div>
+    `;
   }
 
   function renderCaseCard(caseData, index) {
@@ -2395,6 +2475,11 @@
       return;
     }
     if (target.dataset.openCase) openCase(Number(target.dataset.openCase));
+    if (target.dataset.continueCase !== undefined) openCase(continueCaseIndex());
+    if (target.dataset.homeView) {
+      state.homeView = target.dataset.homeView;
+      renderHome();
+    }
     if (target.dataset.replayCase) replayCase(Number(target.dataset.replayCase));
     if (target.dataset.mode) setMode(target.dataset.mode);
     if (target.dataset.openIntro !== undefined) renderCaseIntro();
@@ -2548,14 +2633,20 @@
     const selectedEvidence = state.selectedEvidenceId ? evidenceById(caseData, state.selectedEvidenceId) : null;
     const selectedEvidenceVisual = selectedEvidence ? evidenceVisualFor(selectedEvidence, true) : null;
     const selectedEvidencePosition = selectedEvidence ? evidenceSheetPosition(selectedEvidence, caseData) : null;
+    const nextCaseIndex = continueCaseIndex();
+    const nextCase = data.cases[nextCaseIndex] || caseData;
     return storageCodec.stringify({
       note: "文字状态供自动化测试使用；屏幕左上为原点，坐标不适用于本 DOM 游戏。",
       screen: state.screen,
+      homeView: state.homeView,
       currentCase: caseData.title,
       homeFocusCase: data.cases[state.homeFocusIndex]?.title || "",
       homeFocusScene: data.cases[state.homeFocusIndex]?.scene?.name || "",
       homeFocusEpisodeArt: data.cases[state.homeFocusIndex]?.scene?.key ? `episode-art-${data.cases[state.homeFocusIndex].scene.key}.png` : "",
       homeFocusRuns: caseRecord(data.cases[state.homeFocusIndex]?.id || caseData.id).runs.length,
+      continueCase: nextCase.title,
+      continueCaseIndex: nextCaseIndex,
+      continueLabel: continueLabel(nextCase),
       location: location.name,
       scene: caseData.scene?.name || "",
       sceneVariant: location.sceneVariant || "",

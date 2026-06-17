@@ -42,6 +42,30 @@ Remaining Ace Attorney gap list:
 - 法庭记录抽屉已解决信息堆叠，但移动端还需要专门复查抽屉高度、关闭按钮和底部操作按钮触达性。
 - 证物美术已有独立图集，但仍是统一卡牌风格；后续可为关键证物补更具体大图。
 
+## 2026-06-17 iteration 35 result
+
+Implemented:
+- 将首页从直接展示案件画廊改为正式主菜单，首屏只保留标题、进度、当前继续案件预览和四个主操作。
+- 新增主菜单入口：`继续/开始新案`、`案件选择`、`结案档案`、`设置`。
+- 案件选择与结案档案改成二级界面，需要从主菜单点击进入，并提供返回主菜单按钮。
+- `render_game_to_text` 新增 `homeView`、`continueCase`、`continueCaseIndex`、`continueLabel`，便于验证主菜单状态和继续入口。
+- 移除主菜单默认新手提示卡，避免首屏再次堆叠教程内容；提示仍可通过顶部“提示”打开。
+
+Verified:
+- `node --check game/app.js`
+- `python3 -m py_compile scripts/build_game_content.py`
+- `git diff --check`
+- 公开 `game/` 文案扫描无旧模板词和内部路径。
+- Playwright 桌面断言：首屏为主菜单；案件画廊和结案档案不在首屏；案件选择、结案档案、返回主菜单、继续入口均可用。
+- Playwright 移动端断言：390px 宽度下主菜单无横向溢出，四个主菜单按钮可见。
+- develop-web-game 客户端已运行并检查截图：`output/web-game/iteration35-client/shot-0.png`。
+
+Remaining Ace Attorney gap list:
+- 主菜单已成型，但仍缺“读档/存档槽”式管理；当前只有 localStorage 自动存档。
+- 需要继续增加证人差异化表达，让每案证人和对手的语气更明显。
+- 结案档案仍偏统计面板，后续应做成更有“案件档案册”质感的可翻阅界面。
+- 关键证物仍只有卡面缩略图，后续可给每案核心证物补大图或特写演出。
+
 ## 2026-06-16 baseline gap audit
 
 Current game is a functional prototype, not yet a complete Ace Attorney-like game.

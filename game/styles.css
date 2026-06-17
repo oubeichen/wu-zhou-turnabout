@@ -202,6 +202,137 @@ button:not(:disabled):hover {
   gap: 12px;
 }
 
+.home-shell {
+  align-content: stretch;
+}
+
+.main-menu {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(220px, 320px);
+  grid-template-areas:
+    "copy actions"
+    "preview actions";
+  gap: 18px;
+  align-content: center;
+  min-height: calc(100vh - 150px);
+}
+
+.menu-copy {
+  grid-area: copy;
+  display: grid;
+  gap: 18px;
+}
+
+.menu-copy h1 {
+  margin: 0;
+  font-size: clamp(48px, 10vw, 126px);
+  line-height: 0.95;
+  text-shadow: 0 5px 18px rgba(0, 0, 0, 0.34);
+}
+
+.menu-copy p {
+  max-width: 760px;
+}
+
+.menu-progress {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.menu-actions {
+  grid-area: actions;
+  align-self: center;
+  display: grid;
+  gap: 12px;
+  padding: 16px;
+  background: rgba(31, 28, 25, 0.72);
+  border: 2px solid rgba(255, 241, 191, 0.44);
+  border-radius: 8px;
+  box-shadow: 0 18px 42px rgba(31, 28, 25, 0.28);
+}
+
+.menu-button {
+  min-height: 54px;
+  font-size: 18px;
+  font-weight: 900;
+}
+
+.menu-preview {
+  grid-area: preview;
+  position: relative;
+  display: grid;
+  gap: 10px;
+  min-height: 210px;
+  overflow: hidden;
+  padding: 18px;
+  color: #fff8e7;
+  background:
+    radial-gradient(circle at 20% 20%, var(--scene-glow, rgba(221, 171, 61, 0.28)), transparent 30%),
+    linear-gradient(120deg, rgba(31, 28, 25, 0.1), var(--scene-veil, rgba(68, 28, 27, 0.78))),
+    var(--episode-art, url("./assets/investigation-room-v1.png")) center / cover;
+  border: 2px solid rgba(255, 241, 191, 0.56);
+  border-radius: 8px;
+  box-shadow: 0 14px 34px rgba(31, 28, 25, 0.28);
+}
+
+.menu-preview::after {
+  content: attr(data-motif);
+  position: absolute;
+  right: 18px;
+  top: 0;
+  color: rgba(255, 248, 231, 0.16);
+  font-size: clamp(74px, 13vw, 150px);
+  font-weight: 900;
+  line-height: 1;
+  pointer-events: none;
+}
+
+.menu-preview > * {
+  position: relative;
+  z-index: 1;
+}
+
+.menu-preview strong {
+  max-width: 720px;
+  font-size: clamp(25px, 4vw, 48px);
+  line-height: 1.05;
+  text-shadow: 0 5px 18px rgba(0, 0, 0, 0.42);
+}
+
+.menu-preview p {
+  max-width: 760px;
+  color: #f1dfba;
+  font-size: 17px;
+  line-height: 1.6;
+}
+
+.menu-preview small {
+  color: rgba(255, 248, 231, 0.8);
+  line-height: 1.4;
+}
+
+.home-subview {
+  display: grid;
+  gap: 18px;
+  align-content: start;
+}
+
+.subview-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  align-items: center;
+  color: #fff8e7;
+}
+
+.subview-header h2 {
+  margin: 6px 0 0;
+  font-size: clamp(28px, 5vw, 58px);
+  line-height: 1.05;
+  text-shadow: 0 5px 18px rgba(0, 0, 0, 0.34);
+}
+
 .case-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -2733,6 +2864,32 @@ button:not(:disabled):hover {
 
   .play-layout {
     grid-template-columns: 1fr;
+  }
+
+  .main-menu {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "copy"
+      "actions"
+      "preview";
+    min-height: calc(100vh - 116px);
+  }
+
+  .menu-actions {
+    padding: 12px;
+  }
+
+  .menu-button {
+    min-height: 48px;
+    font-size: 16px;
+  }
+
+  .menu-preview {
+    min-height: 180px;
+  }
+
+  .subview-header {
+    display: grid;
   }
 
   .trial-interlude {
