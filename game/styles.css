@@ -3157,7 +3157,64 @@ button:not(:disabled):hover {
   .investigation-layout .command-panel {
     grid-column: 2;
     grid-row: 3;
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr) auto auto;
+    gap: 8px;
+    overflow: hidden;
+  }
+
+  .investigation-layout .command-body {
+    display: grid;
+    gap: 8px;
+    min-height: 0;
     overflow: auto;
+    padding-right: 2px;
+  }
+
+  .investigation-layout .command-body h2 {
+    margin: 0;
+    font-size: 20px;
+  }
+
+  .investigation-layout .command-body .hint-text {
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.4;
+  }
+
+  .investigation-layout .command-body .location-list {
+    gap: 7px;
+  }
+
+  .investigation-layout .location-button {
+    min-height: 36px;
+    overflow: hidden;
+    padding: 8px 10px;
+  }
+
+  .investigation-layout .location-button strong {
+    margin-bottom: 0;
+  }
+
+  .investigation-layout .location-button span {
+    display: none;
+  }
+
+  .investigation-layout .coach-card {
+    display: none;
+  }
+
+  .investigation-actions {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 7px;
+    margin-top: 0;
+  }
+
+  .investigation-actions .secondary-button,
+  .investigation-actions .primary-button {
+    min-height: 38px;
+    padding: 6px 8px;
+    font-size: 14px;
   }
 
   .trial-layout {

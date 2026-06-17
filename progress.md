@@ -94,6 +94,29 @@ Remaining Ace Attorney gap list:
 - 结案档案仍偏统计面板，后续应做成更有“案件档案册”质感的可翻阅界面。
 - 关键证物仍只有卡面缩略图，后续可给每案核心证物补大图或特写演出。
 
+## 2026-06-17 iteration 37 result
+
+Implemented:
+- 继续收紧 PC 调查页单屏操作：将调查指令内容包进 `.command-body`，底部 `案件概要 / 记录 / 开庭` 独立为 `.investigation-actions`。
+- 桌面调查页取消常驻书记提示卡，把提示入口留给顶部“提示”，腾出空间给真正操作按钮。
+- 桌面调查页的移动/查看/交谈/出示列表改为紧凑按钮名，详细说明由场景地图、线索板、对话框承载，避免长描述挤压按钮。
+- 修复地点描述从压缩按钮中漏出的视觉问题。
+
+Verified:
+- `node --check game/app.js`
+- `python3 -m py_compile scripts/build_game_content.py`
+- `git diff --check`
+- 公开 `game/` 文案扫描无旧模板词和生硬选中提示。
+- 浏览器验证桌面调查页 `bodyScrollHeight == innerHeight`；移动、查看、交谈、出示四个指令模式下，命令按钮和 `案件概要 / 记录 / 开庭` 均在当前窗口内可见。
+- 截图已检查：`iteration37-investigation-actions-clean.png`，确认右侧命令按钮不再被文字挤压，底部操作直接可点。
+- develop-web-game 客户端仍因技能脚本环境缺少 `playwright` 包失败；本轮交互验证由浏览器工具完成。
+
+Remaining Ace Attorney gap list:
+- 调查页 PC 单屏操作已明显改善；下一步应让“查看/交谈”后的反馈更像逆转裁判式短对话演出，而不是只更新一条说明。
+- 需要继续增加证人差异化表达，让每案证人和对手的语气更明显。
+- 结案档案仍偏统计面板，后续应做成更有“案件档案册”质感的可翻阅界面。
+- 关键证物仍只有卡面缩略图，后续可给每案核心证物补大图或特写演出。
+
 ## 2026-06-16 baseline gap audit
 
 Current game is a functional prototype, not yet a complete Ace Attorney-like game.

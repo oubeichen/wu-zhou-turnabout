@@ -1443,9 +1443,11 @@
               ${renderCommandButton("talk", "交谈")}
               ${renderCommandButton("present", "出示")}
             </div>
-            ${renderInvestigationCommand(caseData, inv, location)}
+            <div class="command-body">
+              ${renderInvestigationCommand(caseData, inv, location)}
+            </div>
             ${renderCoachCard()}
-            <div class="action-row">
+            <div class="action-row investigation-actions">
               <button class="secondary-button" type="button" data-open-intro>案件概要</button>
               <button class="secondary-button" type="button" data-open-record>记录</button>
               <button class="primary-button" type="button" data-mode="trial" ${allEvidenceCollected(caseData) ? "" : "disabled"}>开庭</button>
