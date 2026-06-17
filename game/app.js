@@ -1908,8 +1908,16 @@
             const key = statementKey(progress.testimonyIndex, rawIndex);
             const pressed = progress.pressed.includes(key);
             const solved = progress.solved.includes(key);
-            const revealed = statement.hiddenUntilPressed ? "revealed" : "";
-            return `<span class="${active ? "active" : ""} ${pressed ? "pressed" : ""} ${solved ? "solved" : ""} ${revealed}">${index + 1}</span>`;
+            const revealed = Boolean(statement.hiddenUntilPressed);
+            const suspicious = statementHasAnswer(statement);
+            const status = solved ? "已突破" : pressed ? "已追问" : revealed ? "新证词" : suspicious ? "有疑点" : "未追问";
+            return `
+              <button class="statement-card ${active ? "active" : ""} ${pressed ? "pressed" : ""} ${solved ? "solved" : ""} ${revealed ? "revealed" : ""} ${suspicious ? "suspicious" : ""}" type="button" data-jump-statement="${index}">
+                <span>${index + 1}</span>
+                <p>${escapeHtml(statement.text)}</p>
+                <small>${status}</small>
+              </button>
+            `;
           })
           .join("")}
       </div>
@@ -2469,6 +2477,23 @@
     renderTrial();
   }
 
+  function jumpStatement(index) {
+    const caseData = currentCase();
+    const progress = caseProgress(caseData.id);
+    const testimony = caseData.testimony[progress.testimonyIndex];
+    const visibleStatements = visibleStatementEntries(testimony, progress);
+    const nextIndex = Math.max(0, Math.min(visibleStatements.length - 1, Number(index) || 0));
+    progress.statementIndex = nextIndex;
+    const { statement } = currentStatementEntry(testimony, progress);
+    setStage(statementHasAnswer(statement) ? "clash" : "witness", `证词第 ${nextIndex + 1} 句`, {
+      left: statementHasAnswer(statement) ? "tense" : "testify",
+      right: "observe",
+    });
+    setMessage(testimony.speaker, statement.text, "");
+    save();
+    renderTrial();
+  }
+
   function pressStatement() {
     const caseData = currentCase();
     const progress = caseProgress(caseData.id);
@@ -2782,6 +2807,7 @@
     if (target.dataset.examineSpot) examineSpot(Number(target.dataset.examineSpot));
     if (target.dataset.talkTopic) talkTopic(Number(target.dataset.talkTopic));
     if (target.dataset.presentInvestigation) presentDuringInvestigation(target.dataset.presentInvestigation);
+    if (target.dataset.jumpStatement !== undefined) jumpStatement(Number(target.dataset.jumpStatement));
     if (target.dataset.selectEvidence) {
       state.selectedEvidenceId = target.dataset.selectEvidence;
       state.selectedProfileName = "";
@@ -3035,7 +3061,20 @@
       recoveries: progress.recoveries || 0,
       testimony: testimony?.title || "",
       statement: statement?.text || "",
+      statementIndex: progress.statementIndex + 1,
       visibleStatements: visibleStatements.length,
+      statementCards: visibleStatements.map(({ statement: item, rawIndex }, index) => {
+        const key = statementKey(progress.testimonyIndex, rawIndex);
+        return {
+          index: index + 1,
+          active: index === progress.statementIndex,
+          pressed: progress.pressed.includes(key),
+          solved: progress.solved.includes(key),
+          hiddenReveal: Boolean(item.hiddenUntilPressed),
+          suspicious: statementHasAnswer(item),
+          text: item.text,
+        };
+      }),
       unlockedStatements: progress.unlockedStatements.length,
       pressedStatements: progress.pressed.length,
       message: state.message,

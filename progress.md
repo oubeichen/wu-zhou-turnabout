@@ -2,6 +2,35 @@ Original prompt: 做一个仿照 《逆转裁判》 的完整游戏。始终检�
 
 # Progress
 
+## 2026-06-17 iteration 41 result
+
+Implemented:
+- Replaced the trial statement number dots with readable, clickable statement cards.
+- Each statement card now shows its index, a one-line statement preview, and a status label: `未追问`, `有疑点`, `已追问`, `新证词`, or `已突破`.
+- Added direct statement jumping via `data-jump-statement`, so players can click a testimony sentence instead of only using previous/next.
+- Kept previous/next and keyboard flow intact while making the cross-examination state easier to scan.
+- Added `statementIndex` and structured `statementCards` to `window.render_game_to_text` for deterministic browser validation.
+
+Verified:
+- Clean browser flow collected all first-case investigation evidence and entered trial.
+- Browser clicked the third statement card; `statementIndex` changed to 3 and the active card moved to statement 3.
+- Browser pressed the active statement; the active card became `pressed=true` and the press response appeared.
+- Desktop 1440x810 trial layout kept the statement card list, right trial panel, courtroom scene, and equal-width action buttons inside the viewport.
+- Mobile 390x844 trial layout had no horizontal overflow; statement cards and trial buttons stayed within the viewport width.
+- Screenshot inspected: `iteration41-statement-cards-trial.png`.
+- `node --check game/app.js && node --check game/game-data.js`
+- `python3 -m py_compile scripts/build_game_content.py scripts/parse_epub_to_markdown.py`
+- `git diff --check`
+- Public text scan on `game/`: old opaque evidence wording did not reappear.
+- GitHub Pages URL returned HTTP 200: `https://oubeichen.github.io/wu-zhou-turnabout/`.
+- Required develop-web-game client was attempted, but the local skill script still failed with `ERR_MODULE_NOT_FOUND: Cannot find package 'playwright'`; MCP browser verification is the authoritative interaction evidence.
+
+Remaining Ace Attorney gap list:
+- Cross-examination now has readable clickable statement cards, but it still lacks dramatic per-statement typewriter timing and stronger objection timing windows.
+- Suspicious statements are labeled, but future polish should distinguish “safe to press” from “ready to present” more cinematically.
+- Main investigation hotspot positions are still generic per-location slots rather than hand-authored coordinates for every scene.
+- Court Record thumbnails still use archetype art rather than bespoke art for every evidence card.
+
 ## 2026-06-17 iteration 40 result
 
 Implemented:

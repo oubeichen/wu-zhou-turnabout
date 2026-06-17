@@ -2512,41 +2512,85 @@ button:not(:disabled):hover {
 }
 
 .statement-strip {
-  display: flex;
+  display: grid;
   gap: 8px;
 }
 
-.statement-strip span {
+.statement-card {
+  display: grid;
+  grid-template-columns: 30px minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: center;
+  min-height: 48px;
+  padding: 8px 10px;
+  color: var(--ink);
+  text-align: left;
+  background: #efe1c8;
+  border: 1px solid rgba(52, 44, 37, 0.28);
+  border-left: 5px solid rgba(52, 44, 37, 0.24);
+  border-radius: 8px;
+  box-shadow: none;
+}
+
+.statement-card span {
   display: grid;
   place-items: center;
   width: 28px;
   height: 28px;
   color: var(--muted);
   background: #e2d2ba;
-  border: 1px solid rgba(52, 44, 37, 0.28);
   border-radius: 50%;
-  font-weight: 800;
+  font-weight: 900;
 }
 
-.statement-strip .active {
+.statement-card p {
+  margin: 0;
+  overflow: hidden;
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 800;
+  line-height: 1.35;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.statement-card small {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.statement-card.active {
+  background: #fff8e7;
+  border-color: rgba(139, 45, 37, 0.42);
+  border-left-color: var(--red);
+}
+
+.statement-card.active span {
   color: #fff8e7;
   background: var(--red);
-  border-color: #5c1d18;
 }
 
-.statement-strip .pressed {
-  box-shadow: inset 0 -4px 0 var(--gold);
+.statement-card.pressed {
+  border-bottom-color: var(--gold);
 }
 
-.statement-strip .solved {
+.statement-card.solved {
+  border-left-color: var(--jade);
+}
+
+.statement-card.solved span {
   color: #fff8e7;
   background: var(--jade);
-  border-color: #1f4f45;
 }
 
-.statement-strip .revealed {
-  border-color: #b37b24;
-  box-shadow: 0 0 0 2px rgba(247, 217, 123, 0.48);
+.statement-card.revealed {
+  box-shadow: 0 0 0 2px rgba(247, 217, 123, 0.35);
+}
+
+.statement-card.suspicious:not(.solved) small {
+  color: #8b2d25;
 }
 
 .hint-text {
@@ -3479,6 +3523,21 @@ button:not(:disabled):hover {
   .trial-layout .trial-panel {
     min-height: 0;
     align-content: start;
+  }
+
+  .trial-layout .statement-strip {
+    max-height: 190px;
+    overflow: auto;
+    padding-right: 2px;
+  }
+
+  .trial-layout .statement-card {
+    min-height: 42px;
+    padding: 7px 9px;
+  }
+
+  .trial-layout .statement-card p {
+    font-size: 13px;
   }
 
   .interlude-stage h2 {
