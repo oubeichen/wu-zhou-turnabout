@@ -76,6 +76,7 @@
     recordOpen: false,
     recordInspect: null,
     recordInspectSpot: "",
+    recordInspectView: "front",
     message: "",
     speaker: "系统",
     dramaticCue: "",
@@ -204,6 +205,7 @@
     state.recordOpen = false;
     state.recordInspect = null;
     state.recordInspectSpot = "";
+    state.recordInspectView = "front";
     state.objectionReveal = null;
     setMessage("读档", `已读取存档 ${index + 1}。`, "");
     save();
@@ -1148,6 +1150,7 @@
     state.recordOpen = false;
     state.recordInspect = null;
     state.recordInspectSpot = "";
+    state.recordInspectView = "front";
     state.objectionReveal = null;
     state.homeView = ["menu", "cases", "archive", "saves"].includes(state.homeView) ? state.homeView : "menu";
     state.homeFocusIndex = Math.min(Math.max(state.homeFocusIndex, 0), data.cases.length - 1);
@@ -2295,12 +2298,14 @@
     if (!items.some((item) => (inspectType === "profile" ? item.name : item.id) === id)) return;
     state.recordInspect = { type: inspectType, id };
     state.recordInspectSpot = inspectType === "evidence" ? "trace" : "";
+    state.recordInspectView = inspectType === "evidence" ? "front" : "";
     rerender();
   }
 
   function closeRecordInspect() {
     state.recordInspect = null;
     state.recordInspectSpot = "";
+    state.recordInspectView = "front";
     rerender();
   }
 
@@ -2316,34 +2321,82 @@
       state.recordTab = "profiles";
       state.recordInspect = { type: "profile", id: next.name };
       state.recordInspectSpot = "";
+      state.recordInspectView = "";
     } else {
       state.selectedEvidenceId = next.id;
       state.selectedProfileName = "";
       state.recordTab = "evidence";
       state.recordInspect = { type: "evidence", id: next.id };
       state.recordInspectSpot = "trace";
+      state.recordInspectView = "front";
     }
     rerender();
   }
 
-  function inspectSpotsForEvidence(item) {
+  function inspectViewsForEvidence() {
+    return [
+      { id: "front", label: "正面", title: "正面查看" },
+      { id: "back", label: "背面", title: "翻到背面" },
+      { id: "edge", label: "边缘", title: "侧看边缘" },
+    ];
+  }
+
+  function activeInspectView() {
+    const views = inspectViewsForEvidence();
+    return views.find((view) => view.id === state.recordInspectView) || views[0];
+  }
+
+  function inspectSpotsForEvidence(item, viewId = activeInspectView().id) {
     if (!item) return [];
     const source = item.source ? `来源：${item.source}` : "来源仍需和证词互相印证。";
     const risk = item.counterRisk ? ` 慎用点：${item.counterRisk}` : "";
-    return [
-      {
+    const common = {
+      trace: {
         id: "trace",
         label: "表面痕迹",
         title: "能直接看见什么",
         text: `${item.summary} ${source}`,
       },
-      {
+      logic: {
         id: "logic",
         label: "庭审结论",
         title: "它能推翻哪种说法",
         text: `${item.use} ${item.detail}${risk}`,
       },
-    ];
+    };
+    if (viewId === "back") {
+      return [
+        {
+          id: "source",
+          label: "来源标记",
+          title: "背面留下什么出处",
+          text: `${source} 背面信息先确认这份记录从哪里来，再决定它能不能被带上庭。`,
+        },
+        {
+          id: "gap",
+          label: "缺漏位置",
+          title: "哪里故意没写清楚",
+          text: `${item.detail} 如果证词把这段空白说成理所当然，就可以从这里追问。`,
+        },
+      ];
+    }
+    if (viewId === "edge") {
+      return [
+        {
+          id: "wear",
+          label: "磨损边角",
+          title: "它经历过怎样的传递",
+          text: `${item.name}不是凭空出现的线索。边角痕迹提醒玩家：先问它怎样到场，再问谁从它受益。`,
+        },
+        {
+          id: "risk",
+          label: "出示风险",
+          title: "什么时候不能乱拍",
+          text: risk ? risk.trim() : `这份记录要等证词说死后再用；太早出示只会让对手转移争点。`,
+        },
+      ];
+    }
+    return [common.trace, common.logic];
   }
 
   function activeInspectSpot(item) {
@@ -2352,15 +2405,29 @@
   }
 
   function renderEvidenceInspectArt(item, caseData) {
-    const spots = inspectSpotsForEvidence(item);
+    const view = activeInspectView();
+    const views = inspectViewsForEvidence();
+    const spots = inspectSpotsForEvidence(item, view.id);
+    const activeSpot = activeInspectSpot(item);
     return `
-      <div class="inspect-art-stage">
+      <div class="inspect-view-tabs" aria-label="证物查看角度">
+        ${views
+          .map(
+            (entry) => `
+              <button class="inspect-view-button ${entry.id === view.id ? "active" : ""}" type="button" data-inspect-view="${escapeHtml(entry.id)}">
+                <span>${escapeHtml(entry.label)}</span>
+              </button>
+            `
+          )
+          .join("")}
+      </div>
+      <div class="inspect-art-stage inspect-view-${escapeHtml(view.id)}" data-view="${escapeHtml(view.title)}">
         ${renderEvidenceThumb(item, true, "inspect", caseData)}
         <div class="inspect-hotspots" aria-label="证物检查点">
           ${spots
             .map(
               (spot, index) => `
-                <button class="inspect-hotspot inspect-hotspot-${index + 1} ${state.recordInspectSpot === spot.id ? "active" : ""}" type="button" data-inspect-spot="${escapeHtml(spot.id)}">
+                <button class="inspect-hotspot inspect-hotspot-${index + 1} ${activeSpot?.id === spot.id ? "active" : ""}" type="button" data-inspect-spot="${escapeHtml(spot.id)}">
                   <span>${index + 1}</span>
                   <small>${escapeHtml(spot.label)}</small>
                 </button>
@@ -2653,6 +2720,7 @@
     state.recordOpen = false;
     state.recordInspect = null;
     state.recordInspectSpot = "";
+    state.recordInspectView = "front";
     state.recordTab = "evidence";
     clearInvestigationBeat();
     setMessage("书记", "案件记录已经展开。先调查现场，再进入庭审。", "");
@@ -2663,6 +2731,7 @@
     state.selectedEvidenceId = "";
     state.recordInspect = null;
     state.recordInspectSpot = "";
+    state.recordInspectView = "front";
     if (mode === "investigation") {
       state.recordOpen = false;
       clearInvestigationBeat();
@@ -2988,6 +3057,7 @@
     state.recordOpen = false;
     state.recordInspect = null;
     state.recordInspectSpot = "";
+    state.recordInspectView = "front";
     if (state.objectionReveal) {
       resolveObjectionReveal();
       return;
@@ -3079,6 +3149,7 @@
     state.selectedEvidenceId = "";
     state.recordInspect = null;
     state.recordInspectSpot = "";
+    state.recordInspectView = "front";
     setStage("clash", `证词更新：${caseData.testimony[progress.testimonyIndex].title}`, { left: "shock", right: "stagger" });
     setMessage("辩方", message, "objection");
     playCue("objection");
@@ -3123,6 +3194,7 @@
     state.objectionReveal = null;
     state.recordInspect = null;
     state.recordInspectSpot = "";
+    state.recordInspectView = "front";
     state.recordTab = "evidence";
     setStage("witness", `${caseData.testimony[0].speaker}重新入庭`, { left: "enter", right: "observe" });
     setMessage("审判长", message || "庭审重新开始。调查证物保留，信誉恢复。", "");
@@ -3161,6 +3233,7 @@
     state.selectedProfileName = "";
     state.recordInspect = null;
     state.recordInspectSpot = "";
+    state.recordInspectView = "front";
     state.recordTab = "evidence";
     setMessage("书记", "旧判决已归档。本次重审会重新计算评价，但保留最佳奖章。", "");
     save();
@@ -3183,6 +3256,7 @@
     state.objectionReveal = null;
     state.recordInspect = null;
     state.recordInspectSpot = "";
+    state.recordInspectView = "front";
     state.settingsOpen = false;
     state.homeView = "menu";
     setMessage("系统", "当前案件已重置，结案记录也已清除。", "");
@@ -3253,10 +3327,17 @@
       state.recordInspectSpot = target.dataset.inspectSpot;
       rerender();
     }
+    if (target.dataset.inspectView) {
+      state.recordInspectView = target.dataset.inspectView;
+      const inspect = currentRecordInspect(currentCase());
+      state.recordInspectSpot = inspect?.type === "evidence" ? inspectSpotsForEvidence(inspect.item)[0]?.id || "" : "";
+      rerender();
+    }
     if (target.dataset.returnToTrial !== undefined || target.dataset.returnToTrialInspect !== undefined) {
       state.recordOpen = false;
       state.recordInspect = null;
       state.recordInspectSpot = "";
+      state.recordInspectView = "front";
       setMessage("法庭记录", "记录已合上。现在可以在主操作区点击“举证”正式提交。", "");
       rerender();
     }
@@ -3471,6 +3552,7 @@
       recordInspectType: inspect?.type || "",
       recordInspectTitle: inspect?.item?.name || "",
       recordInspectIndex: inspect ? `${inspect.index + 1}/${inspect.items.length}` : "",
+      recordInspectView: inspect?.type === "evidence" ? activeInspectView().label : "",
       recordInspectSpot: inspectSpot?.label || "",
       recordInspectObservation: inspectSpot?.text || "",
       investigationBeatKind: state.screen === "investigation" ? state.investigationBeat?.kind || "" : "",

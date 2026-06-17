@@ -2669,6 +2669,70 @@ button:not(:disabled):hover {
   display: grid;
   place-items: center;
   min-width: min(100%, 260px);
+  min-height: 238px;
+  perspective: 780px;
+}
+
+.inspect-art-stage::after {
+  content: attr(data-view);
+  position: absolute;
+  right: -10px;
+  top: -16px;
+  z-index: 1;
+  padding: 5px 9px;
+  color: #fff8e7;
+  background: rgba(31, 28, 25, 0.72);
+  border: 1px solid rgba(255, 241, 191, 0.44);
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.inspect-view-tabs {
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  top: 12px;
+  z-index: 3;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.inspect-view-button {
+  min-height: 32px;
+  padding: 4px 8px;
+  color: #231b16;
+  background: rgba(255, 250, 240, 0.86);
+  border: 1px solid rgba(52, 44, 37, 0.34);
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.inspect-view-button.active {
+  color: #fff8e7;
+  background: #5c1d18;
+  border-color: #fff1bf;
+  box-shadow: 0 8px 18px rgba(31, 28, 25, 0.24);
+}
+
+.inspect-view-front .evidence-thumb {
+  transform: rotate(-2deg);
+}
+
+.inspect-view-back .evidence-thumb {
+  transform: rotateY(180deg) rotate(2deg);
+  filter: sepia(0.26) saturate(0.86);
+}
+
+.inspect-view-back .evidence-thumb::after {
+  transform: rotateY(180deg);
+}
+
+.inspect-view-edge .evidence-thumb {
+  transform: rotateY(64deg) rotate(-1deg) scaleX(0.82);
+  filter: contrast(1.08) saturate(0.9);
 }
 
 .inspect-hotspots {
@@ -2728,6 +2792,28 @@ button:not(:disabled):hover {
 .inspect-hotspot-2 {
   right: -30px;
   bottom: 20%;
+}
+
+.inspect-view-back .inspect-hotspot-1 {
+  left: auto;
+  right: -28px;
+  top: 16%;
+}
+
+.inspect-view-back .inspect-hotspot-2 {
+  left: -26px;
+  right: auto;
+  bottom: 18%;
+}
+
+.inspect-view-edge .inspect-hotspot-1 {
+  left: 6px;
+  top: 28%;
+}
+
+.inspect-view-edge .inspect-hotspot-2 {
+  right: 4px;
+  bottom: 32%;
 }
 
 .record-inspect-art .inspect-profile {
@@ -4280,6 +4366,30 @@ button:not(:disabled):hover {
     padding: 12px;
   }
 
+  .inspect-art-stage {
+    min-width: min(100%, 224px);
+    min-height: 198px;
+  }
+
+  .inspect-art-stage::after {
+    right: 0;
+    top: 38px;
+    font-size: 11px;
+  }
+
+  .inspect-view-tabs {
+    left: 8px;
+    right: 8px;
+    top: 8px;
+    gap: 4px;
+  }
+
+  .inspect-view-button {
+    min-height: 28px;
+    padding: 3px 5px;
+    font-size: 12px;
+  }
+
   .inspect-hotspot {
     min-width: 92px;
     min-height: 32px;
@@ -4292,6 +4402,20 @@ button:not(:disabled):hover {
   }
 
   .inspect-hotspot-2 {
+    right: 4px;
+    bottom: 12px;
+  }
+
+  .inspect-view-back .inspect-hotspot-1,
+  .inspect-view-edge .inspect-hotspot-1 {
+    left: 4px;
+    right: auto;
+    top: 46px;
+  }
+
+  .inspect-view-back .inspect-hotspot-2,
+  .inspect-view-edge .inspect-hotspot-2 {
+    left: auto;
     right: 4px;
     bottom: 12px;
   }
