@@ -75,6 +75,7 @@
     guideOpen: false,
     recordOpen: false,
     recordInspect: null,
+    recordInspectSpot: "",
     message: "",
     speaker: "系统",
     dramaticCue: "",
@@ -202,6 +203,7 @@
     state.selectedProfileName = "";
     state.recordOpen = false;
     state.recordInspect = null;
+    state.recordInspectSpot = "";
     state.objectionReveal = null;
     setMessage("读档", `已读取存档 ${index + 1}。`, "");
     save();
@@ -1145,6 +1147,7 @@
     state.selectedProfileName = "";
     state.recordOpen = false;
     state.recordInspect = null;
+    state.recordInspectSpot = "";
     state.objectionReveal = null;
     state.homeView = ["menu", "cases", "archive", "saves"].includes(state.homeView) ? state.homeView : "menu";
     state.homeFocusIndex = Math.min(Math.max(state.homeFocusIndex, 0), data.cases.length - 1);
@@ -1800,6 +1803,19 @@
       ${renderGuidePanel()}${renderSettings()}
     `;
     syncAudioForScreen();
+    queueMobileTrialStageFocus();
+  }
+
+  function queueMobileTrialStageFocus() {
+    if (state.screen !== "trial" || state.recordOpen || state.recordInspect) return;
+    if (!window.matchMedia("(max-width: 820px)").matches) return;
+    requestAnimationFrame(() => {
+      const scene = app.querySelector(".scene.trial");
+      if (!scene) return;
+      const topbarHeight = document.querySelector(".topbar")?.getBoundingClientRect().height || 0;
+      const top = Math.max(0, window.scrollY + scene.getBoundingClientRect().top - topbarHeight - 8);
+      window.scrollTo({ top, behavior: "auto" });
+    });
   }
 
   function renderTestimonyInterlude() {
@@ -2278,11 +2294,13 @@
     const items = recordInspectItems(caseData, inspectType);
     if (!items.some((item) => (inspectType === "profile" ? item.name : item.id) === id)) return;
     state.recordInspect = { type: inspectType, id };
+    state.recordInspectSpot = inspectType === "evidence" ? "trace" : "";
     rerender();
   }
 
   function closeRecordInspect() {
     state.recordInspect = null;
+    state.recordInspectSpot = "";
     rerender();
   }
 
@@ -2297,13 +2315,61 @@
       state.selectedEvidenceId = "";
       state.recordTab = "profiles";
       state.recordInspect = { type: "profile", id: next.name };
+      state.recordInspectSpot = "";
     } else {
       state.selectedEvidenceId = next.id;
       state.selectedProfileName = "";
       state.recordTab = "evidence";
       state.recordInspect = { type: "evidence", id: next.id };
+      state.recordInspectSpot = "trace";
     }
     rerender();
+  }
+
+  function inspectSpotsForEvidence(item) {
+    if (!item) return [];
+    const source = item.source ? `来源：${item.source}` : "来源仍需和证词互相印证。";
+    const risk = item.counterRisk ? ` 慎用点：${item.counterRisk}` : "";
+    return [
+      {
+        id: "trace",
+        label: "表面痕迹",
+        title: "能直接看见什么",
+        text: `${item.summary} ${source}`,
+      },
+      {
+        id: "logic",
+        label: "庭审结论",
+        title: "它能推翻哪种说法",
+        text: `${item.use} ${item.detail}${risk}`,
+      },
+    ];
+  }
+
+  function activeInspectSpot(item) {
+    const spots = inspectSpotsForEvidence(item);
+    return spots.find((spot) => spot.id === state.recordInspectSpot) || spots[0] || null;
+  }
+
+  function renderEvidenceInspectArt(item, caseData) {
+    const spots = inspectSpotsForEvidence(item);
+    return `
+      <div class="inspect-art-stage">
+        ${renderEvidenceThumb(item, true, "inspect", caseData)}
+        <div class="inspect-hotspots" aria-label="证物检查点">
+          ${spots
+            .map(
+              (spot, index) => `
+                <button class="inspect-hotspot inspect-hotspot-${index + 1} ${state.recordInspectSpot === spot.id ? "active" : ""}" type="button" data-inspect-spot="${escapeHtml(spot.id)}">
+                  <span>${index + 1}</span>
+                  <small>${escapeHtml(spot.label)}</small>
+                </button>
+              `
+            )
+            .join("")}
+        </div>
+      </div>
+    `;
   }
 
   function renderRecordInspectModal(caseData) {
@@ -2312,6 +2378,7 @@
     const { type, item, index, items } = inspect;
     const title = type === "profile" ? item.name : item.name;
     const subtitle = type === "profile" ? item.role : `${item.type}｜${item.source}`;
+    const spot = type === "evidence" ? activeInspectSpot(item) : null;
     return `
       <div class="modal-scrim record-inspect-scrim" role="dialog" aria-modal="true" aria-label="法庭记录详查">
         <section class="record-inspect-panel record-inspect-${escapeHtml(type)}">
@@ -2324,13 +2391,14 @@
               ${
                 type === "profile"
                   ? `<span class="inspect-profile portrait-${escapeHtml(item.portrait || "empress")}" aria-hidden="true"></span>`
-                  : renderEvidenceThumb(item, true, "inspect", caseData)
+                  : renderEvidenceInspectArt(item, caseData)
               }
             </div>
             <div class="record-inspect-copy">
               <strong>${escapeHtml(title)}</strong>
               <span>${escapeHtml(subtitle)}</span>
               ${type === "profile" ? `<p>${escapeHtml(item.note)}</p>` : `<p>${escapeHtml(item.detail)}</p>`}
+              ${spot ? `<div class="inspect-observation"><b>${escapeHtml(spot.title)}</b><span>${escapeHtml(spot.text)}</span></div>` : ""}
               <div class="inspect-facts">
                 ${
                   type === "profile"
@@ -2489,6 +2557,7 @@
     state.selectedProfileName = "";
     state.recordOpen = false;
     state.recordInspect = null;
+    state.recordInspectSpot = "";
     state.recordTab = "evidence";
     clearInvestigationBeat();
     setMessage("书记", "案件记录已经展开。先调查现场，再进入庭审。", "");
@@ -2498,6 +2567,7 @@
   function setMode(mode) {
     state.selectedEvidenceId = "";
     state.recordInspect = null;
+    state.recordInspectSpot = "";
     if (mode === "investigation") {
       state.recordOpen = false;
       clearInvestigationBeat();
@@ -2806,6 +2876,7 @@
     const presentedLabel = selectedRecordLabel(caseData);
     state.recordOpen = false;
     state.recordInspect = null;
+    state.recordInspectSpot = "";
     if (state.objectionReveal) {
       resolveObjectionReveal();
       return;
@@ -2896,6 +2967,7 @@
     progress.lastObjection = message || "";
     state.selectedEvidenceId = "";
     state.recordInspect = null;
+    state.recordInspectSpot = "";
     setStage("clash", `证词更新：${caseData.testimony[progress.testimonyIndex].title}`, { left: "shock", right: "stagger" });
     setMessage("辩方", message, "objection");
     playCue("objection");
@@ -2939,6 +3011,7 @@
     state.selectedProfileName = "";
     state.objectionReveal = null;
     state.recordInspect = null;
+    state.recordInspectSpot = "";
     state.recordTab = "evidence";
     setStage("witness", `${caseData.testimony[0].speaker}重新入庭`, { left: "enter", right: "observe" });
     setMessage("审判长", message || "庭审重新开始。调查证物保留，信誉恢复。", "");
@@ -2976,6 +3049,7 @@
     state.selectedEvidenceId = "";
     state.selectedProfileName = "";
     state.recordInspect = null;
+    state.recordInspectSpot = "";
     state.recordTab = "evidence";
     setMessage("书记", "旧判决已归档。本次重审会重新计算评价，但保留最佳奖章。", "");
     save();
@@ -2997,6 +3071,7 @@
     state.selectedProfileName = "";
     state.objectionReveal = null;
     state.recordInspect = null;
+    state.recordInspectSpot = "";
     state.settingsOpen = false;
     state.homeView = "menu";
     setMessage("系统", "当前案件已重置，结案记录也已清除。", "");
@@ -3063,9 +3138,14 @@
     if (target.dataset.inspectRecord) openRecordInspect(target.dataset.inspectRecord);
     if (target.dataset.closeInspect !== undefined) closeRecordInspect();
     if (target.dataset.inspectStep !== undefined) stepRecordInspect(Number(target.dataset.inspectStep));
+    if (target.dataset.inspectSpot) {
+      state.recordInspectSpot = target.dataset.inspectSpot;
+      rerender();
+    }
     if (target.dataset.returnToTrial !== undefined || target.dataset.returnToTrialInspect !== undefined) {
       state.recordOpen = false;
       state.recordInspect = null;
+      state.recordInspectSpot = "";
       setMessage("法庭记录", "记录已合上。现在可以在主操作区点击“举证”正式提交。", "");
       rerender();
     }
@@ -3231,6 +3311,7 @@
     const selectedEvidenceVisual = selectedEvidence ? evidenceVisualFor(selectedEvidence, true) : null;
     const selectedEvidencePosition = selectedEvidence ? evidenceSheetPosition(selectedEvidence, caseData) : null;
     const inspect = currentRecordInspect(caseData);
+    const inspectSpot = inspect?.type === "evidence" ? activeInspectSpot(inspect.item) : null;
     const nextCaseIndex = continueCaseIndex();
     const nextCase = data.cases[nextCaseIndex] || caseData;
     const manualSlots = readSaveSlots();
@@ -3278,6 +3359,8 @@
       recordInspectType: inspect?.type || "",
       recordInspectTitle: inspect?.item?.name || "",
       recordInspectIndex: inspect ? `${inspect.index + 1}/${inspect.items.length}` : "",
+      recordInspectSpot: inspectSpot?.label || "",
+      recordInspectObservation: inspectSpot?.text || "",
       investigationBeatKind: state.screen === "investigation" ? state.investigationBeat?.kind || "" : "",
       investigationBeatSpeaker: state.screen === "investigation" ? state.investigationBeat?.speaker || "" : "",
       investigationBeatResult: state.screen === "investigation" ? state.investigationBeat?.result || "" : "",

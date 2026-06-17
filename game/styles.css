@@ -1164,6 +1164,7 @@ button:not(:disabled):hover {
 }
 
 .scene.trial .portrait {
+  z-index: 31;
   bottom: clamp(104px, 13vw, 144px);
   width: clamp(170px, 19vw, 246px);
 }
@@ -2646,6 +2647,7 @@ button:not(:disabled):hover {
 }
 
 .record-inspect-art {
+  position: relative;
   display: grid;
   place-items: center;
   min-height: 300px;
@@ -2660,6 +2662,72 @@ button:not(:disabled):hover {
 .record-inspect-art .evidence-thumb {
   transform: rotate(-2deg);
   box-shadow: 0 18px 34px rgba(31, 28, 25, 0.28);
+}
+
+.inspect-art-stage {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-width: min(100%, 260px);
+}
+
+.inspect-hotspots {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.inspect-hotspot {
+  position: absolute;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 5px;
+  align-items: center;
+  min-width: 108px;
+  min-height: 36px;
+  padding: 5px 8px;
+  color: #fff8e7;
+  background: rgba(92, 29, 24, 0.92);
+  border: 2px solid rgba(255, 241, 191, 0.86);
+  border-radius: 999px;
+  box-shadow: 0 10px 22px rgba(31, 28, 25, 0.32);
+  pointer-events: auto;
+}
+
+.inspect-hotspot span {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  color: #231b16;
+  background: #fff1bf;
+  border-radius: 50%;
+  font-weight: 900;
+}
+
+.inspect-hotspot small {
+  overflow: hidden;
+  color: #fff8e7;
+  font-size: 12px;
+  font-weight: 900;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.inspect-hotspot.active {
+  background: rgba(179, 123, 36, 0.96);
+  box-shadow: 0 12px 28px rgba(31, 28, 25, 0.36), 0 0 0 4px rgba(255, 241, 191, 0.24);
+}
+
+.inspect-hotspot-1 {
+  left: -24px;
+  top: 18%;
+}
+
+.inspect-hotspot-2 {
+  right: -30px;
+  bottom: 20%;
 }
 
 .record-inspect-art .inspect-profile {
@@ -2713,6 +2781,25 @@ button:not(:disabled):hover {
   color: #5f1f1a;
   background: rgba(160, 43, 35, 0.1);
   border-color: rgba(160, 43, 35, 0.32);
+}
+
+.inspect-observation {
+  display: grid;
+  gap: 5px;
+  padding: 12px;
+  color: #5c1d18;
+  background: #fff1bf;
+  border: 2px solid rgba(179, 123, 36, 0.56);
+  border-radius: 8px;
+}
+
+.inspect-observation b,
+.inspect-observation span {
+  display: block;
+}
+
+.inspect-observation span {
+  line-height: 1.55;
 }
 
 .inspect-facts b,
@@ -4077,6 +4164,22 @@ button:not(:disabled):hover {
     padding: 12px;
   }
 
+  .inspect-hotspot {
+    min-width: 92px;
+    min-height: 32px;
+    padding: 4px 7px;
+  }
+
+  .inspect-hotspot-1 {
+    left: 4px;
+    top: 12px;
+  }
+
+  .inspect-hotspot-2 {
+    right: 4px;
+    bottom: 12px;
+  }
+
   .record-inspect-copy > strong {
     font-size: 28px;
   }
@@ -4351,29 +4454,46 @@ button:not(:disabled):hover {
   }
 
   .court-impact {
-    gap: 4px;
-    min-height: 210px;
-    padding-inline: 14px;
+    top: 58%;
+    gap: 3px;
+    width: min(340px, calc(100vw - 18px));
+    min-height: 132px;
+    padding: 10px 12px;
+    border-width: 3px;
+  }
+
+  .court-impact strong {
+    font-size: 42px;
+  }
+
+  .court-impact em {
+    font-size: 14px;
+  }
+
+  .court-impact span {
+    padding: 3px 8px;
+    font-size: 12px;
   }
 
   .acting-strip {
-    gap: 5px;
+    gap: 4px;
   }
 
   .acting-frame {
-    padding: 6px 4px;
+    gap: 2px;
+    padding: 4px 3px;
   }
 
   .acting-portrait {
-    width: 34px;
+    width: 26px;
   }
 
   .acting-frame b {
-    font-size: 11px;
+    font-size: 10px;
   }
 
   .acting-frame small {
-    font-size: 10px;
+    font-size: 9px;
   }
 
   .trial-header {
