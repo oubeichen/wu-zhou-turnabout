@@ -74,6 +74,7 @@
     settingsOpen: false,
     guideOpen: false,
     recordOpen: false,
+    recordInspect: null,
     message: "",
     speaker: "系统",
     dramaticCue: "",
@@ -200,6 +201,7 @@
     state.selectedEvidenceId = "";
     state.selectedProfileName = "";
     state.recordOpen = false;
+    state.recordInspect = null;
     state.objectionReveal = null;
     setMessage("读档", `已读取存档 ${index + 1}。`, "");
     save();
@@ -1142,6 +1144,7 @@
     state.selectedEvidenceId = "";
     state.selectedProfileName = "";
     state.recordOpen = false;
+    state.recordInspect = null;
     state.objectionReveal = null;
     state.homeView = ["menu", "cases", "archive", "saves"].includes(state.homeView) ? state.homeView : "menu";
     state.homeFocusIndex = Math.min(Math.max(state.homeFocusIndex, 0), data.cases.length - 1);
@@ -1432,6 +1435,7 @@
     const progress = caseProgress(caseData.id);
     state.screen = "case";
     state.recordOpen = false;
+    state.recordInspect = null;
     renderStatus();
     app.innerHTML = `
       <section class="case-intro-layout">
@@ -1516,6 +1520,7 @@
         ${state.recordOpen ? `<button class="record-scrim" type="button" data-close-record aria-label="关闭法庭记录"></button>` : ""}
         ${renderRecordPanel(caseData, progress)}
       </section>
+      ${renderRecordInspectModal(caseData)}
       ${renderGuidePanel()}${renderSettings()}
     `;
     syncAudioForScreen();
@@ -1791,6 +1796,7 @@
       </section>
       ${renderCue()}
       ${renderObjectionReveal()}
+      ${renderRecordInspectModal(caseData)}
       ${renderGuidePanel()}${renderSettings()}
     `;
     syncAudioForScreen();
@@ -2167,7 +2173,7 @@
         </div>
         ${
           selectedProfile
-            ? `<div class="evidence-detail profile-detail"><strong>${escapeHtml(selectedProfile.name)}</strong><span>${escapeHtml(selectedProfile.role)}</span><p>${escapeHtml(selectedProfile.note)}</p><small>${state.screen === "trial" ? "人物档案已拿在手上；带回庭审后再正式举证。" : "庭审中选中人物后也可以“举证”。"}</small>${renderRecordReturnAction()}</div>`
+            ? `<div class="evidence-detail profile-detail"><strong>${escapeHtml(selectedProfile.name)}</strong><span>${escapeHtml(selectedProfile.role)}</span><p>${escapeHtml(selectedProfile.note)}</p><small>${state.screen === "trial" ? "人物档案已拿在手上；带回庭审后再正式举证。" : "庭审中选中人物后也可以“举证”。"}</small><div class="detail-actions"><button class="secondary-button" type="button" data-inspect-record="profile">详查人物</button></div>${renderRecordReturnAction()}</div>`
             : `<p class="hint-text">选择人物查看档案。庭审中人物档案也可能成为矛盾证据。</p>`
         }
       `;
@@ -2236,7 +2242,112 @@
         <p>${escapeHtml(item.detail)}</p>
         ${item.counterRisk ? `<div class="risk-note"><strong>慎用提示</strong><span>${escapeHtml(item.counterRisk)}</span></div>` : ""}
         <small>${escapeHtml(item.use)}</small>
+        <div class="detail-actions">
+          <button class="secondary-button" type="button" data-inspect-record="evidence">详查证物</button>
+        </div>
         ${renderRecordReturnAction()}
+      </div>
+    `;
+  }
+
+  function recordInspectItems(caseData, type) {
+    if (type === "profile") return data.profiles;
+    const collected = state.collected[caseData.id] || [];
+    return caseData.evidence.filter((item) => collected.includes(item.id));
+  }
+
+  function currentRecordInspect(caseData) {
+    const inspect = state.recordInspect;
+    if (!inspect) return null;
+    const type = inspect.type === "profile" ? "profile" : "evidence";
+    const items = recordInspectItems(caseData, type);
+    if (!items.length) return null;
+    const index = Math.max(
+      0,
+      items.findIndex((item) => (type === "profile" ? item.name : item.id) === inspect.id)
+    );
+    const activeIndex = index < 0 ? 0 : index;
+    return { type, items, item: items[activeIndex], index: activeIndex };
+  }
+
+  function openRecordInspect(type) {
+    const caseData = currentCase();
+    const inspectType = type === "profile" ? "profile" : "evidence";
+    const id = inspectType === "profile" ? state.selectedProfileName : state.selectedEvidenceId;
+    if (!id) return;
+    const items = recordInspectItems(caseData, inspectType);
+    if (!items.some((item) => (inspectType === "profile" ? item.name : item.id) === id)) return;
+    state.recordInspect = { type: inspectType, id };
+    rerender();
+  }
+
+  function closeRecordInspect() {
+    state.recordInspect = null;
+    rerender();
+  }
+
+  function stepRecordInspect(delta) {
+    const caseData = currentCase();
+    const inspect = currentRecordInspect(caseData);
+    if (!inspect) return;
+    const nextIndex = (inspect.index + delta + inspect.items.length) % inspect.items.length;
+    const next = inspect.items[nextIndex];
+    if (inspect.type === "profile") {
+      state.selectedProfileName = next.name;
+      state.selectedEvidenceId = "";
+      state.recordTab = "profiles";
+      state.recordInspect = { type: "profile", id: next.name };
+    } else {
+      state.selectedEvidenceId = next.id;
+      state.selectedProfileName = "";
+      state.recordTab = "evidence";
+      state.recordInspect = { type: "evidence", id: next.id };
+    }
+    rerender();
+  }
+
+  function renderRecordInspectModal(caseData) {
+    const inspect = currentRecordInspect(caseData);
+    if (!inspect) return "";
+    const { type, item, index, items } = inspect;
+    const title = type === "profile" ? item.name : item.name;
+    const subtitle = type === "profile" ? item.role : `${item.type}｜${item.source}`;
+    return `
+      <div class="modal-scrim record-inspect-scrim" role="dialog" aria-modal="true" aria-label="法庭记录详查">
+        <section class="record-inspect-panel record-inspect-${escapeHtml(type)}">
+          <div class="record-inspect-header">
+            <span class="hero-kicker">法庭记录详查</span>
+            <button class="record-close-button visible" type="button" data-close-inspect>关闭</button>
+          </div>
+          <div class="record-inspect-body">
+            <div class="record-inspect-art">
+              ${
+                type === "profile"
+                  ? `<span class="inspect-profile portrait-${escapeHtml(item.portrait || "empress")}" aria-hidden="true"></span>`
+                  : renderEvidenceThumb(item, true, "inspect", caseData)
+              }
+            </div>
+            <div class="record-inspect-copy">
+              <strong>${escapeHtml(title)}</strong>
+              <span>${escapeHtml(subtitle)}</span>
+              ${type === "profile" ? `<p>${escapeHtml(item.note)}</p>` : `<p>${escapeHtml(item.detail)}</p>`}
+              <div class="inspect-facts">
+                ${
+                  type === "profile"
+                    ? `<div><b>身份</b><small>${escapeHtml(item.role)}</small></div><div><b>观察点</b><small>${escapeHtml(item.note)}</small></div>`
+                    : `<div><b>现场说法</b><small>${escapeHtml(item.summary)}</small></div><div><b>庭审用途</b><small>${escapeHtml(item.use)}</small></div>`
+                }
+                ${type === "evidence" && item.counterRisk ? `<div class="risk"><b>慎用</b><small>${escapeHtml(item.counterRisk)}</small></div>` : ""}
+              </div>
+              <small class="inspect-index">${index + 1}/${items.length}</small>
+            </div>
+          </div>
+          <div class="record-inspect-actions">
+            <button class="secondary-button" type="button" data-inspect-step="-1">上一项</button>
+            <button class="secondary-button" type="button" data-inspect-step="1">下一项</button>
+            ${state.screen === "trial" ? `<button class="primary-button" type="button" data-return-to-trial-inspect>带回庭审</button>` : ""}
+          </div>
+        </section>
       </div>
     `;
   }
@@ -2377,6 +2488,7 @@
     state.selectedEvidenceId = "";
     state.selectedProfileName = "";
     state.recordOpen = false;
+    state.recordInspect = null;
     state.recordTab = "evidence";
     clearInvestigationBeat();
     setMessage("书记", "案件记录已经展开。先调查现场，再进入庭审。", "");
@@ -2385,6 +2497,7 @@
 
   function setMode(mode) {
     state.selectedEvidenceId = "";
+    state.recordInspect = null;
     if (mode === "investigation") {
       state.recordOpen = false;
       clearInvestigationBeat();
@@ -2692,6 +2805,7 @@
     const key = statementKey(progress.testimonyIndex, rawIndex);
     const presentedLabel = selectedRecordLabel(caseData);
     state.recordOpen = false;
+    state.recordInspect = null;
     if (state.objectionReveal) {
       resolveObjectionReveal();
       return;
@@ -2781,6 +2895,7 @@
     progress.awaitingInterlude = true;
     progress.lastObjection = message || "";
     state.selectedEvidenceId = "";
+    state.recordInspect = null;
     setStage("clash", `证词更新：${caseData.testimony[progress.testimonyIndex].title}`, { left: "shock", right: "stagger" });
     setMessage("辩方", message, "objection");
     playCue("objection");
@@ -2823,6 +2938,7 @@
     state.selectedEvidenceId = "";
     state.selectedProfileName = "";
     state.objectionReveal = null;
+    state.recordInspect = null;
     state.recordTab = "evidence";
     setStage("witness", `${caseData.testimony[0].speaker}重新入庭`, { left: "enter", right: "observe" });
     setMessage("审判长", message || "庭审重新开始。调查证物保留，信誉恢复。", "");
@@ -2859,6 +2975,7 @@
     state.completed = state.completed.filter((id) => id !== caseData.id);
     state.selectedEvidenceId = "";
     state.selectedProfileName = "";
+    state.recordInspect = null;
     state.recordTab = "evidence";
     setMessage("书记", "旧判决已归档。本次重审会重新计算评价，但保留最佳奖章。", "");
     save();
@@ -2879,6 +2996,7 @@
     state.selectedEvidenceId = "";
     state.selectedProfileName = "";
     state.objectionReveal = null;
+    state.recordInspect = null;
     state.settingsOpen = false;
     state.homeView = "menu";
     setMessage("系统", "当前案件已重置，结案记录也已清除。", "");
@@ -2942,8 +3060,12 @@
       state.recordTab = target.dataset.recordTab;
       rerender();
     }
-    if (target.dataset.returnToTrial !== undefined) {
+    if (target.dataset.inspectRecord) openRecordInspect(target.dataset.inspectRecord);
+    if (target.dataset.closeInspect !== undefined) closeRecordInspect();
+    if (target.dataset.inspectStep !== undefined) stepRecordInspect(Number(target.dataset.inspectStep));
+    if (target.dataset.returnToTrial !== undefined || target.dataset.returnToTrialInspect !== undefined) {
       state.recordOpen = false;
+      state.recordInspect = null;
       setMessage("法庭记录", "记录已合上。现在可以在主操作区点击“举证”正式提交。", "");
       rerender();
     }
@@ -3004,6 +3126,25 @@
   }
 
   function handleKeydown(event) {
+    if (state.recordInspect) {
+      if (event.key === "Escape") {
+        playCue("click");
+        closeRecordInspect();
+        return;
+      }
+      if (event.key === "ArrowLeft") {
+        event.preventDefault();
+        playCue("click");
+        stepRecordInspect(-1);
+        return;
+      }
+      if (event.key === "ArrowRight") {
+        event.preventDefault();
+        playCue("click");
+        stepRecordInspect(1);
+        return;
+      }
+    }
     if (event.key === "Escape" && state.recordOpen) {
       playCue("click");
       state.recordOpen = false;
@@ -3089,6 +3230,7 @@
     const selectedEvidence = state.selectedEvidenceId ? evidenceById(caseData, state.selectedEvidenceId) : null;
     const selectedEvidenceVisual = selectedEvidence ? evidenceVisualFor(selectedEvidence, true) : null;
     const selectedEvidencePosition = selectedEvidence ? evidenceSheetPosition(selectedEvidence, caseData) : null;
+    const inspect = currentRecordInspect(caseData);
     const nextCaseIndex = continueCaseIndex();
     const nextCase = data.cases[nextCaseIndex] || caseData;
     const manualSlots = readSaveSlots();
@@ -3132,6 +3274,10 @@
       selectedRecordLabel: selectedRecordLabel(caseData),
       recordReturnAvailable: state.screen === "trial" && state.recordOpen && Boolean(selectedRecordLabel(caseData)),
       presentEnabled: state.screen === "trial" && Boolean(selectedRecordLabel(caseData)),
+      recordInspectOpen: Boolean(inspect),
+      recordInspectType: inspect?.type || "",
+      recordInspectTitle: inspect?.item?.name || "",
+      recordInspectIndex: inspect ? `${inspect.index + 1}/${inspect.items.length}` : "",
       investigationBeatKind: state.screen === "investigation" ? state.investigationBeat?.kind || "" : "",
       investigationBeatSpeaker: state.screen === "investigation" ? state.investigationBeat?.speaker || "" : "",
       investigationBeatResult: state.screen === "investigation" ? state.investigationBeat?.result || "" : "",

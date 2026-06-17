@@ -2278,6 +2278,11 @@ button:not(:disabled):hover {
   height: 96px;
 }
 
+.evidence-thumb-inspect {
+  width: clamp(132px, 18vw, 190px);
+  height: clamp(152px, 21vw, 218px);
+}
+
 .evidence-thumb::before,
 .evidence-thumb::after {
   content: "";
@@ -2549,6 +2554,18 @@ button:not(:disabled):hover {
   margin: 8px 0;
 }
 
+.detail-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.detail-actions .secondary-button {
+  min-height: 34px;
+  padding: 6px 10px;
+  font-size: 14px;
+}
+
 .risk-note {
   display: grid;
   gap: 4px;
@@ -2584,6 +2601,149 @@ button:not(:disabled):hover {
 
 .record-return-action .primary-button {
   min-height: 38px;
+}
+
+.record-inspect-scrim {
+  z-index: 45;
+}
+
+.record-inspect-panel {
+  display: grid;
+  gap: 16px;
+  justify-self: center;
+  align-self: center;
+  width: calc(100vw - 36px);
+  max-width: 920px;
+  max-height: calc(100dvh - 36px);
+  overflow: auto;
+  padding: clamp(16px, 3vw, 26px);
+  color: var(--ink);
+  background:
+    radial-gradient(circle at 18% 12%, rgba(221, 171, 61, 0.16), transparent 28%),
+    var(--paper-strong);
+  border: 3px solid var(--line);
+  border-radius: 8px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.42);
+}
+
+.record-inspect-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+}
+
+.record-close-button.visible {
+  display: inline-flex;
+  align-items: center;
+}
+
+.record-inspect-body {
+  display: grid;
+  grid-template-columns: minmax(190px, 0.8fr) minmax(0, 1.2fr);
+  gap: 18px;
+  align-items: stretch;
+}
+
+.record-inspect-art {
+  display: grid;
+  place-items: center;
+  min-height: 300px;
+  padding: 18px;
+  background:
+    linear-gradient(135deg, rgba(52, 44, 37, 0.08), rgba(31, 28, 25, 0.18)),
+    #efe1c8;
+  border: 2px solid rgba(52, 44, 37, 0.26);
+  border-radius: 8px;
+}
+
+.record-inspect-art .evidence-thumb {
+  transform: rotate(-2deg);
+  box-shadow: 0 18px 34px rgba(31, 28, 25, 0.28);
+}
+
+.record-inspect-art .inspect-profile {
+  display: block;
+  width: clamp(160px, 22vw, 240px);
+  aspect-ratio: 3 / 4;
+  background-image: url("./assets/character-pose-strip-v1.png");
+  background-size: 500% 300%;
+  background-position: var(--portrait-x, 50%) var(--pose-y, 0%);
+  background-repeat: no-repeat;
+  background-color: rgba(31, 28, 25, 0.95);
+  border: 3px solid rgba(221, 171, 61, 0.74);
+  border-radius: 8px 8px 0 0;
+  box-shadow: 0 18px 34px rgba(31, 28, 25, 0.34);
+}
+
+.record-inspect-copy {
+  display: grid;
+  gap: 10px;
+  align-content: start;
+}
+
+.record-inspect-copy > strong {
+  color: #231b16;
+  font-size: clamp(28px, 4vw, 46px);
+  line-height: 1.05;
+}
+
+.record-inspect-copy > span,
+.record-inspect-copy > p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.65;
+}
+
+.inspect-facts {
+  display: grid;
+  gap: 8px;
+}
+
+.inspect-facts div {
+  display: grid;
+  gap: 4px;
+  padding: 10px;
+  background: #efe1c8;
+  border: 1px solid rgba(52, 44, 37, 0.24);
+  border-radius: 8px;
+}
+
+.inspect-facts .risk {
+  color: #5f1f1a;
+  background: rgba(160, 43, 35, 0.1);
+  border-color: rgba(160, 43, 35, 0.32);
+}
+
+.inspect-facts b,
+.inspect-facts small,
+.inspect-index {
+  display: block;
+}
+
+.inspect-facts small {
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.inspect-index {
+  width: fit-content;
+  padding: 4px 10px;
+  color: #5c1d18;
+  background: #fff1bf;
+  border: 1px solid rgba(179, 123, 36, 0.48);
+  border-radius: 999px;
+  font-weight: 900;
+}
+
+.record-inspect-actions {
+  position: sticky;
+  bottom: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 10px;
+  padding-top: 10px;
+  background: linear-gradient(180deg, rgba(255, 250, 240, 0), var(--paper-strong) 34%);
 }
 
 .timeline-strip {
@@ -3850,17 +4010,6 @@ button:not(:disabled):hover {
     bottom: 12px;
   }
 
-  .modal-scrim {
-    padding: 12px;
-  }
-
-  .settings-panel,
-  .guide-panel {
-    max-height: calc(100dvh - 32px);
-    overflow: auto;
-    padding: 16px;
-  }
-
   .result {
     align-content: center;
     justify-content: center;
@@ -3898,6 +4047,42 @@ button:not(:disabled):hover {
   .top-action {
     min-height: 36px;
     padding: 4px 8px;
+  }
+
+  .modal-scrim {
+    padding: 12px;
+  }
+
+  .settings-panel,
+  .guide-panel {
+    max-height: calc(100dvh - 32px);
+    overflow: auto;
+    padding: 16px;
+  }
+
+  .record-inspect-panel {
+    width: 100%;
+    max-width: none;
+    max-height: calc(100dvh - 24px);
+    padding: 14px;
+  }
+
+  .record-inspect-body {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .record-inspect-art {
+    min-height: 210px;
+    padding: 12px;
+  }
+
+  .record-inspect-copy > strong {
+    font-size: 28px;
+  }
+
+  .record-inspect-actions {
+    grid-template-columns: 1fr;
   }
 
   .play-layout {

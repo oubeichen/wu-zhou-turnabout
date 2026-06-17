@@ -1242,3 +1242,32 @@ Remaining Ace Attorney gap list:
 - Correct objections have a deliberate reveal beat, but the impact/reveal animation still uses CSS compositing rather than fully authored animated cut-ins.
 - Courtroom acting keeps both portraits visible, but character animation remains limited to a shared multi-pose sheet rather than bespoke per-character animation strips.
 - Audio has local cue samples and looped music tracks, but the tracks are procedurally generated placeholders rather than fully authored soundtrack compositions.
+
+## 2026-06-17 iteration 46 result
+
+Implemented:
+- Added a Court Record `详查` mode for selected evidence and selected profiles.
+- Evidence inspection now opens a focused modal with a large evidence card, source/type, detailed description, courtroom use, risk note when present, and current index.
+- Profile inspection now opens the same modal structure with a large character portrait, role, observation notes, and index.
+- Added previous/next controls inside the inspection modal; ArrowLeft/ArrowRight also switch inspected records, while Escape closes the modal.
+- In trial, the inspection modal can return directly to the main court action area through `带回庭审` without auto-submitting evidence.
+- Added `recordInspectOpen`, `recordInspectType`, `recordInspectTitle`, and `recordInspectIndex` to `window.render_game_to_text` for deterministic QA.
+- Fixed a CSS class collision where the profile inspection panel was accidentally styled as the portrait itself.
+- Made the inspection action bar sticky so mobile users can see the key buttons without hunting through a long modal.
+
+Verified:
+- `npm run check:js`
+- `npm run check:py`
+- `git diff --check`
+- Public old-template scan on `game/`: no matches for the previous opaque evidence phrases.
+- `npm run qa:web-game` passed; inspected `output/web-game/shot-0.png`.
+- Desktop 1440x810 Playwright flow: opened evidence inspection for `摇篮旁的值夜签`, switched to the next evidence, switched back, returned to court, formally presented evidence, and reached the objection reveal.
+- Desktop profile inspection flow: opened `武则天`, ArrowRight switched to `狄仁杰`, Escape closed the modal.
+- Mobile 390x844 Playwright flow verified the same evidence/profile inspection chains with no horizontal overflow and visible sticky action controls.
+- Screenshots inspected: `iteration46-desktop-evidence-inspect.png`, `iteration46-desktop-profile-inspect.png`, and `iteration46-mobile-evidence-inspect.png`.
+
+Remaining Ace Attorney gap list:
+- Court Record now has a full inspection modal, but evidence inspection still uses generated card art rather than bespoke item illustrations or true rotate/examine hotspots.
+- Correct objections have a deliberate reveal beat, but the impact/reveal animation still uses CSS compositing rather than fully authored animated cut-ins.
+- Courtroom acting keeps both portraits visible, but character animation remains limited to a shared multi-pose sheet rather than bespoke per-character animation strips.
+- Audio has local cue samples and looped music tracks, but the tracks are procedurally generated placeholders rather than fully authored soundtrack compositions.
