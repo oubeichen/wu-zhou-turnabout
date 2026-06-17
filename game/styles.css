@@ -1311,6 +1311,69 @@ button:not(:disabled):hover {
   line-height: 1.5;
 }
 
+.investigation-beat {
+  position: relative;
+  z-index: 3;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 6px 10px;
+  align-items: center;
+  width: min(760px, 100%);
+  padding: 8px 10px;
+  color: #fff8e7;
+  background: rgba(31, 28, 25, 0.82);
+  border: 1px solid rgba(255, 241, 191, 0.34);
+  border-left: 5px solid var(--gold);
+  border-radius: 8px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
+}
+
+.investigation-beat span,
+.investigation-beat em {
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-style: normal;
+  font-weight: 900;
+}
+
+.investigation-beat span {
+  color: #231b16;
+  background: var(--gold);
+}
+
+.investigation-beat strong {
+  min-width: 0;
+  font-size: 16px;
+}
+
+.investigation-beat p,
+.investigation-beat small {
+  grid-column: 1 / -1;
+  margin: 0;
+  overflow: hidden;
+  color: #f1dfba;
+  line-height: 1.45;
+  text-overflow: ellipsis;
+}
+
+.investigation-beat em {
+  color: #fff8e7;
+  background: rgba(46, 111, 98, 0.86);
+}
+
+.investigation-beat small {
+  color: #fff1bf;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.investigation-beat p {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
 .camera-notice {
   position: relative;
   z-index: 3;
@@ -3388,6 +3451,16 @@ button:not(:disabled):hover {
 
   .menu-preview {
     min-height: 180px;
+  }
+
+  .investigation-beat {
+    grid-template-columns: auto minmax(0, 1fr);
+    width: 100%;
+  }
+
+  .investigation-beat em {
+    grid-column: 1 / -1;
+    width: fit-content;
   }
 
   .subview-header {

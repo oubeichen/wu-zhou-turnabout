@@ -117,6 +117,35 @@ Remaining Ace Attorney gap list:
 - 结案档案仍偏统计面板，后续应做成更有“案件档案册”质感的可翻阅界面。
 - 关键证物仍只有卡面缩略图，后续可给每案核心证物补大图或特写演出。
 
+## 2026-06-17 iteration 38 result
+
+Implemented:
+- 为调查阶段新增 `investigationBeat` 演出状态，用于当前查看、交谈、出示反馈，不写入存档，避免破坏旧存档兼容。
+- 左侧现场画面新增 `investigation-beat` 浮层，显示行动类型、说话人、核心反馈和新取得证物，让调查反馈更像短对白/现场记录，而不是普通系统说明。
+- `查看` 会显示“证物取得 / 没有新的证物”，并把新证物名称单独列出。
+- `交谈` 会显示实际说话人和“证言已记录”。
+- `出示` 会显示证人反应和“出示反应”。
+- 切换指令、移动地点、重新进入调查会清空旧调查演出，避免误导玩家。
+- `render_game_to_text` 新增 `investigationBeatKind`、`investigationBeatSpeaker`、`investigationBeatResult`，用于自动化验证。
+- 补充窄屏样式，调查演出层在移动端改为更安全的换行布局，降低横向溢出风险。
+
+Verified:
+- `node --check game/app.js`
+- `python3 -m py_compile scripts/build_game_content.py`
+- `git diff --check`
+- 公开 `game/` 文案扫描无旧模板词和生硬选中提示。
+- 浏览器验证：初始调查无演出层；点击查看后出现“查看 / 调查 / 证物取得 / 新证物”；点击交谈后出现说话人和“证言已记录”；点击出示后出现证人反应和“出示反应”。
+- 浏览器验证：桌面调查页添加演出层后仍保持 `bodyScrollHeight == innerHeight`。
+- 截图已检查：`iteration38-investigation-beat.png`，确认演出层不遮挡右侧操作区。
+- in-app browser 移动端点击验证本轮仍遇到浏览器控制超时；已补移动端 CSS 保护规则，移动交互需后续在浏览器恢复稳定后复查。
+- develop-web-game 客户端仍因技能脚本环境缺少 `playwright` 包失败；本轮交互验证由浏览器工具完成。
+
+Remaining Ace Attorney gap list:
+- 调查反馈已有短演出，但仍是单句反馈；后续可为关键线索做两到三句连续对白和“继续”推进节奏。
+- 需要继续增加证人差异化表达，让每案证人和对手的语气更明显。
+- 结案档案仍偏统计面板，后续应做成更有“案件档案册”质感的可翻阅界面。
+- 关键证物仍只有卡面缩略图，后续可给每案核心证物补大图或特写演出。
+
 ## 2026-06-16 baseline gap audit
 
 Current game is a functional prototype, not yet a complete Ace Attorney-like game.

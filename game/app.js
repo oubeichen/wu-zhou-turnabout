@@ -77,6 +77,7 @@
     message: "",
     speaker: "系统",
     dramaticCue: "",
+    investigationBeat: null,
     impactCue: null,
     stageFocus: "center",
     stageNotice: "",
@@ -679,6 +680,20 @@
       });
       state.backlog = state.backlog.slice(0, 16);
     }
+  }
+
+  function clearInvestigationBeat() {
+    state.investigationBeat = null;
+  }
+
+  function setInvestigationBeat(kind, speaker, text, result, evidenceNames = []) {
+    state.investigationBeat = {
+      kind,
+      speaker: speaker || "调查",
+      text: text || "",
+      result: result || "",
+      evidenceNames,
+    };
   }
 
   function setImpactCue(kind, title, record, subtitle) {
@@ -1772,10 +1787,26 @@
         ${notice}
         ${mode === "investigation" && sceneTone ? `<div class="scene-atmosphere">${escapeHtml(sceneTone)}</div>` : ""}
         <div class="scene-title">${escapeHtml(title)}</div>
+        ${mode === "investigation" ? renderInvestigationBeat() : ""}
         <div class="dialogue-box ${speedClass}">
           <span class="dialogue-speaker">${escapeHtml(speaker)}</span>
           <div>${escapeHtml(text)}</div>
         </div>
+      </div>
+    `;
+  }
+
+  function renderInvestigationBeat() {
+    const beat = state.investigationBeat;
+    if (!beat) return "";
+    const evidenceLine = beat.evidenceNames?.length ? `<small>新证物：${escapeHtml(beat.evidenceNames.join("、"))}</small>` : "";
+    return `
+      <div class="investigation-beat">
+        <span>${escapeHtml(beat.kind)}</span>
+        <strong>${escapeHtml(beat.speaker)}</strong>
+        <p>${escapeHtml(beat.text)}</p>
+        <em>${escapeHtml(beat.result)}</em>
+        ${evidenceLine}
       </div>
     `;
   }
@@ -2201,6 +2232,7 @@
     state.selectedProfileName = "";
     state.recordOpen = false;
     state.recordTab = "evidence";
+    clearInvestigationBeat();
     setMessage("书记", "案件记录已经展开。先调查现场，再进入庭审。", "");
     renderCaseIntro();
   }
@@ -2209,6 +2241,7 @@
     state.selectedEvidenceId = "";
     if (mode === "investigation") {
       state.recordOpen = false;
+      clearInvestigationBeat();
       setMessage("调查", "选择指令。移动、查看、交谈、出示，每一步都可能改变法庭记录。", "");
       renderInvestigation();
     } else {
@@ -2243,6 +2276,7 @@
     const caseData = currentCase();
     const inv = investigationProgress(caseData.id);
     inv.command = command;
+    clearInvestigationBeat();
     setMessage("调查", `已切换到“${commandLabel(command)}”。`, "");
     save();
     renderInvestigation();
@@ -2257,6 +2291,7 @@
     const inv = investigationProgress(caseData.id);
     inv.locationIndex = index;
     const location = caseData.locations[index];
+    clearInvestigationBeat();
     setMessage("调查", `移动到${location.name}。${location.description}`, "");
     save();
     renderInvestigation();
@@ -2272,6 +2307,7 @@
     const gained = collectEvidenceFromLocation(caseData, location, index);
     const suffix = gained.length ? ` 取得证物：${gained.join("、")}。` : " 没有新的证物。";
     setMessage("调查", `${spot.text}${suffix}`, gained.length ? "objection" : "");
+    setInvestigationBeat("查看", "调查", spot.text, gained.length ? "证物取得" : "没有新的证物", gained);
     save();
     renderInvestigation();
   }
@@ -2301,6 +2337,7 @@
     const key = `${inv.locationIndex}:${index}`;
     if (!inv.talked.includes(key)) inv.talked.push(key);
     setMessage(topic.speaker, topic.text, "");
+    setInvestigationBeat("交谈", topic.speaker, topic.text, "证言已记录");
     save();
     renderInvestigation();
   }
@@ -2310,7 +2347,9 @@
     const inv = investigationProgress(caseData.id);
     const item = evidenceById(caseData, evidenceId);
     if (!inv.presented.includes(evidenceId)) inv.presented.push(evidenceId);
-    setMessage(caseData.witness, `这份${item.type}能帮助你在庭审中说明：${item.use}`, "");
+    const reaction = `这份${item.type}能帮助你在庭审中说明：${item.use}`;
+    setMessage(caseData.witness, reaction, "");
+    setInvestigationBeat("出示", caseData.witness, reaction, "出示反应");
     save();
     renderInvestigation();
   }
@@ -2829,6 +2868,9 @@
       selectedEvidenceArt: selectedEvidencePosition ? `${selectedEvidencePosition.row + 1}-${selectedEvidencePosition.col + 1}` : "",
       selectedEvidenceRisk: selectedEvidence?.counterRisk || "",
       selectedProfile: state.selectedProfileName,
+      investigationBeatKind: state.screen === "investigation" ? state.investigationBeat?.kind || "" : "",
+      investigationBeatSpeaker: state.screen === "investigation" ? state.investigationBeat?.speaker || "" : "",
+      investigationBeatResult: state.screen === "investigation" ? state.investigationBeat?.result || "" : "",
       guideOpen: state.guideOpen,
       guideTitle: guide.title,
       guideSeen: Boolean(state.guideSeen[guide.id]),
