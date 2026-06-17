@@ -112,6 +112,13 @@ button {
   border-color: rgba(255, 248, 231, 0.34);
 }
 
+.menu-home-button {
+  width: auto;
+  min-width: 58px;
+  padding: 0 12px;
+  font-weight: 900;
+}
+
 .top-action {
   min-height: 34px;
   padding: 4px 10px;
@@ -331,6 +338,90 @@ button:not(:disabled):hover {
   font-size: clamp(28px, 5vw, 58px);
   line-height: 1.05;
   text-shadow: 0 5px 18px rgba(0, 0, 0, 0.34);
+}
+
+.save-subview {
+  color: var(--ink);
+}
+
+.auto-save-card,
+.save-slot {
+  background: rgba(255, 250, 240, 0.94);
+  border: 2px solid var(--line);
+  border-radius: 8px;
+  box-shadow: 0 12px 36px var(--shadow);
+}
+
+.auto-save-card {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  align-items: center;
+  padding: 16px;
+}
+
+.auto-save-card div,
+.save-slot {
+  display: grid;
+  gap: 8px;
+}
+
+.auto-save-card strong,
+.auto-save-card span,
+.auto-save-card small,
+.save-slot strong,
+.save-slot p,
+.save-slot small {
+  display: block;
+}
+
+.auto-save-card span,
+.auto-save-card small,
+.save-slot p,
+.save-slot small {
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.save-slot-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.save-slot {
+  padding: 16px;
+}
+
+.save-slot.filled {
+  border-color: rgba(179, 123, 36, 0.75);
+  background:
+    radial-gradient(circle at 90% 8%, rgba(201, 155, 59, 0.18), transparent 30%),
+    rgba(255, 250, 240, 0.96);
+}
+
+.save-slot-head {
+  display: grid;
+  gap: 8px;
+}
+
+.save-slot-head strong {
+  font-size: 22px;
+  line-height: 1.25;
+}
+
+.save-slot-actions {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.8fr) auto;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.compact-button {
+  min-width: 58px;
+  min-height: 38px;
+  padding: 6px 10px;
+  font-size: 14px;
 }
 
 .case-grid {
@@ -2835,6 +2926,360 @@ button:not(:disabled):hover {
   padding: 10px;
 }
 
+@media (min-width: 821px) {
+  html,
+  body {
+    height: 100%;
+    overflow: hidden;
+  }
+
+  .app-shell {
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
+    height: 100dvh;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .topbar {
+    position: relative;
+    min-height: 64px;
+    flex: 0 0 auto;
+    padding-block: 8px;
+  }
+
+  .app-main {
+    display: grid;
+    align-items: stretch;
+    height: 100%;
+    min-height: 0;
+    overflow: hidden;
+    padding: 12px 0;
+  }
+
+  .hero,
+  .main-menu,
+  .home-subview,
+  .case-intro-layout,
+  .play-layout,
+  .trial-interlude,
+  .result {
+    height: 100%;
+    min-height: 0;
+  }
+
+  .hero {
+    align-content: center;
+    gap: 18px;
+  }
+
+  .hero h1,
+  .menu-copy h1 {
+    font-size: clamp(42px, 7vw, 92px);
+  }
+
+  .hero p,
+  .menu-copy p,
+  .menu-preview p,
+  .dossier-main p,
+  .interlude-stage p,
+  .panel p {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+  }
+
+  .main-menu {
+    grid-template-rows: minmax(0, auto) minmax(0, 1fr);
+    gap: 12px;
+    align-content: stretch;
+    min-height: 0;
+  }
+
+  .menu-copy {
+    gap: 12px;
+    min-height: 0;
+  }
+
+  .menu-actions {
+    align-self: center;
+    padding: 12px;
+  }
+
+  .menu-button {
+    min-height: 46px;
+    font-size: 16px;
+  }
+
+  .menu-preview {
+    min-height: 0;
+    padding: 14px;
+  }
+
+  .home-subview,
+  .save-subview {
+    grid-template-rows: auto auto minmax(0, 1fr);
+    overflow: hidden;
+  }
+
+  .subview-header h2 {
+    font-size: clamp(28px, 4vw, 44px);
+  }
+
+  .case-grid,
+  .case-gallery,
+  .save-slot-grid,
+  .archive-grid {
+    min-height: 0;
+    overflow: auto;
+    padding-right: 4px;
+  }
+
+  .case-gallery {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .case-card {
+    gap: 10px;
+    padding: 14px;
+  }
+
+  .case-poster {
+    min-height: 112px;
+  }
+
+  .case-dossier {
+    height: 100%;
+    min-height: 0;
+  }
+
+  .view-cases .case-dossier {
+    height: 220px;
+    padding: 14px;
+  }
+
+  .view-cases .dossier-main {
+    min-height: 0;
+    align-content: center;
+    gap: 8px;
+  }
+
+  .view-cases .dossier-main h2 {
+    font-size: clamp(28px, 4vw, 48px);
+  }
+
+  .view-cases .dossier-stats {
+    gap: 8px;
+    overflow: hidden;
+  }
+
+  .view-cases .dossier-stats .source-brief,
+  .view-cases .dossier-stats .run-history {
+    display: none;
+  }
+
+  .view-cases .case-gallery {
+    align-content: start;
+  }
+
+  .view-cases .case-card {
+    gap: 8px;
+  }
+
+  .view-cases .case-card h2 {
+    font-size: 18px;
+  }
+
+  .view-cases .case-card p {
+    -webkit-line-clamp: 2;
+  }
+
+  .view-cases .case-poster {
+    min-height: 82px;
+  }
+
+  .view-cases .case-poster span {
+    font-size: 38px;
+  }
+
+  .dossier-main {
+    min-height: 0;
+  }
+
+  .dossier-stats,
+  .source-brief,
+  .run-history {
+    min-height: 0;
+  }
+
+  .case-intro-layout {
+    align-content: center;
+  }
+
+  .play-layout,
+  .trial-interlude {
+    grid-template-columns: minmax(0, 1fr) minmax(282px, 318px);
+    gap: 12px;
+    align-items: stretch;
+  }
+
+  .record-drawer-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .investigation-layout > div:first-child {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(300px, 360px);
+    grid-template-rows: minmax(120px, 0.7fr) minmax(140px, 0.8fr) minmax(0, 1fr);
+    gap: 12px;
+    height: 100%;
+    min-height: 0;
+  }
+
+  .investigation-layout .scene {
+    grid-column: 1;
+    grid-row: 1 / 4;
+  }
+
+  .investigation-layout .location-map {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .investigation-layout .clue-board {
+    grid-column: 2;
+    grid-row: 2;
+    min-height: 0;
+    overflow: auto;
+  }
+
+  .investigation-layout .command-panel {
+    grid-column: 2;
+    grid-row: 3;
+    overflow: auto;
+  }
+
+  .trial-layout {
+    min-height: 0;
+  }
+
+  .interlude-stage,
+  .scene {
+    height: 100%;
+    min-height: 0;
+    gap: 12px;
+    padding: 14px;
+  }
+
+  .trial-layout .scene {
+    min-height: 0;
+  }
+
+  .interlude-stage h2 {
+    font-size: clamp(34px, 5vw, 60px);
+  }
+
+  .panel,
+  .record-panel,
+  .command-panel,
+  .trial-panel,
+  .verdict-panel {
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .panel,
+  .record-panel {
+    padding: 14px;
+  }
+
+  .case-brief,
+  .command-panel,
+  .trial-panel,
+  .verdict-panel {
+    gap: 10px;
+  }
+
+  .location-map {
+    min-height: 150px;
+    margin: 6px 0;
+  }
+
+  .investigation-layout .location-map,
+  .investigation-layout .clue-board {
+    margin: 0;
+  }
+
+  .clue-board {
+    gap: 8px;
+    margin: 6px 0;
+    padding: 10px;
+  }
+
+  .prop-closeup {
+    min-height: 150px;
+  }
+
+  .prop-stage {
+    min-height: 76px;
+  }
+
+  .dialogue-box {
+    max-height: 180px;
+    overflow: auto;
+    padding: 14px 16px;
+    font-size: 20px;
+    line-height: 1.62;
+  }
+
+  .record-list,
+  .timeline-list,
+  .backlog-list,
+  .location-list {
+    min-height: 0;
+    max-height: none;
+    overflow: auto;
+  }
+
+  .trial-actions {
+    gap: 8px;
+    margin-top: 8px;
+  }
+
+  .selected-record-bar {
+    padding: 8px 10px;
+  }
+
+  .record-drawer-layout .record-panel {
+    top: 76px;
+    right: 12px;
+    bottom: 12px;
+  }
+
+  .modal-scrim {
+    padding: 12px;
+  }
+
+  .settings-panel,
+  .guide-panel {
+    max-height: calc(100dvh - 32px);
+    overflow: auto;
+    padding: 16px;
+  }
+
+  .result {
+    align-content: center;
+    justify-content: center;
+    padding: 0;
+  }
+
+  .result .panel {
+    max-height: 100%;
+    overflow: auto;
+  }
+}
+
 @media (max-width: 820px) {
   .topbar {
     align-items: center;
@@ -2890,6 +3335,18 @@ button:not(:disabled):hover {
 
   .subview-header {
     display: grid;
+  }
+
+  .auto-save-card {
+    display: grid;
+  }
+
+  .save-slot-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .save-slot-actions {
+    grid-template-columns: 1fr 1fr auto;
   }
 
   .trial-interlude {

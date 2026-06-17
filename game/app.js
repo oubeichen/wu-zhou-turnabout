@@ -4,6 +4,8 @@
   const statusStrip = document.getElementById("statusStrip");
   const homeButton = document.getElementById("homeButton");
   const saveKey = "wuzhou-reversal-save-v2";
+  const saveSlotsKey = "wuzhou-reversal-save-slots-v1";
+  const manualSaveSlotCount = 3;
   const storageCodec = window["J" + "SON"];
 
   const defaultSettings = {
@@ -92,33 +94,123 @@
   function loadSave() {
     try {
       const saved = storageCodec.parse(localStorage.getItem(saveKey) || "{}");
-      if (saved && typeof saved === "object") {
-        state.completed = Array.isArray(saved.completed) ? saved.completed : [];
-        state.collected = saved.collected || {};
-        state.trial = saved.trial || {};
-        state.records = saved.records || {};
-        state.investigation = saved.investigation || {};
-        state.guideSeen = saved.guideSeen || {};
-        state.settings = { ...defaultSettings, ...(saved.settings || {}) };
-      }
+      restoreSaveData(saved);
     } catch {
       localStorage.removeItem(saveKey);
     }
   }
 
+  function snapshotSaveData() {
+    return {
+      version: 2,
+      savedAt: new Date().toISOString(),
+      caseIndex: state.caseIndex,
+      homeFocusIndex: state.homeFocusIndex,
+      completed: state.completed,
+      collected: state.collected,
+      trial: state.trial,
+      records: state.records,
+      investigation: state.investigation,
+      backlog: state.backlog,
+      guideSeen: state.guideSeen,
+      settings: state.settings,
+    };
+  }
+
+  function restoreSaveData(saved) {
+    if (!saved || typeof saved !== "object") return;
+    state.caseIndex = Number.isInteger(saved.caseIndex) ? Math.max(0, Math.min(data.cases.length - 1, saved.caseIndex)) : state.caseIndex;
+    state.homeFocusIndex = Number.isInteger(saved.homeFocusIndex) ? Math.max(0, Math.min(data.cases.length - 1, saved.homeFocusIndex)) : state.caseIndex;
+    state.completed = Array.isArray(saved.completed) ? saved.completed : [];
+    state.collected = saved.collected || {};
+    state.trial = saved.trial || {};
+    state.records = saved.records || {};
+    state.investigation = saved.investigation || {};
+    state.backlog = Array.isArray(saved.backlog) ? saved.backlog : [];
+    state.guideSeen = saved.guideSeen || {};
+    state.settings = { ...defaultSettings, ...(saved.settings || {}) };
+  }
+
   function save() {
-    localStorage.setItem(
-      saveKey,
-      storageCodec.stringify({
-        completed: state.completed,
-        collected: state.collected,
-        trial: state.trial,
-        records: state.records,
-        investigation: state.investigation,
-        guideSeen: state.guideSeen,
-        settings: state.settings,
-      })
-    );
+    localStorage.setItem(saveKey, storageCodec.stringify(snapshotSaveData()));
+  }
+
+  function readSaveSlots() {
+    try {
+      const parsed = storageCodec.parse(localStorage.getItem(saveSlotsKey) || "[]");
+      const slots = Array.isArray(parsed) ? parsed : [];
+      return Array.from({ length: manualSaveSlotCount }, (_, index) => slots[index] || null);
+    } catch {
+      localStorage.removeItem(saveSlotsKey);
+      return Array.from({ length: manualSaveSlotCount }, () => null);
+    }
+  }
+
+  function writeSaveSlots(slots) {
+    localStorage.setItem(saveSlotsKey, storageCodec.stringify(slots.slice(0, manualSaveSlotCount)));
+  }
+
+  function saveSlotSummary(saveData) {
+    const caseIndex = Math.max(0, Math.min(data.cases.length - 1, Number(saveData.caseIndex) || 0));
+    const caseData = data.cases[caseIndex] || data.cases[0];
+    const completed = Array.isArray(saveData.completed) ? saveData.completed.length : 0;
+    const collected = (saveData.collected?.[caseData.id] || []).length;
+    const trial = saveData.trial?.[caseData.id];
+    const testimony = trial ? Number(trial.testimonyIndex || 0) + 1 : 0;
+    const stage = trial?.failed ? "败诉复盘" : testimony ? `庭审 ${testimony}/${caseData.testimony.length}` : collected ? "调查中" : "未开案";
+    return {
+      caseTitle: caseData.title,
+      stage,
+      completed,
+      collected,
+      evidenceTotal: caseData.evidence.length,
+      bestMedal: saveData.records?.[caseData.id]?.bestMedal || "",
+    };
+  }
+
+  function manualSave(slotIndex) {
+    const index = Math.max(0, Math.min(manualSaveSlotCount - 1, Number(slotIndex) || 0));
+    const slots = readSaveSlots();
+    const dataForSlot = snapshotSaveData();
+    slots[index] = {
+      savedAt: dataForSlot.savedAt,
+      summary: saveSlotSummary(dataForSlot),
+      data: dataForSlot,
+    };
+    writeSaveSlots(slots);
+    save();
+    setMessage("存档", `已写入存档 ${index + 1}。`, "");
+    state.homeView = "saves";
+    renderHome();
+  }
+
+  function manualLoad(slotIndex) {
+    const index = Math.max(0, Math.min(manualSaveSlotCount - 1, Number(slotIndex) || 0));
+    const slot = readSaveSlots()[index];
+    if (!slot?.data) {
+      setMessage("存档", `存档 ${index + 1} 还是空的。`, "");
+      renderHome();
+      return;
+    }
+    restoreSaveData(slot.data);
+    state.homeView = "menu";
+    state.screen = "home";
+    state.selectedEvidenceId = "";
+    state.selectedProfileName = "";
+    state.recordOpen = false;
+    setMessage("读档", `已读取存档 ${index + 1}。`, "");
+    save();
+    renderHome();
+  }
+
+  function manualClear(slotIndex) {
+    const index = Math.max(0, Math.min(manualSaveSlotCount - 1, Number(slotIndex) || 0));
+    const slots = readSaveSlots();
+    slots[index] = null;
+    writeSaveSlots(slots);
+    setMessage("存档", `存档 ${index + 1} 已清空。`, "");
+    state.homeView = "saves";
+    renderHome();
   }
 
   function audioNumber(value, fallback) {
@@ -801,6 +893,8 @@
   }
 
   function continueCaseIndex() {
+    const current = data.cases[state.caseIndex];
+    if (current && !state.completed.includes(current.id)) return state.caseIndex;
     const active = data.cases.findIndex((caseData) => caseHasProgress(caseData) && !state.completed.includes(caseData.id));
     if (active >= 0) return active;
     const firstUnfinished = data.cases.findIndex((caseData) => !state.completed.includes(caseData.id));
@@ -990,15 +1084,16 @@
     state.selectedEvidenceId = "";
     state.selectedProfileName = "";
     state.recordOpen = false;
-    state.homeView = ["menu", "cases", "archive"].includes(state.homeView) ? state.homeView : "menu";
+    state.homeView = ["menu", "cases", "archive", "saves"].includes(state.homeView) ? state.homeView : "menu";
     state.homeFocusIndex = Math.min(Math.max(state.homeFocusIndex, 0), data.cases.length - 1);
     const focusedCase = data.cases[state.homeFocusIndex] || data.cases[0];
     renderStatus();
     app.innerHTML = `
       <section class="hero home-shell view-${state.homeView}">
-        ${renderHomeMenu()}
+        ${state.homeView === "menu" ? renderHomeMenu() : ""}
         ${state.homeView === "cases" ? renderHomeCases(focusedCase) : ""}
         ${state.homeView === "archive" ? renderHomeArchiveView() : ""}
+        ${state.homeView === "saves" ? renderHomeSavesView() : ""}
       </section>
       ${renderGuidePanel()}${renderSettings()}
     `;
@@ -1027,6 +1122,7 @@
         <nav class="menu-actions" aria-label="主菜单">
           <button class="primary-button menu-button" type="button" data-continue-case>${escapeHtml(continueLabel(caseData))}</button>
           <button class="secondary-button menu-button" type="button" data-home-view="cases">案件选择</button>
+          <button class="secondary-button menu-button" type="button" data-home-view="saves">存档/读档</button>
           <button class="secondary-button menu-button" type="button" data-home-view="archive">结案档案</button>
           <button class="secondary-button menu-button" type="button" data-toggle-settings>设置</button>
         </nav>
@@ -1070,6 +1166,55 @@
         </div>
         ${renderCaseArchive()}
       </div>
+    `;
+  }
+
+  function renderHomeSavesView() {
+    const slots = readSaveSlots();
+    const autoSummary = saveSlotSummary(snapshotSaveData());
+    return `
+      <div class="home-subview save-subview">
+        <div class="subview-header">
+          <div>
+            <span class="hero-kicker">存档/读档</span>
+            <h2>选择存档槽</h2>
+          </div>
+          <button class="secondary-button" type="button" data-home-view="menu">返回主菜单</button>
+        </div>
+        <div class="auto-save-card">
+          <div>
+            <strong>自动存档</strong>
+            <span>${escapeHtml(autoSummary.caseTitle)}｜${escapeHtml(autoSummary.stage)}｜结案 ${autoSummary.completed}/${data.cases.length}</span>
+          </div>
+          <small>自动存档会在调查、庭审、设置和结案后更新。手动槽用于保留关键审理节点。</small>
+        </div>
+        <div class="save-slot-grid">
+          ${slots.map((slot, index) => renderSaveSlot(slot, index)).join("")}
+        </div>
+      </div>
+    `;
+  }
+
+  function renderSaveSlot(slot, index) {
+    const summary = slot?.summary;
+    const savedAt = slot?.savedAt ? new Date(slot.savedAt).toLocaleString("zh-CN", { month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit" }) : "";
+    return `
+      <article class="save-slot ${slot ? "filled" : "empty"}">
+        <div class="save-slot-head">
+          <span class="tag">存档 ${index + 1}</span>
+          <strong>${summary ? escapeHtml(summary.caseTitle) : "空存档"}</strong>
+        </div>
+        ${
+          summary
+            ? `<p>${escapeHtml(summary.stage)}｜证物 ${summary.collected}/${summary.evidenceTotal}｜结案 ${summary.completed}/${data.cases.length}${summary.bestMedal ? `｜最佳 ${escapeHtml(summary.bestMedal)}` : ""}</p><small>${escapeHtml(savedAt)}</small>`
+            : `<p>还没有写入记录。可以把当前自动存档复制到这里。</p><small>适合在庭审前、反制前或结案前保留进度。</small>`
+        }
+        <div class="save-slot-actions">
+          <button class="primary-button" type="button" data-save-slot="${index}">${slot ? "覆盖保存" : "保存"}</button>
+          <button class="secondary-button" type="button" data-load-slot="${index}" ${slot ? "" : "disabled"}>读取</button>
+          <button class="secondary-button compact-button" type="button" data-clear-slot="${index}" ${slot ? "" : "disabled"}>清空</button>
+        </div>
+      </article>
     `;
   }
 
@@ -1936,7 +2081,7 @@
           <span class="evidence-detail-copy">
             <strong>${escapeHtml(item.name)}</strong>
             <span>${escapeHtml(item.type)}｜${escapeHtml(item.source)}</span>
-            <small>${state.screen === "trial" ? "已选中。需要正式提交时，请在庭审主操作区点击“举证”。" : "已加入法庭记录。庭审时可打开记录，选择后再正式举证。"}</small>
+            <small>${state.screen === "trial" ? "证物已经拿在手上；回到庭审主区点“举证”才会提交。" : "已收进法庭记录。开庭后可打开记录，先选好，再举证。"}</small>
           </span>
         </div>
         <p>${escapeHtml(item.detail)}</p>
@@ -2444,6 +2589,10 @@
 
   function resetCurrentCase() {
     const caseData = currentCase();
+    const resetIndex = Math.max(0, data.cases.findIndex((item) => item.id === caseData.id));
+    const wasHome = state.screen === "home";
+    state.caseIndex = resetIndex;
+    state.homeFocusIndex = resetIndex;
     state.collected[caseData.id] = [];
     delete state.trial[caseData.id];
     delete state.investigation[caseData.id];
@@ -2452,9 +2601,11 @@
     state.selectedEvidenceId = "";
     state.selectedProfileName = "";
     state.settingsOpen = false;
+    state.homeView = "menu";
     setMessage("系统", "当前案件已重置，结案记录也已清除。", "");
     save();
-    renderCaseIntro();
+    if (wasHome) renderHome();
+    else renderCaseIntro();
   }
 
   function rerender() {
@@ -2480,6 +2631,9 @@
       state.homeView = target.dataset.homeView;
       renderHome();
     }
+    if (target.dataset.saveSlot !== undefined) manualSave(target.dataset.saveSlot);
+    if (target.dataset.loadSlot !== undefined) manualLoad(target.dataset.loadSlot);
+    if (target.dataset.clearSlot !== undefined) manualClear(target.dataset.clearSlot);
     if (target.dataset.replayCase) replayCase(Number(target.dataset.replayCase));
     if (target.dataset.mode) setMode(target.dataset.mode);
     if (target.dataset.openIntro !== undefined) renderCaseIntro();
@@ -2635,6 +2789,7 @@
     const selectedEvidencePosition = selectedEvidence ? evidenceSheetPosition(selectedEvidence, caseData) : null;
     const nextCaseIndex = continueCaseIndex();
     const nextCase = data.cases[nextCaseIndex] || caseData;
+    const manualSlots = readSaveSlots();
     return storageCodec.stringify({
       note: "文字状态供自动化测试使用；屏幕左上为原点，坐标不适用于本 DOM 游戏。",
       screen: state.screen,
@@ -2647,6 +2802,14 @@
       continueCase: nextCase.title,
       continueCaseIndex: nextCaseIndex,
       continueLabel: continueLabel(nextCase),
+      manualSaveSlots: manualSlots.map((slot, index) => ({
+        index,
+        filled: Boolean(slot?.data),
+        caseTitle: slot?.summary?.caseTitle || "",
+        stage: slot?.summary?.stage || "",
+        savedAt: slot?.savedAt || "",
+      })),
+      manualSaveFilled: manualSlots.filter((slot) => slot?.data).length,
       location: location.name,
       scene: caseData.scene?.name || "",
       sceneVariant: location.sceneVariant || "",
@@ -2733,6 +2896,7 @@
 
   homeButton.addEventListener("click", () => {
     playCue("click");
+    state.homeView = "menu";
     renderHome();
   });
   app.addEventListener("click", handleClick);

@@ -11,6 +11,7 @@ output/
 iteration*-*.png
 iteration*-*.json
 iteration*-*.md
+wuzetian-*.png
 
 # Python/runtime caches
 __pycache__/
