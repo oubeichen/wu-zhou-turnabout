@@ -805,7 +805,7 @@ button:not(:disabled):hover {
 
 .trial-interlude {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 330px;
+  grid-template-columns: minmax(0, 1fr);
   gap: 18px;
   align-items: start;
 }
@@ -2101,6 +2101,12 @@ button:not(:disabled):hover {
   font-weight: 900;
 }
 
+.record-open-button.opportunity,
+.present-button.opportunity {
+  outline: 3px solid rgba(221, 171, 61, 0.42);
+  box-shadow: 0 4px 0 rgba(92, 29, 24, 0.36), 0 0 0 4px rgba(255, 241, 191, 0.22);
+}
+
 .selected-record-bar {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
@@ -2117,6 +2123,13 @@ button:not(:disabled):hover {
   color: #5c1d18;
   background: #fff1bf;
   border-color: rgba(179, 123, 36, 0.62);
+}
+
+.selected-record-bar.opportunity {
+  color: #4c2d09;
+  background: #fff1bf;
+  border-color: rgba(179, 123, 36, 0.9);
+  box-shadow: inset 5px 0 0 var(--gold);
 }
 
 .selected-record-bar span {
@@ -2574,6 +2587,21 @@ button:not(:disabled):hover {
 
 .statement-card.pressed {
   border-bottom-color: var(--gold);
+}
+
+.statement-card.ready-present {
+  background: #fff1bf;
+  border-color: rgba(179, 123, 36, 0.74);
+  border-left-color: var(--gold);
+}
+
+.statement-card.ready-present span {
+  color: #231b16;
+  background: var(--gold);
+}
+
+.statement-card.ready-present small {
+  color: #5c1d18;
 }
 
 .statement-card.solved {
@@ -3382,9 +3410,14 @@ button:not(:disabled):hover {
     align-content: center;
   }
 
-  .play-layout,
-  .trial-interlude {
+  .play-layout {
     grid-template-columns: minmax(0, 1fr) minmax(320px, 390px);
+    gap: 12px;
+    align-items: stretch;
+  }
+
+  .trial-interlude {
+    grid-template-columns: minmax(0, 1fr);
     gap: 12px;
     align-items: stretch;
   }

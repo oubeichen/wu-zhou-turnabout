@@ -1740,9 +1740,18 @@
       return;
     }
     const testimony = caseData.testimony[progress.testimonyIndex];
-    const { statement } = currentStatementEntry(testimony, progress);
+    const { statement, rawIndex } = currentStatementEntry(testimony, progress);
+    const statementKeyValue = statementKey(progress.testimonyIndex, rawIndex);
     const selectedLabel = selectedRecordLabel(caseData);
     const visibleStatements = visibleStatementEntries(testimony, progress);
+    const readyToPresent = statementHasAnswer(statement) && progress.pressed.includes(statementKeyValue) && !progress.solved.includes(statementKeyValue);
+    const recordPrompt = readyToPresent
+      ? selectedLabel
+        ? "破绽已经逼出来了。确认这份记录能反驳当前句，就点击“举证”。"
+        : statement.answerProfile
+          ? "破绽已经逼出来了。打开人物档案，选中能推翻当前句的人。"
+          : "破绽已经逼出来了。打开证物记录，选中能推翻当前句的证物。"
+      : "右侧法庭记录只负责选择；点击下方“举证”才会提交。";
     state.screen = "trial";
     renderStatus();
     app.innerHTML = `
@@ -1757,16 +1766,16 @@
             ${renderStatementNav(testimony, progress)}
             ${state.message ? `<div class="toast ${state.dramaticCue ? "dramatic" : ""}">${escapeHtml(state.message)}</div>` : ""}
             ${renderCoachCard()}
-            <div class="selected-record-bar ${selectedLabel ? "ready" : ""}">
+            <div class="selected-record-bar ${selectedLabel ? "ready" : ""} ${readyToPresent ? "opportunity" : ""}">
               <span>${selectedLabel ? `已选：${escapeHtml(selectedLabel)}` : "尚未选择证物或人物档案"}</span>
-              <small>右侧法庭记录只负责选择；点击下方“举证”才会提交。</small>
+              <small>${escapeHtml(recordPrompt)}</small>
             </div>
             <div class="action-row trial-actions">
               <button class="secondary-button" type="button" data-prev-statement ${progress.statementIndex === 0 ? "disabled" : ""}>上一句</button>
               <button class="secondary-button" type="button" data-next-statement ${progress.statementIndex >= visibleStatements.length - 1 ? "disabled" : ""}>下一句</button>
               <button class="primary-button" type="button" data-press>追问</button>
-              <button class="secondary-button record-open-button" type="button" data-open-record>记录</button>
-              <button class="danger-button present-button" type="button" data-present ${selectedLabel ? "" : "disabled"}>举证</button>
+              <button class="secondary-button record-open-button ${readyToPresent ? "opportunity" : ""}" type="button" data-open-record>记录</button>
+              <button class="danger-button present-button ${readyToPresent && selectedLabel ? "opportunity" : ""}" type="button" data-present ${selectedLabel ? "" : "disabled"}>举证</button>
             </div>
           </div>
         </div>
@@ -1803,7 +1812,6 @@
           </div>
           <button class="primary-button" type="button" data-continue-testimony>继续交叉询问</button>
         </div>
-        ${renderRecordPanel(caseData, progress, true)}
       </section>
       ${renderCue()}
       ${renderGuidePanel()}${renderSettings()}
@@ -1910,9 +1918,10 @@
             const solved = progress.solved.includes(key);
             const revealed = Boolean(statement.hiddenUntilPressed);
             const suspicious = statementHasAnswer(statement);
-            const status = solved ? "已突破" : pressed ? "已追问" : revealed ? "新证词" : suspicious ? "有疑点" : "未追问";
+            const ready = suspicious && pressed && !solved;
+            const status = solved ? "已突破" : ready ? "可举证" : pressed ? "已追问" : revealed ? "新证词" : suspicious ? "有疑点" : "未追问";
             return `
-              <button class="statement-card ${active ? "active" : ""} ${pressed ? "pressed" : ""} ${solved ? "solved" : ""} ${revealed ? "revealed" : ""} ${suspicious ? "suspicious" : ""}" type="button" data-jump-statement="${index}">
+              <button class="statement-card ${active ? "active" : ""} ${pressed ? "pressed" : ""} ${solved ? "solved" : ""} ${revealed ? "revealed" : ""} ${suspicious ? "suspicious" : ""} ${ready ? "ready-present" : ""}" type="button" data-jump-statement="${index}">
                 <span>${index + 1}</span>
                 <p>${escapeHtml(statement.text)}</p>
                 <small>${status}</small>
@@ -2544,6 +2553,7 @@
     const { statement, rawIndex } = currentStatementEntry(testimony, progress);
     const key = statementKey(progress.testimonyIndex, rawIndex);
     const presentedLabel = selectedRecordLabel(caseData);
+    state.recordOpen = false;
     if (statementHasAnswer(statement) && !progress.pressed.includes(key)) {
       setStage("opponent", "举证时机不足", { left: "stagger", right: "attack" });
       setImpactCue("penalty", "追问不足", presentedLabel, "先追问，再举证");
@@ -2949,7 +2959,9 @@
     const inv = investigationProgress(caseData.id);
     const testimony = caseData.testimony[progress.testimonyIndex];
     const visibleStatements = testimony ? visibleStatementEntries(testimony, progress) : [];
-    const statement = testimony ? currentStatementEntry(testimony, progress).statement : null;
+    const currentEntry = testimony ? currentStatementEntry(testimony, progress) : null;
+    const statement = currentEntry?.statement || null;
+    const currentStatementKey = currentEntry ? statementKey(progress.testimonyIndex, currentEntry.rawIndex) : "";
     const record = caseRecord(caseData.id);
     const guide = currentGuideContext();
     const location = currentLocation(caseData);
@@ -3065,16 +3077,21 @@
       visibleStatements: visibleStatements.length,
       statementCards: visibleStatements.map(({ statement: item, rawIndex }, index) => {
         const key = statementKey(progress.testimonyIndex, rawIndex);
+        const pressed = progress.pressed.includes(key);
+        const solved = progress.solved.includes(key);
+        const suspicious = statementHasAnswer(item);
         return {
           index: index + 1,
           active: index === progress.statementIndex,
-          pressed: progress.pressed.includes(key),
-          solved: progress.solved.includes(key),
+          pressed,
+          solved,
           hiddenReveal: Boolean(item.hiddenUntilPressed),
-          suspicious: statementHasAnswer(item),
+          suspicious,
+          readyToPresent: suspicious && pressed && !solved,
           text: item.text,
         };
       }),
+      readyToPresent: statement ? statementHasAnswer(statement) && progress.pressed.includes(currentStatementKey) && !progress.solved.includes(currentStatementKey) : false,
       unlockedStatements: progress.unlockedStatements.length,
       pressedStatements: progress.pressed.length,
       message: state.message,
