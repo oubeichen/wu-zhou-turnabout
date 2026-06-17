@@ -2453,18 +2453,113 @@
   function renderObjectionReveal() {
     const reveal = state.objectionReveal;
     if (!reveal) return "";
+    const steps = objectionRevealSteps(reveal);
+    const stepIndex = Math.max(0, Math.min(steps.length - 1, Number(reveal.step) || 0));
+    const step = steps[stepIndex] || steps[0];
+    const finalStep = stepIndex >= steps.length - 1;
     return `
-      <div class="objection-reveal" role="dialog" aria-live="assertive" aria-label="异议揭示">
+      <div class="objection-reveal reveal-step-${stepIndex + 1}" role="dialog" aria-live="assertive" aria-label="异议揭示">
         <div class="objection-reveal-inner">
-          <span class="hero-kicker">异议切入</span>
-          <strong>${escapeHtml(reveal.title || "异议成立")}</strong>
-          <p>${escapeHtml(reveal.line || "证物与证词正面冲突。")}</p>
-          <div class="reveal-record">
-            <em>${escapeHtml(reveal.record || "法庭记录")}</em>
-            <small>${escapeHtml(reveal.target || "当前证词")}</small>
+          <div class="reveal-head">
+            <span class="hero-kicker">${escapeHtml(step.kicker)}</span>
+            <small>${stepIndex + 1}/${steps.length}</small>
           </div>
-          <button class="primary-button" type="button" data-reveal-objection>揭示矛盾</button>
+          <strong>${escapeHtml(step.title)}</strong>
+          <p>${escapeHtml(step.body)}</p>
+          ${renderObjectionCutIn(reveal, stepIndex)}
+          <div class="reveal-record">
+            <em>${escapeHtml(step.recordLabel)}</em>
+            <small>${escapeHtml(step.targetLabel)}</small>
+          </div>
+          <div class="reveal-stepper" aria-label="异议揭示进度">
+            ${steps
+              .map(
+                (item, index) => `
+                  <span class="${index === stepIndex ? "active" : ""}">
+                    <b>${index + 1}</b>
+                    <small>${escapeHtml(item.kicker)}</small>
+                  </span>
+                `
+              )
+              .join("")}
+          </div>
+          <div class="reveal-actions">
+            <button class="secondary-button" type="button" data-reveal-objection>跳过演出</button>
+            <button class="primary-button" type="button" data-advance-reveal>${finalStep ? "揭示矛盾" : "下一幕"}</button>
+          </div>
         </div>
+      </div>
+    `;
+  }
+
+  function objectionRevealSteps(reveal) {
+    const title = reveal.title || "异议成立";
+    const line = reveal.line || "证物与证词正面冲突。";
+    const record = reveal.record || "法庭记录";
+    const target = reveal.target || "当前证词";
+    return [
+      {
+        kicker: "异议切入",
+        title,
+        body: "先打断证词节奏，把法庭注意力从证人的说法拉回记录本身。",
+        recordLabel: "辩方发声",
+        targetLabel: line,
+      },
+      {
+        kicker: "证物对照",
+        title: record,
+        body: "把证物摆到证词旁边看：哪一句话经不起这份记录的检查？",
+        recordLabel: record,
+        targetLabel: target,
+      },
+      {
+        kicker: "矛盾揭示",
+        title: line,
+        body: `这份记录击中的不是细枝末节，而是证词的核心前提：${target}`,
+        recordLabel: title,
+        targetLabel: record,
+      },
+    ];
+  }
+
+  function renderObjectionCutIn(reveal, stepIndex) {
+    const caseData = currentCase();
+    const frames = [
+      {
+        tone: "defense",
+        portrait: "empress",
+        pose: "assert",
+        role: "辩方",
+        label: reveal.title || "异议",
+      },
+      {
+        tone: "record",
+        portrait: "record",
+        pose: "idle",
+        role: "法庭记录",
+        label: reveal.record || "关键证据",
+      },
+      {
+        tone: "opponent",
+        portrait: caseData.opponentPortrait || "censor",
+        pose: "shaken",
+        role: caseData.opponent || "对手",
+        label: reveal.line || "证词动摇",
+      },
+    ];
+    return `
+      <div class="reveal-cutin" aria-label="异议演出分镜">
+        ${frames
+          .map(
+            (frame, index) => `
+              <div class="reveal-frame reveal-frame-${index + 1} tone-${escapeHtml(frame.tone)} ${index === stepIndex ? "active" : ""}">
+                <span class="acting-portrait portrait-${escapeHtml(frame.portrait)} pose-${escapeHtml(frame.pose)}" aria-hidden="true"></span>
+                <b>${escapeHtml(frame.role)}</b>
+                <small>${escapeHtml(frame.label)}</small>
+              </div>
+            `
+          )
+          .join("")}
       </div>
     `;
   }
@@ -2798,6 +2893,7 @@
       caseId: caseData.id,
       testimonyIndex: progress.testimonyIndex,
       rawIndex,
+      step: 0,
       title,
       record: presentedLabel,
       target: statement.text,
@@ -2805,6 +2901,21 @@
     };
     setMessage("辩方", `异议！${presentedLabel || "这份记录"}和这句证词对不上。`, "objection");
     playCue("objection");
+    save();
+    renderTrial();
+  }
+
+  function advanceObjectionReveal() {
+    const reveal = state.objectionReveal;
+    if (!reveal) return;
+    const steps = objectionRevealSteps(reveal);
+    const currentStep = Math.max(0, Math.min(steps.length - 1, Number(reveal.step) || 0));
+    if (currentStep >= steps.length - 1) {
+      resolveObjectionReveal();
+      return;
+    }
+    reveal.step = currentStep + 1;
+    playCue(reveal.step >= steps.length - 1 ? "counter" : "click");
     save();
     renderTrial();
   }
@@ -3153,6 +3264,7 @@
     if (target.dataset.nextStatement !== undefined) moveStatement(1);
     if (target.dataset.press !== undefined) pressStatement();
     if (target.dataset.present !== undefined) presentEvidence();
+    if (target.dataset.advanceReveal !== undefined) advanceObjectionReveal();
     if (target.dataset.revealObjection !== undefined) resolveObjectionReveal();
     if (target.dataset.continueTestimony !== undefined) continueTestimony();
     if (target.dataset.retryTrial !== undefined) retryTrial();
@@ -3245,7 +3357,7 @@
     }
     if (state.objectionReveal && (event.key === "Enter" || event.key === " ")) {
       event.preventDefault();
-      resolveObjectionReveal();
+      advanceObjectionReveal();
       return;
     }
     if (event.key.toLowerCase() === "s") {
@@ -3422,6 +3534,9 @@
       objectionRevealTitle: state.objectionReveal?.title || "",
       objectionRevealRecord: state.objectionReveal?.record || "",
       objectionRevealLine: state.objectionReveal?.line || "",
+      objectionRevealStep: state.objectionReveal ? Number(state.objectionReveal.step || 0) + 1 : 0,
+      objectionRevealStepTitle: state.objectionReveal ? objectionRevealSteps(state.objectionReveal)[Number(state.objectionReveal.step || 0)]?.kicker || "" : "",
+      objectionRevealSteps: state.objectionReveal ? objectionRevealSteps(state.objectionReveal).length : 0,
       counterattacks: progress.counterattacks || 0,
       recoveries: progress.recoveries || 0,
       testimony: testimony?.title || "",
