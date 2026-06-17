@@ -2,6 +2,39 @@ Original prompt: 做一个仿照 《逆转裁判》 的完整游戏。始终检�
 
 # Progress
 
+## 2026-06-17 iteration 40 result
+
+Implemented:
+- Moved investigation examine targets from the right-side mini map into the main background scene as clickable `scene-hotspot` buttons.
+- Removed the duplicate right-side hotspot list; the right column now serves as location context, clue close-up, command mode, and bottom actions.
+- Widened the desktop game container from 1180px to 1440px so 16:9 screens use more horizontal space instead of compressing content into a centered narrow column.
+- Reworked desktop investigation into a wide scene plus 380-440px tool column; tightened the clue board and command status rows to avoid local scrolling for core actions.
+- Reworked desktop trial into a wide left courtroom scene plus right trial panel, fixing the prior off-screen trial controls.
+- Made trial action buttons equal width in desktop mode.
+- Upgraded investigation feedback beats with portrait, previous/next/close controls, and Enter/Space progression.
+- Added the fixed GitHub Pages play link and useful README badges for Pages, static game, and vanilla JS.
+
+Verified:
+- Browser 1440x810 main menu uses a 1412px app width and no page scroll.
+- Browser investigation page shows two main-scene hotspots and zero old `.location-map .hotspot` buttons.
+- Clicking a main-scene hotspot switches command state to `examine`, collects evidence, and opens the two-step investigation dialogue.
+- Investigation dialogue advances with Enter, supports previous line, and can be closed.
+- Investigation right column has no clipped map, clue, or command content after layout tuning.
+- Browser trial page now keeps both courtroom scene and trial panel within the viewport; action buttons are equal width.
+- Mobile 390x844 investigation check has no horizontal overflow; scene hotspots become full-width mobile buttons.
+- Screenshots inspected: `iteration40-investigation-hotspots-wide.png` and `iteration40-trial-wide-layout.png`.
+- `node --check game/app.js && node --check game/game-data.js`
+- `python3 -m py_compile scripts/build_game_content.py scripts/parse_epub_to_markdown.py`
+- `git diff --check`
+- Public text scan on `game/`: old opaque evidence wording did not reappear.
+- Required develop-web-game client was attempted, but the local skill script still failed with `ERR_MODULE_NOT_FOUND: Cannot find package 'playwright'`; MCP browser verification is the authoritative interaction evidence.
+
+Remaining Ace Attorney gap list:
+- Main investigation now uses background hotspots like Ace Attorney, but hotspot positions are still generic per-location slots rather than hand-authored coordinates for every scene.
+- Trial layout is now visible and aligned on wide screens, but cross-examination could still use a more explicit statement list and objection timing polish.
+- README has badges and a fixed Pages URL, but the online deployment should be checked after GitHub Actions completes on `origin/main`.
+- Court Record thumbnails still use archetype art rather than bespoke art for every evidence card.
+
 ## 2026-06-17 iteration 39 result
 
 Implemented:

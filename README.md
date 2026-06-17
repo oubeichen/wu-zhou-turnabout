@@ -3,6 +3,11 @@
 《武周逆转录》是一个基于《武则天正传》材料改编的宫廷法庭推理网页游戏。项目目标不是做资料陈列页，而是做一个接近《逆转裁判》节奏的可玩作品：玩家在庭前调查中移动、查看、交谈、出示证物，在庭审中追问证词、选择证物、举出矛盾，并通过案件推进逐步理解武周权力结构。
 
 [![Deploy static game to GitHub Pages](https://github.com/oubeichen/wu-zhou-turnabout/actions/workflows/pages.yml/badge.svg)](https://github.com/oubeichen/wu-zhou-turnabout/actions/workflows/pages.yml)
+[![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-在线游玩-2ea44f?logo=github)](https://oubeichen.github.io/wu-zhou-turnabout/)
+![Static Game](https://img.shields.io/badge/static%20game-no%20build%20step-8b5cf6)
+![JavaScript](https://img.shields.io/badge/runtime-vanilla%20JS-f7df1e?logo=javascript&logoColor=222)
+
+**在线游玩：** [https://oubeichen.github.io/wu-zhou-turnabout/](https://oubeichen.github.io/wu-zhou-turnabout/)
 
 ## 背景
 

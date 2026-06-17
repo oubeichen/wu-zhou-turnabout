@@ -708,6 +708,20 @@
     renderInvestigation();
   }
 
+  function retreatInvestigationBeat() {
+    const beat = state.investigationBeat;
+    if (!beat?.lines?.length) return;
+    beat.lineIndex = Math.max(0, Number(beat.lineIndex || 0) - 1);
+    const line = beat.lines[beat.lineIndex] || beat.lines[0];
+    setMessage(line.speaker, line.text, "");
+    renderInvestigation();
+  }
+
+  function closeInvestigationBeat() {
+    clearInvestigationBeat();
+    renderInvestigation();
+  }
+
   function setImpactCue(kind, title, record, subtitle) {
     const frames = impactFramesFor(kind, title, record, subtitle);
     state.impactCue = {
@@ -902,6 +916,16 @@
     if (speaker.includes("狄") || speaker.includes("辩") || speaker.includes("追问")) return "minister";
     if (speaker.includes("张")) return "favorite";
     if (speaker.includes("审判") || speaker.includes("书记")) return "empress";
+    return caseData.witnessPortrait || "survivor";
+  }
+
+  function investigationPortraitForSpeaker(caseData, speaker) {
+    const profile = data.profiles.find((item) => item.name === speaker);
+    if (profile?.portrait) return profile.portrait;
+    if (!speaker || speaker === "调查" || speaker.includes("书记")) return "empress";
+    if (speaker === caseData.witness) return caseData.witnessPortrait || "survivor";
+    if (speaker === caseData.opponent) return caseData.opponentPortrait || "censor";
+    if (speaker.includes("辩")) return "minister";
     return caseData.witnessPortrait || "survivor";
   }
 
@@ -1493,20 +1517,34 @@
     const caseData = currentCase();
     const sceneKey = caseData.scene?.key || "archive";
     const variant = location.sceneVariant || "site";
+    const inspected = location.examineSpots.filter((_, index) => inv.examined.includes(`${inv.locationIndex}:${index}`)).length;
     return `
       <div class="location-map scene-${sceneKey} variant-${variant}">
         <div>
           <strong>${escapeHtml(location.name)}</strong>
           <span>${escapeHtml(location.description)}</span>
           <small>${escapeHtml(location.visualNote || caseData.scene?.tone || "")}</small>
+          <em>${inspected}/${location.examineSpots.length} 处已检视。直接点击左侧现场标记查看。</em>
         </div>
+      </div>
+    `;
+  }
+
+  function renderInvestigationHotspots() {
+    if (state.screen !== "investigation") return "";
+    const caseData = currentCase();
+    const inv = investigationProgress(caseData.id);
+    const location = currentLocation(caseData);
+    return `
+      <div class="scene-hotspots" aria-label="现场可疑处">
         ${location.examineSpots
           .map((spot, index) => {
             const key = `${inv.locationIndex}:${index}`;
             const done = inv.examined.includes(key);
             return `
-              <button class="hotspot hotspot-${index + 1} ${done ? "done" : ""}" type="button" data-examine-spot="${index}">
+              <button class="scene-hotspot scene-hotspot-${index + 1} ${done ? "done" : ""}" type="button" data-examine-spot="${index}" aria-label="${escapeHtml(done ? `复查${spot.name}` : `查看${spot.name}`)}">
                 <span>${escapeHtml(spot.name)}</span>
+                <small>${done ? "已记录" : "查看"}</small>
               </button>
             `;
           })
@@ -1639,16 +1677,17 @@
     if (inv.command === "examine") {
       return `
         <h2>查看</h2>
-        <div class="location-list">
+        <p class="hint-text">在左侧现场图上点击发光标记。已记录的位置会变成绿色，可随时复查。</p>
+        <div class="spot-status-list">
           ${location.examineSpots
             .map((spot, index) => {
               const key = `${inv.locationIndex}:${index}`;
               const done = inv.examined.includes(key);
               return `
-                <button class="location-button ${done ? "selected" : ""}" type="button" data-examine-spot="${index}">
-                  <strong>${done ? "✓ " : ""}${escapeHtml(spot.name)}</strong>
-                  <span>${done ? "已记录，可复查" : "检查这个位置"}</span>
-                </button>
+                <div class="spot-status ${done ? "done" : ""}">
+                  <strong>${escapeHtml(spot.name)}</strong>
+                  <span>${done ? "已记录" : "待查看"}</span>
+                </div>
               `;
             })
             .join("")}
@@ -1785,6 +1824,7 @@
     const notice = mode === "trial" && state.stageNotice ? `<div class="camera-notice">${escapeHtml(state.stageNotice)}</div>` : "";
     const leftPoseLabel = mode === "trial" ? poseLabel(stagePose.left) : "";
     const rightPoseLabel = mode === "trial" ? poseLabel(stagePose.right) : "";
+    const hasInvestigationBeat = mode === "investigation" && state.investigationBeat;
     return `
       <div class="scene ${mode} ${sceneKey ? `scene-${sceneKey}` : ""} focus-${focus} pose-left-${stagePose.left} pose-right-${stagePose.right} ${state.settings.reducedMotion ? "reduced-motion" : ""}" data-motif="${escapeHtml(sceneMotif)}">
         <div class="stage-layer">
@@ -1799,11 +1839,13 @@
         ${notice}
         ${mode === "investigation" && sceneTone ? `<div class="scene-atmosphere">${escapeHtml(sceneTone)}</div>` : ""}
         <div class="scene-title">${escapeHtml(title)}</div>
-        ${mode === "investigation" ? renderInvestigationBeat() : ""}
-        <div class="dialogue-box ${speedClass}">
-          <span class="dialogue-speaker">${escapeHtml(speaker)}</span>
-          <div>${escapeHtml(text)}</div>
-        </div>
+        ${mode === "investigation" ? renderInvestigationHotspots() : ""}
+        ${hasInvestigationBeat ? renderInvestigationBeat() : `
+          <div class="dialogue-box ${speedClass}">
+            <span class="dialogue-speaker">${escapeHtml(speaker)}</span>
+            <div>${escapeHtml(text)}</div>
+          </div>
+        `}
       </div>
     `;
   }
@@ -1811,20 +1853,32 @@
   function renderInvestigationBeat() {
     const beat = state.investigationBeat;
     if (!beat) return "";
+    const caseData = currentCase();
     const lines = beat.lines?.length ? beat.lines : [{ speaker: beat.speaker, text: beat.text }];
     const lineIndex = Math.max(0, Math.min(lines.length - 1, Number(beat.lineIndex || 0)));
     const line = lines[lineIndex] || lines[0];
+    const hasPrevious = lineIndex > 0;
     const hasNext = lineIndex < lines.length - 1;
+    const portrait = investigationPortraitForSpeaker(caseData, line.speaker);
+    const pose = line.speaker.includes("辩") ? "assert" : "";
     const evidenceLine = beat.evidenceNames?.length ? `<small>新证物：${escapeHtml(beat.evidenceNames.join("、"))}</small>` : "";
     return `
-      <div class="investigation-beat">
-        <span>${escapeHtml(beat.kind)}</span>
-        <strong>${escapeHtml(line.speaker)}</strong>
-        <b>${lineIndex + 1}/${lines.length}</b>
+      <div class="investigation-beat" aria-live="polite">
+        <i class="beat-portrait portrait-${escapeHtml(portrait)} ${pose ? `pose-${pose}` : ""}" aria-hidden="true"></i>
+        <div class="beat-head">
+          <span>${escapeHtml(beat.kind)}</span>
+          <strong>${escapeHtml(line.speaker)}</strong>
+          <b>${lineIndex + 1}/${lines.length}</b>
+        </div>
         <p>${escapeHtml(line.text)}</p>
-        <em>${escapeHtml(beat.result)}</em>
-        ${evidenceLine}
-        ${hasNext ? `<button class="beat-next-button" type="button" data-advance-investigation-beat>继续</button>` : ""}
+        <div class="beat-meta">
+          <em>${escapeHtml(beat.result)}</em>
+          ${evidenceLine}
+        </div>
+        <div class="beat-controls">
+          ${hasPrevious ? `<button class="beat-next-button secondary" type="button" data-retreat-investigation-beat>上一句</button>` : ""}
+          ${hasNext ? `<button class="beat-next-button" type="button" data-advance-investigation-beat>继续</button>` : `<button class="beat-next-button" type="button" data-close-investigation-beat>收起</button>`}
+        </div>
       </div>
     `;
   }
@@ -2320,6 +2374,8 @@
     const inv = investigationProgress(caseData.id);
     const location = currentLocation(caseData);
     const spot = location.examineSpots[index];
+    if (!spot) return;
+    inv.command = "examine";
     const key = `${inv.locationIndex}:${index}`;
     if (!inv.examined.includes(key)) inv.examined.push(key);
     const gained = collectEvidenceFromLocation(caseData, location, index);
@@ -2720,6 +2776,8 @@
     if (target.dataset.openIntro !== undefined) renderCaseIntro();
     if (target.dataset.command) setCommand(target.dataset.command);
     if (target.dataset.advanceInvestigationBeat !== undefined) advanceInvestigationBeat();
+    if (target.dataset.retreatInvestigationBeat !== undefined) retreatInvestigationBeat();
+    if (target.dataset.closeInvestigationBeat !== undefined) closeInvestigationBeat();
     if (target.dataset.moveLocation) moveLocation(Number(target.dataset.moveLocation));
     if (target.dataset.examineSpot) examineSpot(Number(target.dataset.examineSpot));
     if (target.dataset.talkTopic) talkTopic(Number(target.dataset.talkTopic));
@@ -2834,6 +2892,13 @@
       rerender();
       return;
     }
+    if (state.screen === "investigation" && state.investigationBeat && !state.recordOpen && !state.settingsOpen && !state.guideOpen && (event.key === "Enter" || event.key === " ")) {
+      event.preventDefault();
+      const beat = state.investigationBeat;
+      const lineIndex = Number(beat.lineIndex || 0);
+      if (lineIndex < (beat.lines?.length || 0) - 1) advanceInvestigationBeat();
+      return;
+    }
     if (state.screen === "trial-interlude" && (event.key === "Enter" || event.key === " ")) {
       event.preventDefault();
       continueTestimony();
@@ -2915,6 +2980,9 @@
       investigationBeatStep: state.screen === "investigation" && state.investigationBeat?.lines?.length ? `${Number(state.investigationBeat.lineIndex || 0) + 1}/${state.investigationBeat.lines.length}` : "",
       investigationBeatLineSpeaker: state.screen === "investigation" && state.investigationBeat?.lines?.length ? state.investigationBeat.lines[Number(state.investigationBeat.lineIndex || 0)]?.speaker || "" : "",
       investigationBeatLine: state.screen === "investigation" && state.investigationBeat?.lines?.length ? state.investigationBeat.lines[Number(state.investigationBeat.lineIndex || 0)]?.text || "" : "",
+      investigationBeatHasPrevious: state.screen === "investigation" && state.investigationBeat?.lines?.length ? Number(state.investigationBeat.lineIndex || 0) > 0 : false,
+      investigationBeatHasNext: state.screen === "investigation" && state.investigationBeat?.lines?.length ? Number(state.investigationBeat.lineIndex || 0) < state.investigationBeat.lines.length - 1 : false,
+      investigationBeatPortrait: state.screen === "investigation" && state.investigationBeat?.lines?.length ? investigationPortraitForSpeaker(caseData, state.investigationBeat.lines[Number(state.investigationBeat.lineIndex || 0)]?.speaker || "") : "",
       guideOpen: state.guideOpen,
       guideTitle: guide.title,
       guideSeen: Boolean(state.guideSeen[guide.id]),
