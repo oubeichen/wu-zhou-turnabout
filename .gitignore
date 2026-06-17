@@ -1,0 +1,20 @@
+.DS_Store
+
+# John workspace internals and local agent state
+.john/
+.playwright-mcp/
+.serena/
+.spec-workflow/
+
+# Generated QA and browser-test artifacts
+output/
+iteration*-*.png
+iteration*-*.json
+iteration*-*.md
+
+# Python/runtime caches
+__pycache__/
+*.py[cod]
+
+# Local dependency folders if introduced later
+node_modules/

@@ -1,0 +1,138 @@
+# PLAN.md — wuzetian2
+
+*Created by `/john:init` on 2026-06-16. This file is the durable contract for the John knowledge phases and the game build phases.*
+
+## Project intent
+
+Build a complete standalone Chinese browser game inspired by the courtroom loop of 《逆转裁判》, using the user-provided `武则天正传.epub` as the source corpus.
+
+The produced game is for ordinary players who enjoy historical drama, court-record reasoning, witness testimony, and contradiction solving. It should open locally without a backend, present the book's political narrative as playable cases, and keep the public UI in Chinese. Success means a player can choose a case, investigate locations, collect evidence, cross-examine witnesses, present the right evidence, lose or preserve credibility, finish every case, and see progress saved locally.
+
+The game must not expose John internals, raw JSON, local file paths, schema keys, skill names, or full source-text dumps. Source use is transformed into chapter references, summaries, evidence cards, and short contextual prompts.
+
+## Intent and display contracts
+
+- Intent question budget: one batch maximum, four questions maximum; unused. The user's request is specific enough to infer the app direction.
+- Normalized user intent: `.john/brief/user_intent.json`
+- Public app blueprint: `.john/contracts/app_blueprint.json`
+- UI-driven extraction plan: `.john/contracts/extraction_plan.json`
+- Public UI must hide: raw JSON, internal IDs, skill names, schema keys, chunk IDs, file paths, and unnecessary English variable names.
+
+## Knowledge inventory
+
+- Initial input: `.john/input/武则天正传.epub`
+- Parsed output: `.john/parsed/wuzetian/doc.md`, `.john/parsed/wuzetian/chapters.json`, `.john/parsed/wuzetian/metadata.json`
+- Corpus profile: one Chinese EPUB, 46 parsed chapter entries including the appendix; EPUB has two正文 XHTML files, one TOC, and 10 image assets.
+- Game data output: `game/game-data.js`
+- Game image assets: `game/assets/`
+
+## App-type definition
+
+- **User intent**: make a complete Ace Attorney-style historical courtroom game from `武则天正传.epub`.
+- **App mechanism**: static browser game with title screen, case selection, investigation, evidence inventory, courtroom cross-examination, credibility loss, case completion, and local progress save.
+- **Display contract**: public navigation and visible labels are `案件`, `调查`, `庭审`, `法庭记录`, `人物`, `追问`, `举证`, `判决`. The UI should feel like a serious historical courtroom drama, not a reading database.
+- **Extraction targets**: case arcs, evidence cards, testimony statements, contradiction mappings, witness/opponent profiles, and verdict summaries.
+- **Knowledge format/schema**: custom story-game schema with `case`, `evidence`, `testimony`, and `profile` entries. Entries carry source chapter titles and transformed summaries; the public UI does not show schema fields.
+- **Build pipeline**: parse EPUB -> write app-first contracts -> generate game content -> implement static game shell -> verify game state transitions and UI leak guardrails.
+
+## Phases
+
+### Phase 1: bootstrap — done
+
+- Intent: initialize John state and record the inferred product goal.
+- Skills invoked: `using-john`, `init-workspace`, `plan-md-authoring`, `phase-design`
+- Required artifacts: `.john/`, `PLAN.md`, `AGENTS.md`, `CLAUDE.md`, `.john/input/武则天正传.epub`
+- Done criteria: John init succeeded and the EPUB was copied into `.john/input/`.
+
+### Phase 2: parse + survey — done
+
+- Intent: parse the EPUB and survey chapter structure before game design.
+- Skills invoked: `parsing`, `phase-design`
+- Required artifacts: `.john/parsed/wuzetian/doc.md`, `.john/parsed/wuzetian/chapters.json`, `.john/parsed/wuzetian/metadata.json`
+- Done criteria: parser reports 46 chapter entries and chapter titles align with EPUB TOC.
+
+### Phase 3: intent + app blueprint — done
+
+- Intent: turn the user's game request into fixed app-first contracts.
+- Skills invoked: `app-design-thinking`, `schema-design`
+- Required artifacts: `.john/brief/user_intent.json`, `.john/contracts/app_blueprint.json`, `.john/contracts/extraction_plan.json`
+- Done criteria: contracts are valid JSON and encode a courtroom mystery game rather than a generic reading site.
+
+### Phase 4: content generation — done
+
+- Intent: generate playable case data and extract visual assets from the parsed corpus.
+- Skills invoked: `schema-design`
+- Required artifacts: `game/game-data.js`, `game/assets/`
+- Done criteria: five cases exist, each with investigation locations, evidence, testimony, contradictions, and verdict text.
+
+### Phase 5: static game implementation — done
+
+- Intent: build the browser game UI and mechanics.
+- Skills to invoke: frontend implementation discipline, browser verification
+- Required artifacts: `game/index.html`, `game/styles.css`, `game/app.js`
+- Done criteria: local browser can open the game, case selection works, investigation collects evidence, trial cross-examination advances on correct evidence, wrong evidence reduces credibility, completion is saved.
+
+### Phase 6: verification + guardrails — pending
+
+- Intent: verify game behavior, responsiveness, and public UI leak constraints.
+- Skills to invoke: browser verification, code-quality guardrails where needed
+- Required artifacts: smoke test output, UI leak scan result, final status in this PLAN.md
+- Done criteria: deterministic checks pass; no visible `.john`, `/Users/`, `schema_version`, `chunk_id`, or raw JSON terms in public game files.
+
+### Phase 7: Ace Attorney gap closure — in progress
+
+- Intent: repeatedly compare the game against Ace Attorney-style expectations and close the highest-impact gameplay and presentation gaps.
+- Skills invoked: `endurance-goal`, `develop-web-game`, `game-ui-frontend`, `game-playtest`
+- Required artifacts: richer `game/game-data.js`, upgraded `game/app.js`, upgraded `game/styles.css`, `progress.md`, screenshots under `output/web-game/`
+- Done criteria: each iteration records the gap baseline, implements gameplay or presentation improvements, runs static checks, runs browser interaction checks, and updates the remaining gap list.
+
+## Subagent matrix
+
+No large vertical fan-out was needed. This corpus is one EPUB with 46 chapter entries, so parsing and content seeding ran inline with deterministic scripts.
+
+## Open decisions
+
+- None blocking. Default choices: static local game, Chinese UI, no runtime LLM, no backend, no full chapter text embedded in public UI.
+
+## Log
+
+- 2026-06-16: Phase 7 iteration 1 done. Added persistent John endurance goal; upgraded data with per-location talk/examine content, evidence details, timelines, and richer testimony metadata; upgraded UI with four investigation commands, record tabs, selected evidence details, profiles, timeline, dialogue backlog, settings, keyboard controls, objection/penalty banners, and `render_game_to_text` / `advanceTime` hooks. Verified with syntax checks, data integrity checks, John UI leak scan, develop-web-game Playwright client, in-browser investigation flow, trial completion, mobile overflow check, and console error check. Remaining gap: result screen and trial staging should use wide screens more cinematically; future iterations should add generated portraits/backgrounds, audio cues, deeper case-specific dialogue, and stronger multi-step trial branches.
+- 2026-06-16: Phase 7 iteration 2 done. Generated and integrated `game/assets/courtroom-bg-v1.png`, added Web Audio cues and mute setting, fixed topbar settings handling, made testimony denser, added press-before-present contradiction unlocking, marked pressed statements, and centered verdict layout. Verified with syntax checks, UI leak scan, Playwright settings/investigation/trial checks, and screenshot inspection.
+- 2026-06-16: Phase 7 iteration 3 done. Generated and integrated `game/assets/character-sheet-v1.png` and `game/assets/investigation-room-v1.png`; routed case/profile portraits into trial, investigation, and Court Record; added visual investigation hotspots; replaced EPUB-derived investigation backgrounds; fixed mobile hotspot overlap. Verified with data regeneration, syntax checks, UI leak scan, develop-web-game client, Playwright desktop/mobile flows, and screenshot inspection.
+- 2026-06-16: Phase 7 iteration 4 done. Added trial-only press-unlocked evidence, per-statement wrong-evidence feedback, mistake counting, verdict grades, case-card completion/grade display, and locked Court Record wording for courtroom-only clues. Verified with data regeneration, `node --check`, John UI leak scan, `git diff --check`, Playwright flow through wrong evidence, press unlock, final contradiction, verdict grade, and case select completion screenshots.
+- 2026-06-16: Phase 7 iteration 5 done. Added courtroom stage focus and notices for witness entrance, pressing, record unlocks, wrong evidence, contradiction hits, testimony transitions, and verdict; added trial header, spotlight/portrait focus styling, reduced-motion support, and `render_game_to_text` stage fields; fixed verdict page scroll and 1280x720 action visibility. Verified with data regeneration, `node --check`, John UI leak scan, `git diff --check`, develop-web-game client, Playwright end-to-end stage assertions, no-console-error check, and screenshot inspection.
+- 2026-06-16: Phase 7 iteration 6 done. Added profile-based contradictions to every case; expanded generated profiles to include case witnesses and opponents; made Court Record profiles presentable in trial; fixed multi-contradiction testimony so each answerable statement must be solved before advancing; added solved statement markers and `selectedProfile` to `render_game_to_text`. Verified with data regeneration, `node --check`, profile-reference integrity check, John UI leak scan, `git diff --check`, develop-web-game client, Playwright profile-present flow, screenshot inspection, and mobile profile-list overflow check.
+- 2026-06-16: Phase 7 iteration 7 done. Added persistent per-case completion records, medals, best grade/mistake tracking, clear counts, a home-screen 结案档案, replay flow that preserves best records, upgraded case-card status, and verdict stats. Verified with data regeneration, `node --check`, John UI leak scan, `git diff --check`, develop-web-game client, Playwright flawless-clear/replay/worse-clear record checks, screenshot inspection, and mobile awards overflow check.
+- 2026-06-16: Phase 7 iteration 8 done. Added case-specific investigation scene metadata, public scene names, motifs, tone text, location variants, scene palettes, watermarks, atmosphere notes, map notes, and `render_game_to_text` scene fields; fixed desktop hotspot crowding after screenshot review. Verified with data regeneration, `node --check`, scene data integrity checks, John UI leak scan, `git diff --check`, five-case Playwright scene/variant assertions, develop-web-game client, mobile overflow check, and screenshot inspection.
+- 2026-06-17: Phase 7 iteration 9 done. Rebuilt the home screen into a chapter-style case gallery with focused dossiers, poster cards, scene motifs, archive summary, persistent recent-run history, and `render_game_to_text` home-focus fields; fixed return-home and focus-dossier scroll behavior. Verified with `node --check`, John UI leak scan, `git diff --check`, real first-case investigation-to-verdict Playwright flow, desktop/mobile focus-scroll assertions, develop-web-game client, and screenshot inspection.
+- 2026-06-17: Phase 7 iteration 10 done. Added press-unlocked hidden testimony branches, visible/raw statement index mapping, per-case branch text, revealed statement styling, and `render_game_to_text` branch fields. Verified with data regeneration, `node --check`, hidden-branch data integrity checks, John UI leak scan, `git diff --check`, desktop Playwright branch-to-verdict flow, mobile no-overflow branch check, develop-web-game client, and screenshot inspection.
+- 2026-06-17: Phase 7 iteration 11 done. Added interactive testimony-transition interludes with courtroom staging, previous/next testimony flow cards, witness portrait crop, continue button, Enter/Space support, persisted `awaitingInterlude`, and `render_game_to_text` interlude state. Verified with `node --check`, John UI leak scan, `git diff --check`, desktop Playwright interlude-to-verdict flow, mobile no-overflow interlude check, develop-web-game client, and screenshot inspection.
+- 2026-06-17: Phase 7 iteration 12 done. Added contextual 书记提示 cards and guide panels across home, briefing, investigation, trial, interludes, and verdict; persisted `guideSeen`; added `render_game_to_text` guide fields; and verified desktop/mobile guide flows plus full first-case regression to 金章 verdict.
+- 2026-06-17: Phase 7 iteration 13 done. Added five per-case episode art PNGs, connected case posters and focused dossiers to scene-specific `--episode-art`, exposed `homeFocusEpisodeArt` / `episodeArt` in `render_game_to_text`, and verified desktop/mobile backgrounds, no-overflow behavior, John UI leak scan, `node --check`, `git diff --check`, develop-web-game client, and screenshot inspection.
+- 2026-06-17: Phase 7 iteration 14 done. Added transient courtroom pose states for both sides, mapped trial entrance/press/wrong-present/correct-objection/interlude/verdict events to visible pose changes, exposed `stagePoseLeft` / `stagePoseRight`, fixed interlude pose-badge cascade, and verified desktop pose assertions, 390px mobile no-overflow behavior, `node --check`, John UI leak scan, `git diff --check`, and screenshot inspection.
+- 2026-06-17: Phase 7 iteration 15 done. Added bespoke counterattack traps for cases 2-5, generated trap fields in testimony data, added runtime 2-point credibility counterattacks with `counterattacks` test state, and verified generated data integrity, case 2 desktop trap flow, 390px mobile no-overflow behavior, `node --check`, John UI leak scan, `git diff --check`, and screenshot inspection.
+- 2026-06-17: Phase 7 iteration 16 done. Added fair `慎用提示` warnings for counterattack trap evidence, exposed `selectedEvidenceRisk`, added trial guide warnings before risky presents, and verified generated data integrity, case 2 desktop warning-to-counterattack flow, 390px mobile no-overflow behavior, develop-web-game client output, `node --check`, John UI leak scan, `git diff --check`, and screenshot inspection.
+- 2026-06-17: Phase 7 iteration 17 done. Added counterattack recovery testimony branches for cases 2-5, made unlocked recovery statements optional unless triggered, restored 1 credibility on successful recovery, exposed `recoveries`, returned focus to the original contradiction after recovery, and verified the full case 2 profile-branch -> counterattack -> recovery -> interlude flow on desktop/mobile plus develop-web-game client, `node --check`, John UI leak scan, `git diff --check`, and screenshot inspection.
+- 2026-06-17: Phase 7 iteration 18 done. Added case-specific bad-ending copy, replaced instant credibility reset with a formal `bad-ending` screen, exposed `failed` / `failureReason`, added `重审庭审` that preserves investigation evidence while resetting trial state, and verified desktop/mobile failure-to-retry flow, first-viewport retry visibility, develop-web-game client, `node --check`, John UI leak scan, `git diff --check`, and screenshot inspection.
+- 2026-06-17: Phase 7 iteration 19 done. Rebuilt synthesized audio into layered cues plus scene-aware ambience, added separate提示音量/环境音量 controls and audio state fields in `render_game_to_text`, split counterattack/collapse cue feedback, fixed favicon console noise, kept mobile topbar 提示/设置 buttons visible, and verified desktop/mobile audio state transitions, mute behavior, no-overflow settings layout, develop-web-game client output, `node --check`, John UI leak scan, `git diff --check`, no-console-error browser QA, and screenshot inspection.
+- 2026-06-17: Phase 7 iteration 20 done. Added derived trial pressure levels, credibility-meter pressure labels, low-credibility warning cards, final-warning feedback copy, `pressureLevel` / `pressureLabel` test state, and fixed mobile trial ordering so courtroom pressure appears before the Court Record; verified desktop/mobile pressure flows, no-overflow behavior, develop-web-game client output, `node --check`, John UI leak scan, `git diff --check`, no-console-error browser QA, and screenshot inspection.
+- 2026-06-17: Phase 7 iteration 21 done. Added case-specific danger/final-warning pressure beats to all five cases, generated public `pressureBeats`, routed pressure cards, camera notices, wrong-present pressure copy, and `render_game_to_text` fields through active-case content, and verified case 3 desktop/mobile near-loss flows, data integrity, develop-web-game client output, `node --check`, `python3 -m py_compile`, John UI leak scan, `git diff --check`, no-console-error browser QA, and screenshot inspection.
+- 2026-06-17: Phase 7 iteration 22 done. Added case-specific low-credibility turnabout beats, generated public `turnaboutBeat`, restored 1 credibility on correct presents from danger/final-warning states, tracked `turnabouts` / `lastTurnabout`, rendered turnabout panels in trial and testimony interludes, exposed turnabout fields in `render_game_to_text`, and verified case 3 final-warning rescue flow, data integrity, mobile readability, develop-web-game client output, `node --check`, `python3 -m py_compile`, John UI leak scan, `git diff --check`, no-console-error browser QA, and screenshot inspection.
+- 2026-06-17: Phase 7 iteration 23 done. Ran a full clean-save Playwright completion audit through all five cases, covering investigation collection, hidden testimony branches, profile contradictions, final press-unlocked court notes, verdict persistence, and return-home archive state. Verified every case cleared with `mistakes=0`, `credibility=5`, `bestMedal=金章`, and final home `completed=5`; captured `iteration23-full-clear-audit.json`, `iteration23-final-home.png`, and `iteration23-final-home-snapshot.md`; also ran `node --check`, `python3 -m py_compile`, John UI leak scan, and `git diff --check`.
+- 2026-06-17: Phase 7 iteration 24 done. Added a live investigation `线索特写` board with current clue, inspected-spot progress, location evidence progress, talked-topic progress, and site judgment; exposed `activeClue`, `clueProgress`, and `locationEvidenceProgress` in `render_game_to_text`; clarified examined spots as re-checkable; added responsive desktop/mobile clue-board styling. Verified syntax checks, John UI leak scan, desktop and 390px mobile browser checks/screenshots, no horizontal overflow, and a full five-case flawless regression audit ending with `completed=5`.
+- 2026-06-17: Phase 7 iteration 25 done. Rebuilt the courtroom impact overlay from a single-word banner into a slanted `court-impact` layer with result title, subtitle, speed-line texture, and presented evidence/profile label; rendered it on trial, testimony interlude, verdict, and bad-ending screens; added reduced-motion behavior and `impactKind` / `impactTitle` / `impactRecord` / `impactSubtitle` text-state fields. Verified correct-present and wrong-present browser flows, desktop/mobile screenshots, 390px no-overflow behavior, full five-case flawless regression ending with `completed=5`, develop-web-game client smoke output, syntax checks, John UI leak scan, and `git diff --check`.
+- 2026-06-17: Phase 7 iteration 26 done. Added three-frame acting beats inside the courtroom impact overlay: defense action, court-record/evidence cut-in, and opponent reaction; differentiated successful `objection` beats from `penalty` / rejection beats; exposed `impactFrames` in `render_game_to_text`; added responsive and reduced-motion styling. Verified correct-present and wrong-present browser flows, desktop/mobile screenshots, 390px no-overflow behavior, full five-case regression with every key present exposing at least three acting frames and final `completed=5`, develop-web-game client smoke output, syntax checks, John UI leak scan, and `git diff --check`.
+- 2026-06-17: Phase 7 iteration 27 done. Added prop-specific investigation close-up panels for six recurring clue types, exposed `closeupType` / `closeupTitle` / `closeupStatus` in `render_game_to_text`, and cleared courtroom impact state from investigation screens. Verified six close-up types through browser interaction, desktop/mobile screenshots, no-overflow behavior, full five-case flawless regression ending with `completed=5`, develop-web-game client smoke output, syntax checks, John UI leak scan, and `git diff --check`.
+- 2026-06-17: Phase 7 iteration 28 done. Added `game/assets/prop-closeups-v1.png` as a bitmap evidence close-up sheet and connected `.prop-stage::before` to crop the six prop archetypes by CSS sprite position. Verified PNG loading in browser computed styles, desktop/mobile no-overflow screenshots, develop-web-game client smoke output, syntax checks, John UI leak scan, and `git diff --check`.
+- 2026-06-17: Phase 7 iteration 29 done. Added seven local WAV cue assets under `game/assets/audio/`, made sampled cues preferred in `playCue()` with oscillator fallback, and exposed `audioSamplesLoaded` / `audioSamplesTotal` in `render_game_to_text`. Verified browser fetch/decode for all WAV files, runtime sample loading after user interaction, develop-web-game client smoke output, and syntax checks.
+- 2026-06-17: Phase 7 iteration 30 done. Added seven local looped music tracks under `game/assets/music/`, added a Web Audio music loop runtime with mode switching and `musicVolume`, exposed `audioMusic` / `musicTracksLoaded` / `musicTracksTotal` in `render_game_to_text`, and added a visible `配乐音量` settings slider. Verified browser decode for all music WAV files, desktop/mobile settings screenshots with no overflow, develop-web-game client smoke output, syntax checks, John UI leak scan, and `git diff --check`.
+- 2026-06-17: Phase 7 iteration 31 done. Upgraded the Court Record evidence tab with visual evidence thumbnails and selected-evidence detail art, added front-end evidence visual types for record/map/note/risk/locked cards, and exposed `selectedEvidenceIcon` in `render_game_to_text`. Verified desktop/mobile screenshots, five-case evidence thumbnail structure, develop-web-game client smoke output, syntax checks, John UI leak scan, and `git diff --check`.
+- 2026-06-17: Phase 7 iteration 32 done. Added `game/assets/character-pose-strip-v1.png`, switched courtroom stage/interlude/impact portraits to the three-row pose sheet, added pose metadata to impact frames, exposed `poseSpriteAsset` / `poseSpriteRows`, and unified screen audio syncing through `syncAudioForScreen()`. Verified syntax checks, John UI leak scan, desktop/mobile screenshots, and browser computed styles before the final audio-sync fix; final custom Playwright rerun was blocked by the approval channel, so post-fix verification is static/code-path only.
+- 2026-06-17: Phase 7 iteration 34 done. Rewrote evidence and testimony generation into player-readable props, records, openings, and witness lines; regenerated `game/game-data.js`; added case opening dialogue to the case intro; changed Court Record from permanent side panel to investigation/trial drawer menus; removed the case-intro record panel; made guide cards hideable; kept evidence selection separate from explicit present; added trial-entry evidence guards and wrong-present recovery. Verified data generation, Python compile, `node --check`, old-template public text scan, Playwright drawer/selection/trial-lock/error-recovery assertions, screenshot inspection, and `git diff --check`.
+- 2026-06-16: Phase 6 done. Ran JSON syntax checks, `node --check`, game-data integrity checks for all 5 cases, John UI leak scan on `game/`, desktop browser flow through first case verdict, and mobile viewport overflow check at 390px.
+- 2026-06-16: Phase 5 done. Implemented static browser game in `game/index.html`, `game/styles.css`, and `game/app.js` with case select, investigation, evidence record, cross-examination, credibility, verdict, and local progress save.
+- 2026-06-16: Phase 5 started. Static game files are being implemented under `game/`.
+- 2026-06-16: Phase 4 done. `scripts/build_game_content.py` generated `game/game-data.js` with 5 playable cases and extracted 10 image assets.
+- 2026-06-16: Phase 3 done. App-first contracts written for a historical courtroom mystery game.
+- 2026-06-16: Phase 2 done. `scripts/parse_epub_to_markdown.py` parsed the EPUB into 46 chapter entries using a standard-library OPF spine parser after `markitdown` was unavailable.
+- 2026-06-16: Phase 1 done. John workspace scaffolded by `/john:init`; EPUB copied into `.john/input/`.
