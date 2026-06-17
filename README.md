@@ -64,10 +64,19 @@ http://127.0.0.1:8788/game/
 如果只想快速检查语法：
 
 ```bash
-node --check game/app.js
-node --check game/game-data.js
-python3 -m py_compile scripts/build_game_content.py
+npm install
+npm run check:js
+npm run check:py
 ```
+
+浏览器自动化验证依赖 Playwright。首次安装依赖后如果本机没有 Chromium，可运行：
+
+```bash
+npx playwright install chromium
+npm run qa:web-game
+```
+
+`qa:web-game` 会调用 Codex 的 `develop-web-game` 客户端访问本地 `http://127.0.0.1:8788/game/`，因此运行前需要保持上面的静态服务器开启。
 
 ## 自动发布
 

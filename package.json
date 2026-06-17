@@ -1,0 +1,29 @@
+{
+  "name": "wuzetian2",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Static historical courtroom mystery web game.",
+  "scripts": {
+    "check:js": "node --check game/app.js && node --check game/game-data.js",
+    "check:py": "python3 -m py_compile scripts/build_game_content.py scripts/parse_epub_to_markdown.py",
+    "qa:web-game": "node $HOME/.codex/skills/develop-web-game/scripts/web_game_playwright_client.js --url http://127.0.0.1:8788/game/ --actions-json '{\"steps\":[{\"buttons\":[],\"frames\":2},{\"buttons\":[\"left_mouse_button\"],\"frames\":2,\"mouse_x\":120,\"mouse_y\":120},{\"buttons\":[],\"frames\":2}]}' --iterations 1 --pause-ms 200"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/oubeichen/wu-zhou-turnabout.git"
+  },
+  "keywords": [
+    "browser-game",
+    "courtroom",
+    "static-site"
+  ],
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/oubeichen/wu-zhou-turnabout/issues"
+  },
+  "homepage": "https://oubeichen.github.io/wu-zhou-turnabout/",
+  "devDependencies": {
+    "playwright": "^1.61.0"
+  }
+}

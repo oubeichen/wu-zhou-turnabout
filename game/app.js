@@ -857,6 +857,11 @@
     return `${testimonyIndex}:${rawIndex}`;
   }
 
+  function statementReadyToPresent(statement, progress, testimonyIndex, rawIndex) {
+    const key = statementKey(testimonyIndex, rawIndex);
+    return statementHasAnswer(statement) && progress.pressed.includes(key) && !progress.solved.includes(key);
+  }
+
   function visibleStatementEntries(testimony, progress) {
     return testimony.statements
       .map((statement, rawIndex) => ({ statement, rawIndex }))
@@ -1741,10 +1746,9 @@
     }
     const testimony = caseData.testimony[progress.testimonyIndex];
     const { statement, rawIndex } = currentStatementEntry(testimony, progress);
-    const statementKeyValue = statementKey(progress.testimonyIndex, rawIndex);
     const selectedLabel = selectedRecordLabel(caseData);
     const visibleStatements = visibleStatementEntries(testimony, progress);
-    const readyToPresent = statementHasAnswer(statement) && progress.pressed.includes(statementKeyValue) && !progress.solved.includes(statementKeyValue);
+    const readyToPresent = statementReadyToPresent(statement, progress, progress.testimonyIndex, rawIndex);
     const recordPrompt = readyToPresent
       ? selectedLabel
         ? "破绽已经逼出来了。确认这份记录能反驳当前句，就点击“举证”。"
@@ -1833,8 +1837,9 @@
     const leftPoseLabel = mode === "trial" ? poseLabel(stagePose.left) : "";
     const rightPoseLabel = mode === "trial" ? poseLabel(stagePose.right) : "";
     const hasInvestigationBeat = mode === "investigation" && state.investigationBeat;
+    const vulnerabilityCue = mode === "trial" ? renderTrialVulnerabilityCue() : "";
     return `
-      <div class="scene ${mode} ${sceneKey ? `scene-${sceneKey}` : ""} focus-${focus} pose-left-${stagePose.left} pose-right-${stagePose.right} ${state.settings.reducedMotion ? "reduced-motion" : ""}" data-motif="${escapeHtml(sceneMotif)}">
+      <div class="scene ${mode} ${sceneKey ? `scene-${sceneKey}` : ""} focus-${focus} pose-left-${stagePose.left} pose-right-${stagePose.right} ${vulnerabilityCue ? "vulnerability-ready" : ""} ${state.settings.reducedMotion ? "reduced-motion" : ""}" data-motif="${escapeHtml(sceneMotif)}">
         <div class="stage-layer">
           <div class="spotlight spotlight-left" aria-hidden="true"></div>
           <div class="spotlight spotlight-right" aria-hidden="true"></div>
@@ -1845,6 +1850,7 @@
         ${leftPoseLabel ? `<div class="pose-cue pose-cue-left">${escapeHtml(leftPoseLabel)}</div>` : ""}
         ${rightPoseLabel ? `<div class="pose-cue pose-cue-right">${escapeHtml(rightPoseLabel)}</div>` : ""}
         ${notice}
+        ${vulnerabilityCue}
         ${mode === "investigation" && sceneTone ? `<div class="scene-atmosphere">${escapeHtml(sceneTone)}</div>` : ""}
         <div class="scene-title">${escapeHtml(title)}</div>
         ${mode === "investigation" ? renderInvestigationHotspots() : ""}
@@ -1854,6 +1860,23 @@
             <div>${escapeHtml(text)}</div>
           </div>
         `}
+      </div>
+    `;
+  }
+
+  function renderTrialVulnerabilityCue() {
+    const caseData = currentCase();
+    const progress = caseProgress(caseData.id);
+    const testimony = caseData.testimony[progress.testimonyIndex];
+    if (!testimony) return "";
+    const { statement, rawIndex } = currentStatementEntry(testimony, progress);
+    if (!statementReadyToPresent(statement, progress, progress.testimonyIndex, rawIndex)) return "";
+    const target = statement.answerProfile ? "人物档案" : "证物记录";
+    return `
+      <div class="vulnerability-cue" aria-live="polite">
+        <strong>破绽已现</strong>
+        <span>${escapeHtml(target)}能反驳当前句</span>
+        <small>打开记录，选准后再举证。</small>
       </div>
     `;
   }
@@ -1918,7 +1941,7 @@
             const solved = progress.solved.includes(key);
             const revealed = Boolean(statement.hiddenUntilPressed);
             const suspicious = statementHasAnswer(statement);
-            const ready = suspicious && pressed && !solved;
+            const ready = statementReadyToPresent(statement, progress, progress.testimonyIndex, rawIndex);
             const status = solved ? "已突破" : ready ? "可举证" : pressed ? "已追问" : revealed ? "新证词" : suspicious ? "有疑点" : "未追问";
             return `
               <button class="statement-card ${active ? "active" : ""} ${pressed ? "pressed" : ""} ${solved ? "solved" : ""} ${revealed ? "revealed" : ""} ${suspicious ? "suspicious" : ""} ${ready ? "ready-present" : ""}" type="button" data-jump-statement="${index}">
@@ -2476,9 +2499,10 @@
       0,
       Math.min(visibleStatements.length - 1, progress.statementIndex + delta)
     );
-    const { statement } = currentStatementEntry(testimony, progress);
-    setStage(statementHasAnswer(statement) ? "clash" : "witness", `证词第 ${progress.statementIndex + 1} 句`, {
-      left: statementHasAnswer(statement) ? "tense" : "testify",
+    const { statement, rawIndex } = currentStatementEntry(testimony, progress);
+    const ready = statementReadyToPresent(statement, progress, progress.testimonyIndex, rawIndex);
+    setStage(statementHasAnswer(statement) ? "clash" : "witness", ready ? "破绽已现" : `证词第 ${progress.statementIndex + 1} 句`, {
+      left: ready ? "shock" : statementHasAnswer(statement) ? "tense" : "testify",
       right: "observe",
     });
     setMessage(testimony.speaker, statement.text, "");
@@ -2493,9 +2517,10 @@
     const visibleStatements = visibleStatementEntries(testimony, progress);
     const nextIndex = Math.max(0, Math.min(visibleStatements.length - 1, Number(index) || 0));
     progress.statementIndex = nextIndex;
-    const { statement } = currentStatementEntry(testimony, progress);
-    setStage(statementHasAnswer(statement) ? "clash" : "witness", `证词第 ${nextIndex + 1} 句`, {
-      left: statementHasAnswer(statement) ? "tense" : "testify",
+    const { statement, rawIndex } = currentStatementEntry(testimony, progress);
+    const ready = statementReadyToPresent(statement, progress, progress.testimonyIndex, rawIndex);
+    setStage(statementHasAnswer(statement) ? "clash" : "witness", ready ? "破绽已现" : `证词第 ${nextIndex + 1} 句`, {
+      left: ready ? "shock" : statementHasAnswer(statement) ? "tense" : "testify",
       right: "observe",
     });
     setMessage(testimony.speaker, statement.text, "");
@@ -2524,10 +2549,10 @@
     const extra = statementHasAnswer(statement) ? " 这句证词已经动摇，现在可以考虑举证。" : "";
     const unlockText = unlocked ? ` 新线索已加入法庭记录：${unlocked}。` : "";
     const revealText = unlockedStatement ? ` 新证词浮出水面：${unlockedStatement}。` : "";
-    const focus = unlocked ? "record" : unlockedStatement ? "clash" : "defense";
-    const notice = unlocked ? "新线索写入法庭记录" : unlockedStatement ? "隐藏证词解锁" : "追问证词";
+    const focus = unlocked ? "record" : statementHasAnswer(statement) || unlockedStatement ? "clash" : "defense";
+    const notice = unlocked ? "新线索写入法庭记录" : unlockedStatement ? "隐藏证词解锁" : statementHasAnswer(statement) ? "破绽已现" : "追问证词";
     setStage(focus, notice, {
-      left: unlockedStatement ? "shock" : statementHasAnswer(statement) ? "tense" : "thinking",
+      left: unlockedStatement || statementHasAnswer(statement) ? "shock" : "thinking",
       right: unlocked ? "observe" : "thinking",
     });
     setMessage("追问", `${statement.press}${extra}${unlockText}${revealText}`, statementHasAnswer(statement) || unlocked || unlockedStatement ? "objection" : "");
@@ -2961,7 +2986,6 @@
     const visibleStatements = testimony ? visibleStatementEntries(testimony, progress) : [];
     const currentEntry = testimony ? currentStatementEntry(testimony, progress) : null;
     const statement = currentEntry?.statement || null;
-    const currentStatementKey = currentEntry ? statementKey(progress.testimonyIndex, currentEntry.rawIndex) : "";
     const record = caseRecord(caseData.id);
     const guide = currentGuideContext();
     const location = currentLocation(caseData);
@@ -3087,11 +3111,11 @@
           solved,
           hiddenReveal: Boolean(item.hiddenUntilPressed),
           suspicious,
-          readyToPresent: suspicious && pressed && !solved,
+          readyToPresent: statementReadyToPresent(item, progress, progress.testimonyIndex, rawIndex),
           text: item.text,
         };
       }),
-      readyToPresent: statement ? statementHasAnswer(statement) && progress.pressed.includes(currentStatementKey) && !progress.solved.includes(currentStatementKey) : false,
+      readyToPresent: currentEntry ? statementReadyToPresent(statement, progress, progress.testimonyIndex, currentEntry.rawIndex) : false,
       unlockedStatements: progress.unlockedStatements.length,
       pressedStatements: progress.pressed.length,
       message: state.message,

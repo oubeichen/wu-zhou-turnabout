@@ -2,6 +2,33 @@ Original prompt: 做一个仿照 《逆转裁判》 的完整游戏。始终检�
 
 # Progress
 
+## 2026-06-17 iteration 43 result
+
+Implemented:
+- Added a shared `statementReadyToPresent()` helper so statement cards, trial controls, test state, and stage cues use the same readiness rule.
+- Added an in-scene `破绽已现` cue after a suspicious testimony sentence has been pressed and is ready for evidence/profile presentation.
+- Changed the stage focus for pressed suspicious statements to keep the witness in a stronger `shock` pose instead of only changing right-side controls.
+- Raised trial portraits above the dialogue box on desktop so both sides remain visible during cross-examination.
+- Added mobile-specific trial staging: taller courtroom scene, smaller raised portraits, compact top-right vulnerability cue, and hidden duplicate scene labels/camera notices so portraits are not covered.
+- Added project-local npm metadata with `playwright` as a dev dependency plus `check:js`, `check:py`, and `qa:web-game` scripts.
+- Updated README local verification instructions to use the npm scripts and document the Playwright/Chromium requirement.
+
+Verified:
+- `npm run check:js`
+- `npm run check:py`
+- `git diff --check`
+- Public text scan on `game/`: old opaque evidence wording did not reappear.
+- `npm run qa:web-game` now runs successfully with project-local Playwright after installing Chromium; only the external skill script's module-type warning remains.
+- Browser 1440x810 clean first-case flow reached trial, pressed statement 2, and confirmed `readyToPresent=true`, `stageNotice=破绽已现`, both portraits above the dialogue box, vulnerability cue above the dialogue box, and no page overflow.
+- Browser 390x844 clean first-case flow confirmed `readyToPresent=true`, no horizontal overflow, duplicate mobile trial scene labels hidden, both portraits above the dialogue box, and vulnerability cue above the dialogue box.
+- Screenshots inspected: `iteration43-vulnerability-cue-desktop-final.png` and `iteration43-vulnerability-cue-mobile-final2.png`.
+
+Remaining Ace Attorney gap list:
+- Courtroom now reacts visually when a contradiction is ready, but the actual objection still lacks a dedicated timing pause and player-triggered dramatic cut-in.
+- Portrait staging is more readable, but the cast still shares one generated pose sheet rather than bespoke animation strips per character.
+- Investigation hotspots are still generic per-location slots rather than hand-authored positions for each scene.
+- Court Record thumbnails still use archetype art rather than bespoke art for every individual evidence card.
+
 ## 2026-06-17 iteration 42 result
 
 Implemented:
