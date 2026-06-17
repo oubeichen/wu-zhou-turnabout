@@ -686,14 +686,26 @@
     state.investigationBeat = null;
   }
 
-  function setInvestigationBeat(kind, speaker, text, result, evidenceNames = []) {
+  function setInvestigationBeat(kind, speaker, text, result, evidenceNames = [], followUps = []) {
+    const lines = [{ speaker: speaker || "调查", text: text || "" }].concat(followUps.filter((line) => line?.text));
     state.investigationBeat = {
       kind,
       speaker: speaker || "调查",
       text: text || "",
       result: result || "",
       evidenceNames,
+      lines,
+      lineIndex: 0,
     };
+  }
+
+  function advanceInvestigationBeat() {
+    const beat = state.investigationBeat;
+    if (!beat?.lines?.length) return;
+    beat.lineIndex = Math.min(beat.lines.length - 1, Number(beat.lineIndex || 0) + 1);
+    const line = beat.lines[beat.lineIndex] || beat.lines[0];
+    setMessage(line.speaker, line.text, "");
+    renderInvestigation();
   }
 
   function setImpactCue(kind, title, record, subtitle) {
@@ -1799,14 +1811,20 @@
   function renderInvestigationBeat() {
     const beat = state.investigationBeat;
     if (!beat) return "";
+    const lines = beat.lines?.length ? beat.lines : [{ speaker: beat.speaker, text: beat.text }];
+    const lineIndex = Math.max(0, Math.min(lines.length - 1, Number(beat.lineIndex || 0)));
+    const line = lines[lineIndex] || lines[0];
+    const hasNext = lineIndex < lines.length - 1;
     const evidenceLine = beat.evidenceNames?.length ? `<small>新证物：${escapeHtml(beat.evidenceNames.join("、"))}</small>` : "";
     return `
       <div class="investigation-beat">
         <span>${escapeHtml(beat.kind)}</span>
-        <strong>${escapeHtml(beat.speaker)}</strong>
-        <p>${escapeHtml(beat.text)}</p>
+        <strong>${escapeHtml(line.speaker)}</strong>
+        <b>${lineIndex + 1}/${lines.length}</b>
+        <p>${escapeHtml(line.text)}</p>
         <em>${escapeHtml(beat.result)}</em>
         ${evidenceLine}
+        ${hasNext ? `<button class="beat-next-button" type="button" data-advance-investigation-beat>继续</button>` : ""}
       </div>
     `;
   }
@@ -2307,7 +2325,19 @@
     const gained = collectEvidenceFromLocation(caseData, location, index);
     const suffix = gained.length ? ` 取得证物：${gained.join("、")}。` : " 没有新的证物。";
     setMessage("调查", `${spot.text}${suffix}`, gained.length ? "objection" : "");
-    setInvestigationBeat("查看", "调查", spot.text, gained.length ? "证物取得" : "没有新的证物", gained);
+    setInvestigationBeat(
+      "查看",
+      "调查",
+      spot.text,
+      gained.length ? "证物取得" : "没有新的证物",
+      gained,
+      [
+        {
+          speaker: gained.length ? "辩方" : "调查",
+          text: gained.length ? `这件东西先收进法庭记录。等证词说到这里，再把它拿出来。` : "这里已经查过一遍。与其反复翻找，不如换个可疑处继续看。",
+        },
+      ]
+    );
     save();
     renderInvestigation();
   }
@@ -2337,7 +2367,12 @@
     const key = `${inv.locationIndex}:${index}`;
     if (!inv.talked.includes(key)) inv.talked.push(key);
     setMessage(topic.speaker, topic.text, "");
-    setInvestigationBeat("交谈", topic.speaker, topic.text, "证言已记录");
+    setInvestigationBeat("交谈", topic.speaker, topic.text, "证言已记录", [], [
+      {
+        speaker: "辩方",
+        text: "这句话先记下。真正的破绽，往往要和现场证物摆在一起才看得出来。",
+      },
+    ]);
     save();
     renderInvestigation();
   }
@@ -2349,7 +2384,12 @@
     if (!inv.presented.includes(evidenceId)) inv.presented.push(evidenceId);
     const reaction = `这份${item.type}能帮助你在庭审中说明：${item.use}`;
     setMessage(caseData.witness, reaction, "");
-    setInvestigationBeat("出示", caseData.witness, reaction, "出示反应");
+    setInvestigationBeat("出示", caseData.witness, reaction, "出示反应", [], [
+      {
+        speaker: "辩方",
+        text: "庭审时别急着乱拍证物。先听证词哪里说死了，再用这份记录顶回去。",
+      },
+    ]);
     save();
     renderInvestigation();
   }
@@ -2679,6 +2719,7 @@
     if (target.dataset.mode) setMode(target.dataset.mode);
     if (target.dataset.openIntro !== undefined) renderCaseIntro();
     if (target.dataset.command) setCommand(target.dataset.command);
+    if (target.dataset.advanceInvestigationBeat !== undefined) advanceInvestigationBeat();
     if (target.dataset.moveLocation) moveLocation(Number(target.dataset.moveLocation));
     if (target.dataset.examineSpot) examineSpot(Number(target.dataset.examineSpot));
     if (target.dataset.talkTopic) talkTopic(Number(target.dataset.talkTopic));
@@ -2871,6 +2912,9 @@
       investigationBeatKind: state.screen === "investigation" ? state.investigationBeat?.kind || "" : "",
       investigationBeatSpeaker: state.screen === "investigation" ? state.investigationBeat?.speaker || "" : "",
       investigationBeatResult: state.screen === "investigation" ? state.investigationBeat?.result || "" : "",
+      investigationBeatStep: state.screen === "investigation" && state.investigationBeat?.lines?.length ? `${Number(state.investigationBeat.lineIndex || 0) + 1}/${state.investigationBeat.lines.length}` : "",
+      investigationBeatLineSpeaker: state.screen === "investigation" && state.investigationBeat?.lines?.length ? state.investigationBeat.lines[Number(state.investigationBeat.lineIndex || 0)]?.speaker || "" : "",
+      investigationBeatLine: state.screen === "investigation" && state.investigationBeat?.lines?.length ? state.investigationBeat.lines[Number(state.investigationBeat.lineIndex || 0)]?.text || "" : "",
       guideOpen: state.guideOpen,
       guideTitle: guide.title,
       guideSeen: Boolean(state.guideSeen[guide.id]),

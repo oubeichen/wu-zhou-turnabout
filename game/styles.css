@@ -1329,7 +1329,8 @@ button:not(:disabled):hover {
 }
 
 .investigation-beat span,
-.investigation-beat em {
+.investigation-beat em,
+.investigation-beat b {
   padding: 4px 8px;
   border-radius: 999px;
   font-size: 13px;
@@ -1345,6 +1346,13 @@ button:not(:disabled):hover {
 .investigation-beat strong {
   min-width: 0;
   font-size: 16px;
+}
+
+.investigation-beat b {
+  justify-self: end;
+  color: #fff8e7;
+  background: rgba(255, 248, 231, 0.14);
+  border: 1px solid rgba(255, 248, 231, 0.22);
 }
 
 .investigation-beat p,
@@ -1372,6 +1380,19 @@ button:not(:disabled):hover {
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
+}
+
+.beat-next-button {
+  grid-column: 1 / -1;
+  justify-self: end;
+  min-height: 30px;
+  padding: 4px 14px;
+  color: #231b16;
+  background: #fff1bf;
+  border: 1px solid rgba(52, 44, 37, 0.5);
+  border-radius: 999px;
+  font-weight: 900;
+  cursor: pointer;
 }
 
 .camera-notice {
@@ -3461,6 +3482,14 @@ button:not(:disabled):hover {
   .investigation-beat em {
     grid-column: 1 / -1;
     width: fit-content;
+  }
+
+  .investigation-beat b {
+    justify-self: start;
+  }
+
+  .beat-next-button {
+    justify-self: stretch;
   }
 
   .subview-header {
