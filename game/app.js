@@ -2167,7 +2167,7 @@
         </div>
         ${
           selectedProfile
-            ? `<div class="evidence-detail profile-detail"><strong>${escapeHtml(selectedProfile.name)}</strong><span>${escapeHtml(selectedProfile.role)}</span><p>${escapeHtml(selectedProfile.note)}</p><small>庭审中选中人物后也可以“举证”。</small></div>`
+            ? `<div class="evidence-detail profile-detail"><strong>${escapeHtml(selectedProfile.name)}</strong><span>${escapeHtml(selectedProfile.role)}</span><p>${escapeHtml(selectedProfile.note)}</p><small>${state.screen === "trial" ? "人物档案已拿在手上；带回庭审后再正式举证。" : "庭审中选中人物后也可以“举证”。"}</small>${renderRecordReturnAction()}</div>`
             : `<p class="hint-text">选择人物查看档案。庭审中人物档案也可能成为矛盾证据。</p>`
         }
       `;
@@ -2230,12 +2230,23 @@
           <span class="evidence-detail-copy">
             <strong>${escapeHtml(item.name)}</strong>
             <span>${escapeHtml(item.type)}｜${escapeHtml(item.source)}</span>
-            <small>${state.screen === "trial" ? "证物已经拿在手上；回到庭审主区点“举证”才会提交。" : "已收进法庭记录。开庭后可打开记录，先选好，再举证。"}</small>
+            <small>${state.screen === "trial" ? "证物已经拿在手上；带回庭审后点“举证”才会提交。" : "已收进法庭记录。开庭后可打开记录，先选好，再举证。"}</small>
           </span>
         </div>
         <p>${escapeHtml(item.detail)}</p>
         ${item.counterRisk ? `<div class="risk-note"><strong>慎用提示</strong><span>${escapeHtml(item.counterRisk)}</span></div>` : ""}
         <small>${escapeHtml(item.use)}</small>
+        ${renderRecordReturnAction()}
+      </div>
+    `;
+  }
+
+  function renderRecordReturnAction() {
+    if (state.screen !== "trial") return "";
+    return `
+      <div class="record-return-action">
+        <span>确认选择后回到庭审主操作区，再决定是否正式举证。</span>
+        <button class="primary-button" type="button" data-return-to-trial>带回庭审</button>
       </div>
     `;
   }
@@ -2931,6 +2942,11 @@
       state.recordTab = target.dataset.recordTab;
       rerender();
     }
+    if (target.dataset.returnToTrial !== undefined) {
+      state.recordOpen = false;
+      setMessage("法庭记录", "记录已合上。现在可以在主操作区点击“举证”正式提交。", "");
+      rerender();
+    }
     if (target.dataset.prevStatement !== undefined) moveStatement(-1);
     if (target.dataset.nextStatement !== undefined) moveStatement(1);
     if (target.dataset.press !== undefined) pressStatement();
@@ -3113,6 +3129,9 @@
       selectedEvidenceArt: selectedEvidencePosition ? `${selectedEvidencePosition.row + 1}-${selectedEvidencePosition.col + 1}` : "",
       selectedEvidenceRisk: selectedEvidence?.counterRisk || "",
       selectedProfile: state.selectedProfileName,
+      selectedRecordLabel: selectedRecordLabel(caseData),
+      recordReturnAvailable: state.screen === "trial" && state.recordOpen && Boolean(selectedRecordLabel(caseData)),
+      presentEnabled: state.screen === "trial" && Boolean(selectedRecordLabel(caseData)),
       investigationBeatKind: state.screen === "investigation" ? state.investigationBeat?.kind || "" : "",
       investigationBeatSpeaker: state.screen === "investigation" ? state.investigationBeat?.speaker || "" : "",
       investigationBeatResult: state.screen === "investigation" ? state.investigationBeat?.result || "" : "",

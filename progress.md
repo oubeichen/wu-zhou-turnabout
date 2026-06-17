@@ -1216,3 +1216,29 @@ Remaining Ace Attorney gap list:
 - Courtroom acting now keeps both portraits visible, but character animation remains limited to a shared multi-pose sheet rather than bespoke per-character animation strips.
 - Court Record selection still requires closing the drawer before pressing the main `举证` button in the tested player path; a future pass should make that return-to-main-action step feel more automatic without reintroducing auto-submit.
 - Audio has local cue samples and looped music tracks, but the tracks are procedurally generated placeholders rather than fully authored soundtrack compositions.
+
+## 2026-06-17 iteration 45 result
+
+Implemented:
+- Added a clear Court Record drawer CTA after selecting a trial evidence/profile: `带回庭审`.
+- Kept the Ace Attorney-style two-step flow intact: selecting a record does not auto-submit; only the main trial `举证` button formally presents it.
+- Changed trial record detail copy from a vague “回到主区” hint into a concrete sequence: select record -> `带回庭审` -> main `举证`.
+- Added `recordReturnAvailable`, `selectedRecordLabel`, and `presentEnabled` to `window.render_game_to_text` so browser QA can assert the drawer-to-main-action chain directly.
+- Styled the drawer return action as a prominent decision block without making it more important than the final `举证` button.
+
+Verified:
+- `npm run check:js`
+- `npm run check:py`
+- `git diff --check`
+- Public old-template scan on `game/`: no matches for the previous opaque evidence phrases.
+- `npm run qa:web-game` passed; inspected `output/web-game/shot-0.png`.
+- Desktop 1440x810 Playwright flow collected all first-case evidence, reached ready-to-present statement 2, opened Court Record, selected `摇篮旁的值夜签`, confirmed `recordReturnAvailable=true`, clicked `带回庭审`, confirmed drawer/scrim closed and main `举证` enabled, then clicked `举证` into the objection reveal.
+- Desktop screenshots inspected: `iteration45-desktop-record-return-cta.png` and `iteration45-desktop-returned-to-trial.png`.
+- Mobile 390x844 Playwright flow confirmed the same selected-record return chain with no horizontal overflow.
+- Mobile screenshots inspected: `iteration45-mobile-record-return-cta.png` and `iteration45-mobile-returned-to-trial.png`.
+
+Remaining Ace Attorney gap list:
+- Court Record selection now has an explicit return-to-court confirmation, but there is still no full evidence-detail modal with rotate/inspect-style interactions.
+- Correct objections have a deliberate reveal beat, but the impact/reveal animation still uses CSS compositing rather than fully authored animated cut-ins.
+- Courtroom acting keeps both portraits visible, but character animation remains limited to a shared multi-pose sheet rather than bespoke per-character animation strips.
+- Audio has local cue samples and looped music tracks, but the tracks are procedurally generated placeholders rather than fully authored soundtrack compositions.

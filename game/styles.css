@@ -2564,6 +2564,28 @@ button:not(:disabled):hover {
   display: block;
 }
 
+.record-return-action {
+  display: grid;
+  gap: 8px;
+  margin-top: 6px;
+  padding: 10px;
+  color: #231b16;
+  background: rgba(255, 241, 191, 0.72);
+  border: 2px solid rgba(179, 123, 36, 0.5);
+  border-radius: 8px;
+}
+
+.record-return-action span {
+  color: #5c1d18;
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1.45;
+}
+
+.record-return-action .primary-button {
+  min-height: 38px;
+}
+
 .timeline-strip {
   display: flex;
   flex-wrap: wrap;
