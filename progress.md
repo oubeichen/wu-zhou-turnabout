@@ -1887,3 +1887,29 @@ Remaining Ace Attorney gap list:
 - Browser visual verification needs to be rerun when local browser execution is available again.
 - Investigation dialogue, evidence descriptions, and trial testimony still need a broader character-voice rewrite.
 - Evidence icons are stronger bitmap props, but selected high-value items still lack curated per-prop Image API source exports.
+
+## 2026-06-18 iteration 69 result
+
+Implemented:
+- Upgraded saved `对照札记` from courtroom hint text into an actual post-objection pursuit branch.
+- Correctly presenting an evidence item with a saved deduction now creates `pendingDeductionFollowUp` instead of immediately falling through to the normal testimony result.
+- Added a full-screen `追击证词` beat where the player must click `追击证人` or press Enter/Space to push the witness on the saved deduction.
+- After the pursuit resolves, the original testimony progression resumes through the shared `finishCorrectPresent()` path, preserving existing solved-statement, testimony-interlude, verdict, recovery, and turnabout behavior.
+- Added `deductionPursuits` to trial progress and result stats as `札记追击`, so the route is reflected in the case clear summary.
+- Added QA fields for `pendingDeductionFollowUp`, pending deduction record/text/target/chase line, and pursuit count.
+- Added desktop/mobile styling for the pursuit scene so the two reasoning blocks collapse to one column on narrow screens.
+
+Verified:
+- `npm run check:js`
+- `PYTHONPYCACHEPREFIX="/Users/oubeichen/Projects/wuzetian2/.pycache" npm run check:py`
+- `git diff --check`
+- Source inspection confirmed reset/retry initializes the new fields, keyboard and click events both continue the pursuit, and `render_game_to_text` exposes the new state.
+
+Blocked verification:
+- `npm run qa:web-game` was attempted after the final change and still fails before page load because Chromium cannot register its Mach port rendezvous in this environment (`Permission denied (1100)`). No new browser screenshot was captured.
+
+Remaining Ace Attorney gap list:
+- Saved deductions now create a real pursuit branch, but the branch is still generic; future iterations should author case-specific pursuit lines and optionally unlock unique testimony/evidence.
+- Browser visual verification needs to be rerun when local browser execution is available again.
+- Investigation dialogue, evidence descriptions, and trial testimony still need a broader character-voice rewrite.
+- Evidence icons are stronger bitmap props, but selected high-value items still lack curated per-prop Image API source exports.

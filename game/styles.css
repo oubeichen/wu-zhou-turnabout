@@ -1136,6 +1136,92 @@ button:not(:disabled):hover {
   line-height: 1.7;
 }
 
+.deduction-followup {
+  min-height: min(720px, calc(100vh - 96px));
+  display: grid;
+  align-items: stretch;
+}
+
+.deduction-followup-stage {
+  position: relative;
+  display: grid;
+  align-content: end;
+  gap: 14px;
+  overflow: hidden;
+  padding: clamp(22px, 4vw, 44px);
+  color: #fff8e7;
+  background:
+    linear-gradient(120deg, rgba(31, 28, 25, 0.25), rgba(31, 28, 25, 0.86)),
+    url("./assets/courtroom-bg-v1.png") center / cover;
+  border: 2px solid var(--line);
+  border-radius: 8px;
+  box-shadow: 0 16px 44px rgba(31, 28, 25, 0.34);
+}
+
+.deduction-followup-stage::after {
+  content: "追";
+  position: absolute;
+  right: 24px;
+  top: 14px;
+  color: rgba(255, 248, 231, 0.15);
+  font-size: clamp(96px, 18vw, 190px);
+  font-weight: 900;
+  line-height: 1;
+}
+
+.deduction-followup-stage > * {
+  position: relative;
+  z-index: 1;
+}
+
+.deduction-followup-stage h2,
+.deduction-followup-stage p {
+  max-width: 920px;
+  margin: 0;
+}
+
+.deduction-followup-stage h2 {
+  font-size: clamp(28px, 5vw, 54px);
+}
+
+.deduction-followup-stage p {
+  color: #f1dfba;
+  font-size: clamp(16px, 2vw, 22px);
+  line-height: 1.55;
+}
+
+.deduction-followup-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  max-width: 980px;
+}
+
+.deduction-followup-grid div {
+  display: grid;
+  gap: 8px;
+  padding: 12px 14px;
+  color: var(--ink);
+  background: rgba(255, 241, 191, 0.92);
+  border: 1px solid rgba(255, 248, 231, 0.38);
+  border-radius: 8px;
+}
+
+.deduction-followup-grid strong {
+  color: #5c1d18;
+}
+
+.deduction-followup-grid span {
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.deduction-followup-actions {
+  display: flex;
+  justify-content: flex-end;
+  max-width: 980px;
+}
+
 .interlude-flow {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -5565,6 +5651,27 @@ button:not(:disabled):hover {
 
   .interlude-flow {
     grid-template-columns: 1fr;
+  }
+
+  .deduction-followup {
+    min-height: calc(100vh - 86px);
+  }
+
+  .deduction-followup-stage {
+    align-content: end;
+    min-height: 520px;
+  }
+
+  .deduction-followup-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .deduction-followup-actions {
+    justify-content: stretch;
+  }
+
+  .deduction-followup-actions .primary-button {
+    width: 100%;
   }
 
   .coach-card {

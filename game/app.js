@@ -555,6 +555,8 @@
         recoveries: 0,
         turnabouts: 0,
         lastTurnabout: "",
+        deductionPursuits: 0,
+        pendingDeductionFollowUp: null,
         mistakes: 0,
         grade: "",
       };
@@ -579,6 +581,12 @@
     }
     if (typeof state.trial[caseId].lastTurnabout !== "string") {
       state.trial[caseId].lastTurnabout = "";
+    }
+    if (!Number.isFinite(state.trial[caseId].deductionPursuits)) {
+      state.trial[caseId].deductionPursuits = 0;
+    }
+    if (state.trial[caseId].pendingDeductionFollowUp && typeof state.trial[caseId].pendingDeductionFollowUp !== "object") {
+      state.trial[caseId].pendingDeductionFollowUp = null;
     }
     if (typeof state.trial[caseId].failed !== "boolean") {
       state.trial[caseId].failed = false;
@@ -2117,6 +2125,10 @@
       renderTestimonyInterlude();
       return;
     }
+    if (progress.pendingDeductionFollowUp) {
+      renderDeductionFollowUp();
+      return;
+    }
     const testimony = caseData.testimony[progress.testimonyIndex];
     const { statement, rawIndex } = currentStatementEntry(testimony, progress);
     const selectedLabel = selectedRecordLabel(caseData);
@@ -2179,6 +2191,45 @@
         <small>这条札记来自已对照证物。回到证物记录，找带有“已对照”的记录后再正式举证。</small>
       </div>
     `;
+  }
+
+  function renderDeductionFollowUp() {
+    const caseData = currentCase();
+    const progress = caseProgress(caseData.id);
+    const followUp = progress.pendingDeductionFollowUp;
+    if (!followUp) {
+      renderTrial();
+      return;
+    }
+    const testimony = caseData.testimony[Number(followUp.testimonyIndex) || 0];
+    const statement = testimony?.statements?.[Number(followUp.rawIndex) || 0];
+    state.screen = "trial";
+    renderStatus();
+    app.innerHTML = `
+      <section class="deduction-followup">
+        <div class="deduction-followup-stage">
+          <span class="hero-kicker">追击证词</span>
+          <h2>对照札记打开了新缺口</h2>
+          <p>${escapeHtml(statement?.text || followUp.target || "证人的说法已经动摇。")}</p>
+          <div class="deduction-followup-grid">
+            <div>
+              <strong>${escapeHtml(followUp.record || "关键证物")}</strong>
+              <span>${escapeHtml(followUp.deductionText || "庭前对照已经指出证物之间能互相咬合。")}</span>
+            </div>
+            <div>
+              <strong>证人露出的破绽</strong>
+              <span>${escapeHtml(followUp.chaseLine || "既然证物之间已经对上，证人不能再把它说成孤立巧合。")}</span>
+            </div>
+          </div>
+          <div class="deduction-followup-actions">
+            <button class="primary-button" type="button" data-continue-deduction-followup>追击证人</button>
+          </div>
+        </div>
+      </section>
+      ${renderCue()}
+      ${renderSettings()}
+    `;
+    syncAudioForScreen();
   }
 
   function queueMobileTrialStageFocus() {
@@ -2442,6 +2493,7 @@
           <p>${escapeHtml(caseData.verdict)}</p>
           <div class="result-stats">
             <div><strong>${progress.mistakes}</strong><span>本次失误</span></div>
+            <div><strong>${progress.deductionPursuits || 0}</strong><span>札记追击</span></div>
             <div><strong>${record.bestMistakes ?? progress.mistakes}</strong><span>最佳失误</span></div>
             <div><strong>${record.clears || 1}</strong><span>结案次数</span></div>
           </div>
@@ -3905,6 +3957,7 @@
   function applyCorrectPresent(caseData, progress, testimony, statement, key, presentedLabel) {
     const rescuedFromPressure = !statement.optionalRecovery && pressureLevel(progress) !== "stable";
     const turnabout = rescuedFromPressure ? turnaboutBeat(caseData) : null;
+    const deduction = statement.answerEvidence ? deductionForEvidence(caseData, statement.answerEvidence) : null;
     progress.solved.push(key);
     setStage("clash", turnabout ? turnabout.title : statement.answerProfile ? "人物档案击中矛盾" : "证物击中矛盾", { left: "shock", right: "stagger" });
     setImpactCue(
@@ -3924,11 +3977,39 @@
       progress.turnabouts += 1;
       progress.lastTurnabout = turnabout.title;
     }
-    const turnaboutText = turnabout
-      ? ` ${turnabout.title}：${turnabout.body}${turnabout.opponentLine ? ` ${turnabout.opponentLine}` : ""}`
-      : "";
+    if (deduction) {
+      progress.pendingDeductionFollowUp = {
+        testimonyIndex: progress.testimonyIndex,
+        rawIndex: Number(key.split(":")[1]) || 0,
+        key,
+        record: presentedLabel,
+        target: statement.text,
+        deductionText: deduction.text,
+        deductionTarget: deduction.targetName || "",
+        objectionText: statement.objection || "",
+        turnaboutText: turnabout
+          ? ` ${turnabout.title}：${turnabout.body}${turnabout.opponentLine ? ` ${turnabout.opponentLine}` : ""}`
+          : "",
+        optionalRecovery: Boolean(statement.optionalRecovery),
+        recoveryCredibility: Number(statement.recoveryCredibility) || 0,
+        chaseLine: deduction.targetName
+          ? `札记已经把它和“${deduction.targetName}”连在一起。证人必须解释这条连接为什么会存在。`
+          : "札记已经把证物之间的关系钉住。证人必须解释它为什么和证词相冲突。",
+      };
+      progress.deductionPursuits += 1;
+      setStage("clash", "对照追击", { left: "confident", right: "stagger" });
+      setMessage("辩方", "这条札记还可以继续追。不能只让证词倒下，要让证人解释证物之间为什么能对上。", "objection");
+      playCue("counter");
+      save();
+      renderDeductionFollowUp();
+      return;
+    }
+    finishCorrectPresent(caseData, progress, testimony, statement, key, statement.objection || "", turnabout ? ` ${turnabout.title}：${turnabout.body}${turnabout.opponentLine ? ` ${turnabout.opponentLine}` : ""}` : "");
+  }
+
+  function finishCorrectPresent(caseData, progress, testimony, statement, key, objectionText, turnaboutText = "") {
     if (testimonyFullySolved(testimony, progress.testimonyIndex, progress)) {
-      advanceTestimony(caseData, progress, `${statement.objection}${turnaboutText}`);
+      advanceTestimony(caseData, progress, `${objectionText || statement.objection}${turnaboutText}`);
     } else {
       state.selectedEvidenceId = "";
       state.selectedProfileName = "";
@@ -3936,11 +4017,35 @@
       if (statement.optionalRecovery) {
         progress.statementIndex = Math.max(0, progress.statementIndex - 1);
       }
-      setMessage("辩方", `${statement.objection}${recoveryText}${turnaboutText} 但这段证词还有未解释的矛盾。`, "objection");
+      setMessage("辩方", `${objectionText || statement.objection}${recoveryText}${turnaboutText} 但这段证词还有未解释的矛盾。`, "objection");
       playCue("objection");
       save();
       renderTrial();
     }
+  }
+
+  function continueDeductionFollowUp() {
+    const caseData = currentCase();
+    const progress = caseProgress(caseData.id);
+    const followUp = progress.pendingDeductionFollowUp;
+    if (!followUp) {
+      renderTrial();
+      return;
+    }
+    const testimony = caseData.testimony[Number(followUp.testimonyIndex) || progress.testimonyIndex];
+    const statement = testimony?.statements?.[Number(followUp.rawIndex) || 0];
+    const key = followUp.key || statementKey(Number(followUp.testimonyIndex) || progress.testimonyIndex, Number(followUp.rawIndex) || 0);
+    progress.pendingDeductionFollowUp = null;
+    progress.lastObjection = `${followUp.objectionText || statement?.objection || ""} ${followUp.chaseLine || ""}`.trim();
+    setStage("clash", "追击成立", { left: "confident", right: "stagger" });
+    setMessage("辩方", `${followUp.chaseLine || "对照札记已经把证词推到新的缺口上。"} ${followUp.objectionText || statement?.objection || ""}`.trim(), "objection");
+    playCue("objection");
+    save();
+    if (!testimony || !statement) {
+      renderTrial();
+      return;
+    }
+    finishCorrectPresent(caseData, progress, testimony, statement, key, followUp.objectionText || statement.objection || "", followUp.turnaboutText || "");
   }
 
   function presentEvidence() {
@@ -4084,6 +4189,8 @@
       recoveries: 0,
       turnabouts: 0,
       lastTurnabout: "",
+      deductionPursuits: 0,
+      pendingDeductionFollowUp: null,
       mistakes: 0,
       grade: "",
     };
@@ -4273,6 +4380,7 @@
     if (target.dataset.present !== undefined) presentEvidence();
     if (target.dataset.advanceReveal !== undefined) advanceObjectionReveal();
     if (target.dataset.revealObjection !== undefined) resolveObjectionReveal();
+    if (target.dataset.continueDeductionFollowup !== undefined) continueDeductionFollowUp();
     if (target.dataset.continueTestimony !== undefined) continueTestimony();
     if (target.dataset.retryTrial !== undefined) retryTrial();
     if (target.dataset.home !== undefined) renderHome();
@@ -4437,6 +4545,11 @@
     if (state.screen === "trial-interlude" && (event.key === "Enter" || event.key === " ")) {
       event.preventDefault();
       continueTestimony();
+      return;
+    }
+    if (state.screen === "trial" && caseProgress(currentCase().id).pendingDeductionFollowUp && (event.key === "Enter" || event.key === " ")) {
+      event.preventDefault();
+      continueDeductionFollowUp();
       return;
     }
     if (state.screen !== "trial") return;
@@ -4605,6 +4718,12 @@
       pressureOpponentLine: pressureBeat(caseData, pressureLevel(progress)).opponentLine || "",
       turnabouts: progress.turnabouts || 0,
       lastTurnabout: progress.lastTurnabout || "",
+      deductionPursuits: progress.deductionPursuits || 0,
+      pendingDeductionFollowUp: Boolean(progress.pendingDeductionFollowUp),
+      pendingDeductionRecord: progress.pendingDeductionFollowUp?.record || "",
+      pendingDeductionText: progress.pendingDeductionFollowUp?.deductionText || "",
+      pendingDeductionTarget: progress.pendingDeductionFollowUp?.deductionTarget || "",
+      pendingDeductionChaseLine: progress.pendingDeductionFollowUp?.chaseLine || "",
       turnaboutTitle: turnaboutBeat(caseData).title,
       turnaboutBody: turnaboutBeat(caseData).body,
       turnaboutOpponentLine: turnaboutBeat(caseData).opponentLine || "",
