@@ -52,15 +52,8 @@ def font(size: int, bold: bool = False) -> ImageFont.FreeTypeFont | ImageFont.Im
     return ImageFont.load_default()
 
 
-FONT_TITLE = font(17, True)
 FONT_SMALL = font(13)
 FONT_MARK = font(24, True)
-FONT_TINY = font(10, True)
-
-
-def short_text(text: str, limit: int = 7) -> str:
-    cleaned = re.sub(r"\s+", "", text or "")
-    return cleaned[:limit]
 
 
 def color_mix(a: str, b: str, ratio: float) -> tuple[int, int, int]:
@@ -122,10 +115,14 @@ def visual_kind(item: dict) -> str:
     name = item.get("name", "")
     if "收益图" in name or "图" in name:
         return "map"
+    if "簪" in name or "钗" in name:
+        return "hairpin"
     if "铜匦" in name:
         return "bronze_box"
     if "瓮" in name:
         return "jar"
+    if "通行" in name or "门籍" in name or "门禁" in name:
+        return "gate_pass"
     if "签" in name or "牌" in name:
         return "tally"
     if "名册" in name or "账册" in name or "赏赐簿" in name or "手册" in name:
@@ -142,6 +139,10 @@ def visual_kind(item: dict) -> str:
         return "note"
     if "卷宗" in name:
         return "chapter"
+    if "墨" in name or "笔" in name:
+        return "inkstone"
+    if "布" in name or "帛" in name:
+        return "cloth"
     return "file"
 
 
@@ -297,11 +298,61 @@ def draw_jar(draw: ImageDraw.ImageDraw, center: tuple[int, int], scale: float, a
         draw.arc((cx + 30 + i * 8, cy - 50 - i * 5, cx + 66 + i * 8, cy + 4 + i * 2), 95, 168, fill=(255, 206, 126, 90), width=2)
 
 
+def draw_hairpin(draw: ImageDraw.ImageDraw, center: tuple[int, int], scale: float, accent: str) -> None:
+    cx, cy = center
+    draw_soft_shadow(draw, (cx - 60, cy - 42, cx + 60, cy + 50), 14)
+    draw.line((cx - 48, cy + 30, cx + 34, cy - 34), fill="#f1d889", width=int(8 * scale))
+    draw.line((cx - 40, cy + 39, cx + 42, cy - 24), fill="#9d6d2e", width=int(3 * scale))
+    draw.ellipse((cx + 20, cy - 50, cx + 58, cy - 12), fill=accent, outline="#fff1bf", width=3)
+    draw.ellipse((cx + 30, cy - 40, cx + 48, cy - 22), fill="#fff1bf", outline="#7d2b23", width=2)
+    ribbon = [(cx - 18, cy - 2), (cx - 52, cy + 3), (cx - 28, cy + 20), (cx - 48, cy + 41), (cx - 8, cy + 19)]
+    draw.polygon(ribbon, fill="#7d2b23", outline="#fff1bf")
+    draw.line((cx - 12, cy + 4, cx + 18, cy + 30), fill="#d9b45c", width=3)
+
+
+def draw_gate_pass(draw: ImageDraw.ImageDraw, center: tuple[int, int], scale: float, accent: str) -> None:
+    cx, cy = center
+    tablet = (cx - 42, cy - 58, cx + 42, cy + 58)
+    draw_soft_shadow(draw, tablet, 16)
+    draw.rounded_rectangle(tablet, radius=10, fill="#6d4427", outline="#fff1bf", width=3)
+    draw.ellipse((cx - 11, cy - 47, cx + 11, cy - 25), fill="#1f1714", outline=accent, width=3)
+    draw.arc((cx - 22, cy - 54, cx + 22, cy - 20), 200, 340, fill="#d9b45c", width=3)
+    for y in range(cy - 10, cy + 42, 18):
+        draw.line((cx - 24, y, cx + 24, y), fill="#f4dfaf", width=3)
+    draw_letter(draw, (cx + 42, cy + 25), 0.34, accent)
+
+
+def draw_inkstone(draw: ImageDraw.ImageDraw, center: tuple[int, int], scale: float, accent: str) -> None:
+    cx, cy = center
+    draw_soft_shadow(draw, (cx - 58, cy - 36, cx + 58, cy + 46), 14)
+    draw.rounded_rectangle((cx - 54, cy - 24, cx + 54, cy + 42), radius=18, fill="#211c1b", outline=accent, width=4)
+    draw.ellipse((cx - 30, cy - 11, cx + 20, cy + 27), fill="#312726", outline="#675146", width=2)
+    draw.line((cx - 44, cy + 42, cx + 50, cy - 54), fill="#6b3a1f", width=8)
+    draw.line((cx - 37, cy + 35, cx + 56, cy - 62), fill="#f0d083", width=3)
+    draw.polygon([(cx + 48, cy - 56), (cx + 66, cy - 72), (cx + 58, cy - 45)], fill="#201715", outline="#fff1bf")
+    for dx in (-20, -6, 8):
+        draw.ellipse((cx + dx, cy + 2, cx + dx + 7, cy + 9), fill=(15, 12, 11, 160))
+
+
+def draw_cloth(draw: ImageDraw.ImageDraw, center: tuple[int, int], scale: float, accent: str) -> None:
+    cx, cy = center
+    draw_soft_shadow(draw, (cx - 57, cy - 44, cx + 58, cy + 48), 14)
+    cloth = [(cx - 54, cy - 22), (cx - 18, cy - 44), (cx + 55, cy - 30), (cx + 40, cy + 36), (cx - 32, cy + 48), (cx - 58, cy + 12)]
+    draw.polygon(cloth, fill="#e8dfcb", outline=accent)
+    for offset in (-30, -10, 10, 30):
+        draw.line((cx + offset, cy - 31, cx + offset - 18, cy + 38), fill=(96, 74, 54, 90), width=2)
+    draw.line((cx - 46, cy - 8, cx + 40, cy + 22), fill="#7d2b23", width=5)
+    draw.line((cx - 28, cy + 19, cx + 28, cy - 17), fill="#9d2f25", width=3)
+    draw_stamp(draw, (cx + 26, cy + 22), "封", 0.84)
+
+
 def draw_risk_badge(draw: ImageDraw.ImageDraw, box: tuple[int, int, int, int]) -> None:
     x1, y1, x2, _ = box
     badge = (x2 - 58, y1 + 20, x2 - 18, y1 + 60)
     draw.ellipse(badge, fill="#9d2f25", outline="#fff1bf", width=3)
-    draw.text(((badge[0] + badge[2]) // 2, (badge[1] + badge[3]) // 2 + 1), "慎", fill="#fff1bf", font=FONT_SMALL, anchor="mm")
+    cx, cy = (badge[0] + badge[2]) // 2, (badge[1] + badge[3]) // 2
+    draw.line((cx - 9, cy - 8, cx + 9, cy + 8), fill="#fff1bf", width=3)
+    draw.line((cx + 9, cy - 8, cx - 9, cy + 8), fill="#fff1bf", width=3)
 
 
 def draw_icon(draw: ImageDraw.ImageDraw, item: dict, case_index: int, evidence_index: int, box: tuple[int, int, int, int]) -> None:
@@ -338,15 +389,20 @@ def draw_icon(draw: ImageDraw.ImageDraw, item: dict, case_index: int, evidence_i
         draw_bronze_box(draw, (cx, cy), 1.0, accent)
     elif kind == "jar":
         draw_jar(draw, (cx, cy), 1.0, accent)
+    elif kind == "hairpin":
+        draw_hairpin(draw, (cx, cy), 1.0, accent)
+    elif kind == "gate_pass":
+        draw_gate_pass(draw, (cx, cy), 1.0, accent)
+    elif kind == "inkstone":
+        draw_inkstone(draw, (cx, cy), 1.0, accent)
+    elif kind == "cloth":
+        draw_cloth(draw, (cx, cy), 1.0, accent)
     else:
         draw_seal(draw, (cx, cy), 1.0, accent)
     if item.get("counterRisk"):
         draw_risk_badge(draw, box)
-    label = short_text(item.get("name", "证物"))
-    draw.rounded_rectangle((x1 + 18, y2 - 48, x2 - 18, y2 - 18), radius=8, fill=paper, outline=accent, width=2)
-    draw.text((cx, y2 - 33), label, fill="#2a2119", font=FONT_TITLE, anchor="mm")
-    draw.rounded_rectangle((x1 + 18, y1 + 19, x1 + 49, y1 + 39), radius=999, fill=(31, 28, 25, 150), outline="#fff1bf", width=1)
-    draw.text((x1 + 33, y1 + 29), f"{case_index + 1}-{evidence_index + 1}", fill="#fff8e7", font=FONT_TINY, anchor="mm")
+    for dot_x, dot_y in ((x1 + 28, y1 + 28), (x2 - 28, y1 + 28), (x1 + 28, y2 - 28), (x2 - 28, y2 - 28)):
+        draw.ellipse((dot_x - 3, dot_y - 3, dot_x + 3, dot_y + 3), fill=paper, outline=accent, width=1)
 
 
 def main() -> None:

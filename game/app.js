@@ -2492,14 +2492,14 @@
 
   function evidenceVisualFor(item, owned = true) {
     if (!owned) return { type: "locked", label: "未" };
-    if (!item) return { type: "file", label: "证" };
+    if (!item) return { type: "file", label: "" };
     const name = item.name || "";
     const chapterMatch = name.match(/卷宗(\d+)/);
-    if (item.counterRisk) return { type: "risk", label: "慎" };
-    if (name.includes("收益图")) return { type: "map", label: "图" };
-    if (name.includes("札记") || item.trialOnly) return { type: "note", label: "札" };
-    if (chapterMatch) return { type: "record", label: `卷${chapterMatch[1]}` };
-    return { type: "file", label: "证" };
+    if (item.counterRisk) return { type: "risk", label: "" };
+    if (name.includes("收益图")) return { type: "map", label: "" };
+    if (name.includes("札记") || item.trialOnly) return { type: "note", label: "" };
+    if (chapterMatch) return { type: "record", label: "" };
+    return { type: "file", label: "" };
   }
 
   function evidenceSheetPosition(item, caseData) {
@@ -2518,9 +2518,10 @@
   function renderEvidenceThumb(item, owned, size = "small", caseData = currentCase()) {
     const visual = evidenceVisualFor(item, owned);
     const position = evidenceSheetPosition(item, caseData);
+    const mark = visual.label ? `<span class="evidence-thumb-mark">${escapeHtml(visual.label)}</span>` : "";
     return `
       <span class="evidence-thumb evidence-art evidence-thumb-${escapeHtml(size)} evidence-${escapeHtml(visual.type)}" ${evidenceArtStyle(item, caseData)} data-evidence-art="${position.row}-${position.col}" aria-hidden="true">
-        <span class="evidence-thumb-mark">${escapeHtml(visual.label)}</span>
+        ${mark}
         <span class="evidence-thumb-lines"></span>
       </span>
     `;
@@ -4020,6 +4021,8 @@
       selectedEvidence: selectedEvidence?.name || "",
       selectedEvidenceIcon: selectedEvidenceVisual ? `${selectedEvidenceVisual.type}:${selectedEvidenceVisual.label}` : "",
       selectedEvidenceArt: selectedEvidencePosition ? `${selectedEvidencePosition.row + 1}-${selectedEvidencePosition.col + 1}` : "",
+      selectedEvidenceArtAsset: selectedEvidencePosition ? "evidence-item-sheet-v2.png" : "",
+      selectedEvidenceUsesBitmapOnly: selectedEvidenceVisual ? selectedEvidenceVisual.label === "" : false,
       selectedEvidenceRisk: selectedEvidence?.counterRisk || "",
       selectedProfile: state.selectedProfileName,
       selectedRecordLabel: selectedRecordLabel(caseData),
