@@ -2266,6 +2266,28 @@ button:not(:disabled):hover {
   cursor: pointer;
 }
 
+.dialogue-box[data-advance-trial-dialogue].trial-dialogue-advance {
+  padding-bottom: 30px;
+}
+
+.dialogue-advance-hint {
+  margin-top: 10px;
+  padding: 8px 10px;
+  color: #fff1bf;
+  background: rgba(31, 28, 25, 0.8);
+  border: 1px solid rgba(255, 241, 191, 0.34);
+  border-left: 4px solid var(--gold);
+  border-radius: 8px;
+  font-size: 14px;
+  line-height: 1.35;
+}
+
+.dialogue-box[data-advance-trial-dialogue]:focus-visible,
+.dialogue-box[data-advance-trial-dialogue]:hover {
+  box-shadow: 0 18px 48px rgba(31, 28, 25, 0.34);
+  border-color: rgba(201, 155, 59, 0.9);
+}
+
 .dialogue-box.speed-slow {
   border-bottom: 5px solid var(--jade);
 }
@@ -2532,6 +2554,30 @@ button:not(:disabled):hover {
 .scene-hotspot-2 {
   right: 8%;
   top: 44%;
+  bottom: auto;
+}
+
+.scene-hotspot:nth-child(3) {
+  left: 18%;
+  top: 58%;
+  bottom: auto;
+}
+
+.scene-hotspot:nth-child(4) {
+  right: 18%;
+  top: 28%;
+  bottom: auto;
+}
+
+.scene-hotspot:nth-child(5) {
+  left: 52%;
+  top: 62%;
+  bottom: auto;
+}
+
+.scene-hotspot:nth-child(6) {
+  left: 38%;
+  top: 20%;
   bottom: auto;
 }
 
@@ -5809,6 +5855,11 @@ button:not(:disabled):hover {
     line-height: 1.62;
   }
 
+  .dialogue-advance-hint {
+    font-size: 13px;
+    margin-top: 8px;
+  }
+
   .record-list,
   .timeline-list,
   .backlog-list,
@@ -6353,6 +6404,11 @@ button:not(:disabled):hover {
     font-size: 18px;
   }
 
+  .dialogue-advance-hint {
+    font-size: 13px;
+    margin-top: 8px;
+  }
+
   .selected-record-bar,
   .trial-actions {
     grid-template-columns: 1fr;
@@ -6451,6 +6507,13 @@ button:not(:disabled):hover {
   .scene-hotspot-2 small {
     left: auto;
     right: auto;
+  }
+
+  .scene-hotspot:nth-child(3),
+  .scene-hotspot:nth-child(4),
+  .scene-hotspot:nth-child(5),
+  .scene-hotspot:nth-child(6) {
+    position: static;
   }
 
   .portrait {

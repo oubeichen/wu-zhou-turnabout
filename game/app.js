@@ -2601,6 +2601,10 @@
     const speedClass = `speed-${state.settings.textSpeed}`;
     const caseData = currentCase();
     const location = mode === "investigation" ? currentLocation(caseData) : null;
+    const progress = mode === "trial" ? caseProgress(caseData.id) : null;
+    const testimony = progress && caseData.testimony[progress.testimonyIndex];
+    const visibleStatements = testimony ? visibleStatementEntries(testimony, progress) : [];
+    const hasNextStatement = progress && progress.statementIndex < visibleStatements.length - 1;
     const leftPortrait = portraitForSpeaker(caseData, speaker, mode);
     const rightPortrait = mode === "trial" ? caseData.opponentPortrait || "censor" : "empress";
     const focus = mode === "trial" ? state.stageFocus : "center";
@@ -2620,6 +2624,9 @@
       ? locationBackgroundFile(caseData, location)
       : trialBackgroundFile(caseData);
     const locationStyle = locationArt ? `style="--location-art: url('./assets/${escapeHtml(locationArt)}');"` : "";
+    const trialAdvanceHint = mode === "trial"
+      ? hasNextStatement ? "点击对白任意处或按空格/回车继续下一句" : "当前句可直接追问 / 打开记录 / 举证"
+      : "";
     return `
       <div class="scene ${mode} ${sceneKey ? `scene-${sceneKey}` : ""} focus-${focus} pose-left-${stagePose.left} pose-right-${stagePose.right} ${vulnerabilityCue ? "vulnerability-ready" : ""} ${hasInvestigationBeat ? "has-investigation-beat" : ""} ${state.settings.reducedMotion ? "reduced-motion" : ""}" data-motif="${escapeHtml(sceneMotif)}" ${locationStyle}>
         ${
@@ -2641,9 +2648,10 @@
         <div class="scene-title">${escapeHtml(title)}</div>
         ${mode === "investigation" ? renderInvestigationHotspots() : ""}
         ${hasInvestigationBeat ? renderInvestigationBeat() : `
-          <div class="dialogue-box ${speedClass}" ${trialAdvanceAttr}>
+          <div class="dialogue-box ${speedClass} ${hasNextStatement ? "trial-dialogue-advance" : ""}" ${trialAdvanceAttr}>
             <span class="dialogue-speaker">${escapeHtml(speaker)}</span>
             <div>${escapeHtml(text)}</div>
+            <div class="dialogue-advance-hint">${escapeHtml(trialAdvanceHint)}</div>
           </div>
         `}
       </div>
