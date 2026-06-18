@@ -2048,7 +2048,7 @@ button:not(:disabled):hover {
 
 .scene-title {
   position: relative;
-  z-index: 4;
+  z-index: 9;
   width: fit-content;
   max-width: 100%;
   padding: 8px 12px;
@@ -2060,7 +2060,7 @@ button:not(:disabled):hover {
 
 .scene-atmosphere {
   position: relative;
-  z-index: 4;
+  z-index: 9;
   width: fit-content;
   max-width: min(720px, 100%);
   padding: 8px 12px;
@@ -2074,7 +2074,7 @@ button:not(:disabled):hover {
 
 .investigation-beat {
   position: relative;
-  z-index: 4;
+  z-index: 9;
   display: grid;
   grid-template-columns: 92px minmax(0, 1fr);
   grid-template-areas:
@@ -2423,8 +2423,8 @@ button:not(:disabled):hover {
   display: grid;
   grid-template-columns: 1fr;
   grid-template-rows: 1fr;
-  width: 72px;
-  min-height: 72px;
+  width: 56px;
+  min-height: 56px;
   z-index: 2;
   padding: 0;
   color: #fff8e7;
@@ -2456,9 +2456,10 @@ button:not(:disabled):hover {
 .scene-hotspot span {
   position: absolute;
   left: 72px;
-  top: 8px;
+  top: -12px;
   max-width: 150px;
   min-width: max-content;
+  width: max-content;
   overflow: hidden;
   padding: 4px 8px;
   color: #fff8e7;
@@ -2490,13 +2491,13 @@ button:not(:disabled):hover {
 .dialogue-box,
 .scene-atmosphere,
 .investigation-beat {
-  z-index: 7;
+  z-index: 9;
 }
 
 .scene-hotspot-2 span,
 .scene-hotspot-2 small {
   left: auto;
-  right: 72px;
+  right: 64px;
 }
 
 .scene-hotspot.done::before {
