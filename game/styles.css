@@ -3916,9 +3916,9 @@ button:not(:disabled):hover {
 
 .objection-reveal-inner {
   display: grid;
-  gap: 12px;
-  width: min(680px, 100%);
-  padding: clamp(18px, 4vw, 34px);
+  gap: 9px;
+  width: min(880px, calc(100vw - 36px));
+  padding: 18px 22px;
   color: #fff8e7;
   background:
     linear-gradient(135deg, rgba(157, 47, 37, 0.96), rgba(52, 17, 15, 0.98));
@@ -3941,15 +3941,15 @@ button:not(:disabled):hover {
 }
 
 .objection-reveal-inner strong {
-  font-size: clamp(44px, 10vw, 92px);
-  line-height: 0.95;
+  font-size: 46px;
+  line-height: 0.92;
   text-shadow: 0 7px 0 rgba(31, 28, 25, 0.38), 0 12px 28px rgba(0, 0, 0, 0.42);
 }
 
 .objection-reveal-inner p {
   margin: 0;
   color: #fff1bf;
-  font-size: clamp(18px, 3vw, 24px);
+  font-size: 17px;
   font-weight: 900;
   line-height: 1.45;
 }
@@ -3989,18 +3989,74 @@ button:not(:disabled):hover {
   gap: 8px;
 }
 
-.reveal-cutin,
 .reveal-stepper {
   grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.reveal-cutin {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.objection-sprite-stage {
+  position: relative;
+  grid-column: 1 / -1;
+  height: clamp(122px, 21vh, 176px);
+  overflow: hidden;
+  background-color: #1b100f;
+  background-image: url("./assets/objection-cutin-sheet-v1.png");
+  background-repeat: no-repeat;
+  background-size: 300% 100%;
+  border: 3px solid rgba(255, 241, 191, 0.72);
+  border-radius: 8px;
+  box-shadow: inset 0 0 0 1px rgba(31, 28, 25, 0.36), 0 14px 34px rgba(0, 0, 0, 0.32);
+}
+
+.objection-sprite-stage::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, rgba(255, 248, 231, 0), rgba(255, 248, 231, 0.14), rgba(255, 248, 231, 0)),
+    radial-gradient(circle at 50% 50%, transparent 0 44%, rgba(31, 12, 10, 0.36) 100%);
+  mix-blend-mode: screen;
+  animation: cutin-sheen 0.68s ease both;
+}
+
+.objection-sprite-frame-1 {
+  background-position: 0 50%;
+}
+
+.objection-sprite-frame-2 {
+  background-position: 50% 50%;
+}
+
+.objection-sprite-frame-3 {
+  background-position: 100% 50%;
+}
+
+.objection-sprite-thumb {
+  display: block;
+  width: 100%;
+  max-width: 82px;
+  aspect-ratio: 520 / 292;
+  overflow: hidden;
+  background-color: #1b100f;
+  background-image: url("./assets/objection-cutin-sheet-v1.png");
+  background-repeat: no-repeat;
+  background-size: 300% 100%;
+  border: 1px solid rgba(255, 241, 191, 0.5);
+  border-radius: 5px;
+  box-shadow: inset 0 0 0 1px rgba(31, 28, 25, 0.4);
 }
 
 .reveal-frame {
   position: relative;
   display: grid;
   justify-items: center;
-  gap: 5px;
+  gap: 4px;
   min-width: 0;
-  padding: 10px 8px;
+  padding: 7px 6px;
   color: #fff8e7;
   background: rgba(31, 28, 25, 0.42);
   border: 1px solid rgba(255, 241, 191, 0.32);
@@ -4095,6 +4151,10 @@ button:not(:disabled):hover {
   transition: none;
 }
 
+.scene.reduced-motion ~ .objection-reveal .objection-sprite-stage::after {
+  animation: none;
+}
+
 @keyframes acting-frame-hit {
   from {
     opacity: 0;
@@ -4132,6 +4192,20 @@ button:not(:disabled):hover {
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes cutin-sheen {
+  from {
+    opacity: 0;
+    transform: translateX(-42%);
+  }
+  35% {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+    transform: translateX(42%);
   }
 }
 
@@ -5324,13 +5398,19 @@ button:not(:disabled):hover {
     gap: 5px;
   }
 
+  .objection-sprite-stage {
+    height: clamp(92px, 21vh, 152px);
+    min-height: 92px;
+    border-width: 2px;
+  }
+
+  .objection-sprite-thumb {
+    max-width: 82px;
+  }
+
   .reveal-frame {
     gap: 3px;
     padding: 6px 3px;
-  }
-
-  .reveal-frame .acting-portrait {
-    width: 30px;
   }
 
   .reveal-frame b {

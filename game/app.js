@@ -2992,33 +2992,28 @@
     const frames = [
       {
         tone: "defense",
-        portrait: "empress",
-        pose: "assert",
         role: "辩方",
         label: reveal.title || "异议",
       },
       {
         tone: "record",
-        portrait: "record",
-        pose: "idle",
         role: "法庭记录",
         label: reveal.record || "关键证据",
       },
       {
         tone: "opponent",
-        portrait: caseData.opponentPortrait || "censor",
-        pose: "shaken",
         role: caseData.opponent || "对手",
         label: reveal.line || "证词动摇",
       },
     ];
     return `
       <div class="reveal-cutin" aria-label="异议演出分镜">
+        <div class="objection-sprite-stage objection-sprite-frame-${stepIndex + 1}" data-objection-sprite-frame="${stepIndex + 1}" aria-hidden="true"></div>
         ${frames
           .map(
             (frame, index) => `
               <div class="reveal-frame reveal-frame-${index + 1} tone-${escapeHtml(frame.tone)} ${index === stepIndex ? "active" : ""}">
-                <span class="acting-portrait portrait-${escapeHtml(frame.portrait)} pose-${escapeHtml(frame.pose)}" aria-hidden="true"></span>
+                <span class="objection-sprite-thumb objection-sprite-frame-${index + 1}" aria-hidden="true"></span>
                 <b>${escapeHtml(frame.role)}</b>
                 <small>${escapeHtml(frame.label)}</small>
               </div>
@@ -4110,6 +4105,8 @@
       objectionRevealStep: state.objectionReveal ? Number(state.objectionReveal.step || 0) + 1 : 0,
       objectionRevealStepTitle: state.objectionReveal ? objectionRevealSteps(state.objectionReveal)[Number(state.objectionReveal.step || 0)]?.kicker || "" : "",
       objectionRevealSteps: state.objectionReveal ? objectionRevealSteps(state.objectionReveal).length : 0,
+      objectionRevealSpriteAsset: state.objectionReveal ? "objection-cutin-sheet-v1.png" : "",
+      objectionRevealSpriteFrame: state.objectionReveal ? Number(state.objectionReveal.step || 0) + 1 : 0,
       counterattacks: progress.counterattacks || 0,
       recoveries: progress.recoveries || 0,
       testimony: testimony?.title || "",
