@@ -557,10 +557,11 @@
         recoveries: 0,
         turnabouts: 0,
         lastTurnabout: "",
-        deductionPursuits: 0,
-        deductionPursuitUnlocks: 0,
-        lastPursuitUnlock: "",
-        pendingDeductionFollowUp: null,
+      deductionPursuits: 0,
+      deductionPursuitUnlocks: 0,
+      lastPursuitUnlock: "",
+      lastPursuitStatement: "",
+      pendingDeductionFollowUp: null,
         mistakes: 0,
         grade: "",
       };
@@ -594,6 +595,9 @@
     }
     if (typeof state.trial[caseId].lastPursuitUnlock !== "string") {
       state.trial[caseId].lastPursuitUnlock = "";
+    }
+    if (typeof state.trial[caseId].lastPursuitStatement !== "string") {
+      state.trial[caseId].lastPursuitStatement = "";
     }
     if (state.trial[caseId].pendingDeductionFollowUp && typeof state.trial[caseId].pendingDeductionFollowUp !== "object") {
       state.trial[caseId].pendingDeductionFollowUp = null;
@@ -1075,6 +1079,7 @@
       .map((statement, index) => {
         if (!statementHasAnswer(statement)) return "";
         if (statement.optionalRecovery && !progress.unlockedStatements.includes(statement.hiddenUntilPressed)) return "";
+        if (statement.requiredAfterUnlock && statement.hiddenUntilPressed && !progress.unlockedStatements.includes(statement.hiddenUntilPressed)) return "";
         return statementKey(testimonyIndex, index);
       })
       .filter(Boolean);
@@ -4139,6 +4144,8 @@
         buttonLabel: pursuitCopy.button,
         unlockEvidenceId: pursuitUnlock?.id || "",
         unlockEvidenceName: pursuitUnlock?.name || "",
+        unlockStatementId: statement.pursuitUnlockStatementId || "",
+        unlockStatementLabel: statement.pursuitUnlockLabel || "追击后的补充证词",
       };
       progress.deductionPursuits += 1;
       setStage("clash", "对照追击", { left: "confident", right: "stagger" });
@@ -4187,14 +4194,25 @@
     } else if (followUp.unlockEvidenceName) {
       progress.lastPursuitUnlock = followUp.unlockEvidenceName;
     }
+    let unlockedStatement = "";
+    if (followUp.unlockStatementId && !progress.unlockedStatements.includes(followUp.unlockStatementId)) {
+      progress.unlockedStatements.push(followUp.unlockStatementId);
+      unlockedStatement = followUp.unlockStatementLabel || "追击后的补充证词";
+      progress.lastPursuitStatement = unlockedStatement;
+      const focusedIndex = visibleStatementEntries(testimony || { statements: [] }, progress).findIndex(
+        ({ statement: item }) => item.hiddenUntilPressed === followUp.unlockStatementId
+      );
+      if (focusedIndex >= 0) progress.statementIndex = focusedIndex;
+    }
     const unlockText = unlocked
       ? ` ${unlocked}已经写入法庭记录。`
       : followUp.unlockEvidenceName
         ? ` ${followUp.unlockEvidenceName}已经在法庭记录中，可以直接查看。`
         : "";
-    progress.lastObjection = `${followUp.objectionText || statement?.objection || ""} ${followUp.chaseLine || ""} ${followUp.witnessLine || ""}${unlockText}`.trim();
+    const statementText = unlockedStatement ? ` 新证词追加：${unlockedStatement}。` : "";
+    progress.lastObjection = `${followUp.objectionText || statement?.objection || ""} ${followUp.chaseLine || ""} ${followUp.witnessLine || ""}${unlockText}${statementText}`.trim();
     setStage("clash", "追击成立", { left: "confident", right: "stagger" });
-    setMessage("辩方", `${followUp.chaseLine || "对照札记已经把证词推到新的缺口上。"} ${followUp.witnessLine || ""}${unlockText} ${followUp.objectionText || statement?.objection || ""}`.trim(), "objection");
+    setMessage("辩方", `${followUp.chaseLine || "对照札记已经把证词推到新的缺口上。"} ${followUp.witnessLine || ""}${unlockText}${statementText} ${followUp.objectionText || statement?.objection || ""}`.trim(), "objection");
     playCue("objection");
     save();
     if (!testimony || !statement) {
@@ -4345,10 +4363,11 @@
       recoveries: 0,
       turnabouts: 0,
       lastTurnabout: "",
-      deductionPursuits: 0,
-      deductionPursuitUnlocks: 0,
-      lastPursuitUnlock: "",
-      pendingDeductionFollowUp: null,
+        deductionPursuits: 0,
+        deductionPursuitUnlocks: 0,
+        lastPursuitUnlock: "",
+        lastPursuitStatement: "",
+        pendingDeductionFollowUp: null,
       mistakes: 0,
       grade: "",
     };
@@ -4883,6 +4902,7 @@
       deductionPursuits: progress.deductionPursuits || 0,
       deductionPursuitUnlocks: progress.deductionPursuitUnlocks || 0,
       lastPursuitUnlock: progress.lastPursuitUnlock || "",
+      lastPursuitStatement: progress.lastPursuitStatement || "",
       pendingDeductionFollowUp: Boolean(progress.pendingDeductionFollowUp),
       pendingDeductionRecord: progress.pendingDeductionFollowUp?.record || "",
       pendingDeductionText: progress.pendingDeductionFollowUp?.deductionText || "",
@@ -4892,6 +4912,7 @@
       pendingDeductionWitnessLine: progress.pendingDeductionFollowUp?.witnessLine || "",
       pendingDeductionButton: progress.pendingDeductionFollowUp?.buttonLabel || "",
       pendingDeductionUnlock: progress.pendingDeductionFollowUp?.unlockEvidenceName || "",
+      pendingDeductionStatementUnlock: progress.pendingDeductionFollowUp?.unlockStatementLabel || "",
       pursuitNoteCollected: (state.collected[caseData.id] || []).includes(`${caseData.id}-ev-pursuit-note`),
       turnaboutTitle: turnaboutBeat(caseData).title,
       turnaboutBody: turnaboutBeat(caseData).body,

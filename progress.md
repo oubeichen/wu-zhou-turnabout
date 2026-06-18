@@ -2098,3 +2098,27 @@ Remaining Ace Attorney gap list:
 - Pursuit now unlocks fully separate evidence, but the new pursuit notes reuse the local generated court-note icon style; high-value notes still need curated Image API assets when an exportable path is available.
 - Browser visual verification needs to be rerun when local browser execution is available again.
 - Chapter-source tabs are clearer and clickable, but they could later become a staged `翻阅卷宗` drawer instead of living fully on the case intro.
+
+## 2026-06-18 iteration 77 result
+
+Implemented:
+- Added pursuit-only hidden follow-up testimony for all five cases, with three unlockable statements per case across surface, legality, and final reasoning sections.
+- Correct evidence with a saved `对照札记` now unlocks both `${caseId}-ev-pursuit-note` and a matching hidden follow-up testimony line.
+- Added `requiredAfterUnlock` so pursuit-only statements do not block the ordinary trial route before the player chooses to pursue.
+- Focuses the newly revealed follow-up testimony after pursuit and records `lastPursuitStatement` for QA/debug text output.
+- Exposed pending/last pursuit statement labels through `render_game_to_text`.
+
+Verified:
+- Regenerated `game/game-data.js` with `python3 scripts/build_game_content.py`.
+- Custom Node integrity check confirmed 5 cases, 15 pursuit triggers, 15 pursuit follow-up statements, matching unlock ids, and pursuit follow-ups answered by `${caseId}-ev-pursuit-note`.
+- `npm run check:js`
+- `PYTHONPYCACHEPREFIX="/Users/oubeichen/Projects/wuzetian2/.pycache" npm run check:py`
+- `git diff --check`
+
+Blocked verification:
+- `npm run qa:web-game` was attempted and still fails before page load because Chromium cannot register its Mach port rendezvous in this environment (`Permission denied (1100)`). No new browser screenshot was captured.
+
+Remaining Ace Attorney gap list:
+- Pursuit now changes both evidence and testimony state, but the case-intro/home dossier copy still needs another pass toward scene storytelling instead of briefing prose.
+- Browser visual verification needs to be rerun when local browser execution is available again.
+- High-value pursuit-note icons still need curated Image API assets when a filesystem-exportable path is available.

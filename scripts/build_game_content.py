@@ -1616,6 +1616,55 @@ def case_testimony_script(case: dict[str, object], evidence: list[dict[str, str]
     return by_case.get(str(case["id"]), {})
 
 
+PURSUIT_TESTIMONY_COPY = {
+    "case-empress-seat": {
+        "surface": "记录官低声补了一句：哭声传到案前时，废后两个字已经夹在里面了。",
+        "legality": "许敬宗说漏了嘴：元老折子不是没到，是到了以后被人压在诏稿下面。",
+        "final": "御前书记重新摊开补记：哭声、值夜签和诏稿之间，确实少不了一只传话的手。",
+    },
+    "case-crown-shadow": {
+        "surface": "邠王守礼承认，旧账册在入庭前曾被书记官借走半日。",
+        "legality": "书记官改口说，那些空白日期不是漏写，而是等人决定该留下哪一句。",
+        "final": "御前书记补上一句：旧臣不是自己走到风口，是账册先被人递到了那里。",
+    },
+    "case-rebellion-box": {
+        "surface": "告密人终于承认，他再见原札时，纸边已经多了官府标注。",
+        "legality": "来俊臣避开了转手路线，只说标注是办案常例，却不说是谁先添的字。",
+        "final": "御前书记写下补记：投书每转一次手，罪名就比原来重一层。",
+    },
+    "case-urn": {
+        "surface": "魏元忠补充说，签押前那口瓮已经被拖到供案旁边。",
+        "legality": "周兴说那只是旧法，却没有解释手册折角为什么正停在恐吓那页。",
+        "final": "御前书记把顺序写清：先是瓮，再是手册，最后才是供状。",
+    },
+    "case-half-hour-coup": {
+        "surface": "玄宗旧部承认，夜门撞开前，侧门已经先收到一道换岗口令。",
+        "legality": "张易之说是临时补救，却说不清罪名纸条为何先写结论。",
+        "final": "御前书记补记：半小时不是混乱的空白，而是一张被提前排好的表。",
+    },
+}
+
+
+def pursuit_statement(case: dict[str, object], section: str) -> dict[str, object]:
+    unlock_id = f"{case['id']}-pursuit-{section}"
+    note_id = f"{case['id']}-ev-pursuit-note"
+    note_name = PURSUIT_NOTE_COPY.get(str(case["id"]), {}).get("name", "追击补记")
+    text = PURSUIT_TESTIMONY_COPY.get(str(case["id"]), {}).get(
+        section,
+        "证人被对照札记逼出补充说法，但这句话必须用追击补记才能钉住。",
+    )
+    return {
+        "text": text,
+        "press": "这是对照追击后才出现的补充证词。打开法庭记录，使用刚写入的追击补记击破它。",
+        "hiddenUntilPressed": unlock_id,
+        "revealLabel": "追击后的补充证词",
+        "requiredAfterUnlock": True,
+        "wrongEvidenceFeedback": "这句来自追击补记，普通证物只能说明背景，不能钉住证人刚补出来的话。",
+        "answerEvidence": note_id,
+        "objection": f"异议成立。{note_name}把这句补充证词钉住了，证人不能再退回原来的说法。",
+    }
+
+
 def make_testimony(case: dict[str, object], evidence: list[dict[str, str]]) -> list[dict[str, object]]:
     contradiction_a = evidence[1]["id"]
     contradiction_b = evidence[3]["id"]
@@ -1652,8 +1701,11 @@ def make_testimony(case: dict[str, object], evidence: list[dict[str, str]]) -> l
                     "press": line("surface", 1, "press", "证人把责任全推给一个人。拿出能说明事发前后还有别的安排的证物。"),
                     "wrongEvidenceFeedback": line("surface", 1, "wrong", "这件证物还不能打中“只是私怨”。需要能显示事发前后有人安排、有人受益的证物。"),
                     "answerEvidence": contradiction_a,
+                    "pursuitUnlockStatementId": f"{case['id']}-pursuit-surface",
+                    "pursuitUnlockLabel": "追击后的补充证词",
                     "objection": line("surface", 1, "objection", f"异议成立。{evidence[1]['name']}显示事情发生前后已经有人安排位置和说法，不能只按私人怨气解释。"),
                 },
+                pursuit_statement(case, "surface"),
                 {
                     "text": line("surface", 2, "text", "我只记得最后的结果，前面有没有人铺路，我真的不清楚。"),
                     "press": line("surface", 2, "press", "这句承认了证人不知道前因。先记下，后面遇到绝对断言再反击。"),
@@ -1694,8 +1746,11 @@ def make_testimony(case: dict[str, object], evidence: list[dict[str, str]]) -> l
                     "counterFeedback": trap.get("feedback", ""),
                     "counterPenalty": 2 if trap else 0,
                     "answerEvidence": contradiction_b,
+                    "pursuitUnlockStatementId": f"{case['id']}-pursuit-legality",
+                    "pursuitUnlockLabel": "追击后的补充证词",
                     "objection": line("legality", 2, "objection", f"异议成立。{evidence[3]['name']}显示公开说法背后还有人整理、加压和扩散，证词把关键步骤藏掉了。"),
                 },
+                pursuit_statement(case, "legality"),
                 *(
                     [
                         {
@@ -1738,8 +1793,11 @@ def make_testimony(case: dict[str, object], evidence: list[dict[str, str]]) -> l
                     "press": line("final", 1, "press", "把谁受益、谁沉默、谁背罪放在同一张图上，就能看出它们不是巧合。"),
                     "wrongEvidenceFeedback": line("final", 1, "wrong", "单件证物只能说明局部事实。最后一击需要庭上追问后整理出的记录。"),
                     "answerEvidence": contradiction_c,
+                    "pursuitUnlockStatementId": f"{case['id']}-pursuit-final",
+                    "pursuitUnlockLabel": "追击后的补充证词",
                     "objection": line("final", 1, "objection", f"异议成立。{evidence[-1]['name']}记录了证人说不清的关键：这些事不是巧合，而是有人受益、有人背罪。"),
                 },
+                pursuit_statement(case, "final"),
                 {
                     "text": line("final", 2, "text", "辩方若不能说清这条线，本庭就维持原判。"),
                     "press": line("final", 2, "press", "这是最后机会。选择能概括全案的证据。"),

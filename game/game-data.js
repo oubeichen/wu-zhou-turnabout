@@ -306,7 +306,19 @@ window.WUZHOU_GAME_DATA = {
               "press": "证人急着把一切压到宫人身上。拿出能说明当晚名单被动过手脚的证物。",
               "wrongEvidenceFeedback": "这还不能打中“宫人私怨”。要找能把当晚在场顺序拉回来的记录。",
               "answerEvidence": "case-empress-seat-ev-2",
+              "pursuitUnlockStatementId": "case-empress-seat-pursuit-surface",
+              "pursuitUnlockLabel": "追击后的补充证词",
               "objection": "异议成立。摇篮旁的值夜签说明当晚在场名单被改过，废后传闻不是一名宫人自己能推成的事。"
+            },
+            {
+              "text": "记录官低声补了一句：哭声传到案前时，废后两个字已经夹在里面了。",
+              "press": "这是对照追击后才出现的补充证词。打开法庭记录，使用刚写入的追击补记击破它。",
+              "hiddenUntilPressed": "case-empress-seat-pursuit-surface",
+              "revealLabel": "追击后的补充证词",
+              "requiredAfterUnlock": true,
+              "wrongEvidenceFeedback": "这句来自追击补记，普通证物只能说明背景，不能钉住证人刚补出来的话。",
+              "answerEvidence": "case-empress-seat-ev-pursuit-note",
+              "objection": "异议成立。追击补记：哭声入诏把这句补充证词钉住了，证人不能再退回原来的说法。"
             },
             {
               "text": "至于谁后来升上去、谁被排出去，我一个记录官只照听见的话写，不敢多想。",
@@ -348,7 +360,19 @@ window.WUZHOU_GAME_DATA = {
               "counterFeedback": "",
               "counterPenalty": 0,
               "answerEvidence": "case-empress-seat-ev-4",
+              "pursuitUnlockStatementId": "case-empress-seat-pursuit-legality",
+              "pursuitUnlockLabel": "追击后的补充证词",
               "objection": "异议成立。元老联名折留下了元老反对的痕迹，许敬宗不能把被压下的声音说成不存在。"
+            },
+            {
+              "text": "许敬宗说漏了嘴：元老折子不是没到，是到了以后被人压在诏稿下面。",
+              "press": "这是对照追击后才出现的补充证词。打开法庭记录，使用刚写入的追击补记击破它。",
+              "hiddenUntilPressed": "case-empress-seat-pursuit-legality",
+              "revealLabel": "追击后的补充证词",
+              "requiredAfterUnlock": true,
+              "wrongEvidenceFeedback": "这句来自追击补记，普通证物只能说明背景，不能钉住证人刚补出来的话。",
+              "answerEvidence": "case-empress-seat-ev-pursuit-note",
+              "objection": "异议成立。追击补记：哭声入诏把这句补充证词钉住了，证人不能再退回原来的说法。"
             },
             {
               "text": "最后写进诏书的，就是法庭该承认的事实。纸上已经定了，辩方何必再翻旧账？",
@@ -375,7 +399,19 @@ window.WUZHOU_GAME_DATA = {
               "press": "把谁受益、谁沉默、谁背罪放在同一张图上，后位案就不再像巧合。",
               "wrongEvidenceFeedback": "最后一击需要庭上追问后的总结记录，单件证物只会被拆开解释。",
               "answerEvidence": "case-empress-seat-ev-court-note",
+              "pursuitUnlockStatementId": "case-empress-seat-pursuit-final",
+              "pursuitUnlockLabel": "追击后的补充证词",
               "objection": "异议成立。庭上追问记录把哭声、名册和诏稿串成一条线：宫人背罪，后位得利，元老被迫闭嘴。"
+            },
+            {
+              "text": "御前书记重新摊开补记：哭声、值夜签和诏稿之间，确实少不了一只传话的手。",
+              "press": "这是对照追击后才出现的补充证词。打开法庭记录，使用刚写入的追击补记击破它。",
+              "hiddenUntilPressed": "case-empress-seat-pursuit-final",
+              "revealLabel": "追击后的补充证词",
+              "requiredAfterUnlock": true,
+              "wrongEvidenceFeedback": "这句来自追击补记，普通证物只能说明背景，不能钉住证人刚补出来的话。",
+              "answerEvidence": "case-empress-seat-ev-pursuit-note",
+              "objection": "异议成立。追击补记：哭声入诏把这句补充证词钉住了，证人不能再退回原来的说法。"
             },
             {
               "text": "若辩方还不能说清这条线，废后风波就到此封卷。",
@@ -684,7 +720,19 @@ window.WUZHOU_GAME_DATA = {
               "press": "证人急着把账册说成个人越界。拿出能显示东宫记录被改写的证物。",
               "wrongEvidenceFeedback": "这句要打“和病榻传话无关”。需要能把账册和后续记录连起来的证物。",
               "answerEvidence": "case-crown-shadow-ev-2",
+              "pursuitUnlockStatementId": "case-crown-shadow-pursuit-surface",
+              "pursuitUnlockLabel": "追击后的补充证词",
               "objection": "异议成立。太子问安笺显示东宫记录前后不一致，旧臣不是凭空把储位卷进来的。"
+            },
+            {
+              "text": "邠王守礼承认，旧账册在入庭前曾被书记官借走半日。",
+              "press": "这是对照追击后才出现的补充证词。打开法庭记录，使用刚写入的追击补记击破它。",
+              "hiddenUntilPressed": "case-crown-shadow-pursuit-surface",
+              "revealLabel": "追击后的补充证词",
+              "requiredAfterUnlock": true,
+              "wrongEvidenceFeedback": "这句来自追击补记，普通证物只能说明背景，不能钉住证人刚补出来的话。",
+              "answerEvidence": "case-crown-shadow-ev-pursuit-note",
+              "objection": "异议成立。追击补记：旧账流向把这句补充证词钉住了，证人不能再退回原来的说法。"
             },
             {
               "text": "我只知道最后旧臣被押走。至于谁先挑出这些记录，我不便多说。",
@@ -726,7 +774,19 @@ window.WUZHOU_GAME_DATA = {
               "counterFeedback": "书记官抓住辩方只谈旧账的漏洞：旧账只能说明东宫不安，不能直接证明有人把不安写成罪名。",
               "counterPenalty": 2,
               "answerEvidence": "case-crown-shadow-ev-4",
+              "pursuitUnlockStatementId": "case-crown-shadow-pursuit-legality",
+              "pursuitUnlockLabel": "追击后的补充证词",
               "objection": "异议成立。病榻旁的传位记录显示病榻传话被换过纸，所谓旧档已经被人重新安排过。"
+            },
+            {
+              "text": "书记官改口说，那些空白日期不是漏写，而是等人决定该留下哪一句。",
+              "press": "这是对照追击后才出现的补充证词。打开法庭记录，使用刚写入的追击补记击破它。",
+              "hiddenUntilPressed": "case-crown-shadow-pursuit-legality",
+              "revealLabel": "追击后的补充证词",
+              "requiredAfterUnlock": true,
+              "wrongEvidenceFeedback": "这句来自追击补记，普通证物只能说明背景，不能钉住证人刚补出来的话。",
+              "answerEvidence": "case-crown-shadow-ev-pursuit-note",
+              "objection": "异议成立。追击补记：旧账流向把这句补充证词钉住了，证人不能再退回原来的说法。"
             },
             {
               "text": "宫廷书记官反制后留下了一个缺口：他只证明刚才那件证物不够，却没有解释后续动作是谁做的。",
@@ -764,7 +824,19 @@ window.WUZHOU_GAME_DATA = {
               "press": "把待遇、传话和被押顺序合在一起，就能看出谁把家事整理成罪名。",
               "wrongEvidenceFeedback": "最后一击需要庭上追问记录，不是某一张旧纸。",
               "answerEvidence": "case-crown-shadow-ev-court-note",
+              "pursuitUnlockStatementId": "case-crown-shadow-pursuit-final",
+              "pursuitUnlockLabel": "追击后的补充证词",
               "objection": "异议成立。庭上追问记录说明三件事不是同时发生而已，而是有人挑出记录，把旧臣推到前面。"
+            },
+            {
+              "text": "御前书记补上一句：旧臣不是自己走到风口，是账册先被人递到了那里。",
+              "press": "这是对照追击后才出现的补充证词。打开法庭记录，使用刚写入的追击补记击破它。",
+              "hiddenUntilPressed": "case-crown-shadow-pursuit-final",
+              "revealLabel": "追击后的补充证词",
+              "requiredAfterUnlock": true,
+              "wrongEvidenceFeedback": "这句来自追击补记，普通证物只能说明背景，不能钉住证人刚补出来的话。",
+              "answerEvidence": "case-crown-shadow-ev-pursuit-note",
+              "objection": "异议成立。追击补记：旧账流向把这句补充证词钉住了，证人不能再退回原来的说法。"
             },
             {
               "text": "若这条线连不起来，东宫案就只能维持旧臣有罪。",
@@ -1094,7 +1166,19 @@ window.WUZHOU_GAME_DATA = {
               "press": "证人把投书当成完整事实。拿出能说明投书之后罪名被加重的证物。",
               "wrongEvidenceFeedback": "要打“投书等于谋反”，需要显示投书离开铜匦后发生变化的记录。",
               "answerEvidence": "case-rebellion-box-ev-2",
+              "pursuitUnlockStatementId": "case-rebellion-box-pursuit-surface",
+              "pursuitUnlockLabel": "追击后的补充证词",
               "objection": "异议成立。讨武檄文残页显示告发内容后来被重新标注罪名，投书不是一开始就等于谋反。"
+            },
+            {
+              "text": "告密人终于承认，他再见原札时，纸边已经多了官府标注。",
+              "press": "这是对照追击后才出现的补充证词。打开法庭记录，使用刚写入的追击补记击破它。",
+              "hiddenUntilPressed": "case-rebellion-box-pursuit-surface",
+              "revealLabel": "追击后的补充证词",
+              "requiredAfterUnlock": true,
+              "wrongEvidenceFeedback": "这句来自追击补记，普通证物只能说明背景，不能钉住证人刚补出来的话。",
+              "answerEvidence": "case-rebellion-box-ev-pursuit-note",
+              "objection": "异议成立。追击补记：投书转手把这句补充证词钉住了，证人不能再退回原来的说法。"
             },
             {
               "text": "我只记得榜文贴得很快。快不快，那是官府的事，不是我的事。",
@@ -1136,7 +1220,19 @@ window.WUZHOU_GAME_DATA = {
               "counterFeedback": "来俊臣顺势把焦点推回告密原札：只证明有人投书，反而让酷吏加工案件的关键责任暂时脱身。",
               "counterPenalty": 2,
               "answerEvidence": "case-rebellion-box-ev-4",
+              "pursuitUnlockStatementId": "case-rebellion-box-pursuit-legality",
+              "pursuitUnlockLabel": "追击后的补充证词",
               "objection": "异议成立。酷吏审讯名册里的口供被同一笔迹补过，案情不是照原札自然长大。"
+            },
+            {
+              "text": "来俊臣避开了转手路线，只说标注是办案常例，却不说是谁先添的字。",
+              "press": "这是对照追击后才出现的补充证词。打开法庭记录，使用刚写入的追击补记击破它。",
+              "hiddenUntilPressed": "case-rebellion-box-pursuit-legality",
+              "revealLabel": "追击后的补充证词",
+              "requiredAfterUnlock": true,
+              "wrongEvidenceFeedback": "这句来自追击补记，普通证物只能说明背景，不能钉住证人刚补出来的话。",
+              "answerEvidence": "case-rebellion-box-ev-pursuit-note",
+              "objection": "异议成立。追击补记：投书转手把这句补充证词钉住了，证人不能再退回原来的说法。"
             },
             {
               "text": "来俊臣反制后留下了一个缺口：他只证明刚才那件证物不够，却没有解释后续动作是谁做的。",
@@ -1174,7 +1270,19 @@ window.WUZHOU_GAME_DATA = {
               "press": "把转手路线连起来，就能看出谁每次都在罪名变重的地方出现。",
               "wrongEvidenceFeedback": "最后一击要用庭上追问记录，单件证物会被说成流程一环。",
               "answerEvidence": "case-rebellion-box-ev-court-note",
+              "pursuitUnlockStatementId": "case-rebellion-box-pursuit-final",
+              "pursuitUnlockLabel": "追击后的补充证词",
               "objection": "异议成立。庭上追问记录显示这不是自然推进，而是投书每转一次手，罪名就被加重一次。"
+            },
+            {
+              "text": "御前书记写下补记：投书每转一次手，罪名就比原来重一层。",
+              "press": "这是对照追击后才出现的补充证词。打开法庭记录，使用刚写入的追击补记击破它。",
+              "hiddenUntilPressed": "case-rebellion-box-pursuit-final",
+              "revealLabel": "追击后的补充证词",
+              "requiredAfterUnlock": true,
+              "wrongEvidenceFeedback": "这句来自追击补记，普通证物只能说明背景，不能钉住证人刚补出来的话。",
+              "answerEvidence": "case-rebellion-box-ev-pursuit-note",
+              "objection": "异议成立。追击补记：投书转手把这句补充证词钉住了，证人不能再退回原来的说法。"
             },
             {
               "text": "若辩方无法说明这条路，告密案就按谋反定案。",
@@ -1490,7 +1598,19 @@ window.WUZHOU_GAME_DATA = {
               "press": "证人被迫承认供状，却还没把刑具和签押连起来。拿出能显示供状异常的证物。",
               "wrongEvidenceFeedback": "要打“自愿签押”，需要先指出供状本身不自然。",
               "answerEvidence": "case-urn-ev-2",
+              "pursuitUnlockStatementId": "case-urn-pursuit-surface",
+              "pursuitUnlockLabel": "追击后的补充证词",
               "objection": "异议成立。狄仁杰亲笔供状显示供状后半突然潦草，签押并不像证人说的那样从容自愿。"
+            },
+            {
+              "text": "魏元忠补充说，签押前那口瓮已经被拖到供案旁边。",
+              "press": "这是对照追击后才出现的补充证词。打开法庭记录，使用刚写入的追击补记击破它。",
+              "hiddenUntilPressed": "case-urn-pursuit-surface",
+              "revealLabel": "追击后的补充证词",
+              "requiredAfterUnlock": true,
+              "wrongEvidenceFeedback": "这句来自追击补记，普通证物只能说明背景，不能钉住证人刚补出来的话。",
+              "answerEvidence": "case-urn-ev-pursuit-note",
+              "objection": "异议成立。追击补记：瓮前签押把这句补充证词钉住了，证人不能再退回原来的说法。"
             },
             {
               "text": "我只知道他活着走出了审讯，不知道他在里面听见了什么。",
@@ -1532,7 +1652,19 @@ window.WUZHOU_GAME_DATA = {
               "counterFeedback": "周兴把辩方引向单个供词破绽：供词可疑还不够，必须拿出能说明逼供办法反咬自己的证物。",
               "counterPenalty": 2,
               "answerEvidence": "case-urn-ev-4",
+              "pursuitUnlockStatementId": "case-urn-pursuit-legality",
+              "pursuitUnlockLabel": "追击后的补充证词",
               "objection": "异议成立。周兴审讯手册把恐吓和认罪排成固定步骤，供状不是凭空写成的。"
+            },
+            {
+              "text": "周兴说那只是旧法，却没有解释手册折角为什么正停在恐吓那页。",
+              "press": "这是对照追击后才出现的补充证词。打开法庭记录，使用刚写入的追击补记击破它。",
+              "hiddenUntilPressed": "case-urn-pursuit-legality",
+              "revealLabel": "追击后的补充证词",
+              "requiredAfterUnlock": true,
+              "wrongEvidenceFeedback": "这句来自追击补记，普通证物只能说明背景，不能钉住证人刚补出来的话。",
+              "answerEvidence": "case-urn-ev-pursuit-note",
+              "objection": "异议成立。追击补记：瓮前签押把这句补充证词钉住了，证人不能再退回原来的说法。"
             },
             {
               "text": "周兴反制后留下了一个缺口：他只证明刚才那件证物不够，却没有解释后续动作是谁做的。",
@@ -1570,7 +1702,19 @@ window.WUZHOU_GAME_DATA = {
               "press": "把恐吓、签押、手册折角按顺序排开，它们就不是散落材料。",
               "wrongEvidenceFeedback": "最后一击要用庭上追问记录，单件证物会被周兴拆开解释。",
               "answerEvidence": "case-urn-ev-court-note",
+              "pursuitUnlockStatementId": "case-urn-pursuit-final",
+              "pursuitUnlockLabel": "追击后的补充证词",
               "objection": "异议成立。庭上追问记录说明三件证物合起来是一套流程：先让人害怕，再让供状看起来像自愿。"
+            },
+            {
+              "text": "御前书记把顺序写清：先是瓮，再是手册，最后才是供状。",
+              "press": "这是对照追击后才出现的补充证词。打开法庭记录，使用刚写入的追击补记击破它。",
+              "hiddenUntilPressed": "case-urn-pursuit-final",
+              "revealLabel": "追击后的补充证词",
+              "requiredAfterUnlock": true,
+              "wrongEvidenceFeedback": "这句来自追击补记，普通证物只能说明背景，不能钉住证人刚补出来的话。",
+              "answerEvidence": "case-urn-ev-pursuit-note",
+              "objection": "异议成立。追击补记：瓮前签押把这句补充证词钉住了，证人不能再退回原来的说法。"
             },
             {
               "text": "若不能证明流程存在，供状仍按有效记录处理。",
@@ -1862,7 +2006,19 @@ window.WUZHOU_GAME_DATA = {
               "press": "证人把整齐说成临时。拿出能显示时间顺序异常的证物。",
               "wrongEvidenceFeedback": "要打“事后补办”，需要能证明半小时内已经出现安排的证物。",
               "answerEvidence": "case-half-hour-coup-ev-2",
+              "pursuitUnlockStatementId": "case-half-hour-coup-pursuit-surface",
+              "pursuitUnlockLabel": "追击后的补充证词",
               "objection": "异议成立。张氏兄弟赏赐簿记录半小时内连换口令，禁军行动不是事后才补出来的。"
+            },
+            {
+              "text": "玄宗旧部承认，夜门撞开前，侧门已经先收到一道换岗口令。",
+              "press": "这是对照追击后才出现的补充证词。打开法庭记录，使用刚写入的追击补记击破它。",
+              "hiddenUntilPressed": "case-half-hour-coup-pursuit-surface",
+              "revealLabel": "追击后的补充证词",
+              "requiredAfterUnlock": true,
+              "wrongEvidenceFeedback": "这句来自追击补记，普通证物只能说明背景，不能钉住证人刚补出来的话。",
+              "answerEvidence": "case-half-hour-coup-ev-pursuit-note",
+              "objection": "异议成立。追击补记：夜门先令把这句补充证词钉住了，证人不能再退回原来的说法。"
             },
             {
               "text": "我只看见门开、人散、命令传来。谁先知道结局，我不敢说。",
@@ -1904,7 +2060,19 @@ window.WUZHOU_GAME_DATA = {
               "counterFeedback": "张易之抓住辩方只谈夜门时间的弱点：半小时本身只能证明行动迅速，不能直接说明罪名如何被制造。",
               "counterPenalty": 2,
               "answerEvidence": "case-half-hour-coup-ev-4",
+              "pursuitUnlockStatementId": "case-half-hour-coup-pursuit-legality",
+              "pursuitUnlockLabel": "追击后的补充证词",
               "objection": "异议成立。禁军换岗令显示罪名先写结论后补理由，这不是仓促补救，是给结局找标签。"
+            },
+            {
+              "text": "张易之说是临时补救，却说不清罪名纸条为何先写结论。",
+              "press": "这是对照追击后才出现的补充证词。打开法庭记录，使用刚写入的追击补记击破它。",
+              "hiddenUntilPressed": "case-half-hour-coup-pursuit-legality",
+              "revealLabel": "追击后的补充证词",
+              "requiredAfterUnlock": true,
+              "wrongEvidenceFeedback": "这句来自追击补记，普通证物只能说明背景，不能钉住证人刚补出来的话。",
+              "answerEvidence": "case-half-hour-coup-ev-pursuit-note",
+              "objection": "异议成立。追击补记：夜门先令把这句补充证词钉住了，证人不能再退回原来的说法。"
             },
             {
               "text": "张易之反制后留下了一个缺口：他只证明刚才那件证物不够，却没有解释后续动作是谁做的。",
@@ -1942,7 +2110,19 @@ window.WUZHOU_GAME_DATA = {
               "press": "把半小时拆成开门、换岗、定罪、赏赐，就能看出它们准得过分。",
               "wrongEvidenceFeedback": "最后一击需要庭上追问记录，单件证物会被说成混乱片段。",
               "answerEvidence": "case-half-hour-coup-ev-court-note",
+              "pursuitUnlockStatementId": "case-half-hour-coup-pursuit-final",
+              "pursuitUnlockLabel": "追击后的补充证词",
               "objection": "异议成立。庭上追问记录显示半小时不是混乱的借口，而是一张被提前排好的时间表。"
+            },
+            {
+              "text": "御前书记补记：半小时不是混乱的空白，而是一张被提前排好的表。",
+              "press": "这是对照追击后才出现的补充证词。打开法庭记录，使用刚写入的追击补记击破它。",
+              "hiddenUntilPressed": "case-half-hour-coup-pursuit-final",
+              "revealLabel": "追击后的补充证词",
+              "requiredAfterUnlock": true,
+              "wrongEvidenceFeedback": "这句来自追击补记，普通证物只能说明背景，不能钉住证人刚补出来的话。",
+              "answerEvidence": "case-half-hour-coup-ev-pursuit-note",
+              "objection": "异议成立。追击补记：夜门先令把这句补充证词钉住了，证人不能再退回原来的说法。"
             },
             {
               "text": "若辩方说不清这张时间表，夜门案就只能按既成事实封卷。",
