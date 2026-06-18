@@ -2262,6 +2262,10 @@ button:not(:disabled):hover {
   box-shadow: 0 16px 42px rgba(31, 28, 25, 0.28);
 }
 
+.dialogue-box[data-advance-trial-dialogue] {
+  cursor: pointer;
+}
+
 .dialogue-box.speed-slow {
   border-bottom: 5px solid var(--jade);
 }

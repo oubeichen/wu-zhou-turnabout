@@ -2612,6 +2612,9 @@
     const leftPoseLabel = mode === "trial" ? poseLabel(stagePose.left) : "";
     const rightPoseLabel = mode === "trial" ? poseLabel(stagePose.right) : "";
     const hasInvestigationBeat = mode === "investigation" && state.investigationBeat;
+    const trialAdvanceAttr = mode === "trial"
+      ? `data-advance-trial-dialogue="1" role="button" tabindex="0" aria-label="继续查看证词下一句"`
+      : "";
     const vulnerabilityCue = mode === "trial" ? renderTrialVulnerabilityCue() : "";
     const locationArt = location ? locationBackgroundFile(caseData, location) : "";
     const locationStyle = locationArt ? `style="--location-art: url('./assets/${escapeHtml(locationArt)}');"` : "";
@@ -2636,7 +2639,7 @@
         <div class="scene-title">${escapeHtml(title)}</div>
         ${mode === "investigation" ? renderInvestigationHotspots() : ""}
         ${hasInvestigationBeat ? renderInvestigationBeat() : `
-          <div class="dialogue-box ${speedClass}">
+          <div class="dialogue-box ${speedClass}" ${trialAdvanceAttr}>
             <span class="dialogue-speaker">${escapeHtml(speaker)}</span>
             <div>${escapeHtml(text)}</div>
           </div>
@@ -4170,6 +4173,17 @@
     renderTrial();
   }
 
+  function advanceTrialDialogueByClick() {
+    if (state.screen !== "trial" || state.recordOpen) return;
+    const caseData = currentCase();
+    const progress = caseProgress(caseData.id);
+    const testimony = caseData.testimony[progress.testimonyIndex];
+    const visibleStatements = visibleStatementEntries(testimony, progress);
+    if (progress.statementIndex < visibleStatements.length - 1) {
+      moveStatement(1);
+    }
+  }
+
   function jumpStatement(index) {
     const caseData = currentCase();
     const progress = caseProgress(caseData.id);
@@ -4731,6 +4745,12 @@
       advanceOrCloseInvestigationBeat();
       return;
     }
+    const trialDialogPanel = event.target.closest("[data-advance-trial-dialogue]");
+    if (trialDialogPanel && !event.target.closest("button") && state.screen === "trial") {
+      playCue("click");
+      advanceTrialDialogueByClick();
+      return;
+    }
     const interludePanel = event.target.closest("[data-continue-testimony-panel]");
     if (interludePanel && !event.target.closest("button")) {
       playCue("click");
@@ -4947,6 +4967,15 @@
       if (event.key === "Enter" || event.key === " ") {
         event.preventDefault();
         advanceCaseOpeningCutscene();
+        return;
+      }
+    }
+    if (state.screen === "trial" && (event.key === "Enter" || event.key === " ")) {
+      const isButtonFocus = event.target && event.target.closest && event.target.closest("button");
+      if (!isButtonFocus && !state.recordOpen) {
+        event.preventDefault();
+        playCue("click");
+        advanceTrialDialogueByClick();
         return;
       }
     }
