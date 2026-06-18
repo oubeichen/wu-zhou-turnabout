@@ -80,6 +80,7 @@
     recordInspectView: "front",
     recordInspectGesture: "",
     recordInspectGestureNonce: 0,
+    recordInspectFindings: {},
     inspectDrag: null,
     message: "",
     speaker: "系统",
@@ -2654,10 +2655,12 @@
     if (!id) return;
     const items = recordInspectItems(caseData, inspectType);
     if (!items.some((item) => (inspectType === "profile" ? item.name : item.id) === id)) return;
+    const inspectItem = items.find((item) => (inspectType === "profile" ? item.name : item.id) === id);
     state.recordInspect = { type: inspectType, id };
-    state.recordInspectSpot = inspectType === "evidence" ? "trace" : "";
     state.recordInspectView = inspectType === "evidence" ? "front" : "";
+    state.recordInspectSpot = inspectType === "evidence" ? inspectSpotsForEvidence(inspectItem, "front")[0]?.id || "" : "";
     clearRecordInspectTransient();
+    if (inspectType === "evidence") markRecordInspectFinding(inspectItem, "front", state.recordInspectSpot);
     rerender();
   }
 
@@ -2688,9 +2691,10 @@
       state.selectedProfileName = "";
       state.recordTab = "evidence";
       state.recordInspect = { type: "evidence", id: next.id };
-      state.recordInspectSpot = "trace";
       state.recordInspectView = "front";
+      state.recordInspectSpot = inspectSpotsForEvidence(next, "front")[0]?.id || "";
       clearRecordInspectTransient();
+      markRecordInspectFinding(next, "front", state.recordInspectSpot);
     }
     rerender();
   }
@@ -2715,6 +2719,7 @@
     const view = views.find((entry) => entry.id === viewId) || views[0];
     state.recordInspectView = view.id;
     state.recordInspectSpot = inspectSpotsForEvidence(inspect.item, view.id)[0]?.id || "";
+    markRecordInspectFinding(inspect.item, view.id, state.recordInspectSpot);
     setRecordInspectGesture(gesture);
   }
 
@@ -2729,6 +2734,8 @@
 
   function inspectSpotsForEvidence(item, viewId = activeInspectView().id) {
     if (!item) return [];
+    const specific = specificInspectSpotsForEvidence(item, viewId);
+    if (specific.length) return specific;
     const source = item.source ? `来源：${item.source}` : "来源仍需和证词互相印证。";
     const risk = item.counterRisk ? ` 慎用点：${item.counterRisk}` : "";
     const common = {
@@ -2780,6 +2787,242 @@
     return [common.trace, common.logic];
   }
 
+  function evidenceInspectKind(item) {
+    const id = item?.id || "";
+    const name = item?.name || "";
+    if (id.endsWith("-ev-pattern") || name.includes("线索板") || name.includes("流向图") || name.includes("审讯图") || name.includes("半小时图")) return "board";
+    if (name.includes("名册")) return "roster";
+    if (name.includes("账册") || name.includes("赏赐簿")) return "ledger";
+    if (name.includes("联名折")) return "petition";
+    if (name.includes("诏稿") || name.includes("遗诏") || name.includes("传位记录")) return "edict";
+    if (name.includes("铜匦")) return "bronze_box";
+    if (name.includes("榜文") || name.includes("檄文")) return "notice";
+    if (name.includes("缉捕令") || name.includes("换岗令")) return "order";
+    if (name.includes("瓮口")) return "jar";
+    if (name.includes("供状") || name.includes("口供")) return "confession";
+    if (name.includes("手册")) return "manual";
+    if (name.includes("纸条") || name.includes("札") || name.includes("笺")) return "note";
+    if (name.includes("签") || name.includes("牌")) return "tally";
+    return "record";
+  }
+
+  function specificInspectSpotsForEvidence(item, viewId) {
+    const source = item.source ? `来源：${item.source}` : "来源仍需和证词互相印证。";
+    const risk = item.counterRisk ? `慎用点：${item.counterRisk}` : "太早出示只会让对手把争点带偏。";
+    const map = {
+      board: {
+        front: [
+          ["thread", "红线关系", "先看线怎么连", `${item.name}把受益者、被推出来背罪的人和关键时辰绑在一起。庭上如果有人说“一切只是巧合”，先点这条红线。`],
+          ["pin", "钉住节点", "哪几个点不能分开", `${item.summary} 玩家要记住：线索板不是新传闻，而是把已经取得的证物摆成同一条因果链。`],
+        ],
+        back: [
+          ["order", "排列顺序", "背面的排序痕迹", `${item.detail} 背面排序提醒你先讲时间，再讲动机，最后讲谁受益。`],
+          ["missing", "空白缺口", "还差哪句话", `${item.use} 如果证人回避这些空白，就用追问逼他承认自己解释不了。`],
+        ],
+        edge: [
+          ["wear", "反复翻阅", "边角磨损", `${item.name}边角被翻得发亮，说明它是最后总结用的东西，不适合一开庭就拍出去。`],
+          ["risk", "出示时机", "什么时候拿出来", "等对方把多件事说成偶然，或者否认证物之间有关联时，再用它做最后一击。"],
+        ],
+      },
+      roster: {
+        front: [
+          ["names", "同页名单", "哪些人被放在一起", `${item.summary} 名册的重点不是单个名字，而是谁被写在同一页、谁被调离现场。`],
+          ["seal", "封口印", "谁有权封存", `${source} 这种名册能上庭，是因为它留下了封存痕迹，不是口耳相传。`],
+        ],
+        back: [
+          ["source", "登记出处", "背面来源", `${source} 背面出处能证明它不是事后编出来的便利说法。`],
+          ["gap", "缺席位置", "谁没有出现在名单里", `${item.detail} 如果证词装作所有人在场，这个缺席位置就是追问入口。`],
+        ],
+        edge: [
+          ["wear", "抽换痕", "册页边缘", "边缘厚薄不齐，说明这类名单最怕有人事后补页或抽页。"],
+          ["risk", "举证风险", "不能只念名字", `${risk} 必须先把名单和现场时辰连起来。`],
+        ],
+      },
+      ledger: {
+        front: [
+          ["amount", "赏赐/账目", "数字说明什么", `${item.summary} 账册把口头恩宠变成看得见的资源流向。`],
+          ["recipient", "受益人", "钱物去了谁手里", `${item.use} 证人若说某人只是旁观者，就用账目把他拉回案情中心。`],
+        ],
+        back: [
+          ["source", "账房标记", "登记从哪来", `${source} 背面标记能说明它不是辩方临时拼出的故事。`],
+          ["gap", "断档处", "哪一段账忽然断开", `${item.detail} 断档比完整数字更值得问：谁有能力让记录停住。`],
+        ],
+        edge: [
+          ["wear", "常翻页", "账册被翻过哪里", "磨损集中在同一侧，说明这页在案发后被反复核对。"],
+          ["risk", "举证时机", "什么时候有用", `${risk} 等证人否认利益流向时再用。`],
+        ],
+      },
+      bronze_box: {
+        front: [
+          ["slot", "投书口", "信从哪里进去", `${item.summary} 铜匦只能证明有人投书，不能自动证明后面的审讯和抓捕都合理。`],
+          ["letter", "匣中原札", "原札写到哪一步", `${item.detail} 先分清“有人投书”和“有人扩大案情”，庭上才不会被带跑。`],
+        ],
+        back: [
+          ["seal", "匣背封缄", "谁打开过", `${source} 背面的封缄说明它经过公门流程，也给审讯者留下了动手脚的机会。`],
+          ["gap", "转办空白", "投书之后谁接手", `${item.use} 证词如果只讲投书、不讲转办，就从这里追问。`],
+        ],
+        edge: [
+          ["wear", "铜边擦痕", "被谁频繁使用", "投书口边缘磨亮，说明它不是孤例，而是一套告密机器的入口。"],
+          ["risk", "出示风险", "不能直接定罪", risk],
+        ],
+      },
+      jar: {
+        front: [
+          ["scorch", "烙痕", "火从哪里烧过", `${item.summary} 烙痕让逼供传闻变成现场物证。`],
+          ["mouth", "瓮口", "人会被怎样威吓", `${item.detail} 重点不是故事吓人，而是办案者真的把恐吓当成办法。`],
+        ],
+        back: [
+          ["ash", "灰痕", "背面残灰", `${source} 灰痕说明它不是摆设，曾经被搬进审讯流程。`],
+          ["gap", "谁下令", "记录没有写的人", `${item.use} 若证人只说按旧例问案，就追问是谁把旧例变成火候。`],
+        ],
+        edge: [
+          ["crack", "裂口", "热胀裂痕", "裂口方向能证明它被加热过，不是普通储物瓮。"],
+          ["risk", "出示时机", "要配合哪句话", `${risk} 等证人否认逼供办法时再拿出来。`],
+        ],
+      },
+      confession: {
+        front: [
+          ["hand", "笔迹停顿", "哪里不像自愿写下", `${item.summary} 手抖、停笔和补字，比供词内容本身更能说明压力。`],
+          ["seal", "供状印记", "谁把它定成正式记录", `${source} 印记把个人口供变成公文，也把责任推给办案流程。`],
+        ],
+        back: [
+          ["source", "副本来源", "背面出处", `${source} 背面能说明这是正本、副本，还是后来转抄。`],
+          ["gap", "漏写处", "供词没解释什么", `${item.detail} 供词越完整，漏掉的动机和逼供过程越显眼。`],
+        ],
+        edge: [
+          ["wear", "折痕", "被急着收过", "折痕压在字迹上，像是写完后很快被收走。"],
+          ["risk", "举证风险", "不能只说供词可疑", `${risk} 需要和逼供工具或审讯手册一起形成链条。`],
+        ],
+      },
+      order: {
+        front: [
+          ["route", "路线/命令", "行动怎么被安排", `${item.summary} 命令类证物能把“临时发生”改成“已经部署”。`],
+          ["seal", "官印", "谁让命令生效", `${source} 官印不是装饰，它决定这份命令能不能压过证人的口头说法。`],
+        ],
+        back: [
+          ["source", "发出位置", "从哪一道门传出", `${item.detail} 背面标记能把行动路线和权力来源连起来。`],
+          ["gap", "空白时辰", "少了哪段时间", `${item.use} 如果证词把行动说成突然，就追问空白时辰。`],
+        ],
+        edge: [
+          ["wear", "传递折痕", "一路传过几手", "边缘折痕说明它被匆忙传递，不像事后慢慢归档。"],
+          ["risk", "举证时机", "等证词说死", `${risk} 等对方否认准备动作时再用。`],
+        ],
+      },
+      petition: {
+        front: [
+          ["names", "联名处", "谁把名字写在一起", `${item.summary} 联名折的重点是“不是一个人在反对”，而是一群朝臣把风险一起写下。`],
+          ["fold", "折痕", "折子被如何传阅", `${item.use} 如果证词说朝中无人介意，这些反复翻折的痕迹就能说明它并非孤声。`],
+        ],
+        back: [
+          ["source", "递呈出处", "从哪一路送来", `${source} 背面递呈痕迹能把它从私下抱怨变成正式朝臣文书。`],
+          ["gap", "删改空白", "谁的话被压掉", `${item.detail} 空白处提醒玩家：有人不只是在反对，也可能在被迫沉默。`],
+        ],
+        edge: [
+          ["wear", "传阅磨损", "被多少人摸过", "边角磨损越集中，越能说明它经历了多次传阅。"],
+          ["risk", "出示风险", "不能当作单人怨言", `${risk} 要把它和后续诏稿或名册连起来。`],
+        ],
+      },
+      edict: {
+        front: [
+          ["title", "诏令题头", "命令指向谁", `${item.summary} 诏令类证物要先看题头：它把传闻变成了朝廷动作。`],
+          ["ink", "墨迹覆盖", "哪几个字被盖住", `${item.detail} 墨迹不是污损，而是在遮住不方便留下的人名或顺序。`],
+        ],
+        back: [
+          ["source", "起草出处", "谁能写这份稿", `${source} 起草出处决定它是传闻、草稿，还是已经进入政务流程。`],
+          ["gap", "改写痕迹", "命令哪里被换过", `${item.use} 如果证词把记录说成天然可信，就问这处改写是谁做的。`],
+        ],
+        edge: [
+          ["wear", "卷轴边", "是否反复展开", "边缘被压平，说明这份文书不只是收藏品，而是被拿出来核对过。"],
+          ["risk", "举证时机", "等对方夸口记录完整", `${risk} 对方把公开记录说得越绝对，这份证物越有力。`],
+        ],
+      },
+      notice: {
+        front: [
+          ["headline", "告示题头", "公开说法怎么扩散", `${item.summary} 告示类证物说明恐惧如何从公门贴到街口。`],
+          ["paste", "张贴痕", "它被贴在哪里", `${item.use} 证词若只讲案卷，不讲民间恐惧，就从张贴痕追问。`],
+        ],
+        back: [
+          ["source", "印刷来源", "谁让它变成公开话", `${source} 背面来源能说明它不是自然流言，而是有人推动公开叙事。`],
+          ["gap", "缺页边", "哪半截不见了", `${item.detail} 残缺处可能正是把投书扩大成罪名的那一步。`],
+        ],
+        edge: [
+          ["wear", "撕裂边", "被谁急着揭下", "边缘撕裂不整，像是有人想赶在别人读完前揭走。"],
+          ["risk", "出示风险", "不能只证明有流言", `${risk} 它要用来证明扩散路径，而不是证明罪名本身。`],
+        ],
+      },
+      manual: {
+        front: [
+          ["method", "审讯步骤", "办法写得有多细", `${item.summary} 手册把逼问变成流程，说明问题不在某一句供词，而在办案方法。`],
+          ["mark", "重点批注", "谁把恐吓当技巧", `${item.use} 证人若说只是照例问案，批注能把“旧例”戳成主动选择。`],
+        ],
+        back: [
+          ["source", "手册出处", "从谁那里流出", `${source} 出处能说明这不是旁听传闻，而是办案者自己承认的方法。`],
+          ["gap", "删去段落", "哪一步不敢写明", `${item.detail} 被删去的段落往往比写出来的更接近真相。`],
+        ],
+        edge: [
+          ["wear", "常用页", "哪一页翻得最多", "边缘磨损集中，说明这套方法被反复拿来照做。"],
+          ["risk", "举证时机", "要配合供状或物证", `${risk} 单独拿手册容易被说成纸上谈兵。`],
+        ],
+      },
+      note: {
+        front: [
+          ["line", "急写字迹", "写信人当时有多慌", `${item.summary} 私札、纸条和问安笺要看语气：它往往比正式文书更诚实。`],
+          ["seal", "封口痕", "有没有被拆看", `${item.use} 封口痕能说明它在到达收信人前是否被别人看过。`],
+        ],
+        back: [
+          ["source", "传递路径", "从谁手里来", `${source} 背面传递痕迹决定它是私人求援，还是被拿来加工罪名。`],
+          ["gap", "没写完处", "为什么突然停笔", `${item.detail} 停笔处说明写信人可能被打断，也可能不敢把话说透。`],
+        ],
+        edge: [
+          ["wear", "折角", "被藏过还是递过", "折角小而密，像是被塞进袖中或夹进册页。"],
+          ["risk", "出示风险", "不能只讲情绪", `${risk} 要让它和现场行动或公开记录相互印证。`],
+        ],
+      },
+      tally: {
+        front: [
+          ["slot", "刻痕", "缺了哪个时辰", `${item.summary} 签牌类证物要看时辰刻痕，少掉的一格比写上的字更重要。`],
+          ["name", "补写姓名", "谁后来被添进去", `${item.use} 证词若只说听见哭声，就用补写姓名把他拉回现场。`],
+        ],
+        back: [
+          ["source", "值夜出处", "谁管这块签", `${source} 出处能证明它属于现场秩序，不是辩方随口拿出的木牌。`],
+          ["gap", "空档", "哪一段无人值守", `${item.detail} 空档处正好连接案发时辰，是追问现场动线的入口。`],
+        ],
+        edge: [
+          ["wear", "挂绳磨痕", "曾挂在哪里", "挂绳处磨得发亮，说明它确实长期用于值夜交接。"],
+          ["risk", "举证时机", "等证人回避现场", `${risk} 别在传闻入口浪费它。`],
+        ],
+      },
+    };
+    const kind = evidenceInspectKind(item);
+    const byView = map[kind]?.[viewId];
+    if (!byView) return [];
+    return byView.map(([id, label, title, text]) => ({ id, label, title, text }));
+  }
+
+  function recordInspectFindingKey(item, viewId, spotId) {
+    if (!item || !spotId) return "";
+    return `${item.id || item.name}:${viewId}:${spotId}`;
+  }
+
+  function markRecordInspectFinding(item, viewId, spotId) {
+    const key = recordInspectFindingKey(item, viewId, spotId);
+    if (!key) return;
+    state.recordInspectFindings[key] = true;
+  }
+
+  function isRecordInspectFindingChecked(item, viewId, spotId) {
+    const key = recordInspectFindingKey(item, viewId, spotId);
+    return Boolean(key && state.recordInspectFindings[key]);
+  }
+
+  function recordInspectProgress(item) {
+    if (!item) return { checked: 0, total: 0, label: "" };
+    const views = inspectViewsForEvidence();
+    const keys = views.flatMap((view) => inspectSpotsForEvidence(item, view.id).map((spot) => recordInspectFindingKey(item, view.id, spot.id))).filter(Boolean);
+    const checked = keys.filter((key) => state.recordInspectFindings[key]).length;
+    return { checked, total: keys.length, label: `${checked}/${keys.length}` };
+  }
+
   function activeInspectSpot(item) {
     const spots = inspectSpotsForEvidence(item);
     return spots.find((spot) => spot.id === state.recordInspectSpot) || spots[0] || null;
@@ -2797,6 +3040,7 @@
     const spots = inspectSpotsForEvidence(item, view.id);
     const activeSpot = activeInspectSpot(item);
     const activeSpotIndex = Math.max(0, spots.findIndex((spot) => spot.id === activeSpot?.id));
+    const progress = recordInspectProgress(item);
     return `
       <div class="inspect-view-tabs" aria-label="证物查看角度">
         ${views
@@ -2811,10 +3055,11 @@
       </div>
       <div class="inspect-art-stage inspect-view-${escapeHtml(view.id)} inspect-spot-${escapeHtml(activeSpot?.id || "trace")} ${state.recordInspectGesture ? "inspect-gesture-active" : ""}" data-view="${escapeHtml(view.title)}" data-active-lens="${escapeHtml(`${view.id}:${activeSpot?.id || ""}`)}" data-inspect-drag-stage>
         ${renderEvidenceThumb(item, true, "inspect", caseData)}
+        <div class="inspect-progress" aria-label="${escapeHtml(`已查 ${progress.label}`)}"><b>${escapeHtml(progress.label)}</b><span>已查</span></div>
         <div class="inspect-drag-hint" aria-hidden="true"><span>拖动切换角度</span></div>
         ${
           activeSpot
-            ? `<div class="inspect-lens ${escapeHtml(inspectLensClass(view.id, activeSpot.id))}" data-inspect-lens aria-label="${escapeHtml(`放大查看：${activeSpot.label}`)}">
+            ? `<div class="inspect-lens ${escapeHtml(inspectLensClass(view.id, activeSpot.id))} inspect-lens-slot-${activeSpotIndex + 1}" data-inspect-lens aria-label="${escapeHtml(`放大查看：${activeSpot.label}`)}">
                 <i aria-hidden="true"></i>
                 <strong>${escapeHtml(activeSpot.label)}</strong>
                 <small>${activeSpotIndex + 1}</small>
@@ -2824,12 +3069,15 @@
         <div class="inspect-hotspots" aria-label="证物检查点">
           ${spots
             .map(
-              (spot, index) => `
-                <button class="inspect-hotspot inspect-hotspot-${index + 1} ${activeSpot?.id === spot.id ? "active" : ""}" type="button" data-inspect-spot="${escapeHtml(spot.id)}">
+              (spot, index) => {
+                const checked = isRecordInspectFindingChecked(item, view.id, spot.id);
+                return `
+                <button class="inspect-hotspot inspect-hotspot-${index + 1} ${activeSpot?.id === spot.id ? "active" : ""} ${checked ? "checked" : ""}" type="button" data-inspect-spot="${escapeHtml(spot.id)}">
                   <span>${index + 1}</span>
                   <small>${escapeHtml(spot.label)}</small>
                 </button>
-              `
+              `;
+              }
             )
             .join("")}
         </div>
@@ -3775,6 +4023,8 @@
     if (target.dataset.inspectStep !== undefined) stepRecordInspect(Number(target.dataset.inspectStep));
     if (target.dataset.inspectSpot) {
       state.recordInspectSpot = target.dataset.inspectSpot;
+      const inspect = currentRecordInspect(currentCase());
+      if (inspect?.type === "evidence") markRecordInspectFinding(inspect.item, activeInspectView().id, state.recordInspectSpot);
       clearRecordInspectTransient();
       rerender();
     }
@@ -3995,6 +4245,7 @@
     const selectedEvidencePosition = selectedEvidence ? evidenceSheetPosition(selectedEvidence, caseData) : null;
     const inspect = currentRecordInspect(caseData);
     const inspectSpot = inspect?.type === "evidence" ? activeInspectSpot(inspect.item) : null;
+    const inspectProgress = inspect?.type === "evidence" ? recordInspectProgress(inspect.item) : { label: "", checked: 0, total: 0 };
     const pickup = currentEvidencePickup(caseData);
     const inventoryCue = currentInventoryCue(caseData);
     const nextCaseIndex = continueCaseIndex();
@@ -4054,6 +4305,11 @@
       recordInspectObservation: inspectSpot?.text || "",
       recordInspectLens: inspect?.type === "evidence" && inspectSpot ? `${activeInspectView().id}:${inspectSpot.id}` : "",
       recordInspectLensLabel: inspectSpot?.label || "",
+      recordInspectSpotId: inspectSpot?.id || "",
+      recordInspectSpotChecked: inspect?.type === "evidence" && inspectSpot ? isRecordInspectFindingChecked(inspect.item, activeInspectView().id, inspectSpot.id) : false,
+      recordInspectProgress: inspectProgress.label,
+      recordInspectCheckedCount: inspectProgress.checked,
+      recordInspectTotalCount: inspectProgress.total,
       recordInspectGesture: state.recordInspectGesture || "",
       investigationBeatKind: state.screen === "investigation" ? state.investigationBeat?.kind || "" : "",
       investigationBeatSpeaker: state.screen === "investigation" ? state.investigationBeat?.speaker || "" : "",

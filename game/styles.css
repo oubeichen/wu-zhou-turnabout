@@ -3046,6 +3046,31 @@ button:not(:disabled):hover {
   box-shadow: 0 8px 18px rgba(31, 28, 25, 0.22);
 }
 
+.inspect-progress {
+  position: absolute;
+  right: 14px;
+  top: 12px;
+  z-index: 3;
+  display: grid;
+  grid-template-columns: auto auto;
+  gap: 5px;
+  align-items: center;
+  padding: 5px 8px;
+  color: #231b16;
+  background: rgba(255, 241, 191, 0.9);
+  border: 2px solid rgba(92, 29, 24, 0.5);
+  border-radius: 999px;
+  box-shadow: 0 10px 22px rgba(31, 28, 25, 0.24);
+  pointer-events: none;
+}
+
+.inspect-progress b,
+.inspect-progress span {
+  font-size: 12px;
+  font-weight: 900;
+  line-height: 1;
+}
+
 .inspect-gesture-active .evidence-thumb {
   animation: inspect-swipe-settle 0.24s ease-out both;
 }
@@ -3218,6 +3243,16 @@ button:not(:disabled):hover {
   bottom: 31%;
 }
 
+.inspect-lens-slot-1 {
+  left: 24%;
+  top: 24%;
+}
+
+.inspect-lens-slot-2 {
+  right: 20%;
+  bottom: 24%;
+}
+
 @keyframes inspect-lens-pop {
   from {
     opacity: 0;
@@ -3276,6 +3311,17 @@ button:not(:disabled):hover {
 .inspect-hotspot.active {
   background: rgba(179, 123, 36, 0.96);
   box-shadow: 0 12px 28px rgba(31, 28, 25, 0.36), 0 0 0 4px rgba(255, 241, 191, 0.24);
+}
+
+.inspect-hotspot.checked span {
+  color: #fff8e7;
+  background: #2e6f62;
+}
+
+.inspect-hotspot.checked small::after {
+  content: " 已查";
+  color: #fff1bf;
+  font-weight: 900;
 }
 
 .inspect-hotspot-1 {
@@ -5100,6 +5146,17 @@ button:not(:disabled):hover {
     font-size: 11px;
   }
 
+  .inspect-progress {
+    right: 8px;
+    top: 42px;
+    padding: 4px 7px;
+  }
+
+  .inspect-progress b,
+  .inspect-progress span {
+    font-size: 11px;
+  }
+
   .inspect-lens {
     width: 64px;
     height: 64px;
@@ -5156,6 +5213,16 @@ button:not(:disabled):hover {
   .inspect-lens-edge-risk {
     right: 18%;
     bottom: 34%;
+  }
+
+  .inspect-lens-slot-1 {
+    left: 20%;
+    top: 31%;
+  }
+
+  .inspect-lens-slot-2 {
+    right: 16%;
+    bottom: 30%;
   }
 
   .inspect-view-tabs {

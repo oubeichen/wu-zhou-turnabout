@@ -1740,3 +1740,28 @@ Remaining Ace Attorney gap list:
 - The evidence sheet is reproducible local bitmap art; future passes can replace selected high-value props with direct Image API exports once the tool exposes stable workspace output paths.
 - Courtroom acting keeps both portraits visible, but character animation remains limited to a shared multi-pose sheet rather than bespoke per-character animation strips.
 - Audio has local cue samples and looped music tracks, but the tracks are procedurally generated placeholders rather than fully authored soundtrack compositions.
+
+## 2026-06-18 iteration 63 result
+
+Implemented:
+- Upgraded Court Record `详查` from generic evidence spots into object-specific inspection logic for key evidence families.
+- Added per-evidence-type inspection spots for clue boards, rosters, ledgers, petitions, edicts, bronze-box letters, notices, orders, scorched jars, confession papers, interrogation manuals, notes, and tallies.
+- Added an in-art `已查` progress badge and checked hotspot states so players can tell which parts of an evidence object have been inspected.
+- Marked inspected spots when the modal opens, when the player switches view, and when the player clicks a hotspot.
+- Exposed `recordInspectSpotId`, `recordInspectSpotChecked`, `recordInspectProgress`, `recordInspectCheckedCount`, and `recordInspectTotalCount` through `window.render_game_to_text` for deterministic QA.
+- Added fallback lens slot positions so object-specific hotspot ids still place the magnifier correctly on desktop and mobile.
+
+Verified:
+- `npm run check:js`
+- `PYTHONPYCACHEPREFIX="/Users/oubeichen/Projects/wuzetian2/.pycache" npm run check:py`
+- `git diff --check`
+- `npm run qa:web-game`
+- Desktop 1440x810 Playwright flow collected all first-case investigation evidence, opened Court Record, selected `后位线索板`, opened `详查证物`, clicked object-specific spots, switched to `背面`, and confirmed `红线关系` / `钉住节点` / `排列顺序` observations plus progress from `1/6` to `3/6` with no page-level overflow.
+- Mobile 390x844 Playwright flow opened `后位线索板` inspection, switched to `边缘`, clicked `反复翻阅`, confirmed `recordInspectProgress=2/6`, and confirmed no horizontal overflow.
+- Screenshots inspected: `iteration63-evidence-specific-inspect-desktop.png` and `iteration63-evidence-specific-inspect-mobile.png`.
+
+Remaining Ace Attorney gap list:
+- Evidence inspection now has object-specific hotspots and progress, but the most important objects still need puzzle-like secondary interactions such as comparing two items or unlocking a new deduction after all parts are inspected.
+- Courtroom acting keeps both portraits visible, but character animation remains limited to a shared multi-pose sheet rather than bespoke per-character animation strips.
+- Impact, cut-in, title callout, and evidence art now use bitmap layers, but case/opponent-specific high-fidelity animation strips are still missing.
+- Audio has local cue samples and looped music tracks, but the tracks are procedurally generated placeholders rather than fully authored soundtrack compositions.
