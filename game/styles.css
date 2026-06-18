@@ -456,6 +456,19 @@ button:not(:disabled):hover {
     linear-gradient(145deg, rgba(255, 250, 240, 0.95), rgba(239, 225, 200, 0.92));
 }
 
+.case-card-openable {
+  cursor: pointer;
+}
+
+.case-card-openable:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 3px;
+}
+
+.case-card-openable:hover {
+  box-shadow: 0 16px 42px var(--shadow);
+}
+
 .case-card.focused {
   border-color: var(--gold);
   box-shadow: 0 0 0 3px rgba(255, 241, 191, 0.34), 0 18px 42px rgba(31, 28, 25, 0.34);
@@ -507,6 +520,15 @@ button:not(:disabled):hover {
   margin: 0;
   color: var(--muted);
   line-height: 1.65;
+}
+
+.case-hook {
+  max-width: 100%;
+  min-height: 48px;
+  overflow: hidden;
+  color: #5c1d18;
+  font-size: 14px;
+  line-height: 1.55;
 }
 
 .case-meta,

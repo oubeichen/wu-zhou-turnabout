@@ -1507,13 +1507,20 @@
     const total = caseData.evidence.length;
     const started = collected > 0 || Boolean(state.trial[caseData.id]);
     const record = caseRecord(caseData.id);
+    const cardHook = caseMenuHook(caseData);
     const grade = record.bestGrade || state.trial[caseData.id]?.grade || "";
     const medal = record.bestMedal || medalForGrade(grade);
     const label = done ? "查看案件" : started ? "继续案件" : "进入案件";
     const focused = state.homeFocusIndex === index;
     const sceneKey = caseData.scene?.key || "archive";
     return `
-      <article class="case-card scene-${sceneKey} ${focused ? "focused" : ""}">
+      <article
+        class="case-card scene-${sceneKey} ${focused ? "focused" : ""} case-card-openable"
+        role="button"
+        tabindex="0"
+        data-open-case-card="${index}"
+        aria-label="进入${escapeHtml(caseData.title)}：${escapeHtml(cardHook)}"
+      >
         <button class="case-poster" type="button" data-focus-case="${index}" aria-label="查看${escapeHtml(caseData.title)}档案">
           <span>${escapeHtml(caseData.scene?.motif || String(index + 1))}</span>
           <small>${escapeHtml(caseData.scene?.name || "案件现场")}</small>
@@ -1527,7 +1534,8 @@
           ${record.clears ? `<span class="tag">结案 ${record.clears} 次</span>` : ""}
         </div>
         <h2>${escapeHtml(caseData.title)}</h2>
-        <p>${escapeHtml(caseData.theme)}</p>
+        <p>${escapeHtml(cardHook)}</p>
+        <p class="case-hook">${escapeHtml(caseData.theme)}</p>
         <div class="case-actions">
           <button class="secondary-button" type="button" data-focus-case="${index}">查看档案</button>
           <button class="case-button" type="button" data-open-case="${index}">${label}</button>
@@ -4747,6 +4755,15 @@
       advanceObjectionReveal();
       return;
     }
+    const openCaseCard = event.target.closest("[data-open-case-card]");
+    if (openCaseCard && !event.target.closest("button")) {
+      playCue("click");
+      const index = Number(openCaseCard.dataset.openCaseCard);
+      if (Number.isFinite(index)) {
+        openCase(index);
+      }
+      return;
+    }
     const target = event.target.closest("button");
     if (!target) return;
     playCue("click");
@@ -4993,6 +5010,18 @@
       state.guideOpen = false;
       rerender();
       return;
+    }
+    if (state.screen === "home") {
+      const focusedCaseCard = document.activeElement?.closest?.("[data-open-case-card]");
+      if (focusedCaseCard && (event.key === "Enter" || event.key === " ")) {
+        event.preventDefault();
+        const index = Number(focusedCaseCard.dataset.openCaseCard);
+        if (Number.isFinite(index)) {
+          playCue("click");
+          openCase(index);
+        }
+        return;
+      }
     }
     if (state.objectionReveal && (event.key === "Enter" || event.key === " ")) {
       event.preventDefault();
