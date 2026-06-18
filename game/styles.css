@@ -6638,7 +6638,7 @@ button:not(:disabled):hover {
 .scene-hotspot span {
   position: static;
   max-width: 100%;
-  width: auto;
+  width: min(100%, 160px);
   background: transparent;
   border: 0;
   padding: 0;
@@ -6646,8 +6646,9 @@ button:not(:disabled):hover {
   visibility: visible;
   transform: none;
   pointer-events: none;
-  white-space: normal;
-  text-overflow: unset;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   font-size: 14px;
   font-weight: 900;
 }
