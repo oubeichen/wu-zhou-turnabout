@@ -1852,9 +1852,6 @@
         <span class="prop-kicker">${escapeHtml(closeup.status)}</span>
         <div class="prop-stage" aria-hidden="true">
           <span class="prop-mark">${escapeHtml(closeup.motif)}</span>
-          <span class="prop-piece piece-a"></span>
-          <span class="prop-piece piece-b"></span>
-          <span class="prop-piece piece-c"></span>
         </div>
         <strong>${escapeHtml(closeup.title)}</strong>
         <small>${escapeHtml(closeup.scene)}</small>

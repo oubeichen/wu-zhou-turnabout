@@ -8,6 +8,7 @@
 
 # Generated QA and browser-test artifacts
 output/
+tmp/imagegen/
 iteration*-*.png
 iteration*-*.json
 iteration*-*.md

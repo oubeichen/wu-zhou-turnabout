@@ -2,6 +2,34 @@ Original prompt: 做一个仿照 《逆转裁判》 的完整游戏。始终检�
 
 # Progress
 
+## 2026-06-18 iteration 53 result
+
+Implemented:
+- Used the session image generation tool to draft a reference direction for complex historical evidence props: scrolls, tallies, rosters, petitions, bronze complaint box, notices, registers, jar, confession, night gate tablet, and shift order.
+- The local OpenAI Image API CLI could not run a live export because `OPENAI_API_KEY` is not set in this environment, so this iteration converted the reference direction into committed bitmap-generation improvements rather than leaving the repo unchanged.
+- Upgraded `scripts/generate_evidence_item_sheet.py` so the evidence sheet now draws larger item silhouettes with paper grain, brush strokes, shadows, red seals, route threads, boxed clue boards, bronze-box letters, jar scorch marks, and smaller labels that no longer dominate the icon.
+- Added `scripts/generate_prop_closeups.py` and regenerated `game/assets/prop-closeups-v1.png` as a proper bitmap close-up sheet for desk papers, screen shadow, bamboo slip, ink stain, petition scroll, and court bell.
+- Removed the runtime CSS prop-piece overlays from investigation close-ups, so complex investigation objects are no longer assembled from CSS polygon/shape fragments on top of the bitmap.
+- Added the new prop close-up generator to `npm run check:py`.
+- Updated `.gitignore` with `tmp/imagegen/` for future image-generation batch scratch files.
+
+Verified:
+- `npm run check:js`
+- `PYTHONPYCACHEPREFIX=/Users/oubeichen/Projects/wuzetian2/.pycache npm run check:py`
+- `git diff --check`
+- `npm run qa:web-game` passed; inspected `output/web-game/shot-0.png`. The only warning is the external develop-web-game script's module-type warning.
+- Desktop 1440x810 Playwright flow entered first-case investigation, examined the first hotspot, confirmed `.prop-stage::before` loads `prop-closeups-v1.png`, confirmed no `.prop-piece` / `.piece-*` elements remain, and confirmed page overflow stays `0x0`.
+- Desktop 1440x810 Playwright flow opened Court Record and confirmed evidence thumbnails load `evidence-item-sheet-v2.png` with no horizontal overflow.
+- Mobile 390x844 Playwright flow confirmed the investigation close-up loads `prop-closeups-v1.png`, no CSS prop pieces are rendered, and there is no horizontal overflow.
+- Screenshots inspected: `iteration53-investigation-prop-bitmap.png`, `iteration53-record-evidence-bitmap.png`, and `iteration53-mobile-prop-bitmap.png`.
+
+Remaining Ace Attorney gap list:
+- Complex evidence and investigation objects now use committed PNG sprite sheets instead of SVG/CSS shape overlays, but the art is still generated locally from drawing primitives; once an exportable Image API key/path is available, high-value evidence should be replaced with fully image-generated item sprites.
+- Investigation and Court Record interactions are functional, but there is still no animated evidence pickup fanfare or inventory add animation.
+- Correct objections have staged cut-ins, but animation still uses DOM/CSS composition rather than fully authored frame-by-frame sprites.
+- Courtroom acting keeps both portraits visible, but character animation remains limited to a shared multi-pose sheet rather than bespoke per-character animation strips.
+- Audio has local cue samples and looped music tracks, but the tracks are procedurally generated placeholders rather than fully authored soundtrack compositions.
+
 ## 2026-06-18 iteration 52 result
 
 Implemented:
