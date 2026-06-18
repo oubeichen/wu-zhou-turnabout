@@ -2500,7 +2500,7 @@
         ? "破绽已经逼出来了。确认这份记录能反驳当前句，就点击“举证”。"
         : statement.answerProfile
           ? "破绽已经逼出来了。打开人物档案，选中能推翻当前句的人。"
-          : "破绽已经逼出来了。打开证物记录，选中能推翻当前句的证物。"
+          : "破绽已经逼出来了。打开证物记录，选中能推翻当前句的证物。可按 E 直接提交。"
       : "右侧法庭记录只负责选择；点击下方“举证”才会提交。";
     state.screen = "trial";
     renderStatus();
@@ -4079,7 +4079,7 @@
             <button class="secondary-button" type="button" data-reset-case>重置当前案</button>
             <button class="primary-button" type="button" data-toggle-settings>关闭</button>
           </div>
-          <p class="hint-text">键盘：方向键切换证词，空格/Enter 前进对话，P 追问，R 法庭记录，S 设置，1-4 切换调查指令（移动/查看/交谈/出示）。</p>
+          <p class="hint-text">键盘：方向键切换证词，空格/Enter 前进对话，P 追问，E 举证，R 法庭记录，S 设置，1-4 切换调查指令（移动/查看/交谈/出示）。</p>
         </section>
       </div>
     `;
@@ -5187,6 +5187,18 @@
         event.preventDefault();
         playCue("click");
         advanceTrialDialogueByClick();
+        return;
+      }
+    }
+    if (state.screen === "trial" && event.key.toLowerCase() === "e" && !state.recordOpen) {
+      const caseData = currentCase();
+      const progress = caseProgress(caseData.id);
+      const { statement, rawIndex } = currentStatementEntry(caseData.testimony[progress.testimonyIndex], progress);
+      const readyToPresent = statementReadyToPresent(statement, progress, progress.testimonyIndex, rawIndex);
+      if (readyToPresent && !state.objectionReveal && !state.pursuitUnlockCue && !state.settingsOpen) {
+        event.preventDefault();
+        playCue("click");
+        presentEvidence();
         return;
       }
     }
