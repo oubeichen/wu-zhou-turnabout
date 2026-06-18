@@ -1779,7 +1779,7 @@
         <div class="opening-cutscene-actions">
           <span>${step + 1}/${beats.length}</span>
           <button class="secondary-button" type="button" data-skip-opening>跳过开场</button>
-          <button class="primary-button" type="button" data-advance-opening>${step >= beats.length - 1 ? "开始调查" : "继续"}</button>
+          <span class="opening-continue-hint">${step >= beats.length - 1 ? "点击任意处开始调查" : "点击任意处继续开场"}</span>
         </div>
       </section>
       ${renderSettings()}

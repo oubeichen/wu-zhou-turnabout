@@ -1239,7 +1239,7 @@ button:not(:disabled):hover {
 
 .opening-cutscene-actions {
   display: grid;
-  grid-template-columns: auto minmax(130px, 180px) minmax(160px, 220px);
+  grid-template-columns: auto minmax(130px, 180px) auto;
   gap: 10px;
   align-items: center;
   justify-content: end;
@@ -1250,6 +1250,14 @@ button:not(:disabled):hover {
   color: #231b16;
   background: rgba(255, 241, 191, 0.88);
   border-radius: 999px;
+  font-weight: 900;
+}
+
+.opening-continue-hint {
+  justify-self: end;
+  border: 1px solid rgba(255, 241, 191, 0.42);
+  background: rgba(31, 28, 25, 0.72);
+  color: #ffedcb;
   font-weight: 900;
 }
 
