@@ -78,6 +78,9 @@
     recordInspect: null,
     recordInspectSpot: "",
     recordInspectView: "front",
+    recordInspectGesture: "",
+    recordInspectGestureNonce: 0,
+    inspectDrag: null,
     message: "",
     speaker: "系统",
     dramaticCue: "",
@@ -705,6 +708,25 @@
 
   function clearInventoryCue() {
     state.inventoryCue = null;
+  }
+
+  function clearRecordInspectTransient() {
+    state.recordInspectGesture = "";
+    state.recordInspectGestureNonce = 0;
+    state.inspectDrag = null;
+  }
+
+  function setRecordInspectGesture(gesture) {
+    const nonce = Date.now();
+    state.recordInspectGesture = gesture || "";
+    state.recordInspectGestureNonce = nonce;
+    if (!gesture) return;
+    window.setTimeout(() => {
+      if (state.recordInspectGestureNonce !== nonce) return;
+      state.recordInspectGesture = "";
+      state.recordInspectGestureNonce = 0;
+      if (state.recordInspect) rerender();
+    }, 420);
   }
 
   function setEvidencePickup(caseData, items) {
@@ -2634,6 +2656,7 @@
     state.recordInspect = { type: inspectType, id };
     state.recordInspectSpot = inspectType === "evidence" ? "trace" : "";
     state.recordInspectView = inspectType === "evidence" ? "front" : "";
+    clearRecordInspectTransient();
     rerender();
   }
 
@@ -2641,6 +2664,7 @@
     state.recordInspect = null;
     state.recordInspectSpot = "";
     state.recordInspectView = "front";
+    clearRecordInspectTransient();
     rerender();
   }
 
@@ -2657,6 +2681,7 @@
       state.recordInspect = { type: "profile", id: next.name };
       state.recordInspectSpot = "";
       state.recordInspectView = "";
+      clearRecordInspectTransient();
     } else {
       state.selectedEvidenceId = next.id;
       state.selectedProfileName = "";
@@ -2664,6 +2689,7 @@
       state.recordInspect = { type: "evidence", id: next.id };
       state.recordInspectSpot = "trace";
       state.recordInspectView = "front";
+      clearRecordInspectTransient();
     }
     rerender();
   }
@@ -2679,6 +2705,25 @@
   function activeInspectView() {
     const views = inspectViewsForEvidence();
     return views.find((view) => view.id === state.recordInspectView) || views[0];
+  }
+
+  function setRecordInspectView(viewId, gesture = "") {
+    const inspect = currentRecordInspect(currentCase());
+    if (!inspect || inspect.type !== "evidence") return;
+    const views = inspectViewsForEvidence();
+    const view = views.find((entry) => entry.id === viewId) || views[0];
+    state.recordInspectView = view.id;
+    state.recordInspectSpot = inspectSpotsForEvidence(inspect.item, view.id)[0]?.id || "";
+    setRecordInspectGesture(gesture);
+  }
+
+  function rotateRecordInspectView(delta, gestureSource = "drag") {
+    const inspect = currentRecordInspect(currentCase());
+    if (!inspect || inspect.type !== "evidence") return;
+    const views = inspectViewsForEvidence();
+    const activeIndex = Math.max(0, views.findIndex((view) => view.id === activeInspectView().id));
+    const nextIndex = (activeIndex + delta + views.length) % views.length;
+    setRecordInspectView(views[nextIndex].id, delta > 0 ? `${gestureSource}:next` : `${gestureSource}:prev`);
   }
 
   function inspectSpotsForEvidence(item, viewId = activeInspectView().id) {
@@ -2763,8 +2808,9 @@
           )
           .join("")}
       </div>
-      <div class="inspect-art-stage inspect-view-${escapeHtml(view.id)} inspect-spot-${escapeHtml(activeSpot?.id || "trace")}" data-view="${escapeHtml(view.title)}" data-active-lens="${escapeHtml(`${view.id}:${activeSpot?.id || ""}`)}">
+      <div class="inspect-art-stage inspect-view-${escapeHtml(view.id)} inspect-spot-${escapeHtml(activeSpot?.id || "trace")} ${state.recordInspectGesture ? "inspect-gesture-active" : ""}" data-view="${escapeHtml(view.title)}" data-active-lens="${escapeHtml(`${view.id}:${activeSpot?.id || ""}`)}" data-inspect-drag-stage>
         ${renderEvidenceThumb(item, true, "inspect", caseData)}
+        <div class="inspect-drag-hint" aria-hidden="true"><span>拖动切换角度</span></div>
         ${
           activeSpot
             ? `<div class="inspect-lens ${escapeHtml(inspectLensClass(view.id, activeSpot.id))}" data-inspect-lens aria-label="${escapeHtml(`放大查看：${activeSpot.label}`)}">
@@ -3711,12 +3757,11 @@
     if (target.dataset.inspectStep !== undefined) stepRecordInspect(Number(target.dataset.inspectStep));
     if (target.dataset.inspectSpot) {
       state.recordInspectSpot = target.dataset.inspectSpot;
+      clearRecordInspectTransient();
       rerender();
     }
     if (target.dataset.inspectView) {
-      state.recordInspectView = target.dataset.inspectView;
-      const inspect = currentRecordInspect(currentCase());
-      state.recordInspectSpot = inspect?.type === "evidence" ? inspectSpotsForEvidence(inspect.item)[0]?.id || "" : "";
+      setRecordInspectView(target.dataset.inspectView, "button");
       rerender();
     }
     if (target.dataset.returnToTrial !== undefined || target.dataset.returnToTrialInspect !== undefined) {
@@ -3784,6 +3829,33 @@
     playCue("click");
     syncAudioForScreen();
     rerender();
+  }
+
+  function handlePointerDown(event) {
+    const stage = event.target.closest("[data-inspect-drag-stage]");
+    if (!stage || event.target.closest("button") || !state.recordInspect || state.recordInspect.type !== "evidence") return;
+    state.inspectDrag = {
+      pointerId: event.pointerId,
+      x: event.clientX,
+      y: event.clientY,
+    };
+    stage.setPointerCapture?.(event.pointerId);
+  }
+
+  function handlePointerUp(event) {
+    const drag = state.inspectDrag;
+    if (!drag || (drag.pointerId !== undefined && event.pointerId !== drag.pointerId)) return;
+    state.inspectDrag = null;
+    const dx = event.clientX - drag.x;
+    const dy = event.clientY - drag.y;
+    if (Math.abs(dx) < 44 || Math.abs(dx) < Math.abs(dy) * 1.2) return;
+    rotateRecordInspectView(dx < 0 ? 1 : -1, "drag");
+    rerender();
+  }
+
+  function handlePointerCancel(event) {
+    if (!state.inspectDrag || (state.inspectDrag.pointerId !== undefined && event.pointerId !== state.inspectDrag.pointerId)) return;
+    state.inspectDrag = null;
   }
 
   function handleKeydown(event) {
@@ -3962,6 +4034,7 @@
       recordInspectObservation: inspectSpot?.text || "",
       recordInspectLens: inspect?.type === "evidence" && inspectSpot ? `${activeInspectView().id}:${inspectSpot.id}` : "",
       recordInspectLensLabel: inspectSpot?.label || "",
+      recordInspectGesture: state.recordInspectGesture || "",
       investigationBeatKind: state.screen === "investigation" ? state.investigationBeat?.kind || "" : "",
       investigationBeatSpeaker: state.screen === "investigation" ? state.investigationBeat?.speaker || "" : "",
       investigationBeatResult: state.screen === "investigation" ? state.investigationBeat?.result || "" : "",
@@ -4078,6 +4151,9 @@
   });
   app.addEventListener("click", handleClick);
   app.addEventListener("change", handleChange);
+  app.addEventListener("pointerdown", handlePointerDown);
+  app.addEventListener("pointerup", handlePointerUp);
+  app.addEventListener("pointercancel", handlePointerCancel);
   statusStrip.addEventListener("click", handleClick);
   statusStrip.addEventListener("change", handleChange);
   document.addEventListener("keydown", handleKeydown);

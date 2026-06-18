@@ -2901,7 +2901,8 @@ button:not(:disabled):hover {
   .inventory-flight-card,
   .inventory-target-active,
   .inventory-target-burst,
-  .inspect-lens {
+  .inspect-lens,
+  .inspect-gesture-active .evidence-thumb {
     animation: none;
   }
 }
@@ -3000,6 +3001,13 @@ button:not(:disabled):hover {
   min-width: min(100%, 260px);
   min-height: 238px;
   perspective: 780px;
+  cursor: grab;
+  touch-action: pan-y;
+  user-select: none;
+}
+
+.inspect-art-stage:active {
+  cursor: grabbing;
 }
 
 .inspect-art-stage::after {
@@ -3015,6 +3023,42 @@ button:not(:disabled):hover {
   border-radius: 999px;
   font-size: 12px;
   font-weight: 900;
+}
+
+.inspect-drag-hint {
+  position: absolute;
+  left: 50%;
+  bottom: 7px;
+  z-index: 3;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.inspect-drag-hint span {
+  display: block;
+  padding: 5px 10px;
+  color: #fff8e7;
+  background: rgba(46, 111, 98, 0.86);
+  border: 1px solid rgba(255, 241, 191, 0.42);
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 900;
+  box-shadow: 0 8px 18px rgba(31, 28, 25, 0.22);
+}
+
+.inspect-gesture-active .evidence-thumb {
+  animation: inspect-swipe-settle 0.24s ease-out both;
+}
+
+@keyframes inspect-swipe-settle {
+  from {
+    opacity: 0.76;
+    filter: brightness(1.12);
+  }
+  to {
+    opacity: 1;
+    filter: none;
+  }
 }
 
 .inspect-view-tabs {
@@ -4835,6 +4879,15 @@ button:not(:disabled):hover {
   .inspect-art-stage::after {
     right: 0;
     top: 38px;
+    font-size: 11px;
+  }
+
+  .inspect-drag-hint {
+    bottom: 4px;
+  }
+
+  .inspect-drag-hint span {
+    padding: 4px 8px;
     font-size: 11px;
   }
 
