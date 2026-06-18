@@ -1790,3 +1790,26 @@ Remaining Ace Attorney gap list:
 - Courtroom acting keeps both portraits visible, but character animation remains limited to a shared multi-pose sheet rather than bespoke per-character animation strips.
 - Impact, cut-in, title callout, and evidence art now use bitmap layers, but case/opponent-specific high-fidelity animation strips are still missing.
 - Audio has local cue samples and looped music tracks, but the tracks are procedurally generated placeholders rather than fully authored soundtrack compositions.
+
+## 2026-06-18 iteration 65 result
+
+Implemented:
+- Persisted successful evidence comparisons as Court Record `对照札记` entries through a new `recordDeductions` save field.
+- Correct `证物对照` now writes the confirmed reasoning back into the current evidence record instead of remaining only as a transient modal message.
+- Evidence list rows show an `已对照` badge when an item has a saved deduction.
+- Selected evidence detail renders the saved `对照札记` with the matched evidence name.
+- The `详查` compare panel also reuses saved deduction text so reopening the modal shows the already confirmed reasoning.
+- Added QA fields for selected-evidence deduction text/target, current inspect deduction text, and per-case deduction count.
+
+Verified:
+- `npm run check:js`
+- `PYTHONPYCACHEPREFIX="/Users/oubeichen/Projects/wuzetian2/.pycache" npm run check:py`
+- `git diff --check`
+- Source inspection confirmed `recordDeductions` is included in `snapshotSaveData()` and `restoreSaveData()`, and is rendered in evidence list/detail/inspect UI.
+- Browser persistence verification was attempted but blocked by the environment approval/usage limit before Chromium could launch. This remains a follow-up verification item; do not treat the browser persistence path as visually verified yet.
+
+Remaining Ace Attorney gap list:
+- Saved compare deductions now update the Court Record, but they still do not unlock new trial-only evidence or branch dialogue.
+- Browser verification for the saved-deduction reload path still needs to be rerun when browser execution is available again.
+- Courtroom acting keeps both portraits visible, but character animation remains limited to a shared multi-pose sheet rather than bespoke per-character animation strips.
+- Impact, cut-in, title callout, and evidence art now use bitmap layers, but case/opponent-specific high-fidelity animation strips are still missing.

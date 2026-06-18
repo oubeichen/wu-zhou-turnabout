@@ -82,6 +82,7 @@
     recordInspectGestureNonce: 0,
     recordInspectFindings: {},
     recordInspectCompare: null,
+    recordDeductions: {},
     inspectDrag: null,
     message: "",
     speaker: "系统",
@@ -123,6 +124,7 @@
       collected: state.collected,
       trial: state.trial,
       records: state.records,
+      recordDeductions: state.recordDeductions,
       investigation: state.investigation,
       backlog: state.backlog,
       guideSeen: state.guideSeen,
@@ -138,6 +140,7 @@
     state.collected = saved.collected || {};
     state.trial = saved.trial || {};
     state.records = saved.records || {};
+    state.recordDeductions = saved.recordDeductions || {};
     state.investigation = saved.investigation || {};
     state.backlog = Array.isArray(saved.backlog) ? saved.backlog : [];
     state.guideSeen = saved.guideSeen || {};
@@ -2592,12 +2595,13 @@
             const active = state.selectedEvidenceId === item.id;
             const disabled = !owned ? "disabled" : "";
             const lockedText = item.trialOnly ? "庭审追问可取得" : "尚未取得";
+            const deduction = deductionForEvidence(caseData, item.id);
             return `
               <button class="evidence-button ${active ? "selected" : ""}" type="button" data-select-evidence="${item.id}" ${disabled}>
                 <span class="evidence-row">
                   ${renderEvidenceThumb(item, owned, "small", caseData)}
                   <span class="evidence-copy">
-                    <strong>${escapeHtml(item.name)}</strong>
+                    <strong>${escapeHtml(item.name)}${deduction ? `<em class="deduction-badge">已对照</em>` : ""}</strong>
                     <span>${owned ? escapeHtml(item.summary) : lockedText}</span>
                   </span>
                 </span>
@@ -2615,6 +2619,7 @@
     if (!item) {
       return `<p class="hint-text">选择证物查看详情。庭审中选中证物后再点“举证”；人物档案也可用于举证。</p>`;
     }
+    const deduction = deductionForEvidence(caseData, item.id);
     return `
       <div class="evidence-detail">
         <div class="evidence-detail-top">
@@ -2626,6 +2631,11 @@
           </span>
         </div>
         <p>${escapeHtml(item.detail)}</p>
+        ${
+          deduction
+            ? `<div class="deduction-note"><strong>${escapeHtml(deduction.title)}</strong><span>${escapeHtml(deduction.text)}</span><small>对照：${escapeHtml(deduction.targetName)}</small></div>`
+            : ""
+        }
         ${item.counterRisk ? `<div class="risk-note"><strong>慎用提示</strong><span>${escapeHtml(item.counterRisk)}</span></div>` : ""}
         <small>${escapeHtml(item.use)}</small>
         <div class="detail-actions">
@@ -3081,6 +3091,29 @@
     return `${source.name}和${target.name}互相印证，可以作为庭上追问的下一层依据。`;
   }
 
+  function deductionStoreForCase(caseId) {
+    if (!state.recordDeductions[caseId]) state.recordDeductions[caseId] = {};
+    return state.recordDeductions[caseId];
+  }
+
+  function deductionForEvidence(caseData, evidenceId) {
+    return state.recordDeductions[caseData.id]?.[evidenceId] || null;
+  }
+
+  function saveInspectDeduction(caseData, source, target, text) {
+    if (!caseData || !source || !target || !text) return;
+    const store = deductionStoreForCase(caseData.id);
+    store[source.id] = {
+      sourceId: source.id,
+      targetId: target.id,
+      title: "对照札记",
+      targetName: target.name,
+      text,
+    };
+    setMessage("推理札记", `${source.name}已经写入新的对照札记。`, "turnabout");
+    save();
+  }
+
   function compareInspectEvidence(targetId) {
     const caseData = currentCase();
     const inspect = currentRecordInspect(caseData);
@@ -3094,6 +3127,7 @@
       result: correct ? "match" : "miss",
       text: inspectCompareResultText(inspect.item, target, correct),
     };
+    if (correct) saveInspectDeduction(caseData, inspect.item, target, state.recordInspectCompare.text);
     rerender();
   }
 
@@ -3163,6 +3197,7 @@
     const progress = recordInspectProgress(item);
     const options = inspectCompareOptionsForEvidence(item, caseData);
     const compare = state.recordInspectCompare?.sourceId === item.id ? state.recordInspectCompare : null;
+    const deduction = deductionForEvidence(caseData, item.id);
     if (!isRecordInspectComplete(item)) {
       return `<div class="inspect-compare locked"><b>二次推理</b><span>先把这件证物的全部检查点看完。当前进度：${escapeHtml(progress.label)}</span></div>`;
     }
@@ -3174,8 +3209,9 @@
       <div class="inspect-compare ${compare?.result === "match" ? "matched" : compare?.result === "miss" ? "missed" : ""}">
         <div>
           <b>${compare?.result === "match" ? "推理确认" : "证物对照"}</b>
-          <span>${compare ? escapeHtml(compare.text) : "选择一件已取得证物，确认它能不能和当前证物组成新的推理链。"}</span>
+          <span>${compare ? escapeHtml(compare.text) : deduction ? escapeHtml(deduction.text) : "选择一件已取得证物，确认它能不能和当前证物组成新的推理链。"}</span>
           ${target ? `<small>已对照：${escapeHtml(target.name)}</small>` : ""}
+          ${!target && deduction ? `<small>已写入：${escapeHtml(deduction.targetName)}</small>` : ""}
         </div>
         <div class="inspect-compare-options">
           ${options
@@ -4360,6 +4396,7 @@
     const selectedEvidence = state.selectedEvidenceId ? evidenceById(caseData, state.selectedEvidenceId) : null;
     const selectedEvidenceVisual = selectedEvidence ? evidenceVisualFor(selectedEvidence, true) : null;
     const selectedEvidencePosition = selectedEvidence ? evidenceSheetPosition(selectedEvidence, caseData) : null;
+    const selectedDeduction = selectedEvidence ? deductionForEvidence(caseData, selectedEvidence.id) : null;
     const inspect = currentRecordInspect(caseData);
     const inspectSpot = inspect?.type === "evidence" ? activeInspectSpot(inspect.item) : null;
     const inspectProgress = inspect?.type === "evidence" ? recordInspectProgress(inspect.item) : { label: "", checked: 0, total: 0 };
@@ -4412,6 +4449,8 @@
       selectedEvidenceArtAsset: selectedEvidencePosition ? "evidence-item-sheet-v3.png" : "",
       selectedEvidenceUsesBitmapOnly: selectedEvidenceVisual ? selectedEvidenceVisual.label === "" : false,
       selectedEvidenceRisk: selectedEvidence?.counterRisk || "",
+      selectedEvidenceDeduction: selectedDeduction?.text || "",
+      selectedEvidenceDeductionTarget: selectedDeduction?.targetName || "",
       selectedProfile: state.selectedProfileName,
       selectedRecordLabel: selectedRecordLabel(caseData),
       recordReturnAvailable: state.screen === "trial" && state.recordOpen && Boolean(selectedRecordLabel(caseData)),
@@ -4435,6 +4474,8 @@
       recordInspectCompareTarget: inspectCompareTarget?.name || "",
       recordInspectCompareResult: inspectCompare?.result || "",
       recordInspectCompareText: inspectCompare?.text || "",
+      recordInspectDeduction: inspect?.type === "evidence" ? deductionForEvidence(caseData, inspect.item.id)?.text || "" : "",
+      recordDeductionCount: Object.keys(state.recordDeductions[caseData.id] || {}).length,
       recordInspectGesture: state.recordInspectGesture || "",
       investigationBeatKind: state.screen === "investigation" ? state.investigationBeat?.kind || "" : "",
       investigationBeatSpeaker: state.screen === "investigation" ? state.investigationBeat?.speaker || "" : "",
