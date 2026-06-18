@@ -1573,7 +1573,7 @@
           <div class="case-brief-main">
             <div class="case-brief-copy">
               <h2>${escapeHtml(caseData.title)}</h2>
-              <p>${escapeHtml(caseData.goal)}</p>
+              <p>${escapeHtml(caseNarrativeLead(caseData))}</p>
               ${renderCaseSetup(caseData)}
             </div>
             ${renderCaseIntroArt(caseData)}
@@ -1612,97 +1612,90 @@
   }
 
   function caseBriefingCards(caseData) {
-    const firstLocation = caseData.locations?.[0]?.name || caseData.location;
-    const recordRoom = caseData.locations?.[1]?.name || "案牍房";
-    const fallbackEvidence = caseData.evidence?.slice(0, 3).map((item) => item.name).join("、") || "关键证物";
     const byCase = {
       "case-empress-seat": [
         {
-          title: "谁先把废后喊出口",
-          body: "宫人只承认听见哭声，却避开了更要命的问题：是谁先把婴儿之死、废后诏书和元老抗议连成一件事。",
+          title: "哭声之后，宫门突然安静了",
+          body: "立政殿外有人哭，有人跪，也有人把话咽了回去。宫人只说听见婴儿的哭声，却不肯说废后的风声是谁先放出来的。",
         },
         {
-          title: "第一步别审人，先看纸",
-          body: "去立政殿找破损奏章和值夜签，再到史官案牍房核对内廷名册。纸面改动比宫人口供更难撒谎。",
+          title: "最怕的不是证人撒谎",
+          body: "奏章撕过，值夜签改过，名册又被新蜡封住。每张纸都像在替同一个人遮掩，却没有一张愿意把名字说全。",
         },
         {
-          title: "庭上要打破的说法",
-          body: "对手会把一切说成后宫私怨。你要证明这不是闲话，而是一场已经被文书推动的权力改判。",
+          title: "许敬宗已经等在庭上",
+          body: "他会把这案子说成后宫旧怨。你若只听口供，宫人会背下所有罪名；你若找到文书的破口，后位之争才会露出真正的手。",
         },
       ],
       "case-crown-shadow": [
         {
-          title: "东宫旧臣为何突然成罪人",
-          body: "旧臣只是送文书，却被说成搅乱储位。真正危险的是账册、问安笺和传位记录被放到同一条线上。",
+          title: "东宫旧臣一夜成了罪人",
+          body: "他只是递过几封旧文书，天亮后却被说成搅乱储位。越是没人敢替他说话，越说明有人在等这个罪名落地。",
         },
         {
-          title: "先查待遇，再查时间",
-          body: `从${firstLocation}确认谁能出入，再到${recordRoom}核对皇子名册和病榻记录。储位案最怕只听一句“家事”。`,
+          title: "病榻旁的记录很干净",
+          body: "问安笺、皇子名册、传位记录摆得太整齐，像是早就准备给人看的。真正的问题在缺掉的那几句问候里。",
         },
         {
-          title: "庭上要逼出的漏洞",
-          body: "证人会回避高宗病势和皇子待遇。让他说出“只是旧臣多嘴”，再用记录证明问题早就被安排好了。",
+          title: "一句“家事”挡住了所有人",
+          body: "对手会说皇子待遇只是宫里安排。可旧臣为什么偏偏这时被推出来？储位的影子，已经压到每一本账册上。",
         },
       ],
       "case-rebellion-box": [
         {
-          title: "一张投书怎么变成大案",
-          body: "铜匦打开后，投书立刻被当成铁证。被告旧臣连看纸的机会都没有，就被推到谋反边上。",
+          title: "铜匦打开，罪名也打开了",
+          body: "投书从匣中取出时，还只是一张纸。等它送到案前，街上已经贴出榜文，旧臣连辩白的机会都快没了。",
         },
         {
-          title: "沿着纸的流向查",
-          body: "先看明堂前的铜匦，再查案牍房里的榜文、檄文和缉捕令。谁接过这张纸，谁就可能添过罪名。",
+          title: "纸在路上被人添了重量",
+          body: "投书、檄文、缉捕令说的是同一件事，却像出自三只不同的手。谁把“告发”改成“谋反”，谁就藏在纸张转交的路上。",
         },
         {
-          title: "庭上要拆开的恐惧",
-          body: "对手会说告密就是事实。你的目标是把投书、榜文、酷吏审讯分开，让法庭看见中间被加进去的手。",
+          title: "最吵的人未必最清楚真相",
+          body: "街上人人都在喊谋反，法庭也想快些定案。你要让他们先安静下来，看清那张纸最初到底写了什么。",
         },
       ],
       "case-urn": [
         {
-          title: "供词太整齐，反而不对",
-          body: "狄仁杰的供词看似签得干净，但御史台暗室里还摆着空瓮。逼供留下的痕迹不会自己消失。",
+          title: "供词太漂亮，像刚擦过的刀",
+          body: "狄仁杰的签押干净得反常。御史台暗室里却还留着空瓮、烙痕和没有收好的笔，像有人匆忙把夜里的事盖住。",
         },
         {
-          title: "先看刑具，再看笔迹",
-          body: "从御史台审讯室的瓮口烙痕查起，再到案牍房核对供状副本。真正的矛盾藏在前后笔迹里。",
+          title: "同一句话，被写了太多遍",
+          body: "几份供状的语气一模一样，连停笔的位置都像照着抄。人会害怕，笔不会；笔迹会把审讯者留下来。",
         },
         {
-          title: "庭上要反咬审讯者",
-          body: "周兴会把供词当成铁证。你要让他解释：如果供词自愿，为什么每份记录都像同一个模子压出来。",
+          title: "周兴不怕喊冤，他怕被追问细节",
+          body: "他会把供词拍在案上。别和他比嗓门，盯住瓮口、笔迹和副本，让他亲口解释这份“自愿”为什么带着火味。",
         },
       ],
       "case-half-hour-coup": [
         {
-          title: "半小时不是空白",
-          body: "夜门被撞开到局势翻转，只隔半小时。证人说来不及看清，却又笃定罪名早已成立。",
+          title: "半小时里，宫门换了主人",
+          body: "夜门被撞开时，所有人都说太乱了。可半小时后，罪名、赏赐和换岗都已经有了去处，像有人早把结局写好。",
         },
         {
-          title: "把夜门、赏赐、换岗放一起",
-          body: "先查夜门更漏牌，再看张氏兄弟赏赐簿和禁军换岗令。谁在半小时里失去保护，谁就最接近真相。",
+          title: "更漏牌没有说谎",
+          body: "它只记时间，不认胜负。张氏兄弟的赏赐簿、禁军换岗令和那张罪名纸条，才在替某些人抢时间。",
         },
         {
-          title: "庭上要问清莫须有",
-          body: "对手会把政变说成顺理成章。你要抓住罪名纸条和换岗时间，逼出“莫须有”究竟是谁写下的。",
+          title: "“来不及”是最方便的借口",
+          body: "对手会说局势变化太快，没人能看清。可若真没人看清，为什么惩罚和奖赏都来得那么准？",
         },
       ],
     };
-    return (
-      byCase[caseData.id] || [
-        {
-          title: "现在发生了什么",
-          body: `${caseData.openingLines?.[0]?.text || caseData.theme} 这不是一句证词能说完的事，先把现场、旧记录和证物摆到同一张桌上。`,
-        },
-        {
-          title: "先去哪里查",
-          body: `从${firstLocation}看现场痕迹，再到${recordRoom}核对前后记录，最后回到辩护席整理矛盾。`,
-        },
-        {
-          title: "先盯哪些东西",
-          body: `${fallbackEvidence}会决定开庭后第一轮追问的方向。`,
-        },
-      ]
-    );
+    return byCase[caseData.id] || [];
+  }
+
+  function caseNarrativeLead(caseData) {
+    const byCase = {
+      "case-empress-seat": "婴儿的死讯刚传开，废后的话已经有人写进奏章。立政殿里每个人都说自己只是听见了风声，可风声不会自己变成诏书。",
+      "case-crown-shadow": "东宫旧臣被押来时，手上还带着整理账册留下的墨。没人愿意说他到底犯了什么，只反复提醒你：储位的事，不该问太深。",
+      "case-rebellion-box": "铜匦里的一封投书，在半日之间变成了谋反大案。纸张每经过一只手，罪名就重一分，直到被告再也说不清自己面对的是什么。",
+      "case-urn": "御史台的供状看起来无懈可击，连签押都端正得刺眼。可暗室里的空瓮还没凉，像在等一个人承认：这份供词不是自己长出来的。",
+      "case-half-hour-coup": "夜门被撞开，到新命令传遍宫中，只用了半小时。所有人都说太乱了，可最乱的时候，偏偏有人把赏赐、换岗和罪名安排得很准。",
+    };
+    return byCase[caseData.id] || caseData.openingLines?.[0]?.text || caseData.goal || caseData.theme;
   }
 
   function renderCaseIntroArt(caseData) {
@@ -1722,12 +1715,62 @@
   }
 
   function caseSourceItems(caseData) {
+    const storyItems = caseSourceStoryItems(caseData.id);
     return (caseData.timeline || []).map((item, index) => ({
       ...item,
       index,
       chapter: chapterLabel(item.title || item.label || ""),
       shortTitle: chapterShortTitle(item.title || item.label || ""),
+      storyTitle: storyItems[index]?.title || chapterShortTitle(item.title || item.label || ""),
+      storyNote: storyItems[index]?.note || item.note || "",
     }));
+  }
+
+  function caseSourceStoryItems(caseId) {
+    const byCase = {
+      "case-empress-seat": [
+        { title: "宫门前的哭声", note: "流言从这里开始：有人把婴儿死亡和废后连到一起，却没人敢承认第一句话出自谁口。" },
+        { title: "值夜签被改", note: "名单上少了一段关键时辰，又多出后来补上的人名。它像一扇没关严的门，露出现场真正的动静。" },
+        { title: "名册重新封蜡", note: "后宫、外戚和当值官员被放进同一本册子，说明这不是宫人之间的私怨，而是有人在清点站位。" },
+        { title: "元老终于出声", note: "朝臣们的反对不是替谁哭冤，而是在抗拒后位突然改写。有人急着让他们闭嘴。" },
+        { title: "诏稿上盖住的名字", note: "墨迹遮住了反对者，却留下新后的称号。结果像是早就写好，只等一个理由送上来。" },
+        { title: "第一刀落下", note: "风波开始变成惩罚。谁被推出去承罪，谁被留下来受益，线索在这一刻分得最清楚。" },
+        { title: "宝座终于空出缺口", note: "所有纸张、证词和沉默都指向同一个结局：后位不是自然空出来的，是被一步步挪开的。" },
+      ],
+      "case-crown-shadow": [
+        { title: "旧臣递来的账", note: "一份旧账册让东宫旧事重新浮出水面，也让递账的人变成最方便的嫌疑人。" },
+        { title: "病榻旁的问安", note: "问安笺越整齐，越像有人事后补过。储位之争藏在一句句客气话之间。" },
+        { title: "皇子名册的空格", note: "名单里不是所有名字都一样重。谁被少写一笔，谁就可能被排到局外。" },
+        { title: "传位记录被翻出", note: "旧记录本该安静躺在库房里，却在最紧要的时候被人拿出来当刀。" },
+        { title: "东宫影子压上庭", note: "证人不愿谈继承，只想谈规矩。可规矩被谁拿在手里，才是本案真正的问题。" },
+      ],
+      "case-rebellion-box": [
+        { title: "铜匦里的投书", note: "纸还没展开，罪名已经在旁人嘴里成形。告密和事实之间，隔着一条很长的路。" },
+        { title: "街上的榜文", note: "榜文比审问先到百姓眼前，像有人急着让所有人相信被告已经有罪。" },
+        { title: "残檄的缺口", note: "檄文被撕开后，剩下的字刚好足够吓人，也刚好不够完整。" },
+        { title: "酷吏的名单", note: "审讯名单写得太满，像不是为了查清谁说谎，而是为了让每个人都害怕开口。" },
+        { title: "缉捕令的墨迹", note: "墨还没干，抓人的命令已经发出。有人把审理变成了追捕。" },
+        { title: "兵败后的空白", note: "兵败之后，最先消失的不是人，而是能替人说清楚前因后果的记录。" },
+        { title: "疾风里的证人", note: "越是人人自保的时候，敢留下只字片语的人越少。那些小字，也许比高声控诉更可靠。" },
+        { title: "舆论先判了案", note: "百姓听到的是结论，不是过程。法庭若也只听结论，真正加罪的人就永远不用上庭。" },
+      ],
+      "case-urn": [
+        { title: "空瓮留在暗室", note: "刑具没有说话，却比供状诚实。它告诉你：有人曾在这里等一个人崩溃。" },
+        { title: "供状上的笔锋", note: "笔画一顺到底，像写字的人没有停顿，也没有犹豫。真正的供词不该这样干净。" },
+        { title: "副本里的同一句话", note: "几份供状像互相照抄，错也错在同一处。恐惧会重复，伪造也会。" },
+        { title: "审讯手册的折角", note: "手册折在逼供那一页，说明这不是一场偶然失控，而是一套被反复使用的方法。" },
+        { title: "救援纸条迟到了", note: "有人想把狄仁杰救出来，却来得太晚。迟到的纸条也许正能证明供词来得太快。" },
+        { title: "用贤也会招祸", note: "有才能的人未必安全。若法庭只看供状，不看谁最怕他活着，案子就会被写成一场自白。" },
+      ],
+      "case-half-hour-coup": [
+        { title: "夜门的更漏", note: "半小时很短，却足够改变宫门、兵权和一条人命。时间是本案最冷静的证人。" },
+        { title: "赏赐簿先动了", note: "赏赐来得太早，像是在事情结束前就知道谁会赢。" },
+        { title: "罪名纸条", note: "纸条字少，分量却重。越含糊的罪名，越方便把人推下去。" },
+        { title: "禁军换岗令", note: "换岗不是混乱里的小事。谁离开岗位，谁留下缺口，半小时里都有人算过。" },
+        { title: "终局前的沉默", note: "等所有人都说尘埃落定，真正该问的是：谁最早知道尘埃会落向哪里。" },
+      ],
+    };
+    return byCase[caseId] || [];
   }
 
   function chapterLabel(title) {
@@ -1760,17 +1803,17 @@
             .map(
               (item) => `
                 <button class="source-tab ${active?.index === item.index ? "active" : ""}" type="button" data-case-source="${item.index}">
-                  <strong>${escapeHtml(item.chapter)}</strong>
-                  <span>${escapeHtml(item.shortTitle)}</span>
+                  <strong>${escapeHtml(item.storyTitle)}</strong>
+                  <span>${escapeHtml(item.chapter)}</span>
                 </button>
               `
             )
             .join("")}
         </div>
         <div class="source-detail">
-          <strong>${escapeHtml(active.title)}</strong>
-          <p>${escapeHtml(active.note)}</p>
-          <small>读法：它不是要你背章节，而是提醒本案的矛盾来自哪一段权力变化。调查时遇到相同人物、时间或动机，就回来看这里。</small>
+          <strong>${escapeHtml(active.storyTitle)}</strong>
+          <p>${escapeHtml(active.storyNote)}</p>
+          <small>原书线索：${escapeHtml(active.title)}</small>
         </div>
       </div>
     `;
@@ -4408,6 +4451,8 @@
     const nextCaseIndex = continueCaseIndex();
     const nextCase = data.cases[nextCaseIndex] || caseData;
     const manualSlots = readSaveSlots();
+    const caseSourceTabs = caseSourceItems(caseData);
+    const activeSource = activeCaseSource(caseData);
     return storageCodec.stringify({
       note: "文字状态供自动化测试使用；屏幕左上为原点，坐标不适用于本 DOM 游戏。",
       screen: state.screen,
@@ -4422,6 +4467,10 @@
       continueLabel: continueLabel(nextCase),
       caseBriefingCards: caseBriefingCards(caseData).map((card) => card.title),
       caseIntroArt: caseData.locations?.[0] ? locationBackgroundFile(caseData, caseData.locations[0]) : "",
+      caseSourceTabs: caseSourceTabs.map((item) => item.storyTitle),
+      activeCaseSourceTitle: activeSource?.storyTitle || "",
+      activeCaseSourceChapter: activeSource?.title || "",
+      activeCaseSourceNote: activeSource?.storyNote || "",
       manualSaveSlots: manualSlots.map((slot, index) => ({
         index,
         filled: Boolean(slot?.data),

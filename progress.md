@@ -1813,3 +1813,28 @@ Remaining Ace Attorney gap list:
 - Browser verification for the saved-deduction reload path still needs to be rerun when browser execution is available again.
 - Courtroom acting keeps both portraits visible, but character animation remains limited to a shared multi-pose sheet rather than bespoke per-character animation strips.
 - Impact, cut-in, title callout, and evidence art now use bitmap layers, but case/opponent-specific high-fidelity animation strips are still missing.
+
+## 2026-06-18 iteration 66 result
+
+Implemented:
+- Rewrote the case-intro headline paragraph for all five cases from objective/briefing copy into story-first incident hooks.
+- Replaced homepage briefing cards with more player-readable narrative beats: what happened, what feels wrong, and why the opponent's version is dangerous.
+- Reworked the chapter-source strip so buttons show story clues such as `宫门前的哭声` / `值夜签被改` instead of leading with opaque `卷宗`-style labels.
+- Kept original chapter provenance in the detail panel as `原书线索：...`, so players can still understand where the adapted beat comes from without reading a bibliography first.
+- Added `caseSourceTabs`, `activeCaseSourceTitle`, `activeCaseSourceChapter`, and `activeCaseSourceNote` to `render_game_to_text` so future QA can catch regressions back to manual-like copy.
+
+Verified:
+- `npm run check:js`
+- `PYTHONPYCACHEPREFIX="/Users/oubeichen/Projects/wuzetian2/.pycache" npm run check:py`
+- `git diff --check`
+- Source inspection confirmed every current case has story-first intro card copy and every current timeline entry has a story clue title/note.
+
+Blocked verification:
+- `npm run qa:web-game` still cannot launch Chromium in this environment because macOS denies Chromium's Mach port rendezvous.
+- In-app Browser verification was attempted. Direct `file://` navigation was blocked by Browser Use URL policy, and starting a local HTTP server from the browser runtime failed with `listen EPERM` on `127.0.0.1:8788`. This iteration therefore has no fresh visual screenshot verification.
+
+Remaining Ace Attorney gap list:
+- Case-intro copy is now more story-like, but investigation dialogue, evidence descriptions, and trial testimony still need a broader pass to sound like character voices instead of system explanation.
+- Evidence art already uses bitmap sheets, but complex props still need a follow-up pass using exportable Image API assets or a stronger generated sprite workflow.
+- Saved compare deductions now update the Court Record, but they still do not unlock new trial-only evidence or branch dialogue.
+- Browser visual verification needs to be rerun when local browser execution is available again.
