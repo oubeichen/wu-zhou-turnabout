@@ -4055,7 +4055,7 @@
             <button class="secondary-button" type="button" data-reset-case>重置当前案</button>
             <button class="primary-button" type="button" data-toggle-settings>关闭</button>
           </div>
-          <p class="hint-text">键盘：方向键切换证词，P 追问，Enter 举证，R 法庭记录，S 设置。</p>
+          <p class="hint-text">键盘：方向键切换证词，空格/Enter 前进对话，P 追问，R 法庭记录，S 设置。</p>
         </section>
       </div>
     `;
