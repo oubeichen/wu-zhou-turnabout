@@ -2263,3 +2263,26 @@ Remaining Ace Attorney gap list:
 - Trial scenes still need richer pressure-state character pose changes and stronger reaction timing.
 - Case-opening scenes are staged, but later passes should add beat-specific motion/camera timing and audio stingers.
 - The pursuit-note flow has distinct evidence art now, but the unlock moment itself could use a stronger courtroom reward animation.
+
+## 2026-06-18 iteration 84 result
+
+Implemented:
+- Fixed the mobile `法庭记录详查` hotspot overlap reported by the user: PNG hotspot labels no longer stay visible on small screens where they crowd the text beneath the evidence art.
+- Kept the bitmap hotspot markers and numeric badges visible, while moving the inspection point name responsibility to the existing magnifier/observation text so the art area no longer repeats the same label.
+- Raised the second mobile hotspot away from the bottom drag hint, increasing the measured gap between hotspot buttons and `拖动切换角度`.
+- Preserved desktop labels, where the modal has enough horizontal space and the labels do not cover the copy panel.
+
+Verified:
+- Mobile 390px Playwright repro captured the old overlap: hotspot bottom was `261px` and the drag hint began at `265px`, leaving only `4px`.
+- Mobile 390px Playwright after the fix confirmed hotspot labels are `display: none`, hotspot bottom is `241px`, drag hint begins at `265px`, the gap is now `24px`, the hotspots still clear the angle tabs, and `overflowX=0`.
+- Desktop 1366px Playwright confirmed labels remain visible, there is still a `12px` gap to the drag hint, and page overflow remains `0x0`.
+- Screenshot inspection of `output/web-game/inspect-hotspot-overlap-after-mobile.png` confirmed the hotspot buttons no longer cover the lower hint or evidence text.
+- `npm run check:js`
+- `PYTHONPYCACHEPREFIX="/Users/oubeichen/Projects/wuzetian2/.pycache" npm run check:py`
+- `git diff --check`
+- `npm run qa:web-game` with escalated Chromium browser access succeeded.
+
+Remaining Ace Attorney gap list:
+- The pursuit-note flow has distinct evidence art now, but the unlock moment itself still needs a stronger courtroom reward animation.
+- Trial scenes still need richer pressure-state character pose changes and stronger reaction timing.
+- Case-opening scenes are staged, but later passes should add beat-specific motion/camera timing and audio stingers.
