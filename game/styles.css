@@ -2900,7 +2900,8 @@ button:not(:disabled):hover {
 
   .inventory-flight-card,
   .inventory-target-active,
-  .inventory-target-burst {
+  .inventory-target-burst,
+  .inspect-lens {
     animation: none;
   }
 }
@@ -3061,6 +3062,127 @@ button:not(:disabled):hover {
 .inspect-view-edge .evidence-thumb {
   transform: rotateY(64deg) rotate(-1deg) scaleX(0.82);
   filter: contrast(1.08) saturate(0.9);
+}
+
+.inspect-lens {
+  position: absolute;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 86px;
+  height: 86px;
+  color: #231b16;
+  background:
+    radial-gradient(circle at 42% 36%, rgba(255, 255, 255, 0.72), rgba(255, 241, 191, 0.38) 42%, rgba(46, 111, 98, 0.16) 68%, transparent 70%),
+    rgba(255, 248, 231, 0.2);
+  border: 3px solid rgba(255, 241, 191, 0.92);
+  border-radius: 50%;
+  box-shadow: 0 14px 32px rgba(31, 28, 25, 0.28), inset 0 0 0 2px rgba(46, 111, 98, 0.32);
+  pointer-events: none;
+  animation: inspect-lens-pop 0.24s ease-out both;
+}
+
+.inspect-lens::before,
+.inspect-lens::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+}
+
+.inspect-lens::before {
+  inset: 17px;
+  border: 2px solid rgba(92, 29, 24, 0.44);
+  border-radius: 50%;
+}
+
+.inspect-lens::after {
+  right: -15px;
+  bottom: -18px;
+  width: 38px;
+  height: 9px;
+  background: #5c1d18;
+  border: 2px solid rgba(255, 241, 191, 0.86);
+  border-radius: 999px;
+  transform: rotate(42deg);
+  box-shadow: 0 8px 14px rgba(31, 28, 25, 0.24);
+}
+
+.inspect-lens i {
+  position: absolute;
+  inset: 11px;
+  display: block;
+  border-radius: 50%;
+  background:
+    linear-gradient(90deg, transparent calc(50% - 1px), rgba(92, 29, 24, 0.34) calc(50% - 1px) calc(50% + 1px), transparent calc(50% + 1px)),
+    linear-gradient(0deg, transparent calc(50% - 1px), rgba(92, 29, 24, 0.34) calc(50% - 1px) calc(50% + 1px), transparent calc(50% + 1px));
+}
+
+.inspect-lens strong {
+  z-index: 1;
+  max-width: 68px;
+  color: #231b16;
+  font-size: 13px;
+  font-weight: 900;
+  line-height: 1.1;
+  text-align: center;
+  text-shadow: 0 1px 0 rgba(255, 248, 231, 0.75);
+}
+
+.inspect-lens small {
+  position: absolute;
+  left: -3px;
+  top: -6px;
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  color: #fff8e7;
+  background: #5c1d18;
+  border: 2px solid #fff1bf;
+  border-radius: 50%;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.inspect-lens-front-trace {
+  left: 29%;
+  top: 31%;
+}
+
+.inspect-lens-front-logic {
+  right: 24%;
+  bottom: 24%;
+}
+
+.inspect-lens-back-source {
+  right: 25%;
+  top: 30%;
+}
+
+.inspect-lens-back-gap {
+  left: 22%;
+  bottom: 24%;
+}
+
+.inspect-lens-edge-wear {
+  left: 32%;
+  top: 34%;
+}
+
+.inspect-lens-edge-risk {
+  right: 20%;
+  bottom: 31%;
+}
+
+@keyframes inspect-lens-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.76);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 .inspect-hotspots {
@@ -4714,6 +4836,64 @@ button:not(:disabled):hover {
     right: 0;
     top: 38px;
     font-size: 11px;
+  }
+
+  .inspect-lens {
+    width: 64px;
+    height: 64px;
+    border-width: 2px;
+  }
+
+  .inspect-lens::before {
+    inset: 12px;
+  }
+
+  .inspect-lens::after {
+    right: -12px;
+    bottom: -14px;
+    width: 30px;
+    height: 7px;
+  }
+
+  .inspect-lens strong {
+    max-width: 50px;
+    font-size: 11px;
+  }
+
+  .inspect-lens small {
+    width: 22px;
+    height: 22px;
+    font-size: 11px;
+  }
+
+  .inspect-lens-front-trace {
+    left: 28%;
+    top: 33%;
+  }
+
+  .inspect-lens-front-logic {
+    right: 22%;
+    bottom: 28%;
+  }
+
+  .inspect-lens-back-source {
+    right: 22%;
+    top: 34%;
+  }
+
+  .inspect-lens-back-gap {
+    left: 22%;
+    bottom: 28%;
+  }
+
+  .inspect-lens-edge-wear {
+    left: 35%;
+    top: 38%;
+  }
+
+  .inspect-lens-edge-risk {
+    right: 18%;
+    bottom: 34%;
   }
 
   .inspect-view-tabs {

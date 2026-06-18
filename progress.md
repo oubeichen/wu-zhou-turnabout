@@ -2,6 +2,37 @@ Original prompt: 做一个仿照 《逆转裁判》 的完整游戏。始终检�
 
 # Progress
 
+## 2026-06-18 iteration 56 result
+
+Implemented:
+- Upgraded Court Record evidence inspection with an in-art magnifier marker.
+- The active inspection hotspot now renders an `inspect-lens` directly on top of the evidence art, with the hotspot label and number inside the lens.
+- The lens position changes by evidence view and hotspot:
+  - `front:trace` and `front:logic`
+  - `back:source` and `back:gap`
+  - `edge:wear` and `edge:risk`
+- Switching hotspots updates the lens class and label immediately, so the visual focus matches the observation text.
+- Switching views resets to that view's first spot and moves the lens to the matching view-specific position.
+- Added `recordInspectLens` and `recordInspectLensLabel` to `window.render_game_to_text`.
+- Added desktop and mobile lens styling, including reduced-motion handling and narrower mobile sizing to avoid horizontal overflow.
+
+Verified:
+- `npm run check:js`
+- `PYTHONPYCACHEPREFIX=/Users/oubeichen/Projects/wuzetian2/.pycache npm run check:py`
+- `git diff --check`
+- `npm run qa:web-game` passed; the only warning remains the external develop-web-game script's module-type warning.
+- Desktop 1440x810 Playwright flow collected first evidence, opened Court Record inspect, and confirmed `front:trace` lens, then switched to `front:logic`, then switched to back view and confirmed `back:source`.
+- Desktop flow confirmed the lens DOM classes match the active state and there is no page overflow.
+- Mobile 390x844 Playwright flow confirmed `front:trace` lens and `edge:wear` lens with no horizontal overflow.
+- Screenshots inspected: `iteration56-inspect-lens-front.png`, `iteration56-inspect-lens-back.png`, and `iteration56-inspect-lens-mobile.png`.
+
+Remaining Ace Attorney gap list:
+- Evidence inspection now has visible in-art magnifier feedback, but it still lacks drag/rotate tactile controls and per-item bespoke generated art for the most important objects.
+- Complex evidence and investigation objects use committed PNG sprite sheets instead of SVG/CSS shape overlays, but high-value evidence should still be replaced with exportable image-gen item sprites when an API key/output path is available.
+- Correct objections have staged cut-ins, but animation still uses DOM/CSS composition rather than fully authored frame-by-frame sprites.
+- Courtroom acting keeps both portraits visible, but character animation remains limited to a shared multi-pose sheet rather than bespoke per-character animation strips.
+- Audio has local cue samples and looped music tracks, but the tracks are procedurally generated placeholders rather than fully authored soundtrack compositions.
+
 ## 2026-06-18 iteration 55 result
 
 Implemented:

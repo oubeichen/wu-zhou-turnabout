@@ -2739,11 +2739,18 @@
     return spots.find((spot) => spot.id === state.recordInspectSpot) || spots[0] || null;
   }
 
+  function inspectLensClass(viewId, spotId) {
+    const safeView = viewId || "front";
+    const safeSpot = spotId || "trace";
+    return `inspect-lens-${safeView}-${safeSpot}`;
+  }
+
   function renderEvidenceInspectArt(item, caseData) {
     const view = activeInspectView();
     const views = inspectViewsForEvidence();
     const spots = inspectSpotsForEvidence(item, view.id);
     const activeSpot = activeInspectSpot(item);
+    const activeSpotIndex = Math.max(0, spots.findIndex((spot) => spot.id === activeSpot?.id));
     return `
       <div class="inspect-view-tabs" aria-label="证物查看角度">
         ${views
@@ -2756,8 +2763,17 @@
           )
           .join("")}
       </div>
-      <div class="inspect-art-stage inspect-view-${escapeHtml(view.id)}" data-view="${escapeHtml(view.title)}">
+      <div class="inspect-art-stage inspect-view-${escapeHtml(view.id)} inspect-spot-${escapeHtml(activeSpot?.id || "trace")}" data-view="${escapeHtml(view.title)}" data-active-lens="${escapeHtml(`${view.id}:${activeSpot?.id || ""}`)}">
         ${renderEvidenceThumb(item, true, "inspect", caseData)}
+        ${
+          activeSpot
+            ? `<div class="inspect-lens ${escapeHtml(inspectLensClass(view.id, activeSpot.id))}" data-inspect-lens aria-label="${escapeHtml(`放大查看：${activeSpot.label}`)}">
+                <i aria-hidden="true"></i>
+                <strong>${escapeHtml(activeSpot.label)}</strong>
+                <small>${activeSpotIndex + 1}</small>
+              </div>`
+            : ""
+        }
         <div class="inspect-hotspots" aria-label="证物检查点">
           ${spots
             .map(
@@ -3944,6 +3960,8 @@
       recordInspectView: inspect?.type === "evidence" ? activeInspectView().label : "",
       recordInspectSpot: inspectSpot?.label || "",
       recordInspectObservation: inspectSpot?.text || "",
+      recordInspectLens: inspect?.type === "evidence" && inspectSpot ? `${activeInspectView().id}:${inspectSpot.id}` : "",
+      recordInspectLensLabel: inspectSpot?.label || "",
       investigationBeatKind: state.screen === "investigation" ? state.investigationBeat?.kind || "" : "",
       investigationBeatSpeaker: state.screen === "investigation" ? state.investigationBeat?.speaker || "" : "",
       investigationBeatResult: state.screen === "investigation" ? state.investigationBeat?.result || "" : "",
