@@ -1087,6 +1087,300 @@ def make_timeline(case: dict[str, object], lookup: dict[int, dict[str, object]])
     return result
 
 
+def case_testimony_script(case: dict[str, object], evidence: list[dict[str, str]]) -> dict[str, list[dict[str, str]]]:
+    evidence_a = evidence[1]["name"]
+    evidence_b = evidence[3]["name"]
+    final_record = evidence[-1]["name"]
+    by_case = {
+        "case-empress-seat": {
+            "surface": [
+                {
+                    "text": "我在殿门外听见哭声，随后就有人说这是废后旧怨。宫里这种话，传得比脚步还快。",
+                    "press": "记录官只敢说自己听见哭声，却不敢说谁先把哭声和废后连在一起。继续逼他回到当晚。",
+                },
+                {
+                    "text": "那名宫人本来就怨气深，婴儿夭折也好、废后传闻也好，都和后位更替没有关系。",
+                    "press": "证人急着把一切压到宫人身上。拿出能说明当晚名单被动过手脚的证物。",
+                    "wrong": "这还不能打中“宫人私怨”。要找能把当晚在场顺序拉回来的记录。",
+                    "objection": f"异议成立。{evidence_a}说明当晚在场名单被改过，废后传闻不是一名宫人自己能推成的事。",
+                },
+                {
+                    "text": "至于谁后来升上去、谁被排出去，我一个记录官只照听见的话写，不敢多想。",
+                    "press": "他说“不敢多想”，不是“不知道”。这句先记下，后面等他把文书说成自然结果再反击。",
+                },
+            ],
+            "legality": [
+                {
+                    "text": "后位文书有印有押，辩方再问谁补字、谁压折子，只是在给旧臣找借口。",
+                    "press": str(case["branch"]["triggerPress"]),
+                    "wrong": "许敬宗正在挡住追问。先按住他，让隐藏的署名问题浮出来。",
+                },
+                {
+                    "text": str(case["branch"]["hiddenText"]),
+                    "press": str(case["branch"]["hiddenPress"]),
+                    "wrong": "这里要打的是“谁不是旁观者”。证物不如人物档案直接。",
+                    "objection": f"异议成立。{case['opponent']}不是旁观者，他正是把废后说法写进正式文书的人。",
+                },
+                {
+                    "text": "元老折子没有改变结果，说明朝中本来就没人真正反对这次后位安排。",
+                    "press": "他把折子从证据变成了废纸。问清折子为什么被压下去，再用反对记录反击。",
+                    "wrong": "要反驳“没人真正反对”，需要能显示元老意见被整理和压下的证物。",
+                    "objection": f"异议成立。{evidence_b}留下了元老反对的痕迹，许敬宗不能把被压下的声音说成不存在。",
+                },
+                {
+                    "text": "最后写进诏书的，就是法庭该承认的事实。纸上已经定了，辩方何必再翻旧账？",
+                    "press": "许敬宗把结果当成原因。胜出者留下的纸，正需要反过来追问是谁推动它胜出。",
+                },
+            ],
+            "final": [
+                {
+                    "text": "哭声、名册、折子、诏稿，辩方若只会一个个念名字，本庭听不到它们之间的线。",
+                    "press": "这是最后推理入口。追问后，让书记把证人说不清的连接写入庭审记录。",
+                },
+                {
+                    "text": "这些纸只是凑巧落在同一案里。没有同一个受益者，也没有同一个人被推出去挡刀。",
+                    "press": "把谁受益、谁沉默、谁背罪放在同一张图上，后位案就不再像巧合。",
+                    "wrong": "最后一击需要庭上追问后的总结记录，单件证物只会被拆开解释。",
+                    "objection": f"异议成立。{final_record}把哭声、名册和诏稿串成一条线：宫人背罪，后位得利，元老被迫闭嘴。",
+                },
+                {
+                    "text": "若辩方还不能说清这条线，废后风波就到此封卷。",
+                    "press": "这是判决压力，不是矛盾本身。回到上一句的“凑巧”。",
+                },
+            ],
+        },
+        "case-crown-shadow": {
+            "surface": [
+                {
+                    "text": "东宫旧臣递账那晚，廊灯一直亮着。可我只看见他抱着账册，没看见有人逼他来。",
+                    "press": "邠王守礼把自己放在旁观位置。继续问那本账册为什么偏偏那晚出现。",
+                },
+                {
+                    "text": "旧臣借账册议论储位，本就是他自己惹出的祸，和皇子待遇、病榻传话没什么关系。",
+                    "press": "证人急着把账册说成个人越界。拿出能显示东宫记录被改写的证物。",
+                    "wrong": "这句要打“和病榻传话无关”。需要能把账册和后续记录连起来的证物。",
+                    "objection": f"异议成立。{evidence_a}显示东宫记录前后不一致，旧臣不是凭空把储位卷进来的。",
+                },
+                {
+                    "text": "我只知道最后旧臣被押走。至于谁先挑出这些记录，我不便多说。",
+                    "press": "他不是不知道，是不便说。先记住“谁先挑出记录”这个问题。",
+                },
+            ],
+            "legality": [
+                {
+                    "text": "东宫记录一向按规矩誊录，辩方不必再问谁挑字、谁留白。",
+                    "press": str(case["branch"]["triggerPress"]),
+                    "wrong": "书记官正在把挑选记录说成规矩。先追问，逼出隐藏证词。",
+                },
+                {
+                    "text": str(case["branch"]["hiddenText"]),
+                    "press": str(case["branch"]["hiddenPress"]),
+                    "wrong": "这句藏的是书记官本人。用人物档案，不要用证物绕远。",
+                    "objection": f"异议成立。{case['opponent']}一直在决定哪些话留下，不能把自己说成只会誊录的笔。",
+                },
+                {
+                    "text": "问安笺、名册、遗诏副本都只是宫中旧档，没有人把小事写成大案。",
+                    "press": "他把三份记录拆开解释。要反击，就指出它们被同一套手法排过顺序。",
+                    "wrong": "要打“没有人写成大案”，需要能显示记录被整理和加压的证物。",
+                    "objection": f"异议成立。{evidence_b}显示病榻传话被换过纸，所谓旧档已经被人重新安排过。",
+                },
+                {
+                    "text": "既然最后旧臣承担了罪名，东宫这场风波就该按旧记录结案。",
+                    "press": "旧记录也可能是胜者留下的记录。胜负不能自动证明记录可靠。",
+                },
+            ],
+            "final": [
+                {
+                    "text": "辩方拿出许多旧纸，却还没说明旧臣为什么会突然站到风口上。",
+                    "press": "这是总结入口。追问后，把证人说不清的关系写成庭审记录。",
+                },
+                {
+                    "text": "皇子待遇、病榻传话和旧臣被押，只是同一时期的三件事，没有同一只手。",
+                    "press": "把待遇、传话和被押顺序合在一起，就能看出谁把家事整理成罪名。",
+                    "wrong": "最后一击需要庭上追问记录，不是某一张旧纸。",
+                    "objection": f"异议成立。{final_record}说明三件事不是同时发生而已，而是有人挑出记录，把旧臣推到前面。",
+                },
+                {
+                    "text": "若这条线连不起来，东宫案就只能维持旧臣有罪。",
+                    "press": "这是最后压力。真正矛盾还在上一句的“没有同一只手”。",
+                },
+            ],
+        },
+        "case-rebellion-box": {
+            "surface": [
+                {
+                    "text": "我只把纸投进铜匦。后来街上怎么喊、官府怎么抓，我一个告密人管不了。",
+                    "press": "告密人把自己停在投入口。继续问纸离开铜匦以后经过了谁的手。",
+                },
+                {
+                    "text": "被告本来就心虚，投书只是把旧臣谋反揭出来，和谁扩大案情没有关系。",
+                    "press": "证人把投书当成完整事实。拿出能说明投书之后罪名被加重的证物。",
+                    "wrong": "要打“投书等于谋反”，需要显示投书离开铜匦后发生变化的记录。",
+                    "objection": f"异议成立。{evidence_a}显示告发内容后来被重新标注罪名，投书不是一开始就等于谋反。",
+                },
+                {
+                    "text": "我只记得榜文贴得很快。快不快，那是官府的事，不是我的事。",
+                    "press": "他承认榜文太快，却把责任推开。先记住速度问题，后面追到来俊臣身上。",
+                },
+            ],
+            "legality": [
+                {
+                    "text": "告密入匦以后就是官府记录，辩方再问谁转手，是在替乱臣找路。",
+                    "press": str(case["branch"]["triggerPress"]),
+                    "wrong": "来俊臣正在封住转手路线。先追问，让隐藏证词出现。",
+                },
+                {
+                    "text": str(case["branch"]["hiddenText"]),
+                    "press": str(case["branch"]["hiddenPress"]),
+                    "wrong": "这句藏的是来俊臣的角色。人物档案比证物更能直接打中旁观者伪装。",
+                    "objection": f"异议成立。{case['opponent']}不是接到案子才出现，他一直在把告发改造成大案。",
+                },
+                {
+                    "text": "街上的榜文和审讯名册只是照原札办理，没有人借它们逼证人改口。",
+                    "press": "他把扩散和审讯都说成照办。要反击，就指出名册里同一只手的痕迹。",
+                    "wrong": "需要能显示审讯和扩散被人加工的证物。",
+                    "objection": f"异议成立。{evidence_b}里的口供被同一笔迹补过，案情不是照原札自然长大。",
+                },
+                {
+                    "text": "既然最后抓到了许多人，就说明原先那封投书没有错。",
+                    "press": "抓得多不能证明原札准，只可能说明网撒得大。别被结果带走。",
+                },
+            ],
+            "final": [
+                {
+                    "text": "辩方说了铜匦、榜文、名册，却还没说清一张纸怎么变成一张网。",
+                    "press": "这是最终推理入口。追问后取得庭上记录。",
+                },
+                {
+                    "text": "投书、榜文、缉捕令只是案情自然推进，没有同一个人借机加罪。",
+                    "press": "把转手路线连起来，就能看出谁每次都在罪名变重的地方出现。",
+                    "wrong": "最后一击要用庭上追问记录，单件证物会被说成流程一环。",
+                    "objection": f"异议成立。{final_record}显示这不是自然推进，而是投书每转一次手，罪名就被加重一次。",
+                },
+                {
+                    "text": "若辩方无法说明这条路，告密案就按谋反定案。",
+                    "press": "这是判决压力。矛盾仍在上一句的“自然推进”。",
+                },
+            ],
+        },
+        "case-urn": {
+            "surface": [
+                {
+                    "text": "我看见供状时，签押已经在上面。暗室里发生过什么，周兴说只是照规矩问话。",
+                    "press": "魏元忠只看见结果，不等于过程清白。继续问供状为什么太干净。",
+                },
+                {
+                    "text": "狄仁杰既已签押认罪，供状就是他自己的意思，和空瓮、手册都没有关系。",
+                    "press": "证人被迫承认供状，却还没把刑具和签押连起来。拿出能显示供状异常的证物。",
+                    "wrong": "要打“自愿签押”，需要先指出供状本身不自然。",
+                    "objection": f"异议成立。{evidence_a}显示供状后半突然潦草，签押并不像证人说的那样从容自愿。",
+                },
+                {
+                    "text": "我只知道他活着走出了审讯，不知道他在里面听见了什么。",
+                    "press": "活着走出来不等于没有被逼供。把暗室里的物件和供状放到一起看。",
+                },
+            ],
+            "legality": [
+                {
+                    "text": "御史台问案自有旧法，辩方不必把每一件刑具都说成逼供。",
+                    "press": str(case["branch"]["triggerPress"]),
+                    "wrong": "周兴在把办法说成旧法。先追问，让他露出对流程的熟悉。",
+                },
+                {
+                    "text": str(case["branch"]["hiddenText"]),
+                    "press": str(case["branch"]["hiddenPress"]),
+                    "wrong": "这句要打周兴本人，不是打某件器物。先用人物档案拆他的旁观姿态。",
+                    "objection": f"异议成立。{case['opponent']}熟悉这套逼供办法，不能说自己只是按旧例旁听。",
+                },
+                {
+                    "text": "供状副本和手册只是办案材料，没有人照着它们逼人说同一句话。",
+                    "press": "他否认材料之间的关系。要反击，就指出手册和供状的步骤对得太整齐。",
+                    "wrong": "需要能证明逼供流程被照着使用的证物。",
+                    "objection": f"异议成立。{evidence_b}把恐吓和认罪排成固定步骤，供状不是凭空写成的。",
+                },
+                {
+                    "text": "最后留下签押的人是狄仁杰，这就足够证明供状有效。",
+                    "press": "签押是结果，不是过程。过程若被逼出来，签押反而成了逼供留下的痕迹。",
+                },
+            ],
+            "final": [
+                {
+                    "text": "辩方摆出空瓮、供状、手册，却还没说明它们怎样合成一场逼供。",
+                    "press": "这是总结入口。追问后，把证人承认解释不了的地方写入庭审记录。",
+                },
+                {
+                    "text": "空瓮、供状和手册只是同案材料，没有同一套逼供步骤把它们连起来。",
+                    "press": "把恐吓、签押、手册折角按顺序排开，它们就不是散落材料。",
+                    "wrong": "最后一击要用庭上追问记录，单件证物会被周兴拆开解释。",
+                    "objection": f"异议成立。{final_record}说明三件证物合起来是一套流程：先让人害怕，再让供状看起来像自愿。",
+                },
+                {
+                    "text": "若不能证明流程存在，供状仍按有效记录处理。",
+                    "press": "这是最后压力。真正矛盾是上一句否认流程。",
+                },
+            ],
+        },
+        "case-half-hour-coup": {
+            "surface": [
+                {
+                    "text": "夜门那半小时乱得没人能看清。我只知道张氏兄弟倒下后，新命令很快就来了。",
+                    "press": "玄宗旧部强调混乱，却承认命令来得很快。继续问快到什么程度。",
+                },
+                {
+                    "text": "禁军只是临时应变，赏赐和换岗都是事后补办，和谁预先安排没有关系。",
+                    "press": "证人把整齐说成临时。拿出能显示时间顺序异常的证物。",
+                    "wrong": "要打“事后补办”，需要能证明半小时内已经出现安排的证物。",
+                    "objection": f"异议成立。{evidence_a}记录半小时内连换口令，禁军行动不是事后才补出来的。",
+                },
+                {
+                    "text": "我只看见门开、人散、命令传来。谁先知道结局，我不敢说。",
+                    "press": "他不敢说的正是关键：谁先知道结局，谁就可能先写好安排。",
+                },
+            ],
+            "legality": [
+                {
+                    "text": "神龙之夜本就仓促，辩方再问谁先写纸条、谁先调兵，只是在拖延。",
+                    "press": str(case["branch"]["triggerPress"]),
+                    "wrong": "张易之正在把所有异常塞进“仓促”。先追问，逼出隐藏证词。",
+                },
+                {
+                    "text": str(case["branch"]["hiddenText"]),
+                    "press": str(case["branch"]["hiddenPress"]),
+                    "wrong": "这句藏的是张易之的受益位置。人物档案比单件证物更直接。",
+                    "objection": f"异议成立。{case['opponent']}不是被局势裹挟的旁观者，他的名牌一直压在赏赐记录上。",
+                },
+                {
+                    "text": "罪名纸条和换岗令只是混乱中的补救，没有人提前排好半小时后的结局。",
+                    "press": "他把整齐的顺序说成补救。要反击，就让时间表说话。",
+                    "wrong": "需要能显示半小时内安排过于准确的证物。",
+                    "objection": f"异议成立。{evidence_b}显示罪名先写结论后补理由，这不是仓促补救，是给结局找标签。",
+                },
+                {
+                    "text": "最后新政令顺利传下，说明前面所有判断都是必要的。",
+                    "press": "顺利只说明胜者动作快，不能证明动作没有预先安排。",
+                },
+            ],
+            "final": [
+                {
+                    "text": "辩方拆了更漏、赏赐、罪名、换岗，却还没说清谁把半小时排成了结局。",
+                    "press": "这是最终推理入口。追问后取得庭上记录。",
+                },
+                {
+                    "text": "这些安排只是混乱中接连发生，没有同一个受益者，也没有同一张时间表。",
+                    "press": "把半小时拆成开门、换岗、定罪、赏赐，就能看出它们准得过分。",
+                    "wrong": "最后一击需要庭上追问记录，单件证物会被说成混乱片段。",
+                    "objection": f"异议成立。{final_record}显示半小时不是混乱的借口，而是一张被提前排好的时间表。",
+                },
+                {
+                    "text": "若辩方说不清这张时间表，夜门案就只能按既成事实封卷。",
+                    "press": "这是最后压力。矛盾在上一句的“没有时间表”。",
+                },
+            ],
+        },
+    }
+    return by_case.get(str(case["id"]), {})
+
+
 def make_testimony(case: dict[str, object], evidence: list[dict[str, str]]) -> list[dict[str, object]]:
     contradiction_a = evidence[1]["id"]
     contradiction_b = evidence[3]["id"]
@@ -1097,6 +1391,15 @@ def make_testimony(case: dict[str, object], evidence: list[dict[str, str]]) -> l
     trap = case.get("trap") or {}
     trap_evidence = evidence[int(trap["evidenceIndex"])]["id"] if trap else None
     recovery_id = f"{case['id']}-counter-recovery" if trap else None
+    script = case_testimony_script(case, evidence)
+
+    def line(section: str, index: int, key: str, fallback: str) -> str:
+        entries = script.get(section) or []
+        if index >= len(entries):
+            return fallback
+        value = entries[index].get(key)
+        return str(value) if value else fallback
+
     return [
         {
             "speaker": case["witness"],
@@ -1104,21 +1407,21 @@ def make_testimony(case: dict[str, object], evidence: list[dict[str, str]]) -> l
             "mood": "cautious",
             "statements": [
                 {
-                    "text": "那天乱得很，我只听见旁人说，这是宫里积下的旧怨一下子爆了。",
-                    "press": "证人没有说自己亲眼看见什么，只是在重复传闻。继续追问传闻从哪里来。",
+                    "text": line("surface", 0, "text", "那天乱得很，我只听见旁人说，这是宫里积下的旧怨一下子爆了。"),
+                    "press": line("surface", 0, "press", "证人没有说自己亲眼看见什么，只是在重复传闻。继续追问传闻从哪里来。"),
                     "wrongEvidenceFeedback": "这句只是传闻入口，还不是最硬的矛盾。等证人把责任说死，再出示证物。",
                     "answerEvidence": None,
                 },
                 {
-                    "text": f"{case['defendant']}只是因为私怨才惹出麻烦，和谁上位、谁失势没有关系。",
-                    "press": "证人把责任全推给一个人。拿出能说明事发前后还有别的安排的证物。",
-                    "wrongEvidenceFeedback": "这件证物还不能打中“只是私怨”。需要能显示事发前后有人安排、有人受益的证物。",
+                    "text": line("surface", 1, "text", f"{case['defendant']}只是因为私怨才惹出麻烦，和谁上位、谁失势没有关系。"),
+                    "press": line("surface", 1, "press", "证人把责任全推给一个人。拿出能说明事发前后还有别的安排的证物。"),
+                    "wrongEvidenceFeedback": line("surface", 1, "wrong", "这件证物还不能打中“只是私怨”。需要能显示事发前后有人安排、有人受益的证物。"),
                     "answerEvidence": contradiction_a,
-                    "objection": f"异议成立。{evidence[1]['name']}显示事情发生前后已经有人安排位置和说法，不能只按私人怨气解释。",
+                    "objection": line("surface", 1, "objection", f"异议成立。{evidence[1]['name']}显示事情发生前后已经有人安排位置和说法，不能只按私人怨气解释。"),
                 },
                 {
-                    "text": "我只记得最后的结果，前面有没有人铺路，我真的不清楚。",
-                    "press": "这句承认了证人不知道前因。先记下，后面遇到绝对断言再反击。",
+                    "text": line("surface", 2, "text", "我只记得最后的结果，前面有没有人铺路，我真的不清楚。"),
+                    "press": line("surface", 2, "press", "这句承认了证人不知道前因。先记下，后面遇到绝对断言再反击。"),
                     "wrongEvidenceFeedback": "这句是在提示时间顺序，不是正式矛盾点。证物要留给更绝对的说法。",
                     "answerEvidence": None,
                 },
@@ -1130,33 +1433,33 @@ def make_testimony(case: dict[str, object], evidence: list[dict[str, str]]) -> l
             "mood": "aggressive",
             "statements": [
                 {
-                    "text": "官府记录已经写得很清楚，辩方不必再问是谁整理、是谁补字。",
-                    "press": branch["triggerPress"],
+                    "text": line("legality", 0, "text", "官府记录已经写得很清楚，辩方不必再问是谁整理、是谁补字。"),
+                    "press": line("legality", 0, "press", branch["triggerPress"]),
                     "unlockStatementId": branch_id,
-                    "wrongEvidenceFeedback": "对方正在阻止追问，这时先追问更有用。等他把责任推干净，再用证物。",
+                    "wrongEvidenceFeedback": line("legality", 0, "wrong", "对方正在阻止追问，这时先追问更有用。等他把责任推干净，再用证物。"),
                     "answerEvidence": None,
                 },
                 {
-                    "text": branch["hiddenText"],
-                    "press": branch["hiddenPress"],
+                    "text": line("legality", 1, "text", branch["hiddenText"]),
+                    "press": line("legality", 1, "press", branch["hiddenPress"]),
                     "hiddenUntilPressed": branch_id,
                     "revealLabel": branch["revealLabel"],
-                    "wrongEvidenceFeedback": "这句藏的是人，不是物。应该查看人物档案，找出谁并非旁观者。",
+                    "wrongEvidenceFeedback": line("legality", 1, "wrong", "这句藏的是人，不是物。应该查看人物档案，找出谁并非旁观者。"),
                     "answerProfile": case["opponent"],
                     "answerEvidence": None,
-                    "objection": f"异议成立。{case['opponent']}的人物档案说明他一直在推动这套说法，不能把自己装成旁观者。",
+                    "objection": line("legality", 1, "objection", f"异议成立。{case['opponent']}的人物档案说明他一直在推动这套说法，不能把自己装成旁观者。"),
                 },
                 {
-                    "text": "公开贴出来的说法都是真话，没有人借告示、审讯或传闻逼别人改口。",
-                    "press": "对方把公开说法当成天然可信。问清这套说法从哪里来、谁把它传出去。",
-                    "wrongEvidenceFeedback": "要反驳这句，需要能显示有人借公告、审讯或传闻推动案情的证物。",
+                    "text": line("legality", 2, "text", "公开贴出来的说法都是真话，没有人借告示、审讯或传闻逼别人改口。"),
+                    "press": line("legality", 2, "press", "对方把公开说法当成天然可信。问清这套说法从哪里来、谁把它传出去。"),
+                    "wrongEvidenceFeedback": line("legality", 2, "wrong", "要反驳这句，需要能显示有人借公告、审讯或传闻推动案情的证物。"),
                     "counterEvidence": trap_evidence,
                     "counterRecoveryId": recovery_id,
                     "counterNotice": trap.get("notice", ""),
                     "counterFeedback": trap.get("feedback", ""),
                     "counterPenalty": 2 if trap else 0,
                     "answerEvidence": contradiction_b,
-                    "objection": f"异议成立。{evidence[3]['name']}显示公开说法背后还有人整理、加压和扩散，证词把关键步骤藏掉了。",
+                    "objection": line("legality", 2, "objection", f"异议成立。{evidence[3]['name']}显示公开说法背后还有人整理、加压和扩散，证词把关键步骤藏掉了。"),
                 },
                 *(
                     [
@@ -1176,9 +1479,9 @@ def make_testimony(case: dict[str, object], evidence: list[dict[str, str]]) -> l
                     else []
                 ),
                 {
-                    "text": "反正最后赢的一方留下了记录，这就说明前面的判断都没错。",
-                    "press": "胜负不能自动证明记录可靠。赢的人也可能改写说法。",
-                    "wrongEvidenceFeedback": "这句话很可疑，但它是逻辑偷换，不是本段要击破的核心事实。",
+                    "text": line("legality", 3, "text", "反正最后赢的一方留下了记录，这就说明前面的判断都没错。"),
+                    "press": line("legality", 3, "press", "胜负不能自动证明记录可靠。赢的人也可能改写说法。"),
+                    "wrongEvidenceFeedback": line("legality", 3, "wrong", "这句话很可疑，但它是逻辑偷换，不是本段要击破的核心事实。"),
                     "answerEvidence": None,
                 },
             ],
@@ -1189,23 +1492,23 @@ def make_testimony(case: dict[str, object], evidence: list[dict[str, str]]) -> l
             "mood": "decisive",
             "statements": [
                 {
-                    "text": "庭上已经听够了证物名字，辩方还没有说明它们到底怎么连在一起。",
-                    "press": "这正是最后推理的入口。追问后，把证人承认说不清的地方写成庭审记录。",
+                    "text": line("final", 0, "text", "庭上已经听够了证物名字，辩方还没有说明它们到底怎么连在一起。"),
+                    "press": line("final", 0, "press", "这正是最后推理的入口。追问后，把证人承认说不清的地方写成庭审记录。"),
                     "pressUnlockEvidence": court_note,
                     "wrongEvidenceFeedback": "这句话是在要求辩方总结，还没形成可击破的断言。先追问，取得庭上追问记录。",
                     "answerEvidence": None,
                 },
                 {
-                    "text": "这些事只是碰巧接在一起，没有同一个受益者，也没有同一个被推出去背罪的人。",
-                    "press": "把谁受益、谁沉默、谁背罪放在同一张图上，就能看出它们不是巧合。",
-                    "wrongEvidenceFeedback": "单件证物只能说明局部事实。最后一击需要庭上追问后整理出的记录。",
+                    "text": line("final", 1, "text", "这些事只是碰巧接在一起，没有同一个受益者，也没有同一个被推出去背罪的人。"),
+                    "press": line("final", 1, "press", "把谁受益、谁沉默、谁背罪放在同一张图上，就能看出它们不是巧合。"),
+                    "wrongEvidenceFeedback": line("final", 1, "wrong", "单件证物只能说明局部事实。最后一击需要庭上追问后整理出的记录。"),
                     "answerEvidence": contradiction_c,
-                    "objection": f"异议成立。{evidence[-1]['name']}记录了证人说不清的关键：这些事不是巧合，而是有人受益、有人背罪。",
+                    "objection": line("final", 1, "objection", f"异议成立。{evidence[-1]['name']}记录了证人说不清的关键：这些事不是巧合，而是有人受益、有人背罪。"),
                 },
                 {
-                    "text": "辩方若不能说清这条线，本庭就维持原判。",
-                    "press": "这是最后机会。选择能概括全案的证据。",
-                    "wrongEvidenceFeedback": "这是审判压力，不是矛盾本身。把注意力放回上一句的“偶然事件”。",
+                    "text": line("final", 2, "text", "辩方若不能说清这条线，本庭就维持原判。"),
+                    "press": line("final", 2, "press", "这是最后机会。选择能概括全案的证据。"),
+                    "wrongEvidenceFeedback": line("final", 2, "wrong", "这是审判压力，不是矛盾本身。把注意力放回上一句的“偶然事件”。"),
                     "answerEvidence": None,
                 },
             ],

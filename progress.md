@@ -1992,3 +1992,29 @@ Remaining Ace Attorney gap list:
 - Chapter-source tabs are clearer and clickable, but they could later become a staged `翻阅卷宗` drawer instead of living fully on the case intro.
 - Pursuit branches are case-specific, but they still do not unlock unique evidence/testimony routes after the chase.
 - Evidence icons are stronger bitmap props, but selected high-value items still lack curated per-prop Image API source exports.
+
+## 2026-06-18 iteration 73 result
+
+Implemented:
+- Added a `case_testimony_script()` layer in `scripts/build_game_content.py` so the five current cases no longer share the same courtroom testimony wording.
+- Rewrote witness testimony, opponent legality testimony, and final reasoning testimony for all five cases with case-specific voice and stakes.
+- Kept the existing trial mechanics intact: answer evidence, answer profile, hidden profile contradiction, counterattack trap, recovery branch, court-note unlock, and final court-note answer still use the same structural fields.
+- Regenerated `game/game-data.js` so the playable trial now contains authored lines such as `东宫旧臣递账那晚`, `我只把纸投进铜匦`, `空瓮、供状、手册`, and `夜门那半小时`.
+
+Verified:
+- `PYTHONPYCACHEPREFIX="/Users/oubeichen/Projects/wuzetian2/.pycache" python3 -m py_compile scripts/build_game_content.py`
+- `python3 scripts/build_game_content.py`
+- Custom Node integrity check confirmed `cases=5`, `testimonyGroups=15`, `trapCases=4`, and every case still has hidden profile contradictions, court-note unlocks, final court-note answers, and authored phrase coverage.
+- `npm run check:js`
+- `PYTHONPYCACHEPREFIX="/Users/oubeichen/Projects/wuzetian2/.pycache" npm run check:py`
+- `git diff --check`
+
+Blocked verification:
+- `npm run qa:web-game` was attempted and still fails before page load because Chromium cannot register its Mach port rendezvous in this environment (`Permission denied (1100)`). No new browser screenshot was captured.
+
+Remaining Ace Attorney gap list:
+- Trial testimony is now case-specific, but evidence details still read partly like explanatory database text and need a player-facing character-voice pass.
+- Pursuit branches are case-specific, but they still do not unlock unique evidence/testimony routes after the chase.
+- Browser visual verification needs to be rerun when local browser execution is available again.
+- Chapter-source tabs are clearer and clickable, but they could later become a staged `翻阅卷宗` drawer instead of living fully on the case intro.
+- Evidence icons are stronger bitmap props, but selected high-value items still lack curated per-prop Image API source exports.
