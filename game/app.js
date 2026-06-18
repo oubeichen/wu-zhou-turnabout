@@ -2911,6 +2911,7 @@
               .join("")}
           </div>
           <div class="action-row">
+            <button class="secondary-button" type="button" data-home>返回主菜单</button>
             <button class="primary-button" type="button" data-home>返回案件</button>
             <button class="secondary-button" type="button" data-next-case>下一案</button>
           </div>
@@ -2942,6 +2943,7 @@
           <div class="action-row">
             <button class="danger-button" type="button" data-retry-trial>重审庭审</button>
             <button class="secondary-button" type="button" data-open-intro>整理案卷</button>
+            <button class="secondary-button" type="button" data-home>返回主菜单</button>
             <button class="primary-button" type="button" data-home>返回案件</button>
           </div>
           <div class="evidence-detail">
