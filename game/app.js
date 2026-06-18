@@ -2669,6 +2669,7 @@
     const testimony = progress && caseData.testimony[progress.testimonyIndex];
     const visibleStatements = testimony ? visibleStatementEntries(testimony, progress) : [];
     const hasNextStatement = progress && progress.statementIndex < visibleStatements.length - 1;
+    const hasPrevStatement = progress ? progress.statementIndex > 0 : false;
     const leftPortrait = portraitForSpeaker(caseData, speaker, mode);
     const rightPortrait = mode === "trial" ? caseData.opponentPortrait || "censor" : "empress";
     const focus = mode === "trial" ? state.stageFocus : "center";
@@ -2681,7 +2682,7 @@
     const rightPoseLabel = mode === "trial" ? poseLabel(stagePose.right) : "";
     const hasInvestigationBeat = mode === "investigation" && state.investigationBeat;
     const trialAdvanceAttr = mode === "trial"
-      ? `data-advance-trial-dialogue="1" role="button" tabindex="0" aria-label="继续查看证词下一句"`
+      ? `data-advance-trial-dialogue="1" role="button" tabindex="0" aria-label="${hasPrevStatement ? "可回退/前进证词" : "继续查看证词下一句"}"`
       : "";
     const vulnerabilityCue = mode === "trial" ? renderTrialVulnerabilityCue() : "";
     const locationArt = location
@@ -2689,7 +2690,13 @@
       : trialBackgroundFile(caseData);
     const locationStyle = locationArt ? `style="--location-art: url('./assets/${escapeHtml(locationArt)}');"` : "";
     const trialAdvanceHint = mode === "trial"
-      ? hasNextStatement ? "点击对白任意处或按空格/回车继续下一句" : "当前句可直接追问 / 打开记录 / 举证"
+      ? hasPrevStatement
+        ? hasNextStatement
+          ? "左侧点击可回退一句，右侧点击可继续下一句"
+          : "左侧点击可回退一句，当前句可直接追问 / 打开记录 / 举证"
+        : hasNextStatement
+          ? "点击右侧继续下一句，或按空格/回车"
+          : "当前句可直接追问 / 打开记录 / 举证"
       : "";
     return `
       <div class="scene ${mode} ${sceneKey ? `scene-${sceneKey}` : ""} focus-${focus} pose-left-${stagePose.left} pose-right-${stagePose.right} ${vulnerabilityCue ? "vulnerability-ready" : ""} ${hasInvestigationBeat ? "has-investigation-beat" : ""} ${state.settings.reducedMotion ? "reduced-motion" : ""}" data-motif="${escapeHtml(sceneMotif)}" ${locationStyle}>
@@ -2712,7 +2719,7 @@
         <div class="scene-title">${escapeHtml(title)}</div>
         ${mode === "investigation" ? renderInvestigationHotspots() : ""}
         ${hasInvestigationBeat ? renderInvestigationBeat() : `
-          <div class="dialogue-box ${speedClass} ${hasNextStatement ? "trial-dialogue-advance" : ""}" ${trialAdvanceAttr}>
+          <div class="dialogue-box ${speedClass} ${hasNextStatement ? "trial-dialogue-advance" : ""}" ${trialAdvanceAttr} data-trial-dialogue-nav ${hasPrevStatement ? "data-has-prev-statement" : ""} data-has-next-statement>
             <span class="dialogue-speaker">${escapeHtml(speaker)}</span>
             <div>${escapeHtml(text)}</div>
             <div class="dialogue-advance-hint">${escapeHtml(trialAdvanceHint)}</div>
@@ -4853,7 +4860,22 @@
     const trialDialogPanel = event.target.closest("[data-advance-trial-dialogue]");
     if (trialDialogPanel && !event.target.closest("button") && state.screen === "trial") {
       playCue("click");
-      advanceTrialDialogueByClick();
+      const rect = trialDialogPanel.getBoundingClientRect();
+      const x = event.clientX - rect.left;
+      const progress = caseProgress(currentCase().id);
+      const hasPrevStatement = progress.statementIndex > 0;
+      const testimony = currentCase().testimony[progress.testimonyIndex];
+      const visibleStatements = testimony ? visibleStatementEntries(testimony, progress) : [];
+      const hasNextStatement = progress.statementIndex < visibleStatements.length - 1;
+      if (x <= rect.width / 2 && hasPrevStatement) {
+        moveStatement(-1);
+      } else if (x > rect.width / 2 && hasNextStatement) {
+        advanceTrialDialogueByClick();
+      } else {
+        if (hasNextStatement) {
+          advanceTrialDialogueByClick();
+        }
+      }
       return;
     }
     const interludePanel = event.target.closest("[data-continue-testimony-panel]");
