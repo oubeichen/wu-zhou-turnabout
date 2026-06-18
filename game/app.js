@@ -93,6 +93,7 @@
     openingCutscene: null,
     evidencePickup: null,
     inventoryCue: null,
+    pursuitUnlockCue: null,
     objectionReveal: null,
     impactCue: null,
     stageFocus: "center",
@@ -224,6 +225,7 @@
     state.objectionReveal = null;
     clearEvidencePickup();
     clearInventoryCue();
+    clearPursuitUnlockCue();
     setMessage("读档", `已读取存档 ${index + 1}。`, "");
     save();
     renderHome();
@@ -563,9 +565,10 @@
       lastPursuitUnlock: "",
       lastPursuitStatement: "",
       pendingDeductionFollowUp: null,
-        mistakes: 0,
-        grade: "",
-      };
+      pursuitUnlockFinalize: null,
+      mistakes: 0,
+      grade: "",
+    };
     }
     if (!Array.isArray(state.trial[caseId].pressed)) {
       state.trial[caseId].pressed = [];
@@ -602,6 +605,9 @@
     }
     if (state.trial[caseId].pendingDeductionFollowUp && typeof state.trial[caseId].pendingDeductionFollowUp !== "object") {
       state.trial[caseId].pendingDeductionFollowUp = null;
+    }
+    if (state.trial[caseId].pursuitUnlockFinalize && typeof state.trial[caseId].pursuitUnlockFinalize !== "object") {
+      state.trial[caseId].pursuitUnlockFinalize = null;
     }
     if (typeof state.trial[caseId].failed !== "boolean") {
       state.trial[caseId].failed = false;
@@ -740,6 +746,10 @@
 
   function clearInventoryCue() {
     state.inventoryCue = null;
+  }
+
+  function clearPursuitUnlockCue() {
+    state.pursuitUnlockCue = null;
   }
 
   function clearRecordInspectTransient() {
@@ -1356,6 +1366,7 @@
     state.objectionReveal = null;
     clearEvidencePickup();
     clearInventoryCue();
+    clearPursuitUnlockCue();
     state.homeView = ["menu", "cases", "archive", "saves"].includes(state.homeView) ? state.homeView : "menu";
     state.homeFocusIndex = Math.min(Math.max(state.homeFocusIndex, 0), data.cases.length - 1);
     const focusedCase = data.cases[state.homeFocusIndex] || data.cases[0];
@@ -1648,6 +1659,7 @@
     state.recordInspect = null;
     clearRecordInspectCompare();
     clearEvidencePickup();
+    clearPursuitUnlockCue();
     clearInventoryCue();
     renderStatus();
     app.innerHTML = `
@@ -1721,6 +1733,7 @@
     clearInvestigationBeat();
     clearEvidencePickup();
     clearInventoryCue();
+    clearPursuitUnlockCue();
     setMessage("开幕", "案件开场。点击画面或按 Enter 继续。", "");
     playCue("transition");
     renderCaseOpeningCutscene();
@@ -2379,6 +2392,10 @@
   function renderTrial() {
     const caseData = currentCase();
     const progress = caseProgress(caseData.id);
+    if (state.pursuitUnlockCue && state.pursuitUnlockCue.caseId === caseData.id) {
+      renderPursuitUnlockCue();
+      return;
+    }
     if (progress.awaitingInterlude) {
       renderTestimonyInterlude();
       return;
@@ -2493,6 +2510,40 @@
       ${renderSettings()}
     `;
     syncAudioForScreen();
+  }
+
+  function renderPursuitUnlockCue() {
+    const caseData = currentCase();
+    const progress = caseProgress(caseData.id);
+    const cue = state.pursuitUnlockCue;
+    if (!cue || cue.caseId !== caseData.id) {
+      renderTrial();
+      return;
+    }
+    const item = cue.unlockEvidenceId ? evidenceById(caseData, cue.unlockEvidenceId) : null;
+    state.screen = "trial";
+    renderStatus();
+    app.innerHTML = `
+      <section class="pursuit-unlock-layer" data-continue-pursuit-unlock role="button" tabindex="0" aria-label="返回庭审">
+        <section class="pursuit-unlock-card">
+          <span class="hero-kicker">对照追击成立</span>
+          <h2>${escapeHtml(cue.pursuitTitle || "法庭记录已扩展")}</h2>
+          <div class="pursuit-unlock-main">
+            ${item ? `<div class="pickup-art">${renderEvidenceThumb(item, true, "pickup", caseData)}</div>` : ""}
+            <div class="pursuit-unlock-copy">
+              <p>${escapeHtml(cue.unlockText || "追击成立后，新的证据与证词关系已经被补齐。")}</p>
+              ${cue.unlockStatementText ? `<span>新证词追加：${escapeHtml(cue.unlockStatementText)}</span>` : ""}
+            </div>
+          </div>
+          <div class="pursuit-unlock-actions">
+            <button class="primary-button" type="button" data-continue-pursuit-unlock>返回庭审</button>
+          </div>
+        </section>
+      </section>
+      ${renderCue()}${renderSettings()}
+    `;
+    syncAudioForScreen();
+    queueMobileTrialStageFocus();
   }
 
   function queueMobileTrialStageFocus() {
@@ -3917,10 +3968,12 @@
     state.recordInspectSpot = "";
     state.recordInspectView = "front";
     clearRecordInspectCompare();
+    clearPursuitUnlockCue();
     state.recordTab = "evidence";
     clearInvestigationBeat();
     clearEvidencePickup();
     clearInventoryCue();
+    clearPursuitUnlockCue();
     setMessage("书记", "案件记录已经展开。先调查现场，再进入庭审。", "");
     renderCaseIntro();
   }
@@ -3933,6 +3986,7 @@
     clearRecordInspectCompare();
     clearEvidencePickup();
     clearInventoryCue();
+    clearPursuitUnlockCue();
     if (mode === "investigation") {
       const caseData = currentCase();
       const inv = investigationProgress(caseData.id);
@@ -3978,6 +4032,7 @@
     inv.command = command;
     clearInvestigationBeat();
     clearEvidencePickup();
+    clearPursuitUnlockCue();
     clearInventoryCue();
     setMessage("调查", `已切换到“${commandLabel(command)}”。`, "");
     save();
@@ -3996,6 +4051,7 @@
     clearInvestigationBeat();
     clearEvidencePickup();
     clearInventoryCue();
+    clearPursuitUnlockCue();
     setMessage("调查", `移动到${location.name}。${location.description}`, "");
     save();
     renderInvestigation();
@@ -4312,7 +4368,6 @@
     const testimony = caseData.testimony[Number(followUp.testimonyIndex) || progress.testimonyIndex];
     const statement = testimony?.statements?.[Number(followUp.rawIndex) || 0];
     const key = followUp.key || statementKey(Number(followUp.testimonyIndex) || progress.testimonyIndex, Number(followUp.rawIndex) || 0);
-    progress.pendingDeductionFollowUp = null;
     const unlocked = followUp.unlockEvidenceId ? unlockEvidence(caseData, followUp.unlockEvidenceId) : "";
     if (unlocked) {
       progress.deductionPursuitUnlocks += 1;
@@ -4336,16 +4391,74 @@
         ? ` ${followUp.unlockEvidenceName}已经在法庭记录中，可以直接查看。`
         : "";
     const statementText = unlockedStatement ? ` 新证词追加：${unlockedStatement}。` : "";
+    const stageMessage = `${followUp.chaseLine || "对照札记已经把证词推到新的缺口上。"} ${followUp.witnessLine || ""}${unlockText}${statementText} ${followUp.objectionText || statement?.objection || ""}`.trim();
+    const finalPayload = {
+      testimonyIndex: Number(followUp.testimonyIndex) || progress.testimonyIndex,
+      rawIndex: Number(followUp.rawIndex) || 0,
+      key,
+      objectionText: followUp.objectionText || statement?.objection || "",
+      turnaboutText: followUp.turnaboutText || "",
+      stageMessage,
+      unlockText,
+      statementText,
+    };
     progress.lastObjection = `${followUp.objectionText || statement?.objection || ""} ${followUp.chaseLine || ""} ${followUp.witnessLine || ""}${unlockText}${statementText}`.trim();
     setStage("clash", "追击成立", { left: "confident", right: "stagger" });
-    setMessage("辩方", `${followUp.chaseLine || "对照札记已经把证词推到新的缺口上。"} ${followUp.witnessLine || ""}${unlockText}${statementText} ${followUp.objectionText || statement?.objection || ""}`.trim(), "objection");
+    setMessage("辩方", stageMessage, "objection");
     playCue("objection");
     save();
+    if (!statement) {
+      renderTrial();
+      return;
+    }
+    if (!(unlocked || unlockedStatement || followUp.unlockEvidenceId || followUp.unlockStatementId)) {
+      progress.pendingDeductionFollowUp = null;
+      finalizePursuitFollowUp(caseData, progress, testimony, statement, finalPayload);
+      return;
+    }
+    progress.pendingDeductionFollowUp = null;
+    progress.pursuitUnlockFinalize = finalPayload;
+    state.pursuitUnlockCue = {
+      caseId: caseData.id,
+      pursuitTitle: followUp.pursuitTitle || "对照追击成立",
+      unlockEvidenceId: followUp.unlockEvidenceId || "",
+      unlockEvidenceName: unlocked || followUp.unlockEvidenceName || "",
+      unlockStatementText: unlockedStatement,
+      unlockText: finalPayload.stageMessage,
+      unlockTextBrief: unlockText || "已解锁新证据。",
+    };
+    renderPursuitUnlockCue();
+    return;
+  }
+
+  function continuePursuitUnlock() {
+    const caseData = currentCase();
+    const progress = caseProgress(caseData.id);
+    const cue = state.pursuitUnlockCue;
+    const finalPayload = progress.pursuitUnlockFinalize;
+    if (!cue || cue.caseId !== caseData.id || !finalPayload) {
+      clearPursuitUnlockCue();
+      progress.pursuitUnlockFinalize = null;
+      renderTrial();
+      return;
+    }
+    clearPursuitUnlockCue();
+    progress.pursuitUnlockFinalize = null;
+    const testimony = caseData.testimony[Number(finalPayload.testimonyIndex) || 0];
+    const statement = testimony?.statements?.[Number(finalPayload.rawIndex) || 0];
+    finalizePursuitFollowUp(caseData, progress, testimony, statement, finalPayload);
+  }
+
+  function finalizePursuitFollowUp(caseData, progress, testimony, statement, finalPayload) {
+    progress.pendingDeductionFollowUp = null;
     if (!testimony || !statement) {
       renderTrial();
       return;
     }
-    finishCorrectPresent(caseData, progress, testimony, statement, key, followUp.objectionText || statement.objection || "", followUp.turnaboutText || "");
+    setMessage("辩方", finalPayload.stageMessage, "objection");
+    playCue("objection");
+    save();
+    finishCorrectPresent(caseData, progress, testimony, statement, finalPayload.key, finalPayload.objectionText, finalPayload.turnaboutText);
   }
 
   function presentEvidence() {
@@ -4360,6 +4473,7 @@
     state.recordInspectSpot = "";
     state.recordInspectView = "front";
     clearRecordInspectCompare();
+    clearPursuitUnlockCue();
     if (state.objectionReveal) {
       resolveObjectionReveal();
       return;
@@ -4547,6 +4661,7 @@
     state.recordTab = "evidence";
     clearEvidencePickup();
     clearInventoryCue();
+    clearPursuitUnlockCue();
     setMessage("书记", "旧判决已归档。本次重审会重新计算评价，但保留最佳奖章。", "");
     save();
     renderCaseIntro();
@@ -4699,6 +4814,7 @@
     if (target.dataset.advanceReveal !== undefined) advanceObjectionReveal();
     if (target.dataset.revealObjection !== undefined) resolveObjectionReveal();
     if (target.dataset.continueDeductionFollowup !== undefined) continueDeductionFollowUp();
+    if (target.dataset.continuePursuitUnlock !== undefined) continuePursuitUnlock();
     if (target.dataset.continueTestimony !== undefined) continueTestimony();
     if (target.dataset.retryTrial !== undefined) retryTrial();
     if (target.dataset.home !== undefined) renderHome();
@@ -4807,6 +4923,16 @@
       advanceEvidencePickup();
       return;
     }
+    if (state.pursuitUnlockCue && event.key === "Escape") {
+      event.preventDefault();
+      playCue("click");
+      const caseData = currentCase();
+      const progress = caseProgress(caseData.id);
+      clearPursuitUnlockCue();
+      progress.pursuitUnlockFinalize = null;
+      renderTrial();
+      return;
+    }
     if (state.recordInspect) {
       if (event.key === "Escape") {
         playCue("click");
@@ -4881,6 +5007,11 @@
     if (state.screen === "trial" && caseProgress(currentCase().id).pendingDeductionFollowUp && (event.key === "Enter" || event.key === " ")) {
       event.preventDefault();
       continueDeductionFollowUp();
+      return;
+    }
+    if (state.screen === "trial" && state.pursuitUnlockCue && (event.key === "Enter" || event.key === " ")) {
+      event.preventDefault();
+      continuePursuitUnlock();
       return;
     }
     if (state.screen !== "trial") return;
@@ -5072,6 +5203,12 @@
       pendingDeductionButton: progress.pendingDeductionFollowUp?.buttonLabel || "",
       pendingDeductionUnlock: progress.pendingDeductionFollowUp?.unlockEvidenceName || "",
       pendingDeductionStatementUnlock: progress.pendingDeductionFollowUp?.unlockStatementLabel || "",
+      pursuitUnlockCueOpen: Boolean(state.pursuitUnlockCue),
+      pursuitUnlockCueCaseId: state.pursuitUnlockCue?.caseId || "",
+      pursuitUnlockCueEvidence: state.pursuitUnlockCue?.unlockEvidenceName || "",
+      pursuitUnlockCueStatement: state.pursuitUnlockCue?.unlockStatementText || "",
+      pursuitUnlockCueMessage: state.pursuitUnlockCue?.unlockText || "",
+      pursuitUnlockAwaitFinalize: Boolean(progress.pursuitUnlockFinalize),
       pursuitNoteCollected: (state.collected[caseData.id] || []).includes(`${caseData.id}-ev-pursuit-note`),
       turnaboutTitle: turnaboutBeat(caseData).title,
       turnaboutBody: turnaboutBeat(caseData).body,

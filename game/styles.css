@@ -1606,6 +1606,66 @@ button:not(:disabled):hover {
   line-height: 1.45;
 }
 
+.pursuit-unlock-layer {
+  position: fixed;
+  z-index: 24;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 76px 18px 18px;
+  background: rgba(15, 12, 10, 0.42);
+  backdrop-filter: blur(2px);
+  pointer-events: auto;
+}
+
+.pursuit-unlock-card {
+  display: grid;
+  gap: 12px;
+  width: min(640px, calc(100vw - 28px));
+  max-height: min(690px, calc(100dvh - 96px));
+  overflow: hidden;
+  padding: 16px;
+  color: #fff8e7;
+  background: linear-gradient(145deg, rgba(95, 31, 26, 0.96), rgba(31, 28, 25, 0.94)), #2f2924;
+  border: 2px solid rgba(255, 241, 191, 0.76);
+  border-radius: 8px;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.52), inset 0 0 0 1px rgba(255, 248, 231, 0.18);
+  cursor: pointer;
+  animation: pickup-pop 0.28s ease-out both;
+}
+
+.pursuit-unlock-main {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 16px;
+  align-items: center;
+}
+
+.pursuit-unlock-copy {
+  min-width: 0;
+}
+
+.pursuit-unlock-copy p {
+  margin: 0 0 10px;
+  color: #f1dfba;
+  line-height: 1.65;
+}
+
+.pursuit-unlock-copy span {
+  color: #fff1bf;
+  white-space: normal;
+  line-height: 1.45;
+}
+
+.pursuit-unlock-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.pursuit-unlock-actions .primary-button {
+  min-width: 140px;
+}
+
 .interlude-flow {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1853,7 +1913,7 @@ button:not(:disabled):hover {
 
 .pose-cue {
   position: absolute;
-  z-index: 2;
+  z-index: 4;
   bottom: clamp(154px, 26vw, 286px);
   padding: 5px 10px;
   color: #fff8e7;
@@ -1966,7 +2026,7 @@ button:not(:disabled):hover {
 
 .scene-title {
   position: relative;
-  z-index: 2;
+  z-index: 4;
   width: fit-content;
   max-width: 100%;
   padding: 8px 12px;
@@ -1978,7 +2038,7 @@ button:not(:disabled):hover {
 
 .scene-atmosphere {
   position: relative;
-  z-index: 2;
+  z-index: 4;
   width: fit-content;
   max-width: min(720px, 100%);
   padding: 8px 12px;
@@ -1992,7 +2052,7 @@ button:not(:disabled):hover {
 
 .investigation-beat {
   position: relative;
-  z-index: 3;
+  z-index: 4;
   display: grid;
   grid-template-columns: 92px minmax(0, 1fr);
   grid-template-areas:
@@ -2170,7 +2230,7 @@ button:not(:disabled):hover {
 
 .dialogue-box {
   position: relative;
-  z-index: 2;
+  z-index: 4;
   padding: 20px 22px;
   color: #1d1814;
   background: rgba(255, 250, 240, 0.98);
@@ -2343,6 +2403,7 @@ button:not(:disabled):hover {
   grid-template-rows: 1fr;
   width: 72px;
   min-height: 72px;
+  z-index: 2;
   padding: 0;
   color: #fff8e7;
   background: transparent;
@@ -6152,6 +6213,31 @@ button:not(:disabled):hover {
   }
 
   .deduction-followup-actions .primary-button {
+    width: 100%;
+  }
+
+  .pursuit-unlock-layer {
+    align-items: end;
+    padding: 70px 10px 10px;
+  }
+
+  .pursuit-unlock-card {
+    width: 100%;
+    max-height: calc(100dvh - 82px);
+    padding: 12px;
+  }
+
+  .pursuit-unlock-main {
+    grid-template-columns: 96px minmax(0, 1fr);
+    gap: 10px;
+  }
+
+  .pursuit-unlock-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .pursuit-unlock-actions .primary-button {
     width: 100%;
   }
 
