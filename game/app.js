@@ -2503,15 +2503,14 @@
               <span>${selectedLabel ? `已选：${escapeHtml(selectedLabel)}` : "尚未选择证物或人物档案"}</span>
               <small>${escapeHtml(recordPrompt)}</small>
             </div>
-            <div class="action-row trial-actions">
-              <button class="secondary-button compact-button" type="button" data-home>返回主菜单</button>
-              <button class="secondary-button" type="button" data-prev-statement ${progress.statementIndex === 0 ? "disabled" : ""}>上一句</button>
-              <button class="secondary-button" type="button" data-next-statement ${progress.statementIndex >= visibleStatements.length - 1 ? "disabled" : ""}>下一句</button>
-              <button class="primary-button" type="button" data-press>追问</button>
-              <button class="secondary-button record-open-button ${readyToPresent ? "opportunity" : ""}" type="button" data-open-record>记录</button>
-              <button class="danger-button present-button ${readyToPresent && selectedLabel ? "opportunity" : ""}" type="button" data-present ${selectedLabel ? "" : "disabled"}>举证</button>
-            </div>
+          <div class="action-row trial-actions">
+            <button class="secondary-button compact-button" type="button" data-home>返回主菜单</button>
+            <button class="secondary-button" type="button" data-prev-statement ${progress.statementIndex === 0 ? "disabled" : ""}>上一句</button>
+            <button class="primary-button" type="button" data-press>追问</button>
+            <button class="secondary-button record-open-button ${readyToPresent ? "opportunity" : ""}" type="button" data-open-record>记录</button>
+            <button class="danger-button present-button ${readyToPresent && selectedLabel ? "opportunity" : ""}" type="button" data-present ${selectedLabel ? "" : "disabled"}>举证</button>
           </div>
+        </div>
         </div>
         ${state.recordOpen ? `<button class="record-scrim" type="button" data-close-record aria-label="关闭法庭记录"></button>` : ""}
         ${renderRecordPanel(caseData, progress, true)}
@@ -4986,7 +4985,6 @@
       rerender();
     }
     if (target.dataset.prevStatement !== undefined) moveStatement(-1);
-    if (target.dataset.nextStatement !== undefined) moveStatement(1);
     if (target.dataset.press !== undefined) pressStatement();
     if (target.dataset.present !== undefined) presentEvidence();
     if (target.dataset.advanceReveal !== undefined) advanceObjectionReveal();
