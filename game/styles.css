@@ -3428,6 +3428,60 @@ button:not(:disabled):hover {
   line-height: 1.55;
 }
 
+.inspect-compare {
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+  color: #231b16;
+  background: rgba(46, 111, 98, 0.12);
+  border: 2px solid rgba(46, 111, 98, 0.38);
+  border-radius: 8px;
+}
+
+.inspect-compare.locked {
+  color: var(--muted);
+  background: #efe1c8;
+  border-color: rgba(52, 44, 37, 0.2);
+}
+
+.inspect-compare.matched {
+  background: rgba(255, 241, 191, 0.94);
+  border-color: rgba(179, 123, 36, 0.62);
+  box-shadow: 0 0 0 4px rgba(179, 123, 36, 0.12);
+}
+
+.inspect-compare.missed {
+  background: rgba(160, 43, 35, 0.1);
+  border-color: rgba(160, 43, 35, 0.28);
+}
+
+.inspect-compare b,
+.inspect-compare span,
+.inspect-compare small {
+  display: block;
+}
+
+.inspect-compare span,
+.inspect-compare small {
+  line-height: 1.5;
+}
+
+.inspect-compare small {
+  color: var(--muted);
+}
+
+.inspect-compare-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(132px, 1fr));
+  gap: 8px;
+}
+
+.inspect-compare-options .selected {
+  color: #fff8e7;
+  background: #5c1d18;
+  border-color: rgba(255, 241, 191, 0.76);
+}
+
 .inspect-facts b,
 .inspect-facts small,
 .inspect-index {
@@ -5272,6 +5326,10 @@ button:not(:disabled):hover {
     font-size: 28px;
   }
 
+  .record-inspect-copy {
+    padding-bottom: 88px;
+  }
+
   .case-brief-main {
     grid-template-columns: 1fr;
   }
@@ -5285,6 +5343,7 @@ button:not(:disabled):hover {
   }
 
   .record-inspect-actions {
+    position: static;
     grid-template-columns: 1fr;
   }
 

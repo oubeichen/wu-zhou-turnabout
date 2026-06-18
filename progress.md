@@ -1765,3 +1765,28 @@ Remaining Ace Attorney gap list:
 - Courtroom acting keeps both portraits visible, but character animation remains limited to a shared multi-pose sheet rather than bespoke per-character animation strips.
 - Impact, cut-in, title callout, and evidence art now use bitmap layers, but case/opponent-specific high-fidelity animation strips are still missing.
 - Audio has local cue samples and looped music tracks, but the tracks are procedurally generated placeholders rather than fully authored soundtrack compositions.
+
+## 2026-06-18 iteration 64 result
+
+Implemented:
+- Added a Court Record `证物对照` secondary reasoning step after an evidence item has all inspection spots checked.
+- The compare panel stays locked until the current evidence reaches full `详查` progress; after completion it offers collected evidence candidates from the same case.
+- Added compare target logic for key evidence families so clue boards, rosters, tallies, bronze-box records, jar/confession/manual chains, and orders can suggest a meaningful matching evidence item.
+- Correct comparisons produce a `推理确认` result; wrong comparisons produce a non-punitive hint so players can keep reasoning without leaving the modal.
+- Exposed compare QA fields through `window.render_game_to_text`: readiness, options, target, result, and result text.
+- Adjusted mobile `详查` actions so the bottom controls no longer cover the new compare panel.
+
+Verified:
+- `npm run check:js`
+- `PYTHONPYCACHEPREFIX="/Users/oubeichen/Projects/wuzetian2/.pycache" npm run check:py`
+- `git diff --check`
+- `npm run qa:web-game`
+- Desktop 1440x810 Playwright flow collected all first-case evidence, opened `后位线索板` inspection, checked all six spots, confirmed compare readiness and options, selected `染墨的封后诏稿`, and reached `recordInspectCompareResult=match` with no page-level overflow.
+- Mobile 390x844 Playwright flow repeated the same completed-inspection compare path, confirmed `match`, `6/6`, and no horizontal overflow after the sticky-action layout fix.
+- Screenshots inspected: `iteration64-evidence-compare-desktop.png` and `iteration64-evidence-compare-mobile-final.png`.
+
+Remaining Ace Attorney gap list:
+- Evidence inspection now supports hotspot completion and item comparison, but these deductions do not yet unlock new trial-only evidence or branch dialogue.
+- Courtroom acting keeps both portraits visible, but character animation remains limited to a shared multi-pose sheet rather than bespoke per-character animation strips.
+- Impact, cut-in, title callout, and evidence art now use bitmap layers, but case/opponent-specific high-fidelity animation strips are still missing.
+- Audio has local cue samples and looped music tracks, but the tracks are procedurally generated placeholders rather than fully authored soundtrack compositions.

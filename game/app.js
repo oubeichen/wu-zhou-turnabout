@@ -81,6 +81,7 @@
     recordInspectGesture: "",
     recordInspectGestureNonce: 0,
     recordInspectFindings: {},
+    recordInspectCompare: null,
     inspectDrag: null,
     message: "",
     speaker: "系统",
@@ -213,6 +214,7 @@
     state.recordInspect = null;
     state.recordInspectSpot = "";
     state.recordInspectView = "front";
+    clearRecordInspectCompare();
     state.objectionReveal = null;
     clearEvidencePickup();
     clearInventoryCue();
@@ -715,6 +717,10 @@
     state.recordInspectGesture = "";
     state.recordInspectGestureNonce = 0;
     state.inspectDrag = null;
+  }
+
+  function clearRecordInspectCompare() {
+    state.recordInspectCompare = null;
   }
 
   function setRecordInspectGesture(gesture) {
@@ -1255,6 +1261,7 @@
     state.recordInspect = null;
     state.recordInspectSpot = "";
     state.recordInspectView = "front";
+    clearRecordInspectCompare();
     state.objectionReveal = null;
     clearEvidencePickup();
     clearInventoryCue();
@@ -1548,6 +1555,7 @@
     state.screen = "case";
     state.recordOpen = false;
     state.recordInspect = null;
+    clearRecordInspectCompare();
     clearEvidencePickup();
     clearInventoryCue();
     renderStatus();
@@ -2660,6 +2668,7 @@
     state.recordInspectView = inspectType === "evidence" ? "front" : "";
     state.recordInspectSpot = inspectType === "evidence" ? inspectSpotsForEvidence(inspectItem, "front")[0]?.id || "" : "";
     clearRecordInspectTransient();
+    clearRecordInspectCompare();
     if (inspectType === "evidence") markRecordInspectFinding(inspectItem, "front", state.recordInspectSpot);
     rerender();
   }
@@ -2669,6 +2678,7 @@
     state.recordInspectSpot = "";
     state.recordInspectView = "front";
     clearRecordInspectTransient();
+    clearRecordInspectCompare();
     rerender();
   }
 
@@ -2686,6 +2696,7 @@
       state.recordInspectSpot = "";
       state.recordInspectView = "";
       clearRecordInspectTransient();
+      clearRecordInspectCompare();
     } else {
       state.selectedEvidenceId = next.id;
       state.selectedProfileName = "";
@@ -2694,6 +2705,7 @@
       state.recordInspectView = "front";
       state.recordInspectSpot = inspectSpotsForEvidence(next, "front")[0]?.id || "";
       clearRecordInspectTransient();
+      clearRecordInspectCompare();
       markRecordInspectFinding(next, "front", state.recordInspectSpot);
     }
     rerender();
@@ -3023,6 +3035,68 @@
     return { checked, total: keys.length, label: `${checked}/${keys.length}` };
   }
 
+  function isRecordInspectComplete(item) {
+    const progress = recordInspectProgress(item);
+    return progress.total > 0 && progress.checked >= progress.total;
+  }
+
+  function inspectCompareTargetForEvidence(item, caseData) {
+    if (!item || !caseData?.evidence?.length) return null;
+    const evidence = caseData.evidence.filter((entry) => !entry.trialOnly);
+    const index = evidence.findIndex((entry) => entry.id === item.id);
+    if (index < 0) return null;
+    if (item.id.endsWith("-ev-pattern")) return evidence[Math.max(0, index - 1)] || null;
+    if (evidenceInspectKind(item) === "tally") return evidence.find((entry) => entry.name.includes("名册")) || evidence[index + 1] || null;
+    if (evidenceInspectKind(item) === "roster") return evidence.find((entry) => entry.name.includes("签") || entry.name.includes("牌")) || evidence[index - 1] || null;
+    if (evidenceInspectKind(item) === "bronze_box") return evidence.find((entry) => entry.name.includes("榜文") || entry.name.includes("缉捕令")) || evidence[index + 1] || null;
+    if (evidenceInspectKind(item) === "jar") return evidence.find((entry) => entry.name.includes("供状") || entry.name.includes("手册")) || evidence[index + 1] || null;
+    if (evidenceInspectKind(item) === "order") return evidence[Math.max(0, index - 1)] || null;
+    return evidence[index + 1] || evidence[index - 1] || null;
+  }
+
+  function inspectCompareOptionsForEvidence(item, caseData) {
+    if (!item || !isRecordInspectComplete(item)) return [];
+    const collected = new Set(state.collected[caseData.id] || []);
+    const candidates = (caseData.evidence || []).filter((entry) => entry.id !== item.id && collected.has(entry.id) && !entry.trialOnly);
+    if (!candidates.length) return [];
+    const target = inspectCompareTargetForEvidence(item, caseData);
+    const ordered = [];
+    if (target && candidates.some((entry) => entry.id === target.id)) ordered.push(target);
+    for (const entry of candidates) {
+      if (!ordered.some((itemEntry) => itemEntry.id === entry.id)) ordered.push(entry);
+      if (ordered.length >= 3) break;
+    }
+    return ordered.slice(0, 3);
+  }
+
+  function inspectCompareResultText(source, target, correct) {
+    if (!source || !target) return "";
+    if (!correct) return `${target.name}和${source.name}暂时接不上。先确认两件证物是否在同一条时间线或同一个人身上。`;
+    const kind = evidenceInspectKind(source);
+    if (kind === "board") return `${source.name}的红线和${target.name}对上了：这不是零散线索，而是一条能带上庭的因果链。`;
+    if (kind === "tally" || kind === "roster") return `${source.name}和${target.name}互相补上了“谁在场、谁缺席、谁后来被添进去”的空白。`;
+    if (kind === "bronze_box") return `${source.name}和${target.name}对上后，投书入口和案情扩大的步骤被分开了。`;
+    if (kind === "jar" || kind === "confession" || kind === "manual") return `${source.name}和${target.name}连起来后，逼供不再只是传闻，而成了办案流程的破绽。`;
+    if (kind === "order") return `${source.name}和${target.name}对上后，“临时发生”的说法站不住了。`;
+    return `${source.name}和${target.name}互相印证，可以作为庭上追问的下一层依据。`;
+  }
+
+  function compareInspectEvidence(targetId) {
+    const caseData = currentCase();
+    const inspect = currentRecordInspect(caseData);
+    if (!inspect || inspect.type !== "evidence" || !targetId) return;
+    const target = evidenceById(caseData, targetId);
+    const expected = inspectCompareTargetForEvidence(inspect.item, caseData);
+    const correct = Boolean(target && expected && target.id === expected.id);
+    state.recordInspectCompare = {
+      sourceId: inspect.item.id,
+      targetId,
+      result: correct ? "match" : "miss",
+      text: inspectCompareResultText(inspect.item, target, correct),
+    };
+    rerender();
+  }
+
   function activeInspectSpot(item) {
     const spots = inspectSpotsForEvidence(item);
     return spots.find((spot) => spot.id === state.recordInspectSpot) || spots[0] || null;
@@ -3085,6 +3159,39 @@
     `;
   }
 
+  function renderInspectComparePanel(item, caseData) {
+    const progress = recordInspectProgress(item);
+    const options = inspectCompareOptionsForEvidence(item, caseData);
+    const compare = state.recordInspectCompare?.sourceId === item.id ? state.recordInspectCompare : null;
+    if (!isRecordInspectComplete(item)) {
+      return `<div class="inspect-compare locked"><b>二次推理</b><span>先把这件证物的全部检查点看完。当前进度：${escapeHtml(progress.label)}</span></div>`;
+    }
+    if (!options.length) {
+      return `<div class="inspect-compare locked"><b>二次推理</b><span>证物还不够。继续调查后，再回来把它和另一件记录对照。</span></div>`;
+    }
+    const target = compare?.targetId ? evidenceById(caseData, compare.targetId) : null;
+    return `
+      <div class="inspect-compare ${compare?.result === "match" ? "matched" : compare?.result === "miss" ? "missed" : ""}">
+        <div>
+          <b>${compare?.result === "match" ? "推理确认" : "证物对照"}</b>
+          <span>${compare ? escapeHtml(compare.text) : "选择一件已取得证物，确认它能不能和当前证物组成新的推理链。"}</span>
+          ${target ? `<small>已对照：${escapeHtml(target.name)}</small>` : ""}
+        </div>
+        <div class="inspect-compare-options">
+          ${options
+            .map(
+              (option) => `
+                <button class="secondary-button ${compare?.targetId === option.id ? "selected" : ""}" type="button" data-compare-inspect="${escapeHtml(option.id)}">
+                  ${escapeHtml(option.name)}
+                </button>
+              `
+            )
+            .join("")}
+        </div>
+      </div>
+    `;
+  }
+
   function renderRecordInspectModal(caseData) {
     const inspect = currentRecordInspect(caseData);
     if (!inspect) return "";
@@ -3112,6 +3219,7 @@
               <span>${escapeHtml(subtitle)}</span>
               ${type === "profile" ? `<p>${escapeHtml(item.note)}</p>` : `<p>${escapeHtml(item.detail)}</p>`}
               ${spot ? `<div class="inspect-observation"><b>${escapeHtml(spot.title)}</b><span>${escapeHtml(spot.text)}</span></div>` : ""}
+              ${type === "evidence" ? renderInspectComparePanel(item, caseData) : ""}
               <div class="inspect-facts">
                 ${
                   type === "profile"
@@ -3385,6 +3493,7 @@
     state.recordInspect = null;
     state.recordInspectSpot = "";
     state.recordInspectView = "front";
+    clearRecordInspectCompare();
     state.recordTab = "evidence";
     clearInvestigationBeat();
     clearEvidencePickup();
@@ -3398,6 +3507,7 @@
     state.recordInspect = null;
     state.recordInspectSpot = "";
     state.recordInspectView = "front";
+    clearRecordInspectCompare();
     clearEvidencePickup();
     clearInventoryCue();
     if (mode === "investigation") {
@@ -3734,6 +3844,7 @@
     state.recordInspect = null;
     state.recordInspectSpot = "";
     state.recordInspectView = "front";
+    clearRecordInspectCompare();
     if (state.objectionReveal) {
       resolveObjectionReveal();
       return;
@@ -3826,6 +3937,7 @@
     state.recordInspect = null;
     state.recordInspectSpot = "";
     state.recordInspectView = "front";
+    clearRecordInspectCompare();
     setStage("clash", `证词更新：${caseData.testimony[progress.testimonyIndex].title}`, { left: "shock", right: "stagger" });
     setMessage("辩方", message, "objection");
     playCue("objection");
@@ -3871,6 +3983,7 @@
     state.recordInspect = null;
     state.recordInspectSpot = "";
     state.recordInspectView = "front";
+    clearRecordInspectCompare();
     state.recordTab = "evidence";
     setStage("witness", `${caseData.testimony[0].speaker}重新入庭`, { left: "enter", right: "observe" });
     setMessage("审判长", message || "庭审重新开始。调查证物保留，信誉恢复。", "");
@@ -3910,6 +4023,7 @@
     state.recordInspect = null;
     state.recordInspectSpot = "";
     state.recordInspectView = "front";
+    clearRecordInspectCompare();
     state.recordTab = "evidence";
     clearEvidencePickup();
     clearInventoryCue();
@@ -3935,6 +4049,7 @@
     state.recordInspect = null;
     state.recordInspectSpot = "";
     state.recordInspectView = "front";
+    clearRecordInspectCompare();
     clearEvidencePickup();
     clearInventoryCue();
     state.settingsOpen = false;
@@ -4032,11 +4147,13 @@
       setRecordInspectView(target.dataset.inspectView, "button");
       rerender();
     }
+    if (target.dataset.compareInspect) compareInspectEvidence(target.dataset.compareInspect);
     if (target.dataset.returnToTrial !== undefined || target.dataset.returnToTrialInspect !== undefined) {
       state.recordOpen = false;
       state.recordInspect = null;
       state.recordInspectSpot = "";
       state.recordInspectView = "front";
+      clearRecordInspectCompare();
       setMessage("法庭记录", "记录已合上。现在可以在主操作区点击“举证”正式提交。", "");
       rerender();
     }
@@ -4246,6 +4363,9 @@
     const inspect = currentRecordInspect(caseData);
     const inspectSpot = inspect?.type === "evidence" ? activeInspectSpot(inspect.item) : null;
     const inspectProgress = inspect?.type === "evidence" ? recordInspectProgress(inspect.item) : { label: "", checked: 0, total: 0 };
+    const inspectCompareOptions = inspect?.type === "evidence" ? inspectCompareOptionsForEvidence(inspect.item, caseData) : [];
+    const inspectCompareTarget = inspect?.type === "evidence" ? inspectCompareTargetForEvidence(inspect.item, caseData) : null;
+    const inspectCompare = inspect?.type === "evidence" && state.recordInspectCompare?.sourceId === inspect.item.id ? state.recordInspectCompare : null;
     const pickup = currentEvidencePickup(caseData);
     const inventoryCue = currentInventoryCue(caseData);
     const nextCaseIndex = continueCaseIndex();
@@ -4310,6 +4430,11 @@
       recordInspectProgress: inspectProgress.label,
       recordInspectCheckedCount: inspectProgress.checked,
       recordInspectTotalCount: inspectProgress.total,
+      recordInspectCompareReady: inspect?.type === "evidence" ? isRecordInspectComplete(inspect.item) : false,
+      recordInspectCompareOptions: inspectCompareOptions.map((item) => item.name),
+      recordInspectCompareTarget: inspectCompareTarget?.name || "",
+      recordInspectCompareResult: inspectCompare?.result || "",
+      recordInspectCompareText: inspectCompare?.text || "",
       recordInspectGesture: state.recordInspectGesture || "",
       investigationBeatKind: state.screen === "investigation" ? state.investigationBeat?.kind || "" : "",
       investigationBeatSpeaker: state.screen === "investigation" ? state.investigationBeat?.speaker || "" : "",
