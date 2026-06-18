@@ -1694,6 +1694,7 @@
           </div>
           ${renderCaseSourcePanel(caseData)}
           <div class="action-row">
+            <button class="secondary-button compact-button" type="button" data-home>返回主菜单</button>
             <button class="primary-button" type="button" data-mode="investigation">开始调查</button>
             <button class="secondary-button" type="button" data-mode="trial" ${allEvidenceCollected(caseData) ? "" : "disabled"}>进入庭审</button>
           </div>
@@ -2222,6 +2223,7 @@
               <button class="secondary-button" type="button" data-open-intro>案件概要</button>
               <button class="secondary-button inventory-target ${inventoryCue ? "inventory-target-active" : ""}" type="button" data-open-record>记录</button>
               <button class="primary-button" type="button" data-mode="trial" ${allEvidenceCollected(caseData) ? "" : "disabled"}>开庭</button>
+              <button class="secondary-button compact-button" type="button" data-home>返回主菜单</button>
             </div>
           </div>
         </div>
@@ -2500,6 +2502,7 @@
               <small>${escapeHtml(recordPrompt)}</small>
             </div>
             <div class="action-row trial-actions">
+              <button class="secondary-button compact-button" type="button" data-home>返回主菜单</button>
               <button class="secondary-button" type="button" data-prev-statement ${progress.statementIndex === 0 ? "disabled" : ""}>上一句</button>
               <button class="secondary-button" type="button" data-next-statement ${progress.statementIndex >= visibleStatements.length - 1 ? "disabled" : ""}>下一句</button>
               <button class="primary-button" type="button" data-press>追问</button>
