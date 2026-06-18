@@ -17,7 +17,7 @@ OUT_PATH = ROOT / "game" / "assets" / "evidence-item-sheet-v3.png"
 
 CELL_W = 180
 CELL_H = 210
-COLS = 7
+COLS = 8
 ROWS = 5
 
 
@@ -178,6 +178,8 @@ def visual_kind(item: dict) -> str:
         return specific[item_id]
     if item_id.endswith("-ev-pattern"):
         return "evidence_board"
+    if item_id.endswith("-ev-pursuit-note"):
+        return "court_notes"
     if item_id.endswith("-ev-court-note"):
         return "court_notes"
     if "收益图" in name or "图" in name:

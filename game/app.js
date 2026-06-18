@@ -7,6 +7,8 @@
   const saveSlotsKey = "wuzhou-reversal-save-slots-v1";
   const manualSaveSlotCount = 3;
   const storageCodec = window["J" + "SON"];
+  const evidenceSheetColumns = 8;
+  const evidenceSheetRows = 5;
 
   const defaultSettings = {
     textSpeed: "normal",
@@ -1052,7 +1054,7 @@
   }
 
   function deductionPursuitUnlock(caseData) {
-    return evidenceById(caseData, `${caseData.id}-ev-court-note`);
+    return evidenceById(caseData, `${caseData.id}-ev-pursuit-note`);
   }
 
   function visibleStatementEntries(testimony, progress) {
@@ -2775,8 +2777,8 @@
   function evidenceSheetPosition(item, caseData) {
     const row = Math.max(0, data.cases.findIndex((entry) => entry.id === caseData?.id));
     const col = Math.max(0, (caseData?.evidence || []).findIndex((entry) => entry.id === item?.id));
-    const x = col <= 0 ? 0 : (col / 6) * 100;
-    const y = row <= 0 ? 0 : (row / 4) * 100;
+    const x = col <= 0 ? 0 : (col / Math.max(1, evidenceSheetColumns - 1)) * 100;
+    const y = row <= 0 ? 0 : (row / Math.max(1, evidenceSheetRows - 1)) * 100;
     return { row, col, x, y };
   }
 
@@ -4890,7 +4892,7 @@
       pendingDeductionWitnessLine: progress.pendingDeductionFollowUp?.witnessLine || "",
       pendingDeductionButton: progress.pendingDeductionFollowUp?.buttonLabel || "",
       pendingDeductionUnlock: progress.pendingDeductionFollowUp?.unlockEvidenceName || "",
-      pursuitNoteCollected: (state.collected[caseData.id] || []).includes(`${caseData.id}-ev-court-note`),
+      pursuitNoteCollected: (state.collected[caseData.id] || []).includes(`${caseData.id}-ev-pursuit-note`),
       turnaboutTitle: turnaboutBeat(caseData).title,
       turnaboutBody: turnaboutBeat(caseData).body,
       turnaboutOpponentLine: turnaboutBeat(caseData).opponentLine || "",

@@ -141,6 +141,17 @@ window.WUZHOU_GAME_DATA = {
           "detail": "这份庭上记录不是新证物，而是证人当场露出的空白。它把宫人私怨的说法撕开了一道口子。",
           "use": "最后用它证明后位案不是巧合相连，而是有人借宫人背罪。",
           "trialOnly": true
+        },
+        {
+          "id": "case-empress-seat-ev-pursuit-note",
+          "name": "追击补记：哭声入诏",
+          "type": "追击线索",
+          "source": "由对照札记追击整理",
+          "summary": "记录官被逼到最后，承认哭声传闻进入诏稿前，曾有人先把废后两个字递到案边。",
+          "detail": "这份补记写在追击之后：证人没能说出递话的人名，却说出了传闻不是自己走进文书的。",
+          "use": "用于追查谁把现场哭声加工成后位结论。",
+          "trialOnly": true,
+          "pursuitOnly": true
         }
       ],
       "locations": [
@@ -518,6 +529,17 @@ window.WUZHOU_GAME_DATA = {
           "detail": "书记把这段沉默记了下来。沉默说明东宫案不是旧臣一人能推动的。",
           "use": "最后用它把家事、病势和旧臣定罪连成同一条线。",
           "trialOnly": true
+        },
+        {
+          "id": "case-crown-shadow-ev-pursuit-note",
+          "name": "追击补记：旧账流向",
+          "type": "追击线索",
+          "source": "由对照札记追击整理",
+          "summary": "守礼追问后松口：旧臣账册不是自己送到庭前的，中途曾被书记官借走。",
+          "detail": "补记只多了一句话，却把东宫旧账从私人保管变成了被人挑选过的证物。",
+          "use": "用于追查谁把东宫家事整理成可定罪的记录。",
+          "trialOnly": true,
+          "pursuitOnly": true
         }
       ],
       "locations": [
@@ -902,6 +924,17 @@ window.WUZHOU_GAME_DATA = {
           "detail": "证人不愿说哪只手加了罪，只留下这段答不上来的停顿。停顿本身就是线索。",
           "use": "最后用它反击“告密自然变成谋反”的说法。",
           "trialOnly": true
+        },
+        {
+          "id": "case-rebellion-box-ev-pursuit-note",
+          "name": "追击补记：投书转手",
+          "type": "追击线索",
+          "source": "由对照札记追击整理",
+          "summary": "告密人承认投书离开铜匦后，他再见到它时，纸边已经多了官府标注。",
+          "detail": "补记证明加罪发生在转手途中。投书人没有写出的字，后来被别人补了上去。",
+          "use": "用于追查告密如何被加工成谋反。",
+          "trialOnly": true,
+          "pursuitOnly": true
         }
       ],
       "locations": [
@@ -1297,6 +1330,17 @@ window.WUZHOU_GAME_DATA = {
           "detail": "三件东西分开看都能被狡辩，合在追问记录里就变成一套逼供步骤。",
           "use": "最后用它证明供状不是自愿长出来的，而是被流程逼出来的。",
           "trialOnly": true
+        },
+        {
+          "id": "case-urn-ev-pursuit-note",
+          "name": "追击补记：瓮前签押",
+          "type": "追击线索",
+          "source": "由对照札记追击整理",
+          "summary": "魏元忠补充：签押前，他听见瓮被拖到供案旁，随后才有人催狄仁杰落笔。",
+          "detail": "这条补记把刑具和供状之间的距离缩到一步之内。周兴再难把二者拆开解释。",
+          "use": "用于证明供状不是自然认罪，而是逼供流程的一部分。",
+          "trialOnly": true,
+          "pursuitOnly": true
         }
       ],
       "locations": [
@@ -1669,6 +1713,17 @@ window.WUZHOU_GAME_DATA = {
           "detail": "每段都能被说成仓促，连起来却像早排好的表。时间替辩方留下了证词。",
           "use": "最后用它反击“混乱中自然发生”的说法。",
           "trialOnly": true
+        },
+        {
+          "id": "case-half-hour-coup-ev-pursuit-note",
+          "name": "追击补记：夜门先令",
+          "type": "追击线索",
+          "source": "由对照札记追击整理",
+          "summary": "玄宗旧部承认，夜门撞开前已有一道口令先传到侧门，换岗并非完全临时。",
+          "detail": "补记让半小时时间表多出起点。真正的安排不是门开后才开始，而是在门开前已经动了。",
+          "use": "用于追查谁提前安排夜门后的结局。",
+          "trialOnly": true,
+          "pursuitOnly": true
         }
       ],
       "locations": [

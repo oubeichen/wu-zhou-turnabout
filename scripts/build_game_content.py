@@ -678,6 +678,40 @@ COURT_NOTE_COPY = {
 }
 
 
+PURSUIT_NOTE_COPY = {
+    "case-empress-seat": {
+        "name": "追击补记：哭声入诏",
+        "summary": "记录官被逼到最后，承认哭声传闻进入诏稿前，曾有人先把废后两个字递到案边。",
+        "detail": "这份补记写在追击之后：证人没能说出递话的人名，却说出了传闻不是自己走进文书的。",
+        "use": "用于追查谁把现场哭声加工成后位结论。",
+    },
+    "case-crown-shadow": {
+        "name": "追击补记：旧账流向",
+        "summary": "守礼追问后松口：旧臣账册不是自己送到庭前的，中途曾被书记官借走。",
+        "detail": "补记只多了一句话，却把东宫旧账从私人保管变成了被人挑选过的证物。",
+        "use": "用于追查谁把东宫家事整理成可定罪的记录。",
+    },
+    "case-rebellion-box": {
+        "name": "追击补记：投书转手",
+        "summary": "告密人承认投书离开铜匦后，他再见到它时，纸边已经多了官府标注。",
+        "detail": "补记证明加罪发生在转手途中。投书人没有写出的字，后来被别人补了上去。",
+        "use": "用于追查告密如何被加工成谋反。",
+    },
+    "case-urn": {
+        "name": "追击补记：瓮前签押",
+        "summary": "魏元忠补充：签押前，他听见瓮被拖到供案旁，随后才有人催狄仁杰落笔。",
+        "detail": "这条补记把刑具和供状之间的距离缩到一步之内。周兴再难把二者拆开解释。",
+        "use": "用于证明供状不是自然认罪，而是逼供流程的一部分。",
+    },
+    "case-half-hour-coup": {
+        "name": "追击补记：夜门先令",
+        "summary": "玄宗旧部承认，夜门撞开前已有一道口令先传到侧门，换岗并非完全临时。",
+        "detail": "补记让半小时时间表多出起点。真正的安排不是门开后才开始，而是在门开前已经动了。",
+        "use": "用于追查谁提前安排夜门后的结局。",
+    },
+}
+
+
 def evidence_voice_copy(case_id: str, offset: int, item: dict[str, str]) -> dict[str, str]:
     entries = EVIDENCE_VOICE_COPY.get(case_id, [])
     if 0 <= offset < len(entries):
@@ -730,6 +764,20 @@ def make_evidence(case: dict[str, object], lookup: dict[int, dict[str, object]])
             "detail": court_note.get("detail", "这不是调查阶段能直接拿到的东西。必须先追问最终证词，让证人承认自己说不清证物之间的关系，记录才会加入法庭档案。"),
             "use": court_note.get("use", "用于最终举证，反驳“这些事只是碰巧连在一起”。"),
             "trialOnly": True,
+        }
+    )
+    pursuit_note = PURSUIT_NOTE_COPY.get(str(case["id"]), {})
+    evidence.append(
+        {
+            "id": f"{case['id']}-ev-pursuit-note",
+            "name": pursuit_note.get("name", "对照追击补记"),
+            "type": "追击线索",
+            "source": "由对照札记追击整理",
+            "summary": pursuit_note.get("summary", "对照札记追击后，证人补出了一条能写入法庭记录的新线索。"),
+            "detail": pursuit_note.get("detail", "这不是调查阶段能直接取得的证物，必须先在庭上用对照札记追击证人才会加入记录。"),
+            "use": pursuit_note.get("use", "用于追查证物之间被证人回避的连接。"),
+            "trialOnly": True,
+            "pursuitOnly": True,
         }
     )
     trap = case.get("trap") or {}
@@ -1277,7 +1325,7 @@ def make_timeline(case: dict[str, object], lookup: dict[int, dict[str, object]])
 def case_testimony_script(case: dict[str, object], evidence: list[dict[str, str]]) -> dict[str, list[dict[str, str]]]:
     evidence_a = evidence[1]["name"]
     evidence_b = evidence[3]["name"]
-    final_record = evidence[-1]["name"]
+    final_record = next((item["name"] for item in evidence if item["id"] == f"{case['id']}-ev-court-note"), evidence[-1]["name"])
     by_case = {
         "case-empress-seat": {
             "surface": [
@@ -1571,8 +1619,8 @@ def case_testimony_script(case: dict[str, object], evidence: list[dict[str, str]
 def make_testimony(case: dict[str, object], evidence: list[dict[str, str]]) -> list[dict[str, object]]:
     contradiction_a = evidence[1]["id"]
     contradiction_b = evidence[3]["id"]
-    contradiction_c = evidence[-1]["id"]
-    court_note = evidence[-1]["id"]
+    court_note = f"{case['id']}-ev-court-note"
+    contradiction_c = court_note
     branch_id = f"{case['id']}-legality-branch"
     branch = case["branch"]
     trap = case.get("trap") or {}

@@ -2070,3 +2070,31 @@ Remaining Ace Attorney gap list:
 - Browser visual verification needs to be rerun when local browser execution is available again.
 - Chapter-source tabs are clearer and clickable, but they could later become a staged `翻阅卷宗` drawer instead of living fully on the case intro.
 - Evidence icons are stronger bitmap props, but selected high-value items still lack curated per-prop Image API source exports.
+
+## 2026-06-18 iteration 76 result
+
+Implemented:
+- Expanded the committed evidence item sprite sheet from 7 columns to 8 columns in `scripts/generate_evidence_item_sheet.py`.
+- Updated frontend evidence-sheet positioning to use `evidenceSheetColumns = 8` instead of hard-coded 7-column math.
+- Added a separate trial-only `追击补记` evidence item for every current case with authored names, summaries, details, and use text.
+- Changed `对照札记` pursuit rewards to unlock `${caseId}-ev-pursuit-note` instead of reusing `${caseId}-ev-court-note`.
+- Preserved the final testimony path: final press/unlock and final answer still use `${caseId}-ev-court-note`; pursuit notes no longer leak into final testimony answers.
+- Regenerated `game/game-data.js` and `game/assets/evidence-item-sheet-v3.png`; the PNG is now `1440x1050` and contains the new 8th-column pursuit-note icons.
+
+Verified:
+- `PYTHONPYCACHEPREFIX="/Users/oubeichen/Projects/wuzetian2/.pycache" python3 -m py_compile scripts/build_game_content.py scripts/generate_evidence_item_sheet.py`
+- `python3 scripts/build_game_content.py`
+- `python3 scripts/generate_evidence_item_sheet.py`
+- Custom Node integrity check confirmed 5 pursuit notes, evidence counts `[8,8,8,8,7]`, final testimony still uses court notes, and pursuit notes do not leak into final testimony answer/unlock fields.
+- `npm run check:js`
+- `PYTHONPYCACHEPREFIX="/Users/oubeichen/Projects/wuzetian2/.pycache" npm run check:py`
+- `git diff --check`
+- Visual inspection of `game/assets/evidence-item-sheet-v3.png` confirmed the 8-column sheet renders nonblank pursuit-note icons without obvious cropping.
+
+Blocked verification:
+- `npm run qa:web-game` was attempted and still fails before page load because Chromium cannot register its Mach port rendezvous in this environment (`Permission denied (1100)`). No new browser screenshot was captured.
+
+Remaining Ace Attorney gap list:
+- Pursuit now unlocks fully separate evidence, but the new pursuit notes reuse the local generated court-note icon style; high-value notes still need curated Image API assets when an exportable path is available.
+- Browser visual verification needs to be rerun when local browser execution is available again.
+- Chapter-source tabs are clearer and clickable, but they could later become a staged `翻阅卷宗` drawer instead of living fully on the case intro.
