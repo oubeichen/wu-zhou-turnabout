@@ -4937,12 +4937,14 @@
       state.selectedEvidenceId = target.dataset.selectEvidence;
       state.selectedProfileName = "";
       state.recordTab = "evidence";
+      state.recordOpen = state.screen === "trial" ? false : state.recordOpen;
       setMessage("法庭记录", "证物已放到手边；还没有提交。确认要用它时，再点主操作区的“举证”。", "");
       rerender();
     }
     if (target.dataset.selectProfile) {
       state.selectedProfileName = target.dataset.selectProfile;
       state.selectedEvidenceId = "";
+      state.recordOpen = state.screen === "trial" ? false : state.recordOpen;
       setMessage("人物档案", `${target.dataset.selectProfile}的档案已加入本次推理参考。`, "");
       rerender();
     }
