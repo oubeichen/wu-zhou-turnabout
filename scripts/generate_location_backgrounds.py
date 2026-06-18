@@ -68,13 +68,15 @@ def cover_resize(image: Image.Image, size: tuple[int, int]) -> Image.Image:
     return resized.crop((left, top, left + size[0], top + size[1]))
 
 
-def episode_art_path(scene_key: str) -> Path:
-    path = ASSET_DIR / f"episode-art-{scene_key}.png"
-    return path if path.exists() else ASSET_DIR / "investigation-room-v1.png"
+def clean_room_art_path() -> Path:
+    return ASSET_DIR / "investigation-room-v1.png"
 
 
 def tinted_base(scene_key: str, variant: str) -> Image.Image:
-    base = cover_resize(Image.open(episode_art_path(scene_key)), SIZE)
+    base = cover_resize(Image.open(clean_room_art_path()), SIZE)
+    primary, accent, _paper = PALETTES.get(scene_key, PALETTES["palace"])
+    tint = Image.new("RGB", SIZE, primary)
+    base = Image.blend(base, tint, 0.14 if variant == "site" else 0.22)
     if variant == "archive":
         base = ImageEnhance.Color(base).enhance(0.55)
         base = ImageEnhance.Brightness(base).enhance(0.82)
@@ -91,42 +93,63 @@ def overlay(draw: ImageDraw.ImageDraw, color: str, alpha: int, box: tuple[int, i
     draw.rectangle(box, fill=color + f"{alpha:02x}")
 
 
+def draw_soft_rect(
+    draw: ImageDraw.ImageDraw,
+    box: tuple[int, int, int, int],
+    fill: str,
+    outline: str,
+    radius: int = 12,
+    width: int = 2,
+) -> None:
+    draw.rounded_rectangle(box, radius=radius, fill=fill, outline=outline, width=width)
+
+
+def draw_paper(draw: ImageDraw.ImageDraw, box: tuple[int, int, int, int], accent: str) -> None:
+    x1, y1, x2, y2 = box
+    draw_soft_rect(draw, box, "#ead7b4dd", "#5d442caa", radius=8, width=2)
+    for y in range(y1 + 18, y2 - 10, 18):
+        draw.line((x1 + 16, y, x2 - 18, y + ((y // 18) % 2) * 2), fill=accent + "88", width=3)
+    draw.ellipse((x2 - 36, y1 + 12, x2 - 12, y1 + 36), fill="#8e3029bb", outline="#fff1bf99", width=2)
+
+
+def draw_lamp_glow(layer: Image.Image, center: tuple[int, int], color: str) -> None:
+    glow = Image.new("RGBA", SIZE, (0, 0, 0, 0))
+    draw = ImageDraw.Draw(glow)
+    cx, cy = center
+    for radius, alpha in [(240, 26), (150, 38), (72, 58)]:
+        draw.ellipse((cx - radius, cy - radius, cx + radius, cy + radius), fill=color + f"{alpha:02x}")
+    layer.alpha_composite(glow)
+
+
 def draw_site(draw: ImageDraw.ImageDraw, scene_key: str, location_name: str) -> None:
     primary, accent, paper = PALETTES.get(scene_key, PALETTES["palace"])
-    draw.rectangle((0, 500, 1280, 720), fill="#2a1812aa")
-    draw.polygon([(60, 700), (1180, 700), (920, 510), (260, 510)], fill=primary + "88")
-    draw.line((160, 538, 1120, 538), fill=accent + "cc", width=8)
-    draw.rounded_rectangle((70, 120, 330, 420), radius=18, outline=accent + "cc", width=7)
-    draw.rounded_rectangle((880, 150, 1190, 470), radius=24, outline=paper + "99", width=6)
-    draw.text((990, 252), location_name[:2], fill=paper + "55", font=FONT_BIG, anchor="mm")
+    draw.rectangle((0, 510, 1280, 720), fill="#2317147a")
+    draw.polygon([(80, 720), (1220, 720), (990, 530), (230, 530)], fill=primary + "42")
+    draw.ellipse((125, 130, 372, 378), fill=accent + "18")
+    draw.ellipse((780, 380, 1180, 700), fill=paper + "0f")
 
 
 def draw_archive(draw: ImageDraw.ImageDraw, scene_key: str, location_name: str) -> None:
     primary, accent, paper = PALETTES.get(scene_key, PALETTES["palace"])
-    draw.rectangle((0, 0, 1280, 720), fill="#10100fcc")
-    for x in range(90, 1180, 180):
-        draw.rounded_rectangle((x, 74, x + 118, 520), radius=8, fill=primary + "aa", outline=accent + "aa", width=3)
-        for y in range(116, 486, 54):
-            draw.line((x + 18, y, x + 98, y), fill=paper + "88", width=6)
-    draw.rounded_rectangle((280, 500, 1050, 695), radius=16, fill="#4a2a1dcc", outline=accent + "cc", width=5)
+    draw.rectangle((0, 0, 1280, 720), fill="#10100f8c")
+    draw.rectangle((0, 510, 1280, 720), fill=primary + "56")
     for x in range(350, 920, 150):
-        draw.rounded_rectangle((x, 430, x + 126, 532), radius=8, fill=paper + "dd", outline="#5d442c", width=3)
-    draw.text((1060, 172), "档", fill=paper + "46", font=FONT_BIG, anchor="mm")
+        draw_paper(draw, (x, 456, x + 118, 548), accent)
     draw.text((94, 664), location_name, fill=paper + "cc", font=FONT_SMALL)
 
 
 def draw_defense(draw: ImageDraw.ImageDraw, scene_key: str, location_name: str) -> None:
     primary, accent, paper = PALETTES.get(scene_key, PALETTES["palace"])
-    draw.rectangle((0, 0, 1280, 720), fill="#130c0acc")
-    draw.rounded_rectangle((72, 466, 1210, 706), radius=24, fill="#332015dd", outline=accent + "bb", width=6)
-    draw.rounded_rectangle((830, 110, 1185, 488), radius=20, fill=primary + "99", outline=paper + "88", width=5)
+    draw.rectangle((0, 0, 1280, 720), fill="#130c0a8e")
+    draw.rounded_rectangle((72, 500, 1210, 706), radius=24, fill="#332015b2", outline=accent + "44", width=2)
+    draw.rounded_rectangle((830, 110, 1185, 488), radius=20, fill=primary + "7e", outline=paper + "55", width=2)
     for x in [116, 232, 348]:
-        draw.rounded_rectangle((x, 510, x + 86, 642), radius=6, fill=paper + "e6", outline="#5d442c", width=3)
-        draw.line((x + 15, 550, x + 70, 550), fill=primary + "cc", width=4)
-        draw.line((x + 15, 584, x + 70, 584), fill=primary + "99", width=4)
-    draw.ellipse((570, 510, 720, 660), fill=accent + "aa", outline=paper + "dd", width=5)
-    draw.text((645, 590), "辩", fill="#231b16dd", font=FONT_LABEL, anchor="mm")
-    draw.text((1005, 276), location_name[:2], fill=paper + "42", font=FONT_BIG, anchor="mm")
+        draw_paper(draw, (x, 510, x + 86, 642), accent)
+    draw.ellipse((570, 510, 720, 660), fill=accent + "92", outline=paper + "aa", width=4)
+    draw.text((645, 590), "案", fill="#231b16dd", font=FONT_LABEL, anchor="mm")
+    draw_soft_rect(draw, (890, 180, 1120, 420), "#ead7b499", "#5d442c77", radius=12, width=2)
+    for y in range(224, 384, 34):
+        draw.line((925, y, 1085, y), fill=accent + "77", width=4)
 
 
 def draw_background(case: dict, location: dict) -> Image.Image:
@@ -138,6 +161,7 @@ def draw_background(case: dict, location: dict) -> Image.Image:
     overlay(shade_draw, "#000000", 50 if variant == "site" else 76, (0, 0, 1280, 720))
     image = Image.alpha_composite(image, shade)
     art = Image.new("RGBA", SIZE, (0, 0, 0, 0))
+    draw_lamp_glow(art, (260, 182), PALETTES.get(scene_key, PALETTES["palace"])[1])
     draw = ImageDraw.Draw(art)
     name = location.get("name", "")
     if variant == "archive":

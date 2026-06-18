@@ -1646,19 +1646,6 @@ button:not(:disabled):hover {
   box-shadow: 0 12px 36px var(--shadow);
 }
 
-.scene.investigation::after {
-  content: attr(data-motif);
-  position: absolute;
-  right: clamp(18px, 8vw, 90px);
-  top: 26px;
-  z-index: 1;
-  color: rgba(255, 248, 231, 0.16);
-  font-size: clamp(82px, 18vw, 180px);
-  font-weight: 900;
-  line-height: 1;
-  pointer-events: none;
-}
-
 .scene-palace {
   --episode-art: url("./assets/episode-art-palace.png");
   --scene-veil: rgba(68, 28, 27, 0.72);

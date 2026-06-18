@@ -2171,3 +2171,27 @@ Remaining Ace Attorney gap list:
 - Opening is now interactive and staged, but later passes should add motion/camera timing, audio stingers per beat, and case-specific cut-in art.
 - Investigation and trial scenes still need more character pose changes tied to pressure and testimony state.
 - High-value pursuit-note icons still need curated Image API assets when a filesystem-exportable path is available.
+
+## 2026-06-18 iteration 80 result
+
+Implemented:
+- Removed the remaining SVG favicon data URI from `game/index.html` and added a committed PNG favicon at `game/assets/favicon.png`.
+- Confirmed there are no `svg`, `data:image/svg`, `<svg>`, or `xmlns` references under `game/`.
+- Reworked `scripts/generate_location_backgrounds.py` so investigation backgrounds no longer inherit the older episode-art images that had large vector-like outline boxes and watermark glyphs baked in.
+- Regenerated all 15 `location-bg-*-{site,archive,defense}.png` investigation backgrounds from the clean bitmap room base with scene-specific tone, light, and subtle raster props.
+- Removed the CSS `.scene.investigation::after` giant motif watermark so investigation scenes no longer overlay huge decorative text on top of the background.
+
+Verified:
+- `python3 scripts/generate_location_backgrounds.py`
+- `npm run check:js`
+- `PYTHONPYCACHEPREFIX="/Users/oubeichen/Projects/wuzetian2/.pycache" npm run check:py`
+- `git diff --check`
+- `rg -n "svg|SVG|data:image/svg|<svg|xmlns" game` returned no matches.
+- Non-sandbox Playwright investigation-page check confirmed `svgElements=0`, `dataSvgRefs=0`, investigation `::after` content is `none`, `bodyOverflowY=0`, and the scene is using `location-bg-palace-site.png`.
+- Screenshot inspection of `output/web-game/investigation-after-no-svg-no-watermark.png` confirmed the investigation page now uses a bitmap background without the previous large vector-like outlines or giant glyph overlay.
+- Non-sandbox `npm run qa:web-game` succeeded.
+
+Remaining Ace Attorney gap list:
+- Investigation backgrounds are now clean PNG scenes, but the foreground hotspot buttons still use generic CSS pills; a later pass should replace them with a small committed PNG marker sheet or image-generated interactive marker assets.
+- High-value pursuit-note icons still need curated Image API assets when a filesystem-exportable path is available.
+- Trial scenes still need more character pose changes tied to pressure and testimony state.
