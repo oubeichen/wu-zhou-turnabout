@@ -82,6 +82,7 @@
     speaker: "系统",
     dramaticCue: "",
     investigationBeat: null,
+    evidencePickup: null,
     objectionReveal: null,
     impactCue: null,
     stageFocus: "center",
@@ -208,6 +209,7 @@
     state.recordInspectSpot = "";
     state.recordInspectView = "front";
     state.objectionReveal = null;
+    clearEvidencePickup();
     setMessage("读档", `已读取存档 ${index + 1}。`, "");
     save();
     renderHome();
@@ -695,6 +697,45 @@
     state.investigationBeat = null;
   }
 
+  function clearEvidencePickup() {
+    state.evidencePickup = null;
+  }
+
+  function setEvidencePickup(caseData, items) {
+    const itemIds = (items || []).map((item) => item?.id).filter(Boolean);
+    state.evidencePickup = itemIds.length
+      ? {
+          caseId: caseData.id,
+          itemIds,
+          index: 0,
+        }
+      : null;
+  }
+
+  function currentEvidencePickup(caseData = currentCase()) {
+    const pickup = state.evidencePickup;
+    if (!pickup || pickup.caseId !== caseData.id) return null;
+    const items = (pickup.itemIds || []).map((id) => evidenceById(caseData, id)).filter(Boolean);
+    if (!items.length) return null;
+    const index = Math.max(0, Math.min(items.length - 1, Number(pickup.index || 0)));
+    return { pickup, items, item: items[index], index };
+  }
+
+  function advanceEvidencePickup() {
+    const view = currentEvidencePickup();
+    if (!view) {
+      clearEvidencePickup();
+      rerender();
+      return;
+    }
+    if (view.index < view.items.length - 1) {
+      view.pickup.index = view.index + 1;
+    } else {
+      clearEvidencePickup();
+    }
+    rerender();
+  }
+
   function setInvestigationBeat(kind, speaker, text, result, evidenceNames = [], followUps = []) {
     const lines = [{ speaker: speaker || "调查", text: text || "" }].concat(followUps.filter((line) => line?.text));
     state.investigationBeat = {
@@ -1161,6 +1202,7 @@
     state.recordInspectSpot = "";
     state.recordInspectView = "front";
     state.objectionReveal = null;
+    clearEvidencePickup();
     state.homeView = ["menu", "cases", "archive", "saves"].includes(state.homeView) ? state.homeView : "menu";
     state.homeFocusIndex = Math.min(Math.max(state.homeFocusIndex, 0), data.cases.length - 1);
     const focusedCase = data.cases[state.homeFocusIndex] || data.cases[0];
@@ -1451,6 +1493,7 @@
     state.screen = "case";
     state.recordOpen = false;
     state.recordInspect = null;
+    clearEvidencePickup();
     renderStatus();
     app.innerHTML = `
       <section class="case-intro-layout">
@@ -1720,6 +1763,7 @@
         ${renderRecordPanel(caseData, progress)}
       </section>
       ${renderRecordInspectModal(caseData)}
+      ${renderEvidencePickup(caseData)}
       ${renderGuidePanel()}${renderSettings()}
     `;
     syncAudioForScreen();
@@ -2142,6 +2186,42 @@
           ${hasPrevious ? `<button class="beat-next-button secondary" type="button" data-retreat-investigation-beat>上一句</button>` : ""}
           ${hasNext ? `<button class="beat-next-button" type="button" data-advance-investigation-beat>继续</button>` : `<button class="beat-next-button" type="button" data-close-investigation-beat>收起</button>`}
         </div>
+      </div>
+    `;
+  }
+
+  function renderEvidencePickup(caseData) {
+    const view = currentEvidencePickup(caseData);
+    if (!view) return "";
+    const { item, index, items } = view;
+    const hasNext = index < items.length - 1;
+    const counterCopy = item.counterRisk ? `慎用：${item.counterRisk}` : "已收入法庭记录，庭审中可以先选中它，再正式举证。";
+    return `
+      <div class="evidence-pickup-layer" aria-live="assertive">
+        <section class="evidence-pickup-card" data-advance-pickup-panel role="button" tabindex="0" aria-label="${hasNext ? "点击收入下一件证物" : "点击收起证物取得演出"}">
+          <div class="pickup-kicker">
+            <span>证物取得</span>
+            <b>${index + 1}/${items.length}</b>
+          </div>
+          <div class="pickup-main">
+            <div class="pickup-art">
+              ${renderEvidenceThumb(item, true, "pickup", caseData)}
+            </div>
+            <div class="pickup-copy">
+              <h2>${escapeHtml(item.name)}</h2>
+              <p>${escapeHtml(item.summary || item.detail || "这件物品已经加入法庭记录。")}</p>
+              <small>${escapeHtml(item.type)}｜${escapeHtml(item.source)}</small>
+            </div>
+          </div>
+          <div class="pickup-note">
+            <strong>记录提示</strong>
+            <span>${escapeHtml(counterCopy)}</span>
+          </div>
+          <div class="pickup-actions">
+            <button class="secondary-button" type="button" data-open-record>打开记录</button>
+            <button class="primary-button" type="button" data-advance-pickup>${hasNext ? "收入下一件" : "继续调查"}</button>
+          </div>
+        </section>
       </div>
     `;
   }
@@ -2929,6 +3009,7 @@
     state.recordInspectView = "front";
     state.recordTab = "evidence";
     clearInvestigationBeat();
+    clearEvidencePickup();
     setMessage("书记", "案件记录已经展开。先调查现场，再进入庭审。", "");
     renderCaseIntro();
   }
@@ -2938,6 +3019,7 @@
     state.recordInspect = null;
     state.recordInspectSpot = "";
     state.recordInspectView = "front";
+    clearEvidencePickup();
     if (mode === "investigation") {
       state.recordOpen = false;
       clearInvestigationBeat();
@@ -2976,6 +3058,7 @@
     const inv = investigationProgress(caseData.id);
     inv.command = command;
     clearInvestigationBeat();
+    clearEvidencePickup();
     setMessage("调查", `已切换到“${commandLabel(command)}”。`, "");
     save();
     renderInvestigation();
@@ -2991,6 +3074,7 @@
     inv.locationIndex = index;
     const location = caseData.locations[index];
     clearInvestigationBeat();
+    clearEvidencePickup();
     setMessage("调查", `移动到${location.name}。${location.description}`, "");
     save();
     renderInvestigation();
@@ -3005,19 +3089,21 @@
     inv.command = "examine";
     const key = `${inv.locationIndex}:${index}`;
     if (!inv.examined.includes(key)) inv.examined.push(key);
-    const gained = collectEvidenceFromLocation(caseData, location, index);
-    const suffix = gained.length ? ` 取得证物：${gained.join("、")}。` : " 没有新的证物。";
-    setMessage("调查", `${spot.text}${suffix}`, gained.length ? "objection" : "");
+    const gainedItems = collectEvidenceFromLocation(caseData, location, index);
+    const gainedNames = gainedItems.map((item) => item.name);
+    if (gainedItems.length) setEvidencePickup(caseData, gainedItems);
+    const suffix = gainedNames.length ? ` 取得证物：${gainedNames.join("、")}。` : " 没有新的证物。";
+    setMessage("调查", `${spot.text}${suffix}`, gainedNames.length ? "objection" : "");
     setInvestigationBeat(
       "查看",
       "调查",
       spot.text,
-      gained.length ? "证物取得" : "没有新的证物",
-      gained,
+      gainedNames.length ? "证物取得" : "没有新的证物",
+      gainedNames,
       [
         {
-          speaker: gained.length ? "辩方" : "调查",
-          text: gained.length ? `这件东西先收进法庭记录。等证词说到这里，再把它拿出来。` : "这里已经查过一遍。与其反复翻找，不如换个可疑处继续看。",
+          speaker: gainedNames.length ? "辩方" : "调查",
+          text: gainedNames.length ? `这件东西先收进法庭记录。等证词说到这里，再把它拿出来。` : "这里已经查过一遍。与其反复翻找，不如换个可疑处继续看。",
         },
       ]
     );
@@ -3034,8 +3120,10 @@
     const gained = [];
     gainedIds.forEach((evidenceId) => {
       if (!collected.includes(evidenceId)) {
+        const item = evidenceById(caseData, evidenceId);
+        if (!item) return;
         collected.push(evidenceId);
-        gained.push(evidenceById(caseData, evidenceId).name);
+        gained.push(item);
       }
     });
     state.collected[caseData.id] = collected;
@@ -3441,6 +3529,7 @@
     state.recordInspectSpot = "";
     state.recordInspectView = "front";
     state.recordTab = "evidence";
+    clearEvidencePickup();
     setMessage("书记", "旧判决已归档。本次重审会重新计算评价，但保留最佳奖章。", "");
     save();
     renderCaseIntro();
@@ -3463,6 +3552,7 @@
     state.recordInspect = null;
     state.recordInspectSpot = "";
     state.recordInspectView = "front";
+    clearEvidencePickup();
     state.settingsOpen = false;
     state.homeView = "menu";
     setMessage("系统", "当前案件已重置，结案记录也已清除。", "");
@@ -3481,6 +3571,12 @@
   }
 
   function handleClick(event) {
+    const pickupPanel = event.target.closest("[data-advance-pickup-panel]");
+    if (pickupPanel && !event.target.closest("button")) {
+      playCue("click");
+      advanceEvidencePickup();
+      return;
+    }
     const beatPanel = event.target.closest("[data-advance-investigation-panel]");
     if (beatPanel && !event.target.closest("button")) {
       playCue("click");
@@ -3515,6 +3611,7 @@
     if (target.dataset.advanceInvestigationBeat !== undefined) advanceInvestigationBeat();
     if (target.dataset.retreatInvestigationBeat !== undefined) retreatInvestigationBeat();
     if (target.dataset.closeInvestigationBeat !== undefined) closeInvestigationBeat();
+    if (target.dataset.advancePickup !== undefined) advanceEvidencePickup();
     if (target.dataset.moveLocation !== undefined) moveLocation(Number(target.dataset.moveLocation));
     if (target.dataset.examineSpot !== undefined) examineSpot(Number(target.dataset.examineSpot));
     if (target.dataset.talkTopic !== undefined) talkTopic(Number(target.dataset.talkTopic));
@@ -3582,6 +3679,7 @@
       rerender();
     }
     if (target.dataset.openRecord !== undefined) {
+      clearEvidencePickup();
       state.recordOpen = true;
       rerender();
     }
@@ -3616,6 +3714,19 @@
   }
 
   function handleKeydown(event) {
+    if (state.evidencePickup && state.screen === "investigation" && event.key === "Escape") {
+      event.preventDefault();
+      playCue("click");
+      clearEvidencePickup();
+      rerender();
+      return;
+    }
+    if (state.evidencePickup && state.screen === "investigation" && (event.key === "Enter" || event.key === " ")) {
+      event.preventDefault();
+      playCue("click");
+      advanceEvidencePickup();
+      return;
+    }
     if (state.recordInspect) {
       if (event.key === "Escape") {
         playCue("click");
@@ -3720,6 +3831,7 @@
     const selectedEvidencePosition = selectedEvidence ? evidenceSheetPosition(selectedEvidence, caseData) : null;
     const inspect = currentRecordInspect(caseData);
     const inspectSpot = inspect?.type === "evidence" ? activeInspectSpot(inspect.item) : null;
+    const pickup = currentEvidencePickup(caseData);
     const nextCaseIndex = continueCaseIndex();
     const nextCase = data.cases[nextCaseIndex] || caseData;
     const manualSlots = readSaveSlots();
@@ -3782,6 +3894,11 @@
       investigationBeatHasPrevious: state.screen === "investigation" && state.investigationBeat?.lines?.length ? Number(state.investigationBeat.lineIndex || 0) > 0 : false,
       investigationBeatHasNext: state.screen === "investigation" && state.investigationBeat?.lines?.length ? Number(state.investigationBeat.lineIndex || 0) < state.investigationBeat.lines.length - 1 : false,
       investigationBeatPortrait: state.screen === "investigation" && state.investigationBeat?.lines?.length ? investigationPortraitForSpeaker(caseData, state.investigationBeat.lines[Number(state.investigationBeat.lineIndex || 0)]?.speaker || "") : "",
+      evidencePickupOpen: Boolean(pickup),
+      evidencePickupName: pickup?.item?.name || "",
+      evidencePickupIndex: pickup ? `${pickup.index + 1}/${pickup.items.length}` : "",
+      evidencePickupHasNext: pickup ? pickup.index < pickup.items.length - 1 : false,
+      evidencePickupArt: pickup ? `${evidenceSheetPosition(pickup.item, caseData).row + 1}-${evidenceSheetPosition(pickup.item, caseData).col + 1}` : "",
       guideOpen: state.guideOpen,
       guideTitle: guide.title,
       guideSeen: Boolean(state.guideSeen[guide.id]),
