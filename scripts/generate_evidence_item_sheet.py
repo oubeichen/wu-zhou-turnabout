@@ -178,10 +178,10 @@ def visual_kind(item: dict) -> str:
         return specific[item_id]
     if item_id.endswith("-ev-pattern"):
         return "evidence_board"
-    if item_id.endswith("-ev-pursuit-note"):
-        return "court_notes"
     if item_id.endswith("-ev-court-note"):
-        return "court_notes"
+        return "court_record_notes"
+    if item_id.endswith("-ev-pursuit-note"):
+        return "pursuit_notes"
     if "收益图" in name or "图" in name:
         return "evidence_board"
     if "簪" in name or "钗" in name:
@@ -481,6 +481,46 @@ def draw_court_notes(draw: ImageDraw.ImageDraw, center: tuple[int, int], scale: 
     draw.line((cx - 42, cy + 42, cx + 52, cy - 46), fill="#fff1bf", width=4)
 
 
+def draw_court_record_notes(draw: ImageDraw.ImageDraw, center: tuple[int, int], scale: float, accent: str) -> None:
+    cx, cy = center
+    folder = (cx - 60, cy - 58, cx + 58, cy + 56)
+    draw_soft_shadow(draw, folder, 16)
+    draw.rounded_rectangle(folder, radius=12, fill="#2a211e", outline=accent, width=4)
+    draw.rounded_rectangle((folder[0] + 8, folder[1] + 8, folder[2] - 8, folder[3] - 8), radius=9, outline="#7d2b23", width=3)
+    for ox, oy in ((folder[0] + 5, folder[1] + 5), (folder[2] - 25, folder[1] + 5), (folder[0] + 5, folder[3] - 25), (folder[2] - 25, folder[3] - 25)):
+        draw.pieslice((ox, oy, ox + 20, oy + 20), 0, 360, fill="#b98637", outline="#fff1bf")
+    for index, offset in enumerate((-12, 2, 16)):
+        paper = (cx - 34 + offset, cy - 42 + index * 4, cx + 40 + offset, cy + 34 + index * 4)
+        draw.rounded_rectangle(paper, radius=5, fill="#f2dfbd", outline="#4f3724", width=2)
+        draw_brush_text(draw, (paper[0] + 8, paper[1] + 9, paper[2] - 8, paper[3] - 8), f"court-stack-{index}", 4)
+    tag = (cx - 62, cy - 50, cx - 24, cy + 34)
+    draw.rounded_rectangle(tag, radius=8, fill="#7d2b23", outline="#fff1bf", width=3)
+    draw.text((tag[0] + 19, tag[1] + 38), "审", fill="#fff1bf", font=FONT_MARK, anchor="mm")
+    draw.line((tag[2], tag[1] + 10, cx + 48, cy - 46), fill="#b23a31", width=5)
+    draw.line((tag[2], tag[3] - 8, cx + 48, cy + 48), fill="#b23a31", width=5)
+    draw_stamp(draw, (cx + 40, cy + 30), "庭", 0.9)
+
+
+def draw_pursuit_notes(draw: ImageDraw.ImageDraw, center: tuple[int, int], scale: float, accent: str) -> None:
+    cx, cy = center
+    board = (cx - 58, cy - 54, cx + 58, cy + 54)
+    draw_soft_shadow(draw, board, 16)
+    draw.rounded_rectangle(board, radius=12, fill="#4a241f", outline=accent, width=4)
+    paper = (cx - 48, cy - 44, cx + 50, cy + 44)
+    draw_ragged_paper(draw, paper, f"pursuit-paper-{center}", "#f4dfaf", "#4f3724")
+    draw_brush_text(draw, (paper[0] + 14, paper[1] + 15, paper[2] - 14, paper[3] - 12), f"pursuit-lines-{center}", 3)
+    pins = [(cx - 38, cy - 28), (cx + 34, cy - 26), (cx - 18, cy + 28), (cx + 40, cy + 28)]
+    draw_thread(draw, [pins[0], pins[2], pins[1], pins[3]], "#c63c32")
+    for point in pins:
+        draw_stamp(draw, point, "点", 0.52)
+    lens = (cx - 22, cy + 4, cx + 36, cy + 62)
+    draw.ellipse(lens, fill=(255, 241, 191, 70), outline="#fff1bf", width=5)
+    draw.ellipse((lens[0] + 8, lens[1] + 8, lens[2] - 8, lens[3] - 8), outline="#b98637", width=3)
+    draw.rounded_rectangle((cx + 26, cy + 50, cx + 66, cy + 62), radius=5, fill="#5a2f1d", outline="#fff1bf", width=2)
+    draw.line((cx - 50, cy + 48, cx + 52, cy - 46), fill=(255, 241, 191, 82), width=3)
+    draw_stamp(draw, (cx + 38, cy - 34), "追", 0.95)
+
+
 def draw_succession_record(draw: ImageDraw.ImageDraw, center: tuple[int, int], scale: float, accent: str) -> None:
     cx, cy = center
     draw_decree(draw, (cx - 10, cy - 4), 0.72, accent)
@@ -680,6 +720,10 @@ def draw_icon(draw: ImageDraw.ImageDraw, item: dict, case_index: int, evidence_i
         draw_evidence_board(draw, (cx, cy), 1.0, accent)
     elif kind == "court_notes":
         draw_court_notes(draw, (cx, cy), 1.0, accent)
+    elif kind == "court_record_notes":
+        draw_court_record_notes(draw, (cx, cy), 1.0, accent)
+    elif kind == "pursuit_notes":
+        draw_pursuit_notes(draw, (cx, cy), 1.0, accent)
     elif kind == "old_ledger":
         draw_ledger(draw, (cx, cy), 1.08, accent)
     elif kind == "succession_record":

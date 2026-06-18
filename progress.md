@@ -2238,3 +2238,28 @@ Remaining Ace Attorney gap list:
 - Investigation and Court Record hotspots now use committed PNG markers, but high-value pursuit-note and court-only evidence icons still need stronger generated raster art.
 - Trial scenes still need more character pose changes tied to pressure and testimony state.
 - Case opening scenes are staged, but later passes should add beat-specific motion/camera timing and audio stingers.
+
+## 2026-06-18 iteration 83 result
+
+Implemented:
+- Split `庭上追问记录` and `追击补记` out of the shared generic `court_notes` sprite style in `scripts/generate_evidence_item_sheet.py`.
+- Added a distinct `court_record_notes` icon: lacquer court-record folder, stacked parchment slips, red court tag, brass corners, and seal.
+- Added a distinct `pursuit_notes` icon: pursuit clue card with ragged paper, red string connections, magnifying glass, and pursuit stamp.
+- Regenerated `game/assets/evidence-item-sheet-v3.png` so all cases now show separate raster silhouettes for court-note evidence and pursuit-note evidence.
+- Used the image generation tool as a visual reference pass for the two evidence-icon directions before implementing the reproducible local sprite generator update.
+
+Verified:
+- `python3 scripts/generate_evidence_item_sheet.py`
+- Custom Node data check confirmed every case has both `-ev-court-note` and `-ev-pursuit-note`, with distinct evidence indexes.
+- `npm run check:js`
+- `PYTHONPYCACHEPREFIX="/Users/oubeichen/Projects/wuzetian2/.pycache" npm run check:py`
+- `git diff --check`
+- `rg -n "svg|SVG|data:image/svg|<svg|xmlns" game` returned no matches.
+- `npm run qa:web-game` with escalated Chromium browser access succeeded.
+- Browser record-drawer check confirmed `庭上追问记录` and `追击补记：哭声入诏` both load `evidence-item-sheet-v3.png` but use different sprite positions (`85.7143% 0%` vs `100% 0%`) with no desktop overflow.
+- Screenshot inspection of `game/assets/evidence-item-sheet-v3.png` and `output/web-game/court-pursuit-note-icons-bottom.png` confirmed the two trial-only evidence icons are now visually distinct even in the locked, grayscale record list.
+
+Remaining Ace Attorney gap list:
+- Trial scenes still need richer pressure-state character pose changes and stronger reaction timing.
+- Case-opening scenes are staged, but later passes should add beat-specific motion/camera timing and audio stingers.
+- The pursuit-note flow has distinct evidence art now, but the unlock moment itself could use a stronger courtroom reward animation.
