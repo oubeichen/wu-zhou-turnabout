@@ -1862,3 +1862,28 @@ Remaining Ace Attorney gap list:
 - Case-intro copy is more story-like, but investigation dialogue, evidence descriptions, and trial testimony still need a broader character-voice rewrite.
 - Saved compare deductions update the Court Record, but they still do not unlock new trial-only evidence or branch dialogue.
 - Browser visual verification needs to be rerun when local browser execution is available again.
+
+## 2026-06-18 iteration 68 result
+
+Implemented:
+- Connected saved Court Record `对照札记` entries back into the courtroom loop.
+- Added `trialDeductionForStatement()` so a saved deduction is only surfaced after the player has pressed a contradictory statement and the answer evidence has a matching saved deduction.
+- Added a compact `对照札记可用` trial card above the selected-record bar, reminding players to use the already compared evidence without auto-submitting it.
+- Updated the trial guide copy so it can point players toward a saved deduction when a ready-to-present statement has one.
+- Updated the correct-present reveal sequence so deductions change the cut-in subtitle and step text, making the objection feel based on prior evidence comparison rather than a raw guess.
+- Added `trialDeductionAvailable`, `trialDeductionEvidence`, `trialDeductionTarget`, `trialDeductionText`, `objectionRevealDeductionText`, and `objectionRevealDeductionTarget` to `render_game_to_text`.
+
+Verified:
+- `npm run check:js`
+- `PYTHONPYCACHEPREFIX="/Users/oubeichen/Projects/wuzetian2/.pycache" npm run check:py`
+- `git diff --check`
+- Source inspection confirmed the new deduction path is gated by `statementReadyToPresent()` and only reads saved `recordDeductions` for answer-evidence statements.
+
+Blocked verification:
+- `npm run qa:web-game` was attempted and still fails before page load because Chromium cannot register its Mach port rendezvous in this environment (`Permission denied (1100)`). No new browser screenshot was captured.
+
+Remaining Ace Attorney gap list:
+- Saved deductions now influence trial guidance and objection reveal copy, but they still do not unlock new testimony branches, new evidence, or alternate courtroom routes.
+- Browser visual verification needs to be rerun when local browser execution is available again.
+- Investigation dialogue, evidence descriptions, and trial testimony still need a broader character-voice rewrite.
+- Evidence icons are stronger bitmap props, but selected high-value items still lack curated per-prop Image API source exports.

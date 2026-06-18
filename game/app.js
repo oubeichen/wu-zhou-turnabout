@@ -983,6 +983,14 @@
     return statementHasAnswer(statement) && progress.pressed.includes(key) && !progress.solved.includes(key);
   }
 
+  function trialDeductionForStatement(caseData, statement, progress, testimonyIndex, rawIndex) {
+    if (!statement?.answerEvidence) return null;
+    if (!statementReadyToPresent(statement, progress, testimonyIndex, rawIndex)) return null;
+    const deduction = deductionForEvidence(caseData, statement.answerEvidence);
+    const evidence = deduction ? evidenceById(caseData, statement.answerEvidence) : null;
+    return deduction && evidence ? { evidence, deduction } : null;
+  }
+
   function visibleStatementEntries(testimony, progress) {
     return testimony.statements
       .map((statement, rawIndex) => ({ statement, rawIndex }))
@@ -1157,10 +1165,15 @@
         };
       }
       if (statementHasAnswer(statement) && !selectedRecordLabel(caseData)) {
+        const trialDeduction = trialDeductionForStatement(caseData, statement, progress, progress.testimonyIndex, rawIndex);
         return {
-          id: statement.answerProfile ? "trial-profile" : "trial-evidence",
-          title: statement.answerProfile ? "人物也能举证" : "选择证物",
-          body: statement.answerProfile ? "有些矛盾要用人物档案击破。切到人物，选中相关人物后再举证。" : "切到证物，选中能反驳当前句的记录，再点击举证。",
+          id: trialDeduction ? "trial-deduction" : statement.answerProfile ? "trial-profile" : "trial-evidence",
+          title: trialDeduction ? "对照札记可用" : statement.answerProfile ? "人物也能举证" : "选择证物",
+          body: trialDeduction
+            ? `你已经在记录里做过一条对照札记：${trialDeduction.deduction.text} 打开证物，找带有“已对照”的那件记录。`
+            : statement.answerProfile
+              ? "有些矛盾要用人物档案击破。切到人物，选中相关人物后再举证。"
+              : "切到证物，选中能反驳当前句的记录，再点击举证。",
           steps: statement.answerProfile ? ["打开人物", "选中人物", "举证"] : ["打开证物", "选中记录", "举证"],
         };
       }
@@ -2109,6 +2122,7 @@
     const selectedLabel = selectedRecordLabel(caseData);
     const visibleStatements = visibleStatementEntries(testimony, progress);
     const readyToPresent = statementReadyToPresent(statement, progress, progress.testimonyIndex, rawIndex);
+    const trialDeduction = trialDeductionForStatement(caseData, statement, progress, progress.testimonyIndex, rawIndex);
     const recordPrompt = readyToPresent
       ? selectedLabel
         ? "破绽已经逼出来了。确认这份记录能反驳当前句，就点击“举证”。"
@@ -2130,6 +2144,7 @@
             ${renderStatementNav(testimony, progress)}
             ${state.message ? `<div class="toast ${state.dramaticCue ? "dramatic" : ""}">${escapeHtml(state.message)}</div>` : ""}
             ${renderCoachCard()}
+            ${renderTrialDeductionPanel(trialDeduction)}
             <div class="selected-record-bar ${selectedLabel ? "ready" : ""} ${readyToPresent ? "opportunity" : ""}">
               <span>${selectedLabel ? `已选：${escapeHtml(selectedLabel)}` : "尚未选择证物或人物档案"}</span>
               <small>${escapeHtml(recordPrompt)}</small>
@@ -2153,6 +2168,17 @@
     `;
     syncAudioForScreen();
     queueMobileTrialStageFocus();
+  }
+
+  function renderTrialDeductionPanel(trialDeduction) {
+    if (!trialDeduction) return "";
+    return `
+      <div class="trial-deduction-card">
+        <strong>对照札记可用</strong>
+        <span>${escapeHtml(trialDeduction.deduction.text)}</span>
+        <small>这条札记来自已对照证物。回到证物记录，找带有“已对照”的记录后再正式举证。</small>
+      </div>
+    `;
   }
 
   function queueMobileTrialStageFocus() {
@@ -3419,25 +3445,27 @@
     const line = reveal.line || "证物与证词正面冲突。";
     const record = reveal.record || "法庭记录";
     const target = reveal.target || "当前证词";
+    const deductionText = reveal.deductionText || "";
+    const deductionTarget = reveal.deductionTarget || "";
     return [
       {
         kicker: "异议切入",
         title,
-        body: "先打断证词节奏，把法庭注意力从证人的说法拉回记录本身。",
+        body: deductionText ? "先打断证词节奏。辩方不是临场猜测，而是已经在法庭记录里完成过证物对照。" : "先打断证词节奏，把法庭注意力从证人的说法拉回记录本身。",
         recordLabel: "辩方发声",
         targetLabel: line,
       },
       {
         kicker: "证物对照",
         title: record,
-        body: "把证物摆到证词旁边看：哪一句话经不起这份记录的检查？",
+        body: deductionText ? `札记写得很清楚：${deductionText}` : "把证物摆到证词旁边看：哪一句话经不起这份记录的检查？",
         recordLabel: record,
-        targetLabel: target,
+        targetLabel: deductionTarget || target,
       },
       {
         kicker: "矛盾揭示",
         title: line,
-        body: `这份记录击中的不是细枝末节，而是证词的核心前提：${target}`,
+        body: deductionText ? `庭前对照和当前证词咬在同一个缺口上：${target}` : `这份记录击中的不是细枝末节，而是证词的核心前提：${target}`,
         recordLabel: title,
         targetLabel: record,
       },
@@ -3819,8 +3847,9 @@
 
   function prepareObjectionReveal(caseData, progress, statement, rawIndex, presentedLabel) {
     const turnabout = !statement.optionalRecovery && pressureLevel(progress) !== "stable" ? turnaboutBeat(caseData) : null;
+    const deduction = statement.answerEvidence ? deductionForEvidence(caseData, statement.answerEvidence) : null;
     const title = turnabout ? "逆转" : statement.answerProfile ? "档案击破" : "异议成立";
-    const subtitle = turnabout ? turnabout.title : statement.answerProfile ? "人物档案刺穿证词" : "证物与证词正面冲突";
+    const subtitle = deduction ? "对照札记补上证物链条" : turnabout ? turnabout.title : statement.answerProfile ? "人物档案刺穿证词" : "证物与证词正面冲突";
     setStage("clash", "异议切入", { left: "confident", right: "stagger" });
     setImpactCue("objection", title, presentedLabel, subtitle);
     state.objectionReveal = {
@@ -3832,6 +3861,8 @@
       record: presentedLabel,
       target: statement.text,
       line: subtitle,
+      deductionText: deduction?.text || "",
+      deductionTarget: deduction?.targetName || "",
     };
     setMessage("辩方", `异议！${presentedLabel || "这份记录"}和这句证词对不上。`, "objection");
     playCue("objection");
@@ -4446,6 +4477,7 @@
     const inspectCompareOptions = inspect?.type === "evidence" ? inspectCompareOptionsForEvidence(inspect.item, caseData) : [];
     const inspectCompareTarget = inspect?.type === "evidence" ? inspectCompareTargetForEvidence(inspect.item, caseData) : null;
     const inspectCompare = inspect?.type === "evidence" && state.recordInspectCompare?.sourceId === inspect.item.id ? state.recordInspectCompare : null;
+    const trialDeduction = currentEntry ? trialDeductionForStatement(caseData, currentEntry.statement, progress, progress.testimonyIndex, currentEntry.rawIndex) : null;
     const pickup = currentEvidencePickup(caseData);
     const inventoryCue = currentInventoryCue(caseData);
     const nextCaseIndex = continueCaseIndex();
@@ -4504,6 +4536,10 @@
       selectedRecordLabel: selectedRecordLabel(caseData),
       recordReturnAvailable: state.screen === "trial" && state.recordOpen && Boolean(selectedRecordLabel(caseData)),
       presentEnabled: state.screen === "trial" && Boolean(selectedRecordLabel(caseData)),
+      trialDeductionAvailable: Boolean(trialDeduction),
+      trialDeductionEvidence: trialDeduction?.evidence?.name || "",
+      trialDeductionTarget: trialDeduction?.deduction?.targetName || "",
+      trialDeductionText: trialDeduction?.deduction?.text || "",
       recordInspectOpen: Boolean(inspect),
       recordInspectType: inspect?.type || "",
       recordInspectTitle: inspect?.item?.name || "",
@@ -4599,6 +4635,8 @@
       objectionRevealTitle: state.objectionReveal?.title || "",
       objectionRevealRecord: state.objectionReveal?.record || "",
       objectionRevealLine: state.objectionReveal?.line || "",
+      objectionRevealDeductionText: state.objectionReveal?.deductionText || "",
+      objectionRevealDeductionTarget: state.objectionReveal?.deductionTarget || "",
       objectionRevealStep: state.objectionReveal ? Number(state.objectionReveal.step || 0) + 1 : 0,
       objectionRevealStepTitle: state.objectionReveal ? objectionRevealSteps(state.objectionReveal)[Number(state.objectionReveal.step || 0)]?.kicker || "" : "",
       objectionRevealSteps: state.objectionReveal ? objectionRevealSteps(state.objectionReveal).length : 0,

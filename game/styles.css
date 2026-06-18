@@ -2231,6 +2231,35 @@ button:not(:disabled):hover {
   line-height: 1.35;
 }
 
+.trial-deduction-card {
+  display: grid;
+  gap: 5px;
+  padding: 9px 12px;
+  color: #4c2d09;
+  background:
+    linear-gradient(90deg, rgba(255, 241, 191, 0.96), rgba(239, 225, 200, 0.92));
+  border: 1px solid rgba(179, 123, 36, 0.7);
+  border-left: 5px solid var(--gold);
+  border-radius: 8px;
+}
+
+.trial-deduction-card strong {
+  color: #5c1d18;
+  font-size: 14px;
+}
+
+.trial-deduction-card span {
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 800;
+  line-height: 1.45;
+}
+
+.trial-deduction-card small {
+  color: var(--muted);
+  line-height: 1.35;
+}
+
 .location-button,
 .evidence-button {
   padding: 12px;
