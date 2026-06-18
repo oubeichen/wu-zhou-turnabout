@@ -2514,16 +2514,16 @@ button:not(:disabled):hover {
 
 .scene-hotspot span {
   position: absolute;
-  left: 62px;
-  top: 50%;
-  max-width: 150px;
-  min-width: max-content;
+  left: 50%;
+  top: -8px;
+  max-width: 128px;
+  min-width: 0;
   width: max-content;
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
   transition: opacity 0.16s ease, transform 0.16s ease;
-  transform: translateY(-50%);
+  transform: translate(-50%, -100%);
   overflow: hidden;
   padding: 4px 8px;
   color: #fff8e7;
@@ -2562,7 +2562,7 @@ button:not(:disabled):hover {
 
 .scene-hotspot:hover span,
 .scene-hotspot:focus-visible span {
-  transform: translateY(0);
+  transform: translate(-50%, -8px);
   opacity: 1;
   visibility: visible;
   filter: drop-shadow(0 0 0 2px rgba(255, 241, 191, 0.28));
@@ -2581,13 +2581,8 @@ button:not(:disabled):hover {
 
 .scene-hotspot-2 span,
 .scene-hotspot-2 small {
-  left: auto;
-  right: 62px;
-}
-
-.scene-hotspot:hover span,
-.scene-hotspot:focus-visible span {
-  transform: translateY(-50%);
+  left: 50%;
+  right: auto;
 }
 
 .scene-hotspot.done::before {
