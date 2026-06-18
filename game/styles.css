@@ -1107,6 +1107,130 @@ button:not(:disabled):hover {
   line-height: 1.45;
 }
 
+.opening-cutscene {
+  position: relative;
+  display: grid;
+  grid-template-rows: 1fr auto auto;
+  gap: 14px;
+  min-height: calc(100vh - 92px);
+  overflow: hidden;
+  padding: clamp(18px, 4vw, 46px);
+  color: #fff8e7;
+  background:
+    linear-gradient(110deg, rgba(23, 18, 15, 0.34), rgba(23, 18, 15, 0.76)),
+    var(--location-art, url("./assets/investigation-room-v1.png")) center / cover;
+  border: 2px solid rgba(52, 44, 37, 0.5);
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.opening-cutscene::after {
+  content: attr(data-motif);
+  position: absolute;
+  right: clamp(18px, 6vw, 82px);
+  top: 18px;
+  color: rgba(255, 248, 231, 0.18);
+  font-size: clamp(92px, 18vw, 210px);
+  font-weight: 900;
+  line-height: 1;
+  pointer-events: none;
+}
+
+.opening-cutscene-shade {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 18% 25%, rgba(255, 241, 191, 0.16), transparent 26%),
+    radial-gradient(circle at 72% 52%, rgba(160, 43, 35, 0.2), transparent 34%),
+    linear-gradient(180deg, rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0.42));
+  pointer-events: none;
+}
+
+.opening-cutscene-card,
+.opening-cutscene-dialogue,
+.opening-cutscene-actions {
+  position: relative;
+  z-index: 1;
+}
+
+.opening-cutscene-card {
+  align-self: center;
+  display: grid;
+  gap: 12px;
+  max-width: min(840px, 72vw);
+  padding: clamp(18px, 3vw, 32px);
+  background: rgba(35, 27, 22, 0.84);
+  border: 1px solid rgba(255, 241, 191, 0.42);
+  border-left: 6px solid var(--gold);
+  border-radius: 8px;
+  box-shadow: 0 18px 52px rgba(0, 0, 0, 0.34);
+}
+
+.opening-cutscene.focus-defense .opening-cutscene-card {
+  justify-self: center;
+}
+
+.opening-cutscene.focus-opponent .opening-cutscene-card {
+  justify-self: end;
+}
+
+.opening-cutscene-card > strong {
+  max-width: 780px;
+  font-size: clamp(30px, 5vw, 62px);
+  line-height: 1.12;
+  text-shadow: 0 4px 16px rgba(0, 0, 0, 0.45);
+}
+
+.opening-cutscene-card p {
+  max-width: 760px;
+  margin: 0;
+  color: #f1dfba;
+  font-size: clamp(16px, 1.6vw, 21px);
+  line-height: 1.68;
+}
+
+.opening-cutscene-dialogue {
+  display: grid;
+  gap: 8px;
+  max-width: min(940px, 86vw);
+  padding: 16px 18px;
+  background: rgba(31, 28, 25, 0.92);
+  border: 2px solid rgba(255, 241, 191, 0.38);
+  border-radius: 8px;
+}
+
+.opening-cutscene-dialogue b {
+  width: fit-content;
+  padding: 4px 10px;
+  color: #fff8e7;
+  background: var(--blue);
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.opening-cutscene-dialogue span {
+  color: #fff8e7;
+  font-size: clamp(17px, 1.8vw, 23px);
+  font-weight: 800;
+  line-height: 1.55;
+}
+
+.opening-cutscene-actions {
+  display: grid;
+  grid-template-columns: auto minmax(130px, 180px) minmax(160px, 220px);
+  gap: 10px;
+  align-items: center;
+  justify-content: end;
+}
+
+.opening-cutscene-actions span {
+  padding: 8px 12px;
+  color: #231b16;
+  background: rgba(255, 241, 191, 0.88);
+  border-radius: 999px;
+  font-weight: 900;
+}
+
 @media (min-width: 900px) {
   .case-intro-layout {
     grid-template-columns: minmax(0, min(1180px, calc(100vw - 64px)));
@@ -1237,6 +1361,41 @@ button:not(:disabled):hover {
   .case-brief > .hint-text,
   .case-brief > .coach-card {
     display: none;
+  }
+}
+
+@media (max-width: 720px) {
+  .opening-cutscene {
+    min-height: calc(100dvh - 76px);
+    padding: 14px;
+  }
+
+  .opening-cutscene-card {
+    max-width: none;
+    padding: 16px;
+  }
+
+  .opening-cutscene-card > strong {
+    font-size: clamp(28px, 10vw, 42px);
+  }
+
+  .opening-cutscene-card p {
+    font-size: 15px;
+    line-height: 1.56;
+  }
+
+  .opening-cutscene-dialogue {
+    max-width: none;
+    padding: 14px;
+  }
+
+  .opening-cutscene-actions {
+    grid-template-columns: 1fr;
+    justify-content: stretch;
+  }
+
+  .opening-cutscene-actions span {
+    justify-self: center;
   }
 }
 

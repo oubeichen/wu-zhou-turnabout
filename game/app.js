@@ -90,6 +90,7 @@
     speaker: "系统",
     dramaticCue: "",
     investigationBeat: null,
+    openingCutscene: null,
     evidencePickup: null,
     inventoryCue: null,
     objectionReveal: null,
@@ -358,7 +359,7 @@
     if (state.screen === "investigation") return "investigation";
     if (state.screen === "bad-ending") return "collapse";
     if (state.screen === "result") return "verdict";
-    if (state.screen === "case") return "briefing";
+    if (state.screen === "case" || state.screen === "case-opening") return "briefing";
     return "home";
   }
 
@@ -618,7 +619,10 @@
         examined: [],
         talked: [],
         presented: [],
+        openingSeen: false,
       };
+    } else if (typeof state.investigation[caseId].openingSeen !== "boolean") {
+      state.investigation[caseId].openingSeen = false;
     }
     return state.trial[caseId];
   }
@@ -1674,6 +1678,107 @@
       ${renderGuidePanel()}${renderSettings()}
     `;
     syncAudioForScreen();
+  }
+
+  function caseOpeningBeats(caseData) {
+    const story = caseOpeningStory(caseData);
+    const lines = Array.isArray(caseData.openingLines) ? caseData.openingLines : [];
+    const sources = caseSourceItems(caseData);
+    return [
+      {
+        kicker: story.kicker || "案件开场",
+        title: story.title,
+        body: story.body,
+        speaker: lines[0]?.speaker || caseData.witness || "证人",
+        line: lines[0]?.text || story.body,
+        focus: "scene",
+      },
+      {
+        kicker: "辩护席",
+        title: sources[0]?.storyTitle ? `第一条线索：${sources[0].storyTitle}` : "第一条线索已经露出",
+        body: sources[0]?.storyNote || story.stakes,
+        speaker: lines[1]?.speaker || "辩方",
+        line: lines[1]?.text || "先从现场留下的纸、物、人查起。",
+        focus: "defense",
+      },
+      {
+        kicker: "对手入庭",
+        title: `${caseData.opponent}已经等在庭上`,
+        body: story.stakes,
+        speaker: lines[2]?.speaker || caseData.opponent || "对手",
+        line: lines[2]?.text || "没有更强证据，法庭只会接受眼前的案卷。",
+        focus: "opponent",
+      },
+    ];
+  }
+
+  function startCaseOpeningCutscene(caseData) {
+    state.screen = "case-opening";
+    state.recordOpen = false;
+    state.recordInspect = null;
+    state.openingCutscene = { caseId: caseData.id, step: 0 };
+    clearRecordInspectCompare();
+    clearInvestigationBeat();
+    clearEvidencePickup();
+    clearInventoryCue();
+    setMessage("开幕", "案件开场。点击画面或按 Enter 继续。", "");
+    playCue("transition");
+    renderCaseOpeningCutscene();
+  }
+
+  function renderCaseOpeningCutscene() {
+    const caseData = currentCase();
+    const beats = caseOpeningBeats(caseData);
+    const cutscene = state.openingCutscene?.caseId === caseData.id ? state.openingCutscene : { caseId: caseData.id, step: 0 };
+    state.openingCutscene = cutscene;
+    const step = Math.max(0, Math.min(beats.length - 1, Number(cutscene.step) || 0));
+    const beat = beats[step];
+    const startLocation = caseData.locations?.[0] || { sceneVariant: "site", name: caseData.location };
+    const art = locationBackgroundFile(caseData, startLocation);
+    renderStatus();
+    app.innerHTML = `
+      <section class="opening-cutscene scene-${escapeHtml(caseData.scene?.key || "palace")} focus-${escapeHtml(beat.focus)}" data-motif="${escapeHtml(caseData.scene?.motif || "")}" data-advance-opening-panel style="--location-art: url('./assets/${escapeHtml(art)}');">
+        <div class="opening-cutscene-shade"></div>
+        <div class="opening-cutscene-card">
+          <span class="hero-kicker">${escapeHtml(beat.kicker)}</span>
+          <strong>${escapeHtml(beat.title)}</strong>
+          <p>${escapeHtml(beat.body)}</p>
+        </div>
+        <div class="opening-cutscene-dialogue">
+          <b>${escapeHtml(beat.speaker)}</b>
+          <span>${escapeHtml(beat.line)}</span>
+        </div>
+        <div class="opening-cutscene-actions">
+          <span>${step + 1}/${beats.length}</span>
+          <button class="secondary-button" type="button" data-skip-opening>跳过开场</button>
+          <button class="primary-button" type="button" data-advance-opening>${step >= beats.length - 1 ? "开始调查" : "继续"}</button>
+        </div>
+      </section>
+      ${renderSettings()}
+    `;
+    syncAudioForScreen();
+  }
+
+  function advanceCaseOpeningCutscene() {
+    const caseData = currentCase();
+    const beats = caseOpeningBeats(caseData);
+    const cutscene = state.openingCutscene || { caseId: caseData.id, step: 0 };
+    if ((Number(cutscene.step) || 0) >= beats.length - 1) {
+      finishCaseOpeningCutscene();
+      return;
+    }
+    state.openingCutscene = { caseId: caseData.id, step: (Number(cutscene.step) || 0) + 1 };
+    playCue("click");
+    renderCaseOpeningCutscene();
+  }
+
+  function finishCaseOpeningCutscene() {
+    const caseData = currentCase();
+    const inv = investigationProgress(caseData.id);
+    inv.openingSeen = true;
+    state.openingCutscene = null;
+    save();
+    setMode("investigation", { force: true });
   }
 
   function renderCaseOpeningStory(caseData) {
@@ -3820,7 +3925,7 @@
     renderCaseIntro();
   }
 
-  function setMode(mode) {
+  function setMode(mode, options = {}) {
     state.selectedEvidenceId = "";
     state.recordInspect = null;
     state.recordInspectSpot = "";
@@ -3829,6 +3934,12 @@
     clearEvidencePickup();
     clearInventoryCue();
     if (mode === "investigation") {
+      const caseData = currentCase();
+      const inv = investigationProgress(caseData.id);
+      if (!options.force && !inv.openingSeen) {
+        startCaseOpeningCutscene(caseData);
+        return;
+      }
       state.recordOpen = false;
       clearInvestigationBeat();
       setMessage("调查", "选择指令。移动、查看、交谈、出示，每一步都可能改变法庭记录。", "");
@@ -4472,6 +4583,7 @@
   function rerender() {
     if (state.screen === "home") renderHome();
     else if (state.screen === "case") renderCaseIntro();
+    else if (state.screen === "case-opening") renderCaseOpeningCutscene();
     else if (state.screen === "investigation") renderInvestigation();
     else if (state.screen === "trial" || state.screen === "trial-interlude") renderTrial();
     else if (state.screen === "bad-ending") renderBadEnding();
@@ -4479,6 +4591,11 @@
   }
 
   function handleClick(event) {
+    const openingPanel = event.target.closest("[data-advance-opening-panel]");
+    if (openingPanel && !event.target.closest("button")) {
+      advanceCaseOpeningCutscene();
+      return;
+    }
     const pickupPanel = event.target.closest("[data-advance-pickup-panel]");
     if (pickupPanel && !event.target.closest("button")) {
       playCue("click");
@@ -4501,6 +4618,15 @@
     if (target.dataset.caseSource !== undefined) {
       state.caseSourceIndex = Number(target.dataset.caseSource) || 0;
       renderCaseIntro();
+      return;
+    }
+    if (target.dataset.advanceOpening !== undefined) {
+      advanceCaseOpeningCutscene();
+      return;
+    }
+    if (target.dataset.skipOpening !== undefined) {
+      playCue("click");
+      finishCaseOpeningCutscene();
       return;
     }
     if (target.dataset.openCase) openCase(Number(target.dataset.openCase));
@@ -4654,6 +4780,19 @@
   }
 
   function handleKeydown(event) {
+    if (state.screen === "case-opening") {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        playCue("click");
+        finishCaseOpeningCutscene();
+        return;
+      }
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        advanceCaseOpeningCutscene();
+        return;
+      }
+    }
     if (state.evidencePickup && state.screen === "investigation" && event.key === "Escape") {
       event.preventDefault();
       playCue("click");
@@ -4806,6 +4945,11 @@
       caseOpeningTitle: openingStory.title,
       caseOpeningBody: openingStory.body,
       caseOpeningStakes: openingStory.stakes,
+      openingCutsceneStep: state.screen === "case-opening" ? `${(Number(state.openingCutscene?.step) || 0) + 1}/${caseOpeningBeats(caseData).length}` : "",
+      openingCutsceneTitle: state.screen === "case-opening" ? caseOpeningBeats(caseData)[Number(state.openingCutscene?.step) || 0]?.title || "" : "",
+      openingCutsceneSpeaker: state.screen === "case-opening" ? caseOpeningBeats(caseData)[Number(state.openingCutscene?.step) || 0]?.speaker || "" : "",
+      openingCutsceneLine: state.screen === "case-opening" ? caseOpeningBeats(caseData)[Number(state.openingCutscene?.step) || 0]?.line || "" : "",
+      openingSeen: Boolean(inv.openingSeen),
       caseBriefingCards: caseBriefingCards(caseData).map((card) => card.title),
       caseIntroArt: caseData.locations?.[0] ? locationBackgroundFile(caseData, caseData.locations[0]) : "",
       caseSourceTabs: caseSourceTabs.map((item) => item.storyTitle),

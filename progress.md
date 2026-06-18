@@ -2147,3 +2147,27 @@ Remaining Ace Attorney gap list:
 - Case intro is now story-first and single-screen on desktop, but later passes should add animated opening cuts instead of static story panels.
 - Investigation and trial scenes still need more moment-to-moment character animation changes when testimony pressure rises.
 - High-value pursuit-note icons still need curated Image API assets when a filesystem-exportable path is available.
+
+## 2026-06-18 iteration 79 result
+
+Implemented:
+- Added a formal `case-opening` screen between case intro and investigation so first-time `开始调查` plays a three-beat opening sequence instead of jumping straight into command UI.
+- The opening sequence uses the current case's generated story, first dossier clue, and opponent pressure line as three cinematic beats.
+- Players can click the whole scene, click `继续`, or press Enter/Space to advance; `跳过开场` and Escape immediately enter investigation.
+- Opening playback is tracked per case with `investigation[caseId].openingSeen`; after a player has seen or skipped it, `开始调查` goes straight to investigation.
+- Added QA state fields for opening step, title, speaker, line, and `openingSeen`.
+- Added desktop/mobile styling for a full-scene opening card, dialogue box, and bottom action row over the location background.
+
+Verified:
+- `npm run check:js`
+- `PYTHONPYCACHEPREFIX="/Users/oubeichen/Projects/wuzetian2/.pycache" npm run check:py`
+- `git diff --check`
+- Non-sandbox Playwright flow verified `开始调查 -> case-opening 1/3 -> 2/3 -> 3/3 -> investigation`, with `openingSeen=true`, `bodyOverflowY=0`, and investigation action controls visible.
+- Screenshot inspection of `output/web-game/opening-cutscene-step1.png` confirmed the opening scene renders as a staged background scene with readable story and dialogue, not a blank or ordinary form panel.
+- Non-sandbox Playwright verified `跳过开场` enters investigation and a second `开始调查` after opening does not replay the cutscene.
+- Non-sandbox `npm run qa:web-game` succeeded.
+
+Remaining Ace Attorney gap list:
+- Opening is now interactive and staged, but later passes should add motion/camera timing, audio stingers per beat, and case-specific cut-in art.
+- Investigation and trial scenes still need more character pose changes tied to pressure and testimony state.
+- High-value pursuit-note icons still need curated Image API assets when a filesystem-exportable path is available.
