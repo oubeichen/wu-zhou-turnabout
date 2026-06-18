@@ -2339,11 +2339,10 @@ button:not(:disabled):hover {
 .scene-hotspot {
   position: absolute;
   display: grid;
-  grid-template-rows: 112px auto;
-  justify-items: center;
-  gap: 4px;
-  width: 150px;
-  min-height: 142px;
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr;
+  width: 72px;
+  min-height: 72px;
   padding: 0;
   color: #fff8e7;
   background: transparent;
@@ -2355,8 +2354,8 @@ button:not(:disabled):hover {
 
 .scene-hotspot::before {
   content: "";
-  width: 128px;
-  height: 128px;
+  width: 64px;
+  height: 64px;
   background-image: url("./assets/investigation-marker-sheet-v1.png");
   background-repeat: no-repeat;
   background-size: 256px 128px;
@@ -2372,9 +2371,13 @@ button:not(:disabled):hover {
 }
 
 .scene-hotspot span {
+  position: absolute;
+  left: 72px;
+  top: 8px;
   max-width: 150px;
+  min-width: max-content;
   overflow: hidden;
-  padding: 5px 9px;
+  padding: 4px 8px;
   color: #fff8e7;
   background: rgba(31, 28, 25, 0.86);
   border: 1px solid rgba(255, 241, 191, 0.42);
@@ -2383,10 +2386,17 @@ button:not(:disabled):hover {
   font-weight: 900;
   text-overflow: ellipsis;
   white-space: nowrap;
+  pointer-events: none;
 }
 
 .scene-hotspot small {
   display: none;
+}
+
+.scene-hotspot-2 span,
+.scene-hotspot-2 small {
+  left: auto;
+  right: 72px;
 }
 
 .scene-hotspot.done::before {
@@ -6249,7 +6259,7 @@ button:not(:disabled):hover {
   .scene-hotspot {
     position: static;
     width: 100%;
-    min-height: 78px;
+    min-height: 64px;
     grid-template-columns: 72px minmax(0, 1fr);
     grid-template-rows: 1fr;
     justify-items: start;
@@ -6272,10 +6282,25 @@ button:not(:disabled):hover {
   }
 
   .scene-hotspot span {
+    position: static;
     max-width: 100%;
     background: transparent;
     border: 0;
     padding: 0;
+    left: auto;
+    top: auto;
+    right: auto;
+    pointer-events: auto;
+  }
+
+  .scene-hotspot small {
+    display: inline-block;
+  }
+
+  .scene-hotspot-2 span,
+  .scene-hotspot-2 small {
+    left: auto;
+    right: auto;
   }
 
   .portrait {
