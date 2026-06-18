@@ -2341,7 +2341,7 @@ button:not(:disabled):hover {
   background:
     radial-gradient(circle at 78% 28%, var(--map-glow), transparent 26%),
     linear-gradient(rgba(31, 28, 25, 0.18), var(--map-veil)),
-    url("./assets/investigation-room-v1.png") center / cover;
+    var(--map-art, url("./assets/investigation-room-v1.png")) center / cover;
   border: 2px solid var(--line);
   border-radius: 8px;
   box-shadow: 0 10px 26px var(--shadow);

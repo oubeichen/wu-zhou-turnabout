@@ -2242,9 +2242,11 @@
     const caseData = currentCase();
     const sceneKey = caseData.scene?.key || "archive";
     const variant = location.sceneVariant || "site";
+    const mapArt = locationBackgroundFile(caseData, location);
     const inspected = location.examineSpots.filter((_, index) => inv.examined.includes(`${inv.locationIndex}:${index}`)).length;
+    const mapArtStyle = mapArt ? `style="--map-art: url('./assets/${escapeHtml(mapArt)}');"` : "";
     return `
-      <div class="location-map scene-${sceneKey} variant-${variant}">
+      <div class="location-map scene-${sceneKey} variant-${variant}" ${mapArtStyle}>
         <div>
           <strong>${escapeHtml(location.name)}</strong>
           <span>${escapeHtml(location.description)}</span>
