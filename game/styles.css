@@ -2318,6 +2318,29 @@ button:not(:disabled):hover {
   border-color: rgba(201, 155, 59, 0.9);
 }
 
+.dialogue-nav-zone {
+  position: absolute;
+  bottom: 10px;
+  display: inline-flex;
+  align-items: center;
+  min-height: 26px;
+  padding: 4px 10px;
+  color: #fff8e7;
+  background: rgba(31, 28, 25, 0.68);
+  border: 1px solid rgba(255, 241, 191, 0.34);
+  border-radius: 999px;
+  font-size: 12px;
+  pointer-events: none;
+}
+
+.dialogue-nav-left {
+  left: 12px;
+}
+
+.dialogue-nav-right {
+  right: 12px;
+}
+
 .dialogue-box.speed-slow {
   border-bottom: 5px solid var(--jade);
 }
