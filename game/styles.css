@@ -3723,7 +3723,7 @@ button:not(:disabled):hover {
   position: fixed;
   left: 50%;
   top: 46%;
-  z-index: 30;
+  z-index: 38;
   display: grid;
   place-items: center;
   gap: 6px;
@@ -3749,6 +3749,43 @@ button:not(:disabled):hover {
   background:
     linear-gradient(100deg, rgba(255, 248, 231, 0.16), transparent 24%),
     linear-gradient(135deg, rgba(47, 85, 125, 0.98), rgba(31, 28, 25, 0.98));
+}
+
+.impact-bitmap {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-color: #250e0d;
+  background-image: url("./assets/court-impact-burst-sheet-v1.png");
+  background-repeat: no-repeat;
+  background-size: 300% 100%;
+  opacity: 0.9;
+  transform: scale(1.08);
+  filter: saturate(1.18) contrast(1.08);
+  animation: impact-bitmap-pulse 0.62s ease both;
+}
+
+.impact-bitmap::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgba(255, 248, 231, 0), rgba(255, 248, 231, 0.18), rgba(255, 248, 231, 0)),
+    radial-gradient(circle at 50% 50%, transparent 0 26%, rgba(31, 18, 14, 0.42) 74%);
+  mix-blend-mode: screen;
+  animation: impact-bitmap-sweep 0.54s ease both;
+}
+
+.impact-bitmap-frame-1 .impact-bitmap {
+  background-position: 0 50%;
+}
+
+.impact-bitmap-frame-2 .impact-bitmap {
+  background-position: 50% 50%;
+}
+
+.impact-bitmap-frame-3 .impact-bitmap {
+  background-position: 100% 50%;
 }
 
 .court-impact strong {
@@ -3891,13 +3928,16 @@ button:not(:disabled):hover {
   background:
     repeating-linear-gradient(112deg, transparent 0 18px, rgba(255, 248, 231, 0.22) 18px 24px),
     radial-gradient(circle at 50% 50%, rgba(255, 241, 191, 0.34), transparent 32%);
-  opacity: 0.72;
+  z-index: 1;
+  opacity: 0.28;
   transform: skewX(-14deg);
   animation: impact-lines-slide 0.54s linear both;
 }
 
 .court-impact.still,
 .court-impact.still .impact-lines,
+.court-impact.still .impact-bitmap,
+.court-impact.still .impact-bitmap::after,
 .court-impact.still .acting-frame {
   animation: none;
 }
@@ -4192,6 +4232,35 @@ button:not(:disabled):hover {
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes impact-bitmap-pulse {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  30% {
+    opacity: 1;
+    transform: scale(1.08);
+  }
+  to {
+    opacity: 0.88;
+    transform: scale(1.02);
+  }
+}
+
+@keyframes impact-bitmap-sweep {
+  from {
+    opacity: 0;
+    transform: translateX(-38%) skewX(-12deg);
+  }
+  38% {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+    transform: translateX(38%) skewX(-12deg);
   }
 }
 

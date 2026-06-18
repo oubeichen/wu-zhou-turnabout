@@ -2904,8 +2904,10 @@
       subtitle: "",
     };
     const title = cue.title || (cue.kind === "objection" ? "异议" : "驳回");
+    const impactFrame = impactBitmapFrameFor(cue);
     return `
-      <div class="court-impact impact-${escapeHtml(cue.kind)} ${state.settings.reducedMotion ? "still" : ""}">
+      <div class="court-impact impact-${escapeHtml(cue.kind)} impact-bitmap-frame-${impactFrame} ${state.settings.reducedMotion ? "still" : ""}" data-impact-bitmap-frame="${impactFrame}">
+        <div class="impact-bitmap" aria-hidden="true"></div>
         <div class="impact-lines"></div>
         ${renderImpactFrames(cue)}
         <strong>${escapeHtml(title)}</strong>
@@ -2913,6 +2915,13 @@
         ${cue.record ? `<span>${escapeHtml(cue.record)}</span>` : ""}
       </div>
     `;
+  }
+
+  function impactBitmapFrameFor(cue) {
+    if (cue?.kind === "penalty") return 2;
+    const title = cue?.title || "";
+    if (title.includes("逆转") || title.includes("判决") || title.includes("胜诉")) return 3;
+    return 1;
   }
 
   function renderObjectionReveal() {
@@ -4098,6 +4107,8 @@
       impactRecord: state.impactCue?.record || "",
       impactSubtitle: state.impactCue?.subtitle || "",
       impactFrames: (state.impactCue?.frames || []).map((frame) => `${frame.role}:${frame.label}:${frame.pose || "idle"}`),
+      impactBitmapAsset: state.impactCue ? "court-impact-burst-sheet-v1.png" : "",
+      impactBitmapFrame: state.impactCue ? impactBitmapFrameFor(state.impactCue) : 0,
       objectionReveal: Boolean(state.objectionReveal),
       objectionRevealTitle: state.objectionReveal?.title || "",
       objectionRevealRecord: state.objectionReveal?.record || "",
