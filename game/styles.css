@@ -2339,34 +2339,58 @@ button:not(:disabled):hover {
 .scene-hotspot {
   position: absolute;
   display: grid;
-  place-items: center;
-  min-width: 128px;
-  min-height: 46px;
-  padding: 7px 12px;
+  grid-template-rows: 112px auto;
+  justify-items: center;
+  gap: 4px;
+  width: 150px;
+  min-height: 142px;
+  padding: 0;
   color: #fff8e7;
-  background: rgba(157, 47, 37, 0.9);
-  border: 2px solid #fff1bf;
-  border-radius: 999px;
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.34), 0 0 0 5px rgba(255, 241, 191, 0.12);
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
   pointer-events: auto;
 }
 
-.scene-hotspot span,
-.scene-hotspot small {
-  max-width: 160px;
+.scene-hotspot::before {
+  content: "";
+  width: 128px;
+  height: 128px;
+  background-image: url("./assets/investigation-marker-sheet-v1.png");
+  background-repeat: no-repeat;
+  background-size: 256px 128px;
+  background-position: 0 0;
+  filter: drop-shadow(0 10px 18px rgba(0, 0, 0, 0.35));
+  transition: transform 0.16s ease, filter 0.16s ease;
+}
+
+.scene-hotspot:hover::before,
+.scene-hotspot:focus-visible::before {
+  transform: translateY(-4px) scale(1.04);
+  filter: drop-shadow(0 14px 22px rgba(0, 0, 0, 0.42));
+}
+
+.scene-hotspot span {
+  max-width: 150px;
   overflow: hidden;
+  padding: 5px 9px;
+  color: #fff8e7;
+  background: rgba(31, 28, 25, 0.86);
+  border: 1px solid rgba(255, 241, 191, 0.42);
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 900;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .scene-hotspot small {
-  font-size: 12px;
-  color: #fff1bf;
-  font-weight: 900;
+  display: none;
 }
 
-.scene-hotspot.done {
-  background: rgba(46, 111, 98, 0.92);
+.scene-hotspot.done::before {
+  background-position: -128px 0;
 }
 
 .scene-hotspot-1 {
@@ -6160,7 +6184,33 @@ button:not(:disabled):hover {
   .scene-hotspot {
     position: static;
     width: 100%;
-    min-height: 40px;
+    min-height: 78px;
+    grid-template-columns: 72px minmax(0, 1fr);
+    grid-template-rows: 1fr;
+    justify-items: start;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 8px;
+    background: rgba(31, 28, 25, 0.72);
+    border: 1px solid rgba(255, 241, 191, 0.22);
+    border-radius: 8px;
+  }
+
+  .scene-hotspot::before {
+    width: 64px;
+    height: 64px;
+    background-size: 128px 64px;
+  }
+
+  .scene-hotspot.done::before {
+    background-position: -64px 0;
+  }
+
+  .scene-hotspot span {
+    max-width: 100%;
+    background: transparent;
+    border: 0;
+    padding: 0;
   }
 
   .portrait {

@@ -2195,3 +2195,24 @@ Remaining Ace Attorney gap list:
 - Investigation backgrounds are now clean PNG scenes, but the foreground hotspot buttons still use generic CSS pills; a later pass should replace them with a small committed PNG marker sheet or image-generated interactive marker assets.
 - High-value pursuit-note icons still need curated Image API assets when a filesystem-exportable path is available.
 - Trial scenes still need more character pose changes tied to pressure and testimony state.
+
+## 2026-06-18 iteration 81 result
+
+Implemented:
+- Added a committed bitmap investigation marker sheet at `game/assets/investigation-marker-sheet-v1.png` with separate idle and recorded frames.
+- Replaced the foreground investigation `.scene-hotspot` CSS pill buttons with sprite-backed PNG marker pins while keeping the same accessible button elements and click targets.
+- Added a compact mobile treatment that keeps the PNG marker visible beside the label without reintroducing duplicate map buttons or SVG/vector decoration.
+
+Verified:
+- `npm run check:js`
+- `PYTHONPYCACHEPREFIX="/Users/oubeichen/Projects/wuzetian2/.pycache" npm run check:py`
+- `git diff --check`
+- `rg -n "svg|SVG|data:image/svg|<svg|xmlns" game` returned no matches.
+- `npm run qa:web-game` with escalated Chromium browser access succeeded.
+- Non-sandbox Playwright investigation-page check confirmed the hotspot uses `investigation-marker-sheet-v1.png`, idle state starts at `0px 0px`, clicking it switches to the recorded frame at `-128px 0px`, `svgElements=0`, `htmlSvgText=false`, and `bodyOverflowY=0`.
+- Screenshot inspection of `output/web-game/investigation-marker-png-after-click.png` confirmed the visible hotspot is now a bitmap marker over the scene rather than a generic pill or SVG-like foreground shape.
+
+Remaining Ace Attorney gap list:
+- Investigation hotspots are now PNG markers, but Court Record inspect hotspots still need a more tactile bitmap marker treatment instead of flat UI dots.
+- High-value pursuit-note icons still need curated Image API assets when a filesystem-exportable path is available.
+- Trial scenes still need more character pose changes tied to pressure and testimony state.
