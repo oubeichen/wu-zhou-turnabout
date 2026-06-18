@@ -2018,3 +2018,29 @@ Remaining Ace Attorney gap list:
 - Browser visual verification needs to be rerun when local browser execution is available again.
 - Chapter-source tabs are clearer and clickable, but they could later become a staged `翻阅卷宗` drawer instead of living fully on the case intro.
 - Evidence icons are stronger bitmap props, but selected high-value items still lack curated per-prop Image API source exports.
+
+## 2026-06-18 iteration 74 result
+
+Implemented:
+- Added an `EVIDENCE_VOICE_COPY` display layer in `scripts/build_game_content.py` so player-facing Court Record text can be authored separately from evidence ids and structure.
+- Rewrote visible summary/detail/use text for all investigation evidence in the current five cases with plainer, more story-like language.
+- Expanded `FINAL_BOARD_COPY` with case-specific detail/use text so clue-board evidence no longer falls back to generic `线索板用红线` explanation.
+- Added `COURT_NOTE_COPY` so trial-only `庭上追问记录` text now reflects each case's actual pursuit gap instead of one generic description.
+- Regenerated `game/game-data.js` with the new evidence copy while keeping evidence ids, source chapters, counter-risk metadata, and trial answer references intact.
+
+Verified:
+- `PYTHONPYCACHEPREFIX="/Users/oubeichen/Projects/wuzetian2/.pycache" python3 -m py_compile scripts/build_game_content.py`
+- `python3 scripts/build_game_content.py`
+- Custom Node integrity check confirmed 5 cases, 34 evidence entries, upgraded board/court-note copy, and valid `answerEvidence` / `counterEvidence` / `pressUnlockEvidence` references. The fifth case has 6 evidence entries because it has 4 source chapters plus clue board plus court note.
+- `npm run check:js`
+- `PYTHONPYCACHEPREFIX="/Users/oubeichen/Projects/wuzetian2/.pycache" npm run check:py`
+- `git diff --check`
+
+Blocked verification:
+- `npm run qa:web-game` was attempted and still fails before page load because Chromium cannot register its Mach port rendezvous in this environment (`Permission denied (1100)`). No new browser screenshot was captured.
+
+Remaining Ace Attorney gap list:
+- Case intro, investigation dialogue, testimony, and evidence text are now more character/story oriented; the larger remaining gameplay gap is that pursuit branches still do not unlock unique evidence/testimony routes after the chase.
+- Browser visual verification needs to be rerun when local browser execution is available again.
+- Chapter-source tabs are clearer and clickable, but they could later become a staged `翻阅卷宗` drawer instead of living fully on the case intro.
+- Evidence icons are stronger bitmap props, but selected high-value items still lack curated per-prop Image API source exports.
