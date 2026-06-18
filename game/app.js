@@ -1638,12 +1638,11 @@
           <div class="case-brief-main">
             <div class="case-brief-copy">
               <h2>${escapeHtml(caseData.title)}</h2>
-              <p>${escapeHtml(caseNarrativeLead(caseData))}</p>
+              ${renderCaseOpeningStory(caseData)}
               ${renderCaseSetup(caseData)}
             </div>
             ${renderCaseIntroArt(caseData)}
           </div>
-          ${renderOpeningLines(caseData)}
           ${renderCaseSourcePanel(caseData)}
           <div class="action-row">
             <button class="primary-button" type="button" data-mode="investigation">开始调查</button>
@@ -1658,10 +1657,82 @@
     syncAudioForScreen();
   }
 
+  function renderCaseOpeningStory(caseData) {
+    const story = caseOpeningStory(caseData);
+    const lines = Array.isArray(caseData.openingLines) ? caseData.openingLines.slice(0, 2) : [];
+    return `
+      <div class="case-story-scene" aria-label="案件开场故事">
+        <span class="hero-kicker">${escapeHtml(story.kicker)}</span>
+        <strong>${escapeHtml(story.title)}</strong>
+        <p>${escapeHtml(story.body)}</p>
+        <div class="case-dialogue-strip">
+          ${lines
+            .map(
+              (line) => `
+                <div>
+                  <b>${escapeHtml(line.speaker || "记录")}</b>
+                  <span>${escapeHtml(line.text || "")}</span>
+                </div>
+              `
+            )
+            .join("")}
+        </div>
+        <small>${escapeHtml(story.stakes)}</small>
+      </div>
+    `;
+  }
+
+  function caseOpeningStory(caseData) {
+    const byCase = {
+      "case-empress-seat": {
+        kicker: "事发当晚",
+        title: "立政殿外，有人先听见哭声，也有人先准备好了诏书。",
+        body: "婴儿死讯还没走出宫墙，废后的名字已经被压进案卷。宫人跪在门前，手指攥着袖口，只敢说“听见了”，不敢说是谁第一个把废后喊出口。",
+        stakes: "若你只按口供走，宫人会替整座后宫背下罪名；若你翻出纸张流向，真正推动后位更替的人才会露面。",
+      },
+      "case-crown-shadow": {
+        kicker: "东宫夜审",
+        title: "旧臣递来的是账册，天亮后却变成了罪状。",
+        body: "东宫长廊的灯烧了一夜。旧臣说自己只是护送文书，可记录官已经把“储位不稳”四个字写在案头，等着法庭盖印。",
+        stakes: "越多人说这是皇家家事，越要问清谁整理了这些家事，又是谁等着用它定罪。",
+      },
+      "case-rebellion-box": {
+        kicker: "铜匦开封",
+        title: "一封投书从匣中取出时，还没有重到能压死人。",
+        body: "半日之后，街头榜文已经把旧臣说成谋反。投书、檄文、缉捕令像一串急促的脚步，越走越快，也越走越像有人在后面推。",
+        stakes: "你要追的不是谁最先告发，而是谁在纸张转手时把告发改成了谋反。",
+      },
+      "case-urn": {
+        kicker: "暗室余温",
+        title: "供状太整齐，反而像刚从刑具旁擦干净。",
+        body: "狄仁杰的签押端正得刺眼，暗室里的空瓮却还留着焦味。周兴把供词拍上案时，连看都不看那个瓮口。",
+        stakes: "若法庭只看供状，酷吏就赢了；若你让刑具、笔迹和副本一起开口，自愿二字就会裂开。",
+      },
+      "case-half-hour-coup": {
+        kicker: "夜门半小时",
+        title: "所有人都说来不及，可命令偏偏来得很准。",
+        body: "宫门被撞开的那半小时里，张氏兄弟还没倒下，赏赐簿、换岗令和罪名纸条已经像排好队一样等着登场。",
+        stakes: "别被混乱骗走视线。真正的破绽在时间里：谁最早知道结局，谁就最早安排了结局。",
+      },
+    };
+    return (
+      byCase[caseData.id] || {
+        kicker: "案件开场",
+        title: caseNarrativeLead(caseData),
+        body: caseData.goal || caseData.theme || "案卷已经打开，先听现场的人怎么说。",
+        stakes: "先找到能把口供和证物连起来的裂缝，再把它带上庭。",
+      }
+    );
+  }
+
   function renderCaseSetup(caseData) {
     const cards = caseBriefingCards(caseData);
     return `
       <div class="case-setup" aria-label="案情导入">
+        <div class="case-section-title">
+          <strong>先盯住这三个地方</strong>
+          <span>它们不是任务清单，而是本案一开始就不对劲的地方。</span>
+        </div>
         ${cards
           .map(
             (card) => `
@@ -1863,20 +1934,24 @@
     const active = activeCaseSource(caseData);
     return `
       <div class="case-source-panel">
+        <div class="case-section-title">
+          <strong>可翻看的章节线索</strong>
+          <span>点选任意线索，查看它在案件里能说明什么；原书章节名保留在详情里。</span>
+        </div>
         <div class="source-tabs" aria-label="章节线索">
           ${items
             .map(
               (item) => `
                 <button class="source-tab ${active?.index === item.index ? "active" : ""}" type="button" data-case-source="${item.index}">
                   <strong>${escapeHtml(item.storyTitle)}</strong>
-                  <span>${escapeHtml(item.chapter)}</span>
+                  <span>${escapeHtml(item.chapter)}｜${active?.index === item.index ? "当前线索" : "点击翻看"}</span>
                 </button>
               `
             )
             .join("")}
         </div>
         <div class="source-detail">
-          <strong>${escapeHtml(active.storyTitle)}</strong>
+          <strong>这一段能帮你看清：${escapeHtml(active.storyTitle)}</strong>
           <p>${escapeHtml(active.storyNote)}</p>
           <small>原书线索：${escapeHtml(active.title)}</small>
         </div>
@@ -4648,6 +4723,7 @@
     const manualSlots = readSaveSlots();
     const caseSourceTabs = caseSourceItems(caseData);
     const activeSource = activeCaseSource(caseData);
+    const openingStory = caseOpeningStory(caseData);
     return storageCodec.stringify({
       note: "文字状态供自动化测试使用；屏幕左上为原点，坐标不适用于本 DOM 游戏。",
       screen: state.screen,
@@ -4660,6 +4736,9 @@
       continueCase: nextCase.title,
       continueCaseIndex: nextCaseIndex,
       continueLabel: continueLabel(nextCase),
+      caseOpeningTitle: openingStory.title,
+      caseOpeningBody: openingStory.body,
+      caseOpeningStakes: openingStory.stakes,
       caseBriefingCards: caseBriefingCards(caseData).map((card) => card.title),
       caseIntroArt: caseData.locations?.[0] ? locationBackgroundFile(caseData, caseData.locations[0]) : "",
       caseSourceTabs: caseSourceTabs.map((item) => item.storyTitle),

@@ -1938,3 +1938,30 @@ Remaining Ace Attorney gap list:
 - Browser visual verification needs to be rerun when local browser execution is available again.
 - Investigation dialogue, evidence descriptions, and trial testimony still need a broader character-voice rewrite.
 - Evidence icons are stronger bitmap props, but selected high-value items still lack curated per-prop Image API source exports.
+
+## 2026-06-18 iteration 71 result
+
+Implemented:
+- Rebuilt the case-intro opening from a one-line objective plus briefing cards into a story-first scene block.
+- Added five per-case opening scenes with incident moment, dramatic title, plain-language story paragraph, and player-facing stakes, so ordinary players can understand what happened before choosing `开始调查`.
+- Moved the existing witness/defense opening lines into the story block as visible dialogue, avoiding the previous separate black “script note” block that still felt like UI instruction text.
+- Reframed the three briefing cards under `先盯住这三个地方`, clarifying that they are suspicious story points rather than a task checklist.
+- Reworked chapter-source tabs with a section header, `点击翻看` / `当前线索` labels, and detail copy beginning with `这一段能帮你看清`, so the buttons no longer look like unexplained `卷宗X` blocks.
+- Added `caseOpeningTitle`, `caseOpeningBody`, and `caseOpeningStakes` to `render_game_to_text`.
+- Added desktop/mobile CSS for the story block, dialogue strip, and section titles, including a clamp override so the case opening text is not silently cut off by the single-window desktop layout rules.
+
+Verified:
+- `npm run check:js`
+- `PYTHONPYCACHEPREFIX="/Users/oubeichen/Projects/wuzetian2/.pycache" npm run check:py`
+- `git diff --check`
+- Source inspection confirmed the old standalone opening-lines block was removed from the case-intro flow and the new story fields are exposed for QA.
+
+Blocked verification:
+- `npm run qa:web-game` was attempted and still fails before page load because Chromium cannot register its Mach port rendezvous in this environment (`Permission denied (1100)`). No new browser screenshot was captured.
+
+Remaining Ace Attorney gap list:
+- Case-intro opening now reads more like a story scene, but investigation dialogue, evidence descriptions, and trial testimony still need a broader character-voice rewrite.
+- Chapter-source tabs are clearer and clickable, but they could later become a staged “翻阅卷宗” drawer instead of living fully on the case intro.
+- Pursuit branches are case-specific, but they still do not unlock unique evidence/testimony routes after the chase.
+- Browser visual verification needs to be rerun when local browser execution is available again.
+- Evidence icons are stronger bitmap props, but selected high-value items still lack curated per-prop Image API source exports.
