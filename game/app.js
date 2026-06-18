@@ -2571,7 +2571,7 @@
           <div class="deduction-followup-actions">
             ${followUp.unlockEvidenceName ? `<span class="deduction-followup-unlock">追击成立后写入法庭记录：${escapeHtml(followUp.unlockEvidenceName)}</span>` : ""}
             <button class="secondary-button" type="button" data-home>返回主菜单</button>
-            <button class="primary-button" type="button" data-continue-deduction-followup>${escapeHtml(followUp.buttonLabel || "追击证人")}</button>
+            <span class="panel-continue-hint">点击任意处继续追击</span>
           </div>
         </div>
       </section>
@@ -2606,7 +2606,7 @@
           </div>
           <div class="pursuit-unlock-actions">
             <button class="secondary-button" type="button" data-home>返回主菜单</button>
-            <button class="primary-button" type="button" data-continue-pursuit-unlock>返回庭审</button>
+            <span class="panel-continue-hint">点击任意处返回庭审</span>
           </div>
         </section>
       </section>
@@ -2650,8 +2650,10 @@
             <div><strong>${escapeHtml(previous?.title || "上一段证词")}</strong><span>已击破</span></div>
             <div><strong>${escapeHtml(testimony.title)}</strong><span>${escapeHtml(testimony.speaker)}｜${visibleStatementEntries(testimony, progress).length} 句证词</span></div>
           </div>
-          <button class="secondary-button" type="button" data-home>返回主菜单</button>
-          <button class="primary-button" type="button" data-continue-testimony>继续交叉询问</button>
+          <div class="interlude-actions">
+            <button class="secondary-button" type="button" data-home>返回主菜单</button>
+            <span class="panel-continue-hint">点击任意处继续交叉询问</span>
+          </div>
         </div>
       </section>
       ${renderCue()}
@@ -2783,7 +2785,6 @@
         </div>
         <div class="beat-controls">
           ${hasPrevious ? `<button class="beat-next-button secondary" type="button" data-retreat-investigation-beat>上一句</button>` : ""}
-          ${hasNext ? `<button class="beat-next-button" type="button" data-advance-investigation-beat>继续</button>` : `<button class="beat-next-button" type="button" data-close-investigation-beat>收起</button>`}
         </div>
       </div>
     `;
@@ -2818,7 +2819,7 @@
           </div>
           <div class="pickup-actions">
             <button class="secondary-button" type="button" data-open-record>打开记录</button>
-            <button class="primary-button" type="button" data-advance-pickup>${hasNext ? "收入下一件" : "继续调查"}</button>
+            <span class="panel-continue-hint">点击任意处${hasNext ? "收入下一件证物" : "离开收集界面"}</span>
           </div>
         </section>
       </div>
@@ -3913,10 +3914,10 @@
               )
               .join("")}
           </div>
-          <div class="reveal-actions">
+        <div class="reveal-actions">
             <button class="secondary-button" type="button" data-home>返回主菜单</button>
             <button class="secondary-button" type="button" data-reveal-objection>跳过演出</button>
-            <button class="primary-button" type="button" data-advance-reveal>${finalStep ? "揭示矛盾" : "下一幕"}</button>
+            <span class="panel-continue-hint">点击任意处${finalStep ? "揭示矛盾" : "继续下一幕"}</span>
           </div>
         </div>
       </div>

@@ -1261,6 +1261,21 @@ button:not(:disabled):hover {
   font-weight: 900;
 }
 
+.panel-continue-hint {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 14px;
+  color: #fff1bf;
+  background: rgba(31, 28, 25, 0.78);
+  border: 1px solid rgba(255, 241, 191, 0.34);
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 900;
+  line-height: 1.25;
+  white-space: nowrap;
+  text-wrap: nowrap;
+}
+
 @media (min-width: 900px) {
   .case-intro-layout {
     grid-template-columns: minmax(0, min(1180px, calc(100vw - 64px)));
@@ -1714,6 +1729,13 @@ button:not(:disabled):hover {
 
 .interlude-flow span {
   color: #f1dfba;
+}
+
+.interlude-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: flex-end;
 }
 
 .scene {
@@ -2492,8 +2514,8 @@ button:not(:disabled):hover {
 
 .scene-hotspot span {
   position: absolute;
-  left: 64px;
-  top: -54px;
+  left: 62px;
+  top: 50%;
   max-width: 150px;
   min-width: max-content;
   width: max-content;
@@ -2501,7 +2523,7 @@ button:not(:disabled):hover {
   visibility: hidden;
   pointer-events: none;
   transition: opacity 0.16s ease, transform 0.16s ease;
-  transform: translateY(4px);
+  transform: translateY(-50%);
   overflow: hidden;
   padding: 4px 8px;
   color: #fff8e7;
@@ -2517,6 +2539,18 @@ button:not(:disabled):hover {
 
 .scene-hotspot small {
   display: none;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(2px);
+  transition: opacity 0.14s ease, visibility 0.14s ease, transform 0.14s ease;
+}
+
+.scene-hotspot:hover small,
+.scene-hotspot:focus-visible small {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  pointer-events: none;
 }
 
 .scene-hotspot:focus-visible::before,
@@ -2548,7 +2582,12 @@ button:not(:disabled):hover {
 .scene-hotspot-2 span,
 .scene-hotspot-2 small {
   left: auto;
-  right: 64px;
+  right: 62px;
+}
+
+.scene-hotspot:hover span,
+.scene-hotspot:focus-visible span {
+  transform: translateY(-50%);
 }
 
 .scene-hotspot.done::before {
@@ -5165,7 +5204,7 @@ button:not(:disabled):hover {
 }
 
 .reveal-actions {
-  grid-template-columns: minmax(0, 0.72fr) minmax(0, 1fr);
+  grid-template-columns: minmax(118px, 1fr) minmax(140px, 1fr) minmax(120px, 1fr);
   justify-self: end;
   width: min(380px, 100%);
 }
@@ -6576,7 +6615,7 @@ button:not(:disabled):hover {
   }
 
   .scene-hotspot small {
-    display: inline-block;
+    display: none;
   }
 
   .scene-hotspot-2 span,
