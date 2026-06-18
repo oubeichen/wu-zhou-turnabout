@@ -1302,8 +1302,16 @@ button:not(:disabled):hover {
 
 .deduction-followup-actions {
   display: flex;
+  gap: 12px;
+  align-items: center;
   justify-content: flex-end;
   max-width: 980px;
+}
+
+.deduction-followup-unlock {
+  color: #fff1bf;
+  font-weight: 800;
+  line-height: 1.45;
 }
 
 .interlude-flow {
@@ -5763,6 +5771,7 @@ button:not(:disabled):hover {
   }
 
   .deduction-followup-actions {
+    display: grid;
     justify-content: stretch;
   }
 

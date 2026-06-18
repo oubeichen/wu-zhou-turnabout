@@ -556,6 +556,8 @@
         turnabouts: 0,
         lastTurnabout: "",
         deductionPursuits: 0,
+        deductionPursuitUnlocks: 0,
+        lastPursuitUnlock: "",
         pendingDeductionFollowUp: null,
         mistakes: 0,
         grade: "",
@@ -584,6 +586,12 @@
     }
     if (!Number.isFinite(state.trial[caseId].deductionPursuits)) {
       state.trial[caseId].deductionPursuits = 0;
+    }
+    if (!Number.isFinite(state.trial[caseId].deductionPursuitUnlocks)) {
+      state.trial[caseId].deductionPursuitUnlocks = 0;
+    }
+    if (typeof state.trial[caseId].lastPursuitUnlock !== "string") {
+      state.trial[caseId].lastPursuitUnlock = "";
     }
     if (state.trial[caseId].pendingDeductionFollowUp && typeof state.trial[caseId].pendingDeductionFollowUp !== "object") {
       state.trial[caseId].pendingDeductionFollowUp = null;
@@ -1041,6 +1049,10 @@
       },
     };
     return { ...generic, ...(byCase[caseData.id] || {}) };
+  }
+
+  function deductionPursuitUnlock(caseData) {
+    return evidenceById(caseData, `${caseData.id}-ev-court-note`);
   }
 
   function visibleStatementEntries(testimony, progress) {
@@ -2345,6 +2357,7 @@
             </div>
           </div>
           <div class="deduction-followup-actions">
+            ${followUp.unlockEvidenceName ? `<span class="deduction-followup-unlock">追击成立后写入法庭记录：${escapeHtml(followUp.unlockEvidenceName)}</span>` : ""}
             <button class="primary-button" type="button" data-continue-deduction-followup>${escapeHtml(followUp.buttonLabel || "追击证人")}</button>
           </div>
         </div>
@@ -2617,6 +2630,7 @@
           <div class="result-stats">
             <div><strong>${progress.mistakes}</strong><span>本次失误</span></div>
             <div><strong>${progress.deductionPursuits || 0}</strong><span>札记追击</span></div>
+            <div><strong>${progress.deductionPursuitUnlocks || 0}</strong><span>追击补记</span></div>
             <div><strong>${record.bestMistakes ?? progress.mistakes}</strong><span>最佳失误</span></div>
             <div><strong>${record.clears || 1}</strong><span>结案次数</span></div>
           </div>
@@ -4102,6 +4116,7 @@
     }
     if (deduction) {
       const pursuitCopy = deductionPursuitCopy(caseData, statement, deduction, presentedLabel);
+      const pursuitUnlock = deductionPursuitUnlock(caseData);
       progress.pendingDeductionFollowUp = {
         testimonyIndex: progress.testimonyIndex,
         rawIndex: Number(key.split(":")[1]) || 0,
@@ -4120,6 +4135,8 @@
         chaseLine: pursuitCopy.defenseLine,
         witnessLine: pursuitCopy.witnessLine,
         buttonLabel: pursuitCopy.button,
+        unlockEvidenceId: pursuitUnlock?.id || "",
+        unlockEvidenceName: pursuitUnlock?.name || "",
       };
       progress.deductionPursuits += 1;
       setStage("clash", "对照追击", { left: "confident", right: "stagger" });
@@ -4161,9 +4178,21 @@
     const statement = testimony?.statements?.[Number(followUp.rawIndex) || 0];
     const key = followUp.key || statementKey(Number(followUp.testimonyIndex) || progress.testimonyIndex, Number(followUp.rawIndex) || 0);
     progress.pendingDeductionFollowUp = null;
-    progress.lastObjection = `${followUp.objectionText || statement?.objection || ""} ${followUp.chaseLine || ""} ${followUp.witnessLine || ""}`.trim();
+    const unlocked = followUp.unlockEvidenceId ? unlockEvidence(caseData, followUp.unlockEvidenceId) : "";
+    if (unlocked) {
+      progress.deductionPursuitUnlocks += 1;
+      progress.lastPursuitUnlock = unlocked;
+    } else if (followUp.unlockEvidenceName) {
+      progress.lastPursuitUnlock = followUp.unlockEvidenceName;
+    }
+    const unlockText = unlocked
+      ? ` ${unlocked}已经写入法庭记录。`
+      : followUp.unlockEvidenceName
+        ? ` ${followUp.unlockEvidenceName}已经在法庭记录中，可以直接查看。`
+        : "";
+    progress.lastObjection = `${followUp.objectionText || statement?.objection || ""} ${followUp.chaseLine || ""} ${followUp.witnessLine || ""}${unlockText}`.trim();
     setStage("clash", "追击成立", { left: "confident", right: "stagger" });
-    setMessage("辩方", `${followUp.chaseLine || "对照札记已经把证词推到新的缺口上。"} ${followUp.witnessLine || ""} ${followUp.objectionText || statement?.objection || ""}`.trim(), "objection");
+    setMessage("辩方", `${followUp.chaseLine || "对照札记已经把证词推到新的缺口上。"} ${followUp.witnessLine || ""}${unlockText} ${followUp.objectionText || statement?.objection || ""}`.trim(), "objection");
     playCue("objection");
     save();
     if (!testimony || !statement) {
@@ -4315,6 +4344,8 @@
       turnabouts: 0,
       lastTurnabout: "",
       deductionPursuits: 0,
+      deductionPursuitUnlocks: 0,
+      lastPursuitUnlock: "",
       pendingDeductionFollowUp: null,
       mistakes: 0,
       grade: "",
@@ -4848,6 +4879,8 @@
       turnabouts: progress.turnabouts || 0,
       lastTurnabout: progress.lastTurnabout || "",
       deductionPursuits: progress.deductionPursuits || 0,
+      deductionPursuitUnlocks: progress.deductionPursuitUnlocks || 0,
+      lastPursuitUnlock: progress.lastPursuitUnlock || "",
       pendingDeductionFollowUp: Boolean(progress.pendingDeductionFollowUp),
       pendingDeductionRecord: progress.pendingDeductionFollowUp?.record || "",
       pendingDeductionText: progress.pendingDeductionFollowUp?.deductionText || "",
@@ -4856,6 +4889,8 @@
       pendingDeductionChaseLine: progress.pendingDeductionFollowUp?.chaseLine || "",
       pendingDeductionWitnessLine: progress.pendingDeductionFollowUp?.witnessLine || "",
       pendingDeductionButton: progress.pendingDeductionFollowUp?.buttonLabel || "",
+      pendingDeductionUnlock: progress.pendingDeductionFollowUp?.unlockEvidenceName || "",
+      pursuitNoteCollected: (state.collected[caseData.id] || []).includes(`${caseData.id}-ev-court-note`),
       turnaboutTitle: turnaboutBeat(caseData).title,
       turnaboutBody: turnaboutBeat(caseData).body,
       turnaboutOpponentLine: turnaboutBeat(caseData).opponentLine || "",

@@ -2044,3 +2044,29 @@ Remaining Ace Attorney gap list:
 - Browser visual verification needs to be rerun when local browser execution is available again.
 - Chapter-source tabs are clearer and clickable, but they could later become a staged `翻阅卷宗` drawer instead of living fully on the case intro.
 - Evidence icons are stronger bitmap props, but selected high-value items still lack curated per-prop Image API source exports.
+
+## 2026-06-18 iteration 75 result
+
+Implemented:
+- Connected `对照札记` pursuit branches to an actual Court Record unlock instead of leaving them as dialogue-only beats.
+- Correctly resolving a deduction pursuit now unlocks the current case's trial-only `庭上追问记录` through the shared `unlockEvidence()` path.
+- Added a visible pursuit-scene reward hint: `追击成立后写入法庭记录：庭上追问记录`.
+- Added `deductionPursuitUnlocks` and `lastPursuitUnlock` to trial progress and reset state, plus a result-page `追击补记` stat.
+- Added QA fields `deductionPursuitUnlocks`, `lastPursuitUnlock`, `pendingDeductionUnlock`, and `pursuitNoteCollected` to `render_game_to_text`.
+- Added desktop/mobile styling for the pursuit reward hint.
+
+Verified:
+- Source inspection confirmed pursuit unlocks target the existing `${caseId}-ev-court-note` trial-only evidence for all five cases.
+- Custom Node check confirmed all five cases have the trial-only court note target.
+- `npm run check:js`
+- `PYTHONPYCACHEPREFIX="/Users/oubeichen/Projects/wuzetian2/.pycache" npm run check:py`
+- `git diff --check`
+
+Blocked verification:
+- `npm run qa:web-game` was attempted and still fails before page load because Chromium cannot register its Mach port rendezvous in this environment (`Permission denied (1100)`). No new browser screenshot was captured.
+
+Remaining Ace Attorney gap list:
+- Pursuit now changes Court Record resources, but it reuses the existing `庭上追问记录` to avoid overflowing the current 7-column evidence sprite sheet. A later media-system pass should expand the sheet and add fully separate pursuit-only evidence.
+- Browser visual verification needs to be rerun when local browser execution is available again.
+- Chapter-source tabs are clearer and clickable, but they could later become a staged `翻阅卷宗` drawer instead of living fully on the case intro.
+- Evidence icons are stronger bitmap props, but selected high-value items still lack curated per-prop Image API source exports.
