@@ -2048,7 +2048,7 @@ button:not(:disabled):hover {
 
 .scene-title {
   position: relative;
-  z-index: 9;
+  z-index: 11;
   width: fit-content;
   max-width: 100%;
   padding: 8px 12px;
@@ -2060,7 +2060,7 @@ button:not(:disabled):hover {
 
 .scene-atmosphere {
   position: relative;
-  z-index: 9;
+  z-index: 11;
   width: fit-content;
   max-width: min(720px, 100%);
   padding: 8px 12px;
@@ -2074,7 +2074,7 @@ button:not(:disabled):hover {
 
 .investigation-beat {
   position: relative;
-  z-index: 9;
+  z-index: 11;
   display: grid;
   grid-template-columns: 92px minmax(0, 1fr);
   grid-template-areas:
@@ -2252,7 +2252,7 @@ button:not(:disabled):hover {
 
 .dialogue-box {
   position: relative;
-  z-index: 4;
+  z-index: 11;
   padding: 20px 22px;
   color: #1d1814;
   background: rgba(255, 250, 240, 0.98);
@@ -2460,6 +2460,11 @@ button:not(:disabled):hover {
   max-width: 150px;
   min-width: max-content;
   width: max-content;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.16s ease, transform 0.16s ease;
+  transform: translateY(4px);
   overflow: hidden;
   padding: 4px 8px;
   color: #fff8e7;
@@ -2478,8 +2483,17 @@ button:not(:disabled):hover {
 }
 
 .scene-hotspot:focus-visible::before,
-.scene-hotspot:focus-visible span,
-.scene-hotspot:hover span {
+.scene-hotspot:hover::before,
+.scene-hotspot:focus-visible::before,
+.scene-hotspot:hover::before {
+  filter: drop-shadow(0 0 0 2px rgba(255, 241, 191, 0.28));
+}
+
+.scene-hotspot:hover span,
+.scene-hotspot:focus-visible span {
+  transform: translateY(0);
+  opacity: 1;
+  visibility: visible;
   filter: drop-shadow(0 0 0 2px rgba(255, 241, 191, 0.28));
 }
 
@@ -6416,6 +6430,9 @@ button:not(:disabled):hover {
     left: auto;
     top: auto;
     right: auto;
+    opacity: 1;
+    visibility: visible;
+    transform: none;
     pointer-events: none;
   }
 
