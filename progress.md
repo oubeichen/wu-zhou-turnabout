@@ -1715,3 +1715,28 @@ Remaining Ace Attorney gap list:
 - Courtroom acting keeps both portraits visible, but character animation remains limited to a shared multi-pose sheet rather than bespoke per-character animation strips.
 - Evidence inspection has a full modal and item/card art, but complex evidence objects still need richer bitmap item illustrations and object-specific inspect interactions.
 - Audio has local cue samples and looped music tracks, but the tracks are procedurally generated placeholders rather than fully authored soundtrack compositions.
+
+## 2026-06-18 iteration 62 result
+
+Implemented:
+- Used the image generation tool for a Tang-dynasty evidence sprite-sheet visual direction pass, then converted the usable direction into a project-local reproducible bitmap pipeline.
+- Upgraded `scripts/generate_evidence_item_sheet.py` to emit `evidence-item-sheet-v3.png`.
+- Added specific complex-evidence drawing branches for sealed rosters, petition stacks, ink-stained edicts, clue boards, court notes, succession records, folded wills, bronze-box letters, torn manifestos, street notices, interrogation rosters, arrest warrants, scorched jar mouths, confession papers with brush, interrogation manuals, rescue notes, reward ledgers, fabricated charge strips, and guard shift orders.
+- Switched Court Record thumbnails and evidence detail metadata from `evidence-item-sheet-v2.png` to `evidence-item-sheet-v3.png`.
+- Updated README technical notes so the documented evidence-art pipeline points at the v3 asset and explains that complex evidence is rendered as combined item bitmap art.
+
+Verified:
+- `python3 scripts/generate_evidence_item_sheet.py`
+- Visual inspection of `game/assets/evidence-item-sheet-v3.png`: complex evidence now has distinct multi-object silhouettes instead of repeated generic file cards.
+- `npm run check:js`
+- `PYTHONPYCACHEPREFIX="/Users/oubeichen/Projects/wuzetian2/.pycache" npm run check:py`
+- `git diff --check`
+- `npm run qa:web-game`
+- Desktop 1440x810 Playwright flow opened a new case, entered investigation, collected the first evidence through a scene hotspot, opened Court Record, and confirmed the unlocked thumbnail uses `evidence-item-sheet-v3.png`, `filter=none`, and no page-level overflow.
+- Screenshot inspected: `iteration62-evidence-v3-record-unlocked-desktop.png`.
+
+Remaining Ace Attorney gap list:
+- Complex evidence thumbnails are now richer bitmap props, but the `详查` modal still needs object-specific interaction hotspots for each important artifact.
+- The evidence sheet is reproducible local bitmap art; future passes can replace selected high-value props with direct Image API exports once the tool exposes stable workspace output paths.
+- Courtroom acting keeps both portraits visible, but character animation remains limited to a shared multi-pose sheet rather than bespoke per-character animation strips.
+- Audio has local cue samples and looped music tracks, but the tracks are procedurally generated placeholders rather than fully authored soundtrack compositions.

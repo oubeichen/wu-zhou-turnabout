@@ -4038,7 +4038,7 @@
       selectedEvidence: selectedEvidence?.name || "",
       selectedEvidenceIcon: selectedEvidenceVisual ? `${selectedEvidenceVisual.type}:${selectedEvidenceVisual.label}` : "",
       selectedEvidenceArt: selectedEvidencePosition ? `${selectedEvidencePosition.row + 1}-${selectedEvidencePosition.col + 1}` : "",
-      selectedEvidenceArtAsset: selectedEvidencePosition ? "evidence-item-sheet-v2.png" : "",
+      selectedEvidenceArtAsset: selectedEvidencePosition ? "evidence-item-sheet-v3.png" : "",
       selectedEvidenceUsesBitmapOnly: selectedEvidenceVisual ? selectedEvidenceVisual.label === "" : false,
       selectedEvidenceRisk: selectedEvidence?.counterRisk || "",
       selectedProfile: state.selectedProfileName,

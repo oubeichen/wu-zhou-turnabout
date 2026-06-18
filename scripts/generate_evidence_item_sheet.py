@@ -13,7 +13,7 @@ from PIL import Image, ImageDraw, ImageFont
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA_PATH = ROOT / "game" / "game-data.js"
-OUT_PATH = ROOT / "game" / "assets" / "evidence-item-sheet-v2.png"
+OUT_PATH = ROOT / "game" / "assets" / "evidence-item-sheet-v3.png"
 
 CELL_W = 180
 CELL_H = 210
@@ -112,9 +112,38 @@ def draw_thread(draw: ImageDraw.ImageDraw, points: list[tuple[int, int]], color:
 
 
 def visual_kind(item: dict) -> str:
+    item_id = item.get("id", "")
     name = item.get("name", "")
+    specific = {
+        "case-empress-seat-ev-3": "sealed_roster",
+        "case-empress-seat-ev-4": "petition_stack",
+        "case-empress-seat-ev-5": "ink_edict",
+        "case-crown-shadow-ev-1": "old_ledger",
+        "case-crown-shadow-ev-3": "sealed_roster",
+        "case-crown-shadow-ev-4": "succession_record",
+        "case-crown-shadow-ev-5": "folded_will",
+        "case-rebellion-box-ev-1": "bronze_letter",
+        "case-rebellion-box-ev-2": "torn_manifesto",
+        "case-rebellion-box-ev-3": "street_notice",
+        "case-rebellion-box-ev-4": "interrogation_roster",
+        "case-rebellion-box-ev-5": "arrest_warrant",
+        "case-urn-ev-1": "scorched_jar_mouth",
+        "case-urn-ev-2": "confession_brush",
+        "case-urn-ev-3": "confession_copy",
+        "case-urn-ev-4": "interrogation_manual",
+        "case-urn-ev-5": "rescue_note",
+        "case-half-hour-coup-ev-2": "reward_ledger",
+        "case-half-hour-coup-ev-3": "charge_strip",
+        "case-half-hour-coup-ev-4": "shift_order",
+    }
+    if item_id in specific:
+        return specific[item_id]
+    if item_id.endswith("-ev-pattern"):
+        return "evidence_board"
+    if item_id.endswith("-ev-court-note"):
+        return "court_notes"
     if "收益图" in name or "图" in name:
-        return "map"
+        return "evidence_board"
     if "簪" in name or "钗" in name:
         return "hairpin"
     if "铜匦" in name:
@@ -346,6 +375,184 @@ def draw_cloth(draw: ImageDraw.ImageDraw, center: tuple[int, int], scale: float,
     draw_stamp(draw, (cx + 26, cy + 22), "封", 0.84)
 
 
+def draw_sealed_roster(draw: ImageDraw.ImageDraw, center: tuple[int, int], scale: float, accent: str) -> None:
+    cx, cy = center
+    draw_ledger(draw, (cx - 16, cy + 2), 0.82, accent)
+    ribbon = [(cx - 54, cy - 54), (cx - 26, cy - 66), (cx + 42, cy + 46), (cx + 18, cy + 56)]
+    draw.polygon(ribbon, fill="#8e3029", outline="#fff1bf")
+    draw_stamp(draw, (cx + 34, cy + 38), "封", 1.0)
+    draw_thread(draw, [(cx - 46, cy - 26), (cx - 8, cy + 8), (cx + 38, cy - 24)], accent)
+
+
+def draw_petition_stack(draw: ImageDraw.ImageDraw, center: tuple[int, int], scale: float, accent: str) -> None:
+    cx, cy = center
+    for offset, tilt in [(-22, 8), (0, -2), (20, 10)]:
+        paper = (cx - 54 + offset, cy - 44 + tilt, cx + 42 + offset, cy + 42 + tilt)
+        draw.rounded_rectangle(paper, radius=8, fill="#f4dfaf", outline="#4f3724", width=2)
+        draw_brush_text(draw, (paper[0] + 14, paper[1] + 14, paper[2] - 12, paper[3] - 12), f"petition-{offset}", 3)
+    draw_thread(draw, [(cx - 42, cy - 28), (cx, cy + 8), (cx + 44, cy - 30)], accent)
+    draw_stamp(draw, (cx + 44, cy + 34), "臣", 0.92)
+
+
+def draw_ink_edict(draw: ImageDraw.ImageDraw, center: tuple[int, int], scale: float, accent: str) -> None:
+    cx, cy = center
+    draw_decree(draw, (cx - 2, cy), 0.9, accent)
+    ink = [(cx - 48, cy - 16), (cx - 5, cy - 30), (cx + 36, cy - 20), (cx + 50, cy + 8), (cx + 8, cy + 4)]
+    draw.polygon(ink, fill=(24, 19, 17, 210))
+    for dx, dy, r in [(-20, -30, 7), (18, -12, 9), (34, 4, 5)]:
+        draw.ellipse((cx + dx - r, cy + dy - r, cx + dx + r, cy + dy + r), fill=(16, 13, 12, 230))
+    draw.line((cx - 45, cy + 44, cx + 52, cy - 46), fill="#422111", width=6)
+
+
+def draw_evidence_board(draw: ImageDraw.ImageDraw, center: tuple[int, int], scale: float, accent: str) -> None:
+    cx, cy = center
+    board = (cx - 58, cy - 54, cx + 58, cy + 54)
+    draw_soft_shadow(draw, board, 15)
+    draw.rounded_rectangle(board, radius=10, fill="#31261f", outline=accent, width=4)
+    cards = [(cx - 46, cy - 38, cx - 8, cy - 12), (cx + 11, cy - 38, cx + 49, cy - 12), (cx - 18, cy + 14, cx + 24, cy + 42)]
+    pins = []
+    for index, card in enumerate(cards):
+        draw.rounded_rectangle(card, radius=4, fill="#f3dfb5", outline="#fff1bf", width=2)
+        draw_brush_text(draw, (card[0] + 5, card[1] + 5, card[2] - 5, card[3] - 5), f"board-{index}", 2)
+        pins.append(((card[0] + card[2]) // 2, card[1] + 8))
+    pins.append((cx + 34, cy + 28))
+    draw_thread(draw, [pins[0], pins[2], pins[1], pins[3]], "#c63c32")
+    for point in pins:
+        draw_stamp(draw, point, "点", 0.56)
+
+
+def draw_court_notes(draw: ImageDraw.ImageDraw, center: tuple[int, int], scale: float, accent: str) -> None:
+    cx, cy = center
+    draw_note(draw, (cx - 16, cy), 0.82, accent)
+    slip = (cx + 10, cy - 44, cx + 58, cy + 34)
+    draw.rounded_rectangle(slip, radius=7, fill="#f2dfbd", outline="#4f3724", width=2)
+    draw_brush_text(draw, (slip[0] + 7, slip[1] + 8, slip[2] - 7, slip[3] - 8), "court-note", 4)
+    draw.line((cx - 42, cy + 42, cx + 52, cy - 46), fill="#fff1bf", width=4)
+
+
+def draw_succession_record(draw: ImageDraw.ImageDraw, center: tuple[int, int], scale: float, accent: str) -> None:
+    cx, cy = center
+    draw_decree(draw, (cx - 10, cy - 4), 0.72, accent)
+    bed = (cx - 48, cy + 12, cx + 58, cy + 48)
+    draw.rounded_rectangle(bed, radius=9, fill="#5b2f27", outline="#fff1bf", width=3)
+    draw.rectangle((cx - 42, cy - 10, cx + 46, cy + 18), fill="#e8d7b5", outline="#4f3724", width=2)
+    draw.ellipse((cx - 50, cy - 5, cx - 18, cy + 25), fill="#d0b680", outline="#fff1bf", width=2)
+    draw.line((cx + 4, cy - 38, cx + 44, cy + 24), fill="#2c1c15", width=4)
+
+
+def draw_folded_will(draw: ImageDraw.ImageDraw, center: tuple[int, int], scale: float, accent: str) -> None:
+    cx, cy = center
+    draw_folded_paper(draw, (cx - 48, cy - 54, cx + 48, cy + 54), "#f0dcb3", "#4f3724")
+    draw.polygon([(cx - 50, cy - 54), (cx - 20, cy - 64), (cx - 24, cy + 50), (cx - 52, cy + 44)], fill="#b59d77", outline="#fff1bf")
+    draw.line((cx - 40, cy - 34, cx + 42, cy + 34), fill="#2d211c", width=5)
+    draw_stamp(draw, (cx + 34, cy + 34), "诏", 0.9)
+
+
+def draw_bronze_letter(draw: ImageDraw.ImageDraw, center: tuple[int, int], scale: float, accent: str) -> None:
+    cx, cy = center
+    draw_bronze_box(draw, (cx - 8, cy + 8), 0.88, accent)
+    draw_letter(draw, (cx + 42, cy - 38), 0.55, accent)
+    draw_stamp(draw, (cx + 54, cy - 6), "密", 0.74)
+
+
+def draw_torn_manifesto(draw: ImageDraw.ImageDraw, center: tuple[int, int], scale: float, accent: str) -> None:
+    cx, cy = center
+    left = [(cx - 58, cy - 46), (cx - 10, cy - 54), (cx - 21, cy + 52), (cx - 64, cy + 42)]
+    right = [(cx - 4, cy - 48), (cx + 56, cy - 42), (cx + 46, cy + 48), (cx - 12, cy + 56)]
+    for index, poly in enumerate([left, right]):
+        draw.polygon(poly, fill="#edd9b6", outline="#4f3724")
+        bounds = (min(x for x, _ in poly) + 8, min(y for _, y in poly) + 12, max(x for x, _ in poly) - 8, max(y for _, y in poly) - 12)
+        draw_brush_text(draw, bounds, f"manifesto-{index}", 4)
+    draw.line((cx - 6, cy - 48, cx - 18, cy + 50), fill="#7d2b23", width=4)
+    draw_stamp(draw, (cx + 36, cy + 30), "檄", 0.88)
+
+
+def draw_street_notice(draw: ImageDraw.ImageDraw, center: tuple[int, int], scale: float, accent: str) -> None:
+    cx, cy = center
+    draw.rectangle((cx - 58, cy - 48, cx + 58, cy + 48), fill="#44241e", outline="#fff1bf", width=3)
+    draw_notice(draw, (cx, cy - 2), 0.72, accent)
+    draw.line((cx - 54, cy + 50, cx - 54, cy + 68), fill="#2b1712", width=7)
+    draw.line((cx + 54, cy + 50, cx + 54, cy + 68), fill="#2b1712", width=7)
+
+
+def draw_interrogation_roster(draw: ImageDraw.ImageDraw, center: tuple[int, int], scale: float, accent: str) -> None:
+    cx, cy = center
+    draw_ledger(draw, (cx - 14, cy), 0.84, accent)
+    for offset in (-30, 2, 34):
+        draw.rectangle((cx + offset, cy - 46, cx + offset + 18, cy + 40), fill=(24, 17, 14, 170), outline="#fff1bf")
+    draw_stamp(draw, (cx + 42, cy + 34), "审", 0.86)
+
+
+def draw_arrest_warrant(draw: ImageDraw.ImageDraw, center: tuple[int, int], scale: float, accent: str) -> None:
+    cx, cy = center
+    draw_decree(draw, (cx, cy), 0.82, accent)
+    draw.line((cx - 44, cy - 42, cx + 42, cy + 40), fill="#7d2b23", width=5)
+    draw.line((cx - 48, cy + 42, cx + 46, cy - 40), fill="#7d2b23", width=3)
+    draw_stamp(draw, (cx + 38, cy + 28), "捕", 0.9)
+
+
+def draw_scorched_jar_mouth(draw: ImageDraw.ImageDraw, center: tuple[int, int], scale: float, accent: str) -> None:
+    cx, cy = center
+    draw_soft_shadow(draw, (cx - 58, cy - 50, cx + 58, cy + 50), 16)
+    draw.ellipse((cx - 56, cy - 48, cx + 56, cy + 38), fill="#8d512e", outline="#fff1bf", width=4)
+    draw.ellipse((cx - 42, cy - 34, cx + 42, cy + 18), fill="#211512", outline="#e89b47", width=5)
+    for angle, length in [(-44, 44), (-17, 56), (11, 48), (37, 38)]:
+        draw.line((cx, cy - 10, cx + angle, cy - 10 + length), fill="#201310", width=5)
+    for dx in (-34, -12, 18, 40):
+        draw.arc((cx + dx - 10, cy - 62, cx + dx + 18, cy - 20), 80, 160, fill=(255, 205, 122, 115), width=3)
+
+
+def draw_confession_brush(draw: ImageDraw.ImageDraw, center: tuple[int, int], scale: float, accent: str) -> None:
+    cx, cy = center
+    draw_confession(draw, (cx - 6, cy), 0.92, accent)
+    draw.line((cx - 44, cy + 42, cx + 58, cy - 56), fill="#5c2d19", width=8)
+    draw.line((cx - 38, cy + 36, cx + 64, cy - 62), fill="#f0d083", width=3)
+    draw.polygon([(cx + 58, cy - 58), (cx + 72, cy - 76), (cx + 69, cy - 50)], fill="#171211", outline="#fff1bf")
+
+
+def draw_interrogation_manual(draw: ImageDraw.ImageDraw, center: tuple[int, int], scale: float, accent: str) -> None:
+    cx, cy = center
+    draw_ledger(draw, (cx - 8, cy), 0.92, accent)
+    draw.rectangle((cx - 48, cy - 42, cx + 38, cy + 42), outline="#9d2f25", width=4)
+    draw.line((cx - 44, cy - 38, cx + 34, cy + 38), fill="#9d2f25", width=4)
+    draw.line((cx - 36, cy + 34, cx + 42, cy - 34), fill="#9d2f25", width=3)
+
+
+def draw_rescue_note(draw: ImageDraw.ImageDraw, center: tuple[int, int], scale: float, accent: str) -> None:
+    cx, cy = center
+    draw_letter(draw, (cx - 12, cy), 0.94, accent)
+    draw.line((cx - 50, cy + 44, cx + 56, cy - 42), fill="#7d2b23", width=4)
+    draw_stamp(draw, (cx + 40, cy + 28), "急", 0.92)
+    draw_thread(draw, [(cx - 42, cy - 22), (cx + 4, cy + 10), (cx + 46, cy - 24)], accent)
+
+
+def draw_reward_ledger(draw: ImageDraw.ImageDraw, center: tuple[int, int], scale: float, accent: str) -> None:
+    cx, cy = center
+    draw_ledger(draw, (cx - 12, cy), 0.86, accent)
+    for i, offset in enumerate((18, 34, 50)):
+        draw.ellipse((cx + offset - 12, cy + 20 - i * 18, cx + offset + 12, cy + 44 - i * 18), fill="#d2a24c", outline="#fff1bf", width=2)
+        draw.text((cx + offset, cy + 32 - i * 18), "赏", fill="#4f3724", font=FONT_SMALL, anchor="mm")
+
+
+def draw_charge_strip(draw: ImageDraw.ImageDraw, center: tuple[int, int], scale: float, accent: str) -> None:
+    cx, cy = center
+    for offset, width in [(-24, 94), (24, 70)]:
+        strip = (cx - width // 2 + offset, cy - 22 + offset // 6, cx + width // 2 + offset, cy + 22 + offset // 6)
+        draw.rounded_rectangle(strip, radius=6, fill="#f0dfbd", outline="#4f3724", width=2)
+        draw_brush_text(draw, (strip[0] + 10, strip[1] + 9, strip[2] - 10, strip[3] - 8), f"charge-{offset}", 2)
+    draw.line((cx - 60, cy - 38, cx + 58, cy + 36), fill="#7d2b23", width=4)
+    draw_stamp(draw, (cx + 42, cy + 30), "罪", 0.92)
+
+
+def draw_shift_order(draw: ImageDraw.ImageDraw, center: tuple[int, int], scale: float, accent: str) -> None:
+    cx, cy = center
+    draw_decree(draw, (cx - 14, cy - 4), 0.7, accent)
+    for x in (cx + 18, cx + 38, cx + 58):
+        draw.rectangle((x - 8, cy - 44, x + 8, cy + 44), fill="#53311d", outline="#fff1bf")
+        draw.polygon([(x - 8, cy - 44), (x, cy - 62), (x + 8, cy - 44)], fill="#9d2f25", outline="#fff1bf")
+    draw_thread(draw, [(cx - 38, cy + 22), (cx + 4, cy - 6), (cx + 48, cy + 22)], "#c63c32")
+
+
 def draw_risk_badge(draw: ImageDraw.ImageDraw, box: tuple[int, int, int, int]) -> None:
     x1, y1, x2, _ = box
     badge = (x2 - 58, y1 + 20, x2 - 18, y1 + 60)
@@ -397,6 +604,48 @@ def draw_icon(draw: ImageDraw.ImageDraw, item: dict, case_index: int, evidence_i
         draw_inkstone(draw, (cx, cy), 1.0, accent)
     elif kind == "cloth":
         draw_cloth(draw, (cx, cy), 1.0, accent)
+    elif kind == "sealed_roster":
+        draw_sealed_roster(draw, (cx, cy), 1.0, accent)
+    elif kind == "petition_stack":
+        draw_petition_stack(draw, (cx, cy), 1.0, accent)
+    elif kind == "ink_edict":
+        draw_ink_edict(draw, (cx, cy), 1.0, accent)
+    elif kind == "evidence_board":
+        draw_evidence_board(draw, (cx, cy), 1.0, accent)
+    elif kind == "court_notes":
+        draw_court_notes(draw, (cx, cy), 1.0, accent)
+    elif kind == "old_ledger":
+        draw_ledger(draw, (cx, cy), 1.08, accent)
+    elif kind == "succession_record":
+        draw_succession_record(draw, (cx, cy), 1.0, accent)
+    elif kind == "folded_will":
+        draw_folded_will(draw, (cx, cy), 1.0, accent)
+    elif kind == "bronze_letter":
+        draw_bronze_letter(draw, (cx, cy), 1.0, accent)
+    elif kind == "torn_manifesto":
+        draw_torn_manifesto(draw, (cx, cy), 1.0, accent)
+    elif kind == "street_notice":
+        draw_street_notice(draw, (cx, cy), 1.0, accent)
+    elif kind == "interrogation_roster":
+        draw_interrogation_roster(draw, (cx, cy), 1.0, accent)
+    elif kind == "arrest_warrant":
+        draw_arrest_warrant(draw, (cx, cy), 1.0, accent)
+    elif kind == "scorched_jar_mouth":
+        draw_scorched_jar_mouth(draw, (cx, cy), 1.0, accent)
+    elif kind == "confession_brush":
+        draw_confession_brush(draw, (cx, cy), 1.0, accent)
+    elif kind == "confession_copy":
+        draw_confession(draw, (cx, cy), 1.08, accent)
+    elif kind == "interrogation_manual":
+        draw_interrogation_manual(draw, (cx, cy), 1.0, accent)
+    elif kind == "rescue_note":
+        draw_rescue_note(draw, (cx, cy), 1.0, accent)
+    elif kind == "reward_ledger":
+        draw_reward_ledger(draw, (cx, cy), 1.0, accent)
+    elif kind == "charge_strip":
+        draw_charge_strip(draw, (cx, cy), 1.0, accent)
+    elif kind == "shift_order":
+        draw_shift_order(draw, (cx, cy), 1.0, accent)
     else:
         draw_seal(draw, (cx, cy), 1.0, accent)
     if item.get("counterRisk"):

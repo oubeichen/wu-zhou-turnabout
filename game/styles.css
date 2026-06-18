@@ -2366,7 +2366,7 @@ button:not(:disabled):hover {
 }
 
 .evidence-thumb.evidence-art {
-  background-image: url("./assets/evidence-item-sheet-v2.png");
+  background-image: url("./assets/evidence-item-sheet-v3.png");
   background-size: 700% 500%;
   background-position: var(--evidence-art-x, 0%) var(--evidence-art-y, 0%);
   background-repeat: no-repeat;

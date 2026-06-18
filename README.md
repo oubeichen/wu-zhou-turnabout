@@ -42,7 +42,7 @@
 - `game/styles.css`：主菜单、调查页、庭审页、抽屉菜单和响应式布局。
 - `game/assets/`：背景、人物、证物、近景和章节视觉资源。
 - `scripts/build_game_content.py`：从项目知识内容生成或刷新游戏数据的辅助脚本。
-- `scripts/generate_evidence_item_sheet.py`：用 Pillow 从当前案件证物数据重生成 `game/assets/evidence-item-sheet-v2.png`。
+- `scripts/generate_evidence_item_sheet.py`：用 Pillow 从当前案件证物数据重生成 `game/assets/evidence-item-sheet-v3.png`，复杂证物会绘制为组合物件位图。
 - `scripts/generate_location_backgrounds.py`：为每个案件地点重生成独立调查背景图。
 - `progress.md`：持续开发记录，记录每轮目标、验证结果和下一步缺口。
 - `PLAN.md`：John 项目的阶段计划与当前迭代状态。
