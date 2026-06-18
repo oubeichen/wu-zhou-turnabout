@@ -1557,7 +1557,25 @@
     const collected = state.collected[caseData.id]?.length || 0;
     const sceneKey = caseData.scene?.key || "archive";
     const status = state.completed.includes(caseData.id) ? "已结案" : collected ? "调查中" : "未开始";
-    const sourceList = caseData.sources.slice(0, 4).map((source) => `<li>${escapeHtml(source)}</li>`).join("");
+    const sourceItems = caseSourceItems(caseData);
+    const sourceList = sourceItems
+      .slice(0, 4)
+      .map(
+        (item) => `
+            <li>
+              <button
+                class="source-brief-button"
+                type="button"
+                data-open-case-source-case="${index}"
+                data-open-case-source="${item.index}"
+              >
+                ${escapeHtml(item.storyTitle)}
+              </button>
+              <small>${escapeHtml(item.title)}</small>
+            </li>
+          `
+      )
+      .join("");
     const latestRuns = renderRunHistory(record);
     return `
       <section class="case-dossier scene-${sceneKey}" data-motif="${escapeHtml(caseData.scene?.motif || "")}">
@@ -4912,6 +4930,37 @@
     }
     const target = event.target.closest("button");
     if (!target) return;
+
+    if (target.dataset.openCaseSourceCase !== undefined && target.dataset.openCaseSource !== undefined) {
+      const caseIndex = Number(target.dataset.openCaseSourceCase);
+      const sourceIndex = Number(target.dataset.openCaseSource);
+      const clampedCaseIndex = Number.isFinite(caseIndex)
+        ? Math.max(0, Math.min(data.cases.length - 1, caseIndex))
+        : -1;
+      if (Number.isFinite(clampedCaseIndex) && clampedCaseIndex >= 0) {
+        const caseData = data.cases[clampedCaseIndex];
+        if (caseData) {
+          const items = caseSourceItems(caseData);
+          const clampedSourceIndex = Number.isFinite(sourceIndex)
+            ? Math.max(0, Math.min(items.length - 1, sourceIndex))
+            : 0;
+          playCue("click");
+          openCase(clampedCaseIndex);
+          state.caseSourceIndex = clampedSourceIndex;
+          renderCaseIntro();
+        }
+      }
+      return;
+    }
+
+    if (target.dataset.openCaseSource !== undefined) {
+      const items = caseSourceItems(currentCase());
+      const sourceIndex = Number(target.dataset.openCaseSource);
+      state.caseSourceIndex = Number.isFinite(sourceIndex) ? Math.max(0, Math.min(items.length - 1, sourceIndex)) : 0;
+      renderCaseIntro();
+      return;
+    }
+
     playCue("click");
     if (target.dataset.focusCase) {
       focusHomeCase(target.dataset.focusCase);
@@ -4924,11 +4973,6 @@
       const source = sources[index];
       setMessage("卷宗", source ? `已定位到线索：${source.storyTitle}` : "已定位到该线索。", "");
       rerender();
-      return;
-    }
-    if (target.dataset.caseSource !== undefined) {
-      state.caseSourceIndex = Number(target.dataset.caseSource) || 0;
-      renderCaseIntro();
       return;
     }
     if (target.dataset.advanceOpening !== undefined) {

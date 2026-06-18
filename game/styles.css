@@ -686,6 +686,41 @@ button:not(:disabled):hover {
   line-height: 1.45;
 }
 
+.source-brief li {
+  display: grid;
+  gap: 6px;
+  padding: 5px 0;
+}
+
+.source-brief-button {
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  max-width: min(100%, 220px);
+  padding: 5px 10px;
+  color: #5c1d18;
+  background: #efe1c8;
+  border: 1px solid rgba(92, 29, 24, 0.2);
+  border-radius: 999px;
+  font-weight: 800;
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.source-brief-button:hover,
+.source-brief-button:focus-visible {
+  color: #fff1bf;
+  background: #5c1d18;
+  border-color: #fff1bf;
+}
+
+.source-brief small {
+  color: #8b2d25;
+  line-height: 1.4;
+}
+
 .run-history p {
   margin: 0;
   color: var(--muted);
@@ -2492,6 +2527,7 @@ button:not(:disabled):hover {
   border-radius: 0;
   box-shadow: none;
   pointer-events: auto;
+  z-index: 1;
 }
 
 .scene-hotspot::before {
@@ -2535,6 +2571,7 @@ button:not(:disabled):hover {
   text-overflow: ellipsis;
   white-space: nowrap;
   pointer-events: none;
+  z-index: 2;
 }
 
 .scene-hotspot small {
@@ -2543,6 +2580,7 @@ button:not(:disabled):hover {
   visibility: hidden;
   transform: translateY(2px);
   transition: opacity 0.14s ease, visibility 0.14s ease, transform 0.14s ease;
+  z-index: 2;
 }
 
 .scene-hotspot:hover small,
