@@ -5150,6 +5150,23 @@
         return;
       }
     }
+    if (
+      event.key === "Escape" &&
+      !state.settingsOpen &&
+      !state.guideOpen &&
+      !state.recordOpen &&
+      !state.recordInspect &&
+      !state.objectionReveal &&
+      !state.investigationBeat &&
+      !state.pursuitUnlockCue &&
+      state.screen !== "home"
+    ) {
+      event.preventDefault();
+      playCue("click");
+      state.homeView = "menu";
+      renderHome();
+      return;
+    }
     if (state.screen === "trial" && (event.key === "Enter" || event.key === " ")) {
       const isButtonFocus = event.target && event.target.closest && event.target.closest("button");
       if (!isButtonFocus && !state.recordOpen) {
