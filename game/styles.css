@@ -3823,48 +3823,87 @@ button:not(:disabled):hover {
   position: absolute;
   z-index: 2;
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  gap: 5px;
-  align-items: center;
-  min-width: 108px;
-  min-height: 36px;
-  padding: 5px 8px;
+  grid-template-rows: 72px auto;
+  justify-items: center;
+  gap: 3px;
+  width: 118px;
+  min-height: 96px;
+  padding: 0;
   color: #fff8e7;
-  background: rgba(92, 29, 24, 0.92);
-  border: 2px solid rgba(255, 241, 191, 0.86);
-  border-radius: 999px;
-  box-shadow: 0 10px 22px rgba(31, 28, 25, 0.32);
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
   pointer-events: auto;
 }
 
+.inspect-hotspot::before {
+  content: "";
+  width: 72px;
+  height: 72px;
+  background-image: url("./assets/inspect-hotspot-marker-sheet-v1.png");
+  background-repeat: no-repeat;
+  background-size: 216px 72px;
+  background-position: 0 0;
+  filter: drop-shadow(0 9px 16px rgba(31, 28, 25, 0.36));
+  transition: transform 0.16s ease, filter 0.16s ease;
+}
+
+.inspect-hotspot:hover::before,
+.inspect-hotspot:focus-visible::before {
+  transform: translateY(-3px) scale(1.05);
+  filter: drop-shadow(0 12px 20px rgba(31, 28, 25, 0.42));
+}
+
 .inspect-hotspot span {
+  position: absolute;
+  left: 23px;
+  top: 1px;
   display: grid;
   place-items: center;
-  width: 22px;
-  height: 22px;
-  color: #231b16;
-  background: #fff1bf;
+  width: 20px;
+  height: 20px;
+  color: #fff8e7;
+  background: rgba(35, 27, 22, 0.78);
+  border: 1px solid rgba(255, 241, 191, 0.74);
   border-radius: 50%;
+  font-size: 12px;
   font-weight: 900;
 }
 
 .inspect-hotspot small {
+  max-width: 118px;
   overflow: hidden;
+  padding: 4px 7px;
   color: #fff8e7;
+  background: rgba(31, 28, 25, 0.84);
+  border: 1px solid rgba(255, 241, 191, 0.34);
+  border-radius: 8px;
   font-size: 12px;
   font-weight: 900;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.inspect-hotspot.active {
-  background: rgba(179, 123, 36, 0.96);
-  box-shadow: 0 12px 28px rgba(31, 28, 25, 0.36), 0 0 0 4px rgba(255, 241, 191, 0.24);
+.inspect-hotspot.active::before {
+  background-position: -72px 0;
+}
+
+.inspect-hotspot.active small {
+  border-color: rgba(255, 241, 191, 0.72);
+  box-shadow: 0 0 0 3px rgba(255, 241, 191, 0.14);
+}
+
+.inspect-hotspot.checked::before {
+  background-position: -144px 0;
 }
 
 .inspect-hotspot.checked span {
-  color: #fff8e7;
-  background: #2e6f62;
+  background: rgba(46, 111, 98, 0.9);
+}
+
+.inspect-hotspot.checked.active small {
+  border-color: rgba(228, 246, 218, 0.72);
 }
 
 .inspect-hotspot.checked small::after {
@@ -5852,33 +5891,61 @@ button:not(:disabled):hover {
   }
 
   .inspect-hotspot {
-    min-width: 92px;
-    min-height: 32px;
-    padding: 4px 7px;
+    grid-template-rows: 56px auto;
+    width: 86px;
+    min-height: 76px;
+  }
+
+  .inspect-hotspot::before {
+    width: 56px;
+    height: 56px;
+    background-size: 168px 56px;
+  }
+
+  .inspect-hotspot.active::before {
+    background-position: -56px 0;
+  }
+
+  .inspect-hotspot.checked::before {
+    background-position: -112px 0;
+  }
+
+  .inspect-hotspot span {
+    left: 14px;
+    top: 0;
+    width: 18px;
+    height: 18px;
+    font-size: 11px;
+  }
+
+  .inspect-hotspot small {
+    max-width: 86px;
+    padding: 3px 5px;
+    font-size: 11px;
   }
 
   .inspect-hotspot-1 {
-    left: 4px;
-    top: 12px;
+    left: 12px;
+    top: 66px;
   }
 
   .inspect-hotspot-2 {
-    right: 4px;
-    bottom: 12px;
+    right: 10px;
+    bottom: 34px;
   }
 
   .inspect-view-back .inspect-hotspot-1,
   .inspect-view-edge .inspect-hotspot-1 {
-    left: 4px;
+    left: 12px;
     right: auto;
-    top: 46px;
+    top: 76px;
   }
 
   .inspect-view-back .inspect-hotspot-2,
   .inspect-view-edge .inspect-hotspot-2 {
     left: auto;
-    right: 4px;
-    bottom: 12px;
+    right: 10px;
+    bottom: 34px;
   }
 
   .record-inspect-copy > strong {

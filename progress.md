@@ -2216,3 +2216,25 @@ Remaining Ace Attorney gap list:
 - Investigation hotspots are now PNG markers, but Court Record inspect hotspots still need a more tactile bitmap marker treatment instead of flat UI dots.
 - High-value pursuit-note icons still need curated Image API assets when a filesystem-exportable path is available.
 - Trial scenes still need more character pose changes tied to pressure and testimony state.
+
+## 2026-06-18 iteration 82 result
+
+Implemented:
+- Added a committed bitmap Court Record inspection marker sheet at `game/assets/inspect-hotspot-marker-sheet-v1.png` with idle, active, and checked frames.
+- Replaced the `详查` modal's flat red pill inspection hotspots with sprite-backed PNG markers while preserving the existing accessible buttons, numeric order badges, labels, and checked state.
+- Tuned the mobile inspection hotspot positions so the PNG markers no longer crowd the `正面 / 背面 / 边缘` view tabs and still avoid horizontal overflow.
+
+Verified:
+- `npm run check:js`
+- `PYTHONPYCACHEPREFIX="/Users/oubeichen/Projects/wuzetian2/.pycache" npm run check:py`
+- `git diff --check`
+- `rg -n "svg|SVG|data:image/svg|<svg|xmlns" game` returned no matches.
+- `npm run qa:web-game` with escalated Chromium browser access succeeded.
+- Desktop Playwright flow entered a new case, collected the first evidence, opened `记录 -> 详查证物`, confirmed the inspection hotspots load `inspect-hotspot-marker-sheet-v1.png`, and verified clicking the second hotspot advances `recordInspectProgress` from `1/6` to `2/6` with `bodyOverflowY=0`.
+- Mobile 390px Playwright flow confirmed the PNG inspection marker loads, the first hotspot clears the angle tabs, and `bodyOverflowX=0`.
+- Screenshot inspection of `output/web-game/inspect-hotspot-png-after-click.png` and `output/web-game/inspect-hotspot-png-mobile.png` confirmed the `详查` markers now read as bitmap game markers rather than flat UI pills.
+
+Remaining Ace Attorney gap list:
+- Investigation and Court Record hotspots now use committed PNG markers, but high-value pursuit-note and court-only evidence icons still need stronger generated raster art.
+- Trial scenes still need more character pose changes tied to pressure and testimony state.
+- Case opening scenes are staged, but later passes should add beat-specific motion/camera timing and audio stingers.
