@@ -2122,3 +2122,28 @@ Remaining Ace Attorney gap list:
 - Pursuit now changes both evidence and testimony state, but the case-intro/home dossier copy still needs another pass toward scene storytelling instead of briefing prose.
 - Browser visual verification needs to be rerun when local browser execution is available again.
 - High-value pursuit-note icons still need curated Image API assets when a filesystem-exportable path is available.
+
+## 2026-06-18 iteration 78 result
+
+Implemented:
+- Installed the external `novel-writing` Codex skill from `wgwtest/novel-writing` into `/Users/oubeichen/.codex/skills/novel-writing` and applied its character-introduction, scene-structure, style-fidelity, and realism-constraint guidance to the current case-intro rewrite.
+- Added `menuHook`, `openingStory`, `introCards`, and `sourceStoryItems` to every current case blueprint so case-home and case-intro copy comes from authored story data instead of UI hard-coded fallback prose.
+- Expanded each case opening to three character-positioned lines: witness/record side, defense side, and opponent or key witness pressure.
+- Updated `game/app.js` to prefer generated story fields for main-menu preview, case opening, briefing cards, and chapter-source tabs.
+- Reworded case-source UI labels from technical chapter language toward player-facing dossier language.
+- Tightened desktop case-intro layout so the 1280x720 PC view keeps the story, scene art, clickable dossier tabs, and `开始调查` button in one window without page or panel scrolling.
+
+Verified:
+- `python3 scripts/build_game_content.py`
+- Custom Node integrity check confirmed 5 cases, 15 opening lines, 15 intro cards, and 30 source story items matching case timelines.
+- `npm run check:js`
+- `PYTHONPYCACHEPREFIX="/Users/oubeichen/Projects/wuzetian2/.pycache" npm run check:py`
+- `git diff --check`
+- `npm run qa:web-game` with non-sandbox Playwright Chromium succeeded; the default sandbox still blocks Chromium MachPortRendezvous, but non-sandbox browser launch is now verified.
+- Browser screenshot inspection confirmed the main menu uses the new story hook and the case intro renders the story, three dialogue lines, scene art, clickable dossier tabs, and visible `开始调查` action.
+- Browser layout probe at 1280x720 confirmed `bodyOverflowY=0`, `.case-brief` overflow delta `0`, and `startVisible=true`.
+
+Remaining Ace Attorney gap list:
+- Case intro is now story-first and single-screen on desktop, but later passes should add animated opening cuts instead of static story panels.
+- Investigation and trial scenes still need more moment-to-moment character animation changes when testimony pressure rises.
+- High-value pursuit-note icons still need curated Image API assets when a filesystem-exportable path is available.

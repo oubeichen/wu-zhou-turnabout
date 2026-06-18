@@ -1107,6 +1107,139 @@ button:not(:disabled):hover {
   line-height: 1.45;
 }
 
+@media (min-width: 900px) {
+  .case-intro-layout {
+    grid-template-columns: minmax(0, min(1180px, calc(100vw - 64px)));
+    height: calc(100vh - 64px);
+    align-content: center;
+  }
+
+  .case-brief {
+    max-height: calc(100vh - 86px);
+    min-height: 0;
+    overflow: hidden;
+    gap: 8px;
+    padding: 14px;
+  }
+
+  .case-brief-main {
+    grid-template-columns: minmax(0, 1.55fr) minmax(300px, 360px);
+    gap: 10px;
+    min-height: 0;
+  }
+
+  .case-brief-copy {
+    gap: 8px;
+    min-height: 0;
+  }
+
+  .case-brief-copy h2 {
+    font-size: 24px;
+    line-height: 1.15;
+  }
+
+  .case-story-scene {
+    gap: 7px;
+    padding: 12px;
+  }
+
+  .case-story-scene > strong {
+    font-size: clamp(22px, 2.2vw, 30px);
+    line-height: 1.22;
+  }
+
+  .case-story-scene p {
+    font-size: 15px;
+    line-height: 1.56;
+  }
+
+  .case-story-scene small {
+    font-size: 13px;
+    line-height: 1.38;
+  }
+
+  .case-dialogue-strip {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 7px;
+  }
+
+  .case-dialogue-strip div {
+    padding: 8px;
+  }
+
+  .case-brief .case-dialogue-strip span {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    font-size: 13px;
+    line-height: 1.42;
+  }
+
+  .case-intro-art {
+    min-height: 0;
+  }
+
+  .case-setup {
+    display: none;
+  }
+
+  .case-setup > div:not(.case-section-title),
+  .source-detail {
+    gap: 5px;
+    padding: 8px 10px;
+  }
+
+  .case-setup p,
+  .source-detail p {
+    font-size: 13px;
+    line-height: 1.42;
+  }
+
+  .case-source-panel {
+    grid-template-columns: minmax(0, 1.35fr) minmax(280px, 0.65fr);
+    gap: 7px 10px;
+    align-items: stretch;
+    min-height: 0;
+  }
+
+  .case-source-panel .case-section-title {
+    grid-column: 1 / -1;
+  }
+
+  .case-source-panel .case-section-title span {
+    display: none;
+  }
+
+  .source-tabs {
+    grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+    gap: 6px;
+  }
+
+  .source-tab {
+    min-height: 40px;
+    padding: 6px 8px;
+    border-width: 1px;
+    box-shadow: none;
+  }
+
+  .source-tab span {
+    display: none;
+  }
+
+  .source-detail p {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+
+  .case-brief > .hint-text,
+  .case-brief > .coach-card {
+    display: none;
+  }
+}
+
 .interlude-stage {
   position: relative;
   min-height: 500px;
@@ -4964,9 +5097,7 @@ button:not(:disabled):hover {
   .case-brief .case-brief-copy > p,
   .case-brief .case-story-scene p,
   .case-brief .case-story-scene small,
-  .case-brief .case-dialogue-strip span,
   .case-brief .case-setup p,
-  .case-brief .source-detail p,
   .case-brief .source-detail small {
     display: block;
     overflow: visible;

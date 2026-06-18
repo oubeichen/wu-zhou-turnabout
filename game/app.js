@@ -1397,7 +1397,7 @@
         <div class="menu-preview scene-${escapeHtml(caseData.scene?.key || "archive")}" data-motif="${escapeHtml(caseData.scene?.motif || "")}">
           <span class="hero-kicker">当前继续</span>
           <strong>${escapeHtml(caseData.title)}</strong>
-          <p>${escapeHtml(caseData.openingLines?.[0]?.text || caseData.goal || caseData.theme)}</p>
+          <p>${escapeHtml(caseMenuHook(caseData))}</p>
           <small>${escapeHtml(caseData.scene?.name || caseData.location)}｜${escapeHtml(caseData.theme)}</small>
         </div>
       </div>
@@ -1667,7 +1667,7 @@
             <button class="primary-button" type="button" data-mode="investigation">开始调查</button>
             <button class="secondary-button" type="button" data-mode="trial" ${allEvidenceCollected(caseData) ? "" : "disabled"}>进入庭审</button>
           </div>
-          ${allEvidenceCollected(caseData) ? `<p class="hint-text">调查阶段证物已齐。庭审中仍可能通过追问得到新线索。</p>` : `<p class="hint-text">庭审前需要通过“移动、查看、交谈、出示”收齐关键证物。</p>`}
+          ${allEvidenceCollected(caseData) ? `<p class="hint-text">线索已经够进庭。庭审里还会从证人嘴里逼出新材料。</p>` : `<p class="hint-text">先在现场把能说话的纸、物、人找齐；少一件，庭上就会被堵死。</p>`}
           ${renderCoachCard()}
         </div>
       </section>
@@ -1678,7 +1678,7 @@
 
   function renderCaseOpeningStory(caseData) {
     const story = caseOpeningStory(caseData);
-    const lines = Array.isArray(caseData.openingLines) ? caseData.openingLines.slice(0, 2) : [];
+    const lines = Array.isArray(caseData.openingLines) ? caseData.openingLines.slice(0, 3) : [];
     return `
       <div class="case-story-scene" aria-label="案件开场故事">
         <span class="hero-kicker">${escapeHtml(story.kicker)}</span>
@@ -1701,7 +1701,19 @@
     `;
   }
 
+  function caseMenuHook(caseData) {
+    return caseData.menuHook || caseOpeningStory(caseData).body || caseData.goal || caseData.theme;
+  }
+
   function caseOpeningStory(caseData) {
+    if (caseData.openingStory && typeof caseData.openingStory === "object") {
+      return {
+        kicker: caseData.openingStory.kicker || "案件开场",
+        title: caseData.openingStory.title || caseNarrativeLead(caseData),
+        body: caseData.openingStory.body || caseData.goal || caseData.theme,
+        stakes: caseData.openingStory.stakes || "先找到能把口供和证物连起来的裂缝，再把它带上庭。",
+      };
+    }
     const byCase = {
       "case-empress-seat": {
         kicker: "事发当晚",
@@ -1767,6 +1779,9 @@
   }
 
   function caseBriefingCards(caseData) {
+    if (Array.isArray(caseData.introCards) && caseData.introCards.length) {
+      return caseData.introCards;
+    }
     const byCase = {
       "case-empress-seat": [
         {
@@ -1870,7 +1885,7 @@
   }
 
   function caseSourceItems(caseData) {
-    const storyItems = caseSourceStoryItems(caseData.id);
+    const storyItems = Array.isArray(caseData.sourceStoryItems) ? caseData.sourceStoryItems : caseSourceStoryItems(caseData.id);
     return (caseData.timeline || []).map((item, index) => ({
       ...item,
       index,
@@ -1954,8 +1969,8 @@
     return `
       <div class="case-source-panel">
         <div class="case-section-title">
-          <strong>可翻看的章节线索</strong>
-          <span>点选任意线索，查看它在案件里能说明什么；原书章节名保留在详情里。</span>
+          <strong>翻开本案卷宗</strong>
+          <span>点选一条线索，看它怎样把现场、证人和证物接起来。</span>
         </div>
         <div class="source-tabs" aria-label="章节线索">
           ${items
@@ -1963,16 +1978,16 @@
               (item) => `
                 <button class="source-tab ${active?.index === item.index ? "active" : ""}" type="button" data-case-source="${item.index}">
                   <strong>${escapeHtml(item.storyTitle)}</strong>
-                  <span>${escapeHtml(item.chapter)}｜${active?.index === item.index ? "当前线索" : "点击翻看"}</span>
+                  <span>线索 ${item.index + 1}｜${active?.index === item.index ? "正在翻看" : "点击翻看"}</span>
                 </button>
               `
             )
             .join("")}
         </div>
         <div class="source-detail">
-          <strong>这一段能帮你看清：${escapeHtml(active.storyTitle)}</strong>
+          <strong>翻到这里，看见：${escapeHtml(active.storyTitle)}</strong>
           <p>${escapeHtml(active.storyNote)}</p>
-          <small>原书线索：${escapeHtml(active.title)}</small>
+          <small>出处：${escapeHtml(active.title)}</small>
         </div>
       </div>
     `;
