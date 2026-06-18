@@ -3230,6 +3230,11 @@ button:not(:disabled):hover {
   overflow: auto;
 }
 
+.record-body > .timeline-list {
+  display: grid;
+  gap: 8px;
+}
+
 .record-body > .evidence-detail {
   max-height: min(38vh, 360px);
   margin-top: 0;
@@ -4285,6 +4290,7 @@ button:not(:disabled):hover {
   gap: 8px;
 }
 
+.timeline-row,
 .timeline-strip span,
 .timeline-list div,
 .backlog-list div {
@@ -4298,6 +4304,47 @@ button:not(:disabled):hover {
 .backlog-list div {
   display: grid;
   gap: 4px;
+}
+
+.timeline-row {
+  appearance: none;
+  display: grid;
+  margin: 0;
+  width: 100%;
+  text-align: left;
+  border-radius: 8px;
+  border: 1px solid rgba(52, 44, 37, 0.28);
+  box-shadow: none;
+  gap: 4px;
+}
+
+.timeline-row.active {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 1px rgba(201, 155, 59, 0.5) inset;
+}
+
+.timeline-row strong,
+.timeline-row span,
+.timeline-row small {
+  display: block;
+}
+
+.timeline-source-note {
+  margin-top: 10px;
+  padding: 10px;
+  border: 1px dashed rgba(31, 28, 25, 0.28);
+  border-radius: 8px;
+  background: rgba(255, 248, 231, 0.75);
+  line-height: 1.6;
+}
+
+.timeline-source-note small {
+  color: var(--muted);
+}
+
+.timeline-row-hint,
+.timeline-row-note {
+  color: var(--muted);
 }
 
 .timeline-list span,

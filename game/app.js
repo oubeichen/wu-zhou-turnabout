@@ -2081,6 +2081,55 @@
       .slice(0, 14);
   }
 
+  function parseChapterNumber(text) {
+    const str = String(text || "");
+    const direct = str.match(/第(\d+)章/);
+    if (direct) return Number(direct[1]);
+    const map = { 零: 0, 一: 1, 二: 2, 三: 3, 四: 4, 五: 5, 六: 6, 七: 7, 八: 8, 九: 9, 十: 10, 百: 100 };
+    const match = str.match(/第([一二三四五六七八九十百]+)章/);
+    if (!match) return 0;
+    const chars = match[1];
+    let total = 0;
+    let unit = 1;
+    for (let i = chars.length - 1; i >= 0; i--) {
+      const ch = chars[i];
+      const value = map[ch];
+      if (value === undefined) continue;
+      if (value === 10 || value === 100) {
+        unit = value;
+        continue;
+      }
+      total += value * (unit >= 10 ? unit : 1);
+      if (unit >= 10) unit = 1;
+    }
+    return total;
+  }
+
+  function timelineLabel(item, fallbackIndex = 0) {
+    const chapter = parseChapterNumber(item?.label || item?.title);
+    if (chapter) return `线索${chapter}`;
+    return `线索${Math.max(1, Number(fallbackIndex) + 1)}`;
+  }
+
+  function timelineSourceIndex(caseData, item, fallbackIndex = 0) {
+    const targetChapter = parseChapterNumber(item?.label || item?.title);
+    const sources = caseSourceItems(caseData);
+    if (!sources.length) return Math.max(0, Math.min(sources.length - 1, Number(fallbackIndex) || 0));
+    if (!targetChapter) return Math.max(0, Math.min(sources.length - 1, Number(fallbackIndex) || 0));
+    const direct = sources.findIndex((sourceItem) => parseChapterNumber(sourceItem.title) === targetChapter);
+    if (direct >= 0) return direct;
+    return Math.max(0, Math.min(sources.length - 1, Number(fallbackIndex) || 0));
+  }
+
+  function timelineSourceSummary(caseData, item) {
+    const targetChapter = parseChapterNumber(item?.label || item?.title);
+    const sourceItems = caseSourceItems(caseData);
+    const matched = targetChapter
+      ? sourceItems.find((sourceItem) => parseChapterNumber(sourceItem.title) === targetChapter)
+      : null;
+    return matched || sourceItems[0] || null;
+  }
+
   function activeCaseSource(caseData) {
     const items = caseSourceItems(caseData);
     if (!items.length) return null;
@@ -2849,7 +2898,7 @@
           <div class="timeline-list">
             ${caseData.timeline
               .slice(0, 5)
-              .map((item) => `<div><strong>${escapeHtml(item.label)}</strong><span>${escapeHtml(item.title)}</span></div>`)
+              .map((item) => `<div><strong>${escapeHtml(timelineLabel(item))}</strong><span>${escapeHtml(item.title)}</span></div>`)
               .join("")}
           </div>
           <div class="action-row">
@@ -3037,11 +3086,28 @@
       `;
     }
     if (state.recordTab === "timeline") {
+      const timelineSource = timelineSourceSummary(currentCase(), caseData.timeline[state.caseSourceIndex] || caseData.timeline[0]);
+      const timelineSourceText = timelineSource?.storyTitle || "尚未对应卷宗";
+      const timelineSourceNote = timelineSource?.storyNote || "时间线条目可点击，快速定位线索文本。";
       return `
         <div class="timeline-list">
           ${caseData.timeline
-            .map((item) => `<div><strong>${escapeHtml(item.label)}</strong><span>${escapeHtml(item.title)}</span><small>${escapeHtml(item.note)}</small></div>`)
+            .map((item, index) => {
+              const sourceIndex = timelineSourceIndex(caseData, item, index);
+              const activeSource = sourceIndex === state.caseSourceIndex;
+              return `
+                <button class="timeline-row ${activeSource ? "active" : ""}" type="button" data-timeline-source="${sourceIndex}">
+                  <strong>${escapeHtml(timelineLabel(item, index))}</strong>
+                  <span>${escapeHtml(item.title)}</span>
+                  <small>${escapeHtml(item.note)}</small>
+                </button>
+              `;
+            })
             .join("")}
+        </div>
+        <div class="timeline-source-note">
+          <strong>${escapeHtml(timelineSourceText)}</strong>
+          <small>${escapeHtml(timelineSourceNote)}</small>
         </div>
       `;
     }
@@ -4811,6 +4877,15 @@
     playCue("click");
     if (target.dataset.focusCase) {
       focusHomeCase(target.dataset.focusCase);
+      return;
+    }
+    if (target.dataset.timelineSource !== undefined) {
+      const sources = caseSourceItems(currentCase());
+      const index = Math.max(0, Math.min(sources.length - 1, Number(target.dataset.timelineSource) || 0));
+      state.caseSourceIndex = index;
+      const source = sources[index];
+      setMessage("卷宗", source ? `已定位到线索：${source.storyTitle}` : "已定位到该线索。", "");
+      rerender();
       return;
     }
     if (target.dataset.caseSource !== undefined) {
