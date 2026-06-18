@@ -2476,6 +2476,23 @@ button:not(:disabled):hover {
   display: none;
 }
 
+.scene-hotspot:focus-visible::before,
+.scene-hotspot:focus-visible span,
+.scene-hotspot:hover span {
+  filter: drop-shadow(0 0 0 2px rgba(255, 241, 191, 0.28));
+}
+
+.location-map > div {
+  position: relative;
+  z-index: 6;
+}
+
+.dialogue-box,
+.scene-atmosphere,
+.investigation-beat {
+  z-index: 7;
+}
+
 .scene-hotspot-2 span,
 .scene-hotspot-2 small {
   left: auto;
@@ -6398,7 +6415,7 @@ button:not(:disabled):hover {
     left: auto;
     top: auto;
     right: auto;
-    pointer-events: auto;
+    pointer-events: none;
   }
 
   .scene-hotspot small {
