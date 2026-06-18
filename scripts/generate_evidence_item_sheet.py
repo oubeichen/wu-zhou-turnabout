@@ -85,6 +85,44 @@ def draw_paper_texture(draw: ImageDraw.ImageDraw, box: tuple[int, int, int, int]
         draw.line((x, y, min(x + length, x2 - 4), y + rng.randint(-1, 1)), fill=color, width=1)
 
 
+def draw_material_grain(draw: ImageDraw.ImageDraw, box: tuple[int, int, int, int], seed: str, color: tuple[int, int, int], count: int = 34) -> None:
+    rng = random.Random(seed)
+    x1, y1, x2, y2 = box
+    for _ in range(count):
+        x = rng.randint(x1 + 3, max(x1 + 3, x2 - 5))
+        y = rng.randint(y1 + 3, max(y1 + 3, y2 - 5))
+        length = rng.randint(5, 20)
+        alpha = rng.randint(22, 75)
+        draw.line((x, y, min(x + length, x2 - 4), y + rng.randint(-2, 2)), fill=color + (alpha,), width=1)
+
+
+def draw_handpainted_highlight(draw: ImageDraw.ImageDraw, box: tuple[int, int, int, int], seed: str) -> None:
+    rng = random.Random(seed)
+    x1, y1, x2, y2 = box
+    for _ in range(5):
+        x = rng.randint(x1 + 8, max(x1 + 8, x2 - 22))
+        y = rng.randint(y1 + 6, max(y1 + 6, y2 - 16))
+        draw.arc((x, y, x + rng.randint(18, 42), y + rng.randint(10, 26)), 205, 330, fill=(255, 241, 191, rng.randint(34, 72)), width=2)
+
+
+def ragged_paper_points(box: tuple[int, int, int, int], seed: str, jitter: int = 7) -> list[tuple[int, int]]:
+    rng = random.Random(seed)
+    x1, y1, x2, y2 = box
+    return [
+        (x1 + rng.randint(0, jitter), y1 + rng.randint(0, jitter)),
+        (x2 - rng.randint(0, jitter), y1 + rng.randint(0, jitter)),
+        (x2 - rng.randint(0, jitter), y2 - rng.randint(0, jitter)),
+        (x1 + rng.randint(0, jitter), y2 - rng.randint(0, jitter)),
+    ]
+
+
+def draw_ragged_paper(draw: ImageDraw.ImageDraw, box: tuple[int, int, int, int], seed: str, fill: str = "#f4dfaf", outline: str = "#4f3724") -> None:
+    points = ragged_paper_points(box, seed)
+    draw.polygon(points, fill=fill, outline=outline)
+    draw_paper_texture(draw, box, seed, 48)
+    draw_handpainted_highlight(draw, box, f"paper-hi-{seed}")
+
+
 def draw_brush_text(draw: ImageDraw.ImageDraw, box: tuple[int, int, int, int], seed: str, rows: int = 4) -> None:
     rng = random.Random(seed)
     x1, y1, x2, y2 = box
@@ -310,7 +348,12 @@ def draw_bronze_box(draw: ImageDraw.ImageDraw, center: tuple[int, int], scale: f
     draw_soft_shadow(draw, (cx - 58, cy - 62, cx + 58, cy + 52), 16)
     draw.rounded_rectangle((cx - 54, cy - 30, cx + 54, cy + 48), radius=9, fill="#8b6a38", outline="#fff1bf", width=3)
     draw.polygon([(cx - 42, cy - 30), (cx, cy - 62), (cx + 42, cy - 30)], fill="#5c4124", outline="#fff1bf")
+    draw_material_grain(draw, (cx - 50, cy - 57, cx + 50, cy + 45), f"bronze-grain-{center}", (255, 217, 139), 54)
+    draw_handpainted_highlight(draw, (cx - 48, cy - 54, cx + 48, cy + 42), f"bronze-hi-{center}")
+    for px, py in ((cx - 42, cy - 18), (cx + 42, cy - 18), (cx - 42, cy + 36), (cx + 42, cy + 36)):
+        draw.ellipse((px - 4, py - 4, px + 4, py + 4), fill="#d0a05a", outline="#3d2418")
     draw.rectangle((cx - 10, cy - 44, cx + 10, cy - 10), fill="#221815", outline=accent, width=3)
+    draw.line((cx - 7, cy - 36, cx + 7, cy - 19), fill="#d8bd72", width=2)
     draw.line((cx - 44, cy + 2, cx + 44, cy + 2), fill="#d5b066", width=3)
     draw_letter(draw, (cx + 40, cy - 30), 0.42, accent)
 
@@ -320,9 +363,12 @@ def draw_jar(draw: ImageDraw.ImageDraw, center: tuple[int, int], scale: float, a
     draw_soft_shadow(draw, (cx - 48, cy - 58, cx + 48, cy + 58), 16)
     draw.ellipse((cx - 46, cy - 58, cx + 46, cy - 22), fill="#3a231b", outline="#fff1bf", width=3)
     draw.rounded_rectangle((cx - 38, cy - 36, cx + 38, cy + 54), radius=28, fill="#7b4a2a", outline="#fff1bf", width=3)
+    draw_material_grain(draw, (cx - 36, cy - 35, cx + 36, cy + 52), f"jar-grain-{center}", (255, 191, 112), 48)
     draw.arc((cx - 42, cy - 64, cx + 42, cy - 16), 10, 170, fill="#e89b47", width=6)
     draw.line((cx - 28, cy - 18, cx + 26, cy + 30), fill=accent, width=5)
     draw.line((cx - 20, cy + 20, cx + 30, cy - 18), fill="#2b1712", width=4)
+    for dx, dy in [(-22, -30), (12, -26), (28, 4), (-6, 22)]:
+        draw.ellipse((cx + dx - 9, cy + dy - 6, cx + dx + 9, cy + dy + 7), fill=(28, 18, 14, 90))
     for i in range(3):
         draw.arc((cx + 30 + i * 8, cy - 50 - i * 5, cx + 66 + i * 8, cy + 4 + i * 2), 95, 168, fill=(255, 206, 126, 90), width=2)
 
@@ -388,9 +434,10 @@ def draw_petition_stack(draw: ImageDraw.ImageDraw, center: tuple[int, int], scal
     cx, cy = center
     for offset, tilt in [(-22, 8), (0, -2), (20, 10)]:
         paper = (cx - 54 + offset, cy - 44 + tilt, cx + 42 + offset, cy + 42 + tilt)
-        draw.rounded_rectangle(paper, radius=8, fill="#f4dfaf", outline="#4f3724", width=2)
+        draw_ragged_paper(draw, paper, f"petition-paper-{offset}", "#f4dfaf", "#4f3724")
         draw_brush_text(draw, (paper[0] + 14, paper[1] + 14, paper[2] - 12, paper[3] - 12), f"petition-{offset}", 3)
     draw_thread(draw, [(cx - 42, cy - 28), (cx, cy + 8), (cx + 44, cy - 30)], accent)
+    draw.line((cx - 52, cy + 50, cx + 50, cy - 45), fill=(65, 32, 18, 160), width=2)
     draw_stamp(draw, (cx + 44, cy + 34), "臣", 0.92)
 
 
@@ -409,14 +456,16 @@ def draw_evidence_board(draw: ImageDraw.ImageDraw, center: tuple[int, int], scal
     board = (cx - 58, cy - 54, cx + 58, cy + 54)
     draw_soft_shadow(draw, board, 15)
     draw.rounded_rectangle(board, radius=10, fill="#31261f", outline=accent, width=4)
+    draw_material_grain(draw, board, f"board-grain-{center}", (214, 172, 100), 62)
     cards = [(cx - 46, cy - 38, cx - 8, cy - 12), (cx + 11, cy - 38, cx + 49, cy - 12), (cx - 18, cy + 14, cx + 24, cy + 42)]
     pins = []
     for index, card in enumerate(cards):
-        draw.rounded_rectangle(card, radius=4, fill="#f3dfb5", outline="#fff1bf", width=2)
+        draw_ragged_paper(draw, card, f"board-card-{index}", "#f3dfb5", "#fff1bf")
         draw_brush_text(draw, (card[0] + 5, card[1] + 5, card[2] - 5, card[3] - 5), f"board-{index}", 2)
         pins.append(((card[0] + card[2]) // 2, card[1] + 8))
     pins.append((cx + 34, cy + 28))
     draw_thread(draw, [pins[0], pins[2], pins[1], pins[3]], "#c63c32")
+    draw.line((cx - 48, cy + 47, cx + 50, cy - 45), fill=(255, 241, 191, 42), width=2)
     for point in pins:
         draw_stamp(draw, point, "点", 0.56)
 
@@ -462,14 +511,18 @@ def draw_torn_manifesto(draw: ImageDraw.ImageDraw, center: tuple[int, int], scal
     for index, poly in enumerate([left, right]):
         draw.polygon(poly, fill="#edd9b6", outline="#4f3724")
         bounds = (min(x for x, _ in poly) + 8, min(y for _, y in poly) + 12, max(x for x, _ in poly) - 8, max(y for _, y in poly) - 12)
+        draw_paper_texture(draw, bounds, f"manifesto-paper-{index}", 58)
+        draw_handpainted_highlight(draw, bounds, f"manifesto-hi-{index}")
         draw_brush_text(draw, bounds, f"manifesto-{index}", 4)
     draw.line((cx - 6, cy - 48, cx - 18, cy + 50), fill="#7d2b23", width=4)
+    draw.line((cx - 1, cy - 45, cx - 13, cy + 47), fill=(255, 241, 191, 75), width=1)
     draw_stamp(draw, (cx + 36, cy + 30), "檄", 0.88)
 
 
 def draw_street_notice(draw: ImageDraw.ImageDraw, center: tuple[int, int], scale: float, accent: str) -> None:
     cx, cy = center
     draw.rectangle((cx - 58, cy - 48, cx + 58, cy + 48), fill="#44241e", outline="#fff1bf", width=3)
+    draw_material_grain(draw, (cx - 58, cy - 48, cx + 58, cy + 48), f"notice-board-{center}", (219, 168, 93), 38)
     draw_notice(draw, (cx, cy - 2), 0.72, accent)
     draw.line((cx - 54, cy + 50, cx - 54, cy + 68), fill="#2b1712", width=7)
     draw.line((cx + 54, cy + 50, cx + 54, cy + 68), fill="#2b1712", width=7)
@@ -479,7 +532,10 @@ def draw_interrogation_roster(draw: ImageDraw.ImageDraw, center: tuple[int, int]
     cx, cy = center
     draw_ledger(draw, (cx - 14, cy), 0.84, accent)
     for offset in (-30, 2, 34):
-        draw.rectangle((cx + offset, cy - 46, cx + offset + 18, cy + 40), fill=(24, 17, 14, 170), outline="#fff1bf")
+        strip = (cx + offset, cy - 46, cx + offset + 18, cy + 40)
+        draw.rectangle(strip, fill=(24, 17, 14, 170), outline="#fff1bf")
+        draw_material_grain(draw, strip, f"roster-bar-{offset}", (255, 241, 191), 12)
+    draw_letter(draw, (cx + 36, cy - 30), 0.38, accent)
     draw_stamp(draw, (cx + 42, cy + 34), "审", 0.86)
 
 
@@ -496,8 +552,11 @@ def draw_scorched_jar_mouth(draw: ImageDraw.ImageDraw, center: tuple[int, int], 
     draw_soft_shadow(draw, (cx - 58, cy - 50, cx + 58, cy + 50), 16)
     draw.ellipse((cx - 56, cy - 48, cx + 56, cy + 38), fill="#8d512e", outline="#fff1bf", width=4)
     draw.ellipse((cx - 42, cy - 34, cx + 42, cy + 18), fill="#211512", outline="#e89b47", width=5)
+    draw_material_grain(draw, (cx - 52, cy - 45, cx + 52, cy + 35), f"scorch-grain-{center}", (255, 184, 88), 54)
     for angle, length in [(-44, 44), (-17, 56), (11, 48), (37, 38)]:
         draw.line((cx, cy - 10, cx + angle, cy - 10 + length), fill="#201310", width=5)
+    for dx, dy, r in [(-24, -15, 9), (18, -20, 11), (34, 8, 8), (-8, 18, 7)]:
+        draw.ellipse((cx + dx - r, cy + dy - r, cx + dx + r, cy + dy + r), fill=(16, 11, 9, 125))
     for dx in (-34, -12, 18, 40):
         draw.arc((cx + dx - 10, cy - 62, cx + dx + 18, cy - 20), 80, 160, fill=(255, 205, 122, 115), width=3)
 
@@ -505,9 +564,14 @@ def draw_scorched_jar_mouth(draw: ImageDraw.ImageDraw, center: tuple[int, int], 
 def draw_confession_brush(draw: ImageDraw.ImageDraw, center: tuple[int, int], scale: float, accent: str) -> None:
     cx, cy = center
     draw_confession(draw, (cx - 6, cy), 0.92, accent)
+    inkstone = (cx - 55, cy + 22, cx - 12, cy + 48)
+    draw.rounded_rectangle(inkstone, radius=10, fill="#211c1b", outline=accent, width=2)
+    draw.ellipse((cx - 48, cy + 27, cx - 24, cy + 43), fill="#312726", outline="#675146", width=1)
     draw.line((cx - 44, cy + 42, cx + 58, cy - 56), fill="#5c2d19", width=8)
     draw.line((cx - 38, cy + 36, cx + 64, cy - 62), fill="#f0d083", width=3)
     draw.polygon([(cx + 58, cy - 58), (cx + 72, cy - 76), (cx + 69, cy - 50)], fill="#171211", outline="#fff1bf")
+    for dx, dy in [(-26, 26), (2, 18), (28, -10)]:
+        draw.ellipse((cx + dx - 4, cy + dy - 4, cx + dx + 4, cy + dy + 4), fill=(18, 14, 13, 150))
 
 
 def draw_interrogation_manual(draw: ImageDraw.ImageDraw, center: tuple[int, int], scale: float, accent: str) -> None:

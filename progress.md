@@ -1838,3 +1838,27 @@ Remaining Ace Attorney gap list:
 - Evidence art already uses bitmap sheets, but complex props still need a follow-up pass using exportable Image API assets or a stronger generated sprite workflow.
 - Saved compare deductions now update the Court Record, but they still do not unlock new trial-only evidence or branch dialogue.
 - Browser visual verification needs to be rerun when local browser execution is available again.
+
+## 2026-06-18 iteration 67 result
+
+Implemented:
+- Strengthened the committed raster evidence-sheet pipeline for complex evidence objects.
+- Added reusable hand-painted material helpers to `scripts/generate_evidence_item_sheet.py`: paper grain, rough paper edges, material grain, and small highlight strokes.
+- Applied the richer raster treatment to multi-object and high-complexity props: minister petition stacks, clue boards, bronze petition boxes, scorched urn mouths, torn manifestos, street notices, interrogation rosters, and confession brush/inkstone evidence.
+- Regenerated `game/assets/evidence-item-sheet-v3.png` so these items read more like distinct historical props instead of flat geometric icons.
+- Fixed a generated-art overflow issue where the confession inkstone reused a large-object brush path and escaped its evidence cell.
+
+Verified:
+- `npm run check:js`
+- `PYTHONPYCACHEPREFIX="/Users/oubeichen/Projects/wuzetian2/.pycache" npm run check:py`
+- `git diff --check`
+- Visual inspection of `game/assets/evidence-item-sheet-v3.png` confirmed the regenerated sheet stays inside its grid cells and the complex props now have visible paper, bronze, soot, thread, and ink textures.
+
+Blocked verification:
+- No fresh browser screenshot was captured in this iteration because the local browser restrictions recorded in iteration 66 still apply.
+
+Remaining Ace Attorney gap list:
+- Evidence icons are now stronger committed bitmap props, but the workflow still lacks direct, per-prop exported Image API source files that can be curated one by one.
+- Case-intro copy is more story-like, but investigation dialogue, evidence descriptions, and trial testimony still need a broader character-voice rewrite.
+- Saved compare deductions update the Court Record, but they still do not unlock new trial-only evidence or branch dialogue.
+- Browser visual verification needs to be rerun when local browser execution is available again.
