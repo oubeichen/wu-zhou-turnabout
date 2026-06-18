@@ -83,6 +83,7 @@
     dramaticCue: "",
     investigationBeat: null,
     evidencePickup: null,
+    inventoryCue: null,
     objectionReveal: null,
     impactCue: null,
     stageFocus: "center",
@@ -210,6 +211,7 @@
     state.recordInspectView = "front";
     state.objectionReveal = null;
     clearEvidencePickup();
+    clearInventoryCue();
     setMessage("读档", `已读取存档 ${index + 1}。`, "");
     save();
     renderHome();
@@ -701,6 +703,10 @@
     state.evidencePickup = null;
   }
 
+  function clearInventoryCue() {
+    state.inventoryCue = null;
+  }
+
   function setEvidencePickup(caseData, items) {
     const itemIds = (items || []).map((item) => item?.id).filter(Boolean);
     state.evidencePickup = itemIds.length
@@ -731,9 +737,34 @@
     if (view.index < view.items.length - 1) {
       view.pickup.index = view.index + 1;
     } else {
+      triggerInventoryCue(view.item);
       clearEvidencePickup();
     }
     rerender();
+  }
+
+  function triggerInventoryCue(item) {
+    const caseData = currentCase();
+    if (!item || state.screen !== "investigation") return;
+    const nonce = Date.now();
+    state.inventoryCue = {
+      caseId: caseData.id,
+      itemId: item.id,
+      nonce,
+    };
+    window.setTimeout(() => {
+      if (state.inventoryCue?.nonce !== nonce) return;
+      clearInventoryCue();
+      if (state.screen === "investigation") rerender();
+    }, 1150);
+  }
+
+  function currentInventoryCue(caseData = currentCase()) {
+    const cue = state.inventoryCue;
+    if (!cue || cue.caseId !== caseData.id || state.screen !== "investigation") return null;
+    const item = evidenceById(caseData, cue.itemId);
+    if (!item) return null;
+    return { cue, item };
   }
 
   function setInvestigationBeat(kind, speaker, text, result, evidenceNames = [], followUps = []) {
@@ -1203,6 +1234,7 @@
     state.recordInspectView = "front";
     state.objectionReveal = null;
     clearEvidencePickup();
+    clearInventoryCue();
     state.homeView = ["menu", "cases", "archive", "saves"].includes(state.homeView) ? state.homeView : "menu";
     state.homeFocusIndex = Math.min(Math.max(state.homeFocusIndex, 0), data.cases.length - 1);
     const focusedCase = data.cases[state.homeFocusIndex] || data.cases[0];
@@ -1494,6 +1526,7 @@
     state.recordOpen = false;
     state.recordInspect = null;
     clearEvidencePickup();
+    clearInventoryCue();
     renderStatus();
     app.innerHTML = `
       <section class="case-intro-layout">
@@ -1733,6 +1766,7 @@
     const progress = caseProgress(caseData.id);
     const inv = investigationProgress(caseData.id);
     const location = currentLocation(caseData);
+    const inventoryCue = currentInventoryCue(caseData);
     state.screen = "investigation";
     renderStatus();
     app.innerHTML = `
@@ -1751,10 +1785,10 @@
             <div class="command-body">
               ${renderInvestigationCommand(caseData, inv, location)}
             </div>
-            ${renderCoachCard()}
+              ${renderCoachCard()}
             <div class="action-row investigation-actions">
               <button class="secondary-button" type="button" data-open-intro>案件概要</button>
-              <button class="secondary-button" type="button" data-open-record>记录</button>
+              <button class="secondary-button inventory-target ${inventoryCue ? "inventory-target-active" : ""}" type="button" data-open-record>记录</button>
               <button class="primary-button" type="button" data-mode="trial" ${allEvidenceCollected(caseData) ? "" : "disabled"}>开庭</button>
             </div>
           </div>
@@ -1764,6 +1798,7 @@
       </section>
       ${renderRecordInspectModal(caseData)}
       ${renderEvidencePickup(caseData)}
+      ${renderInventoryCue(caseData)}
       ${renderGuidePanel()}${renderSettings()}
     `;
     syncAudioForScreen();
@@ -2222,6 +2257,21 @@
             <button class="primary-button" type="button" data-advance-pickup>${hasNext ? "收入下一件" : "继续调查"}</button>
           </div>
         </section>
+      </div>
+    `;
+  }
+
+  function renderInventoryCue(caseData) {
+    const view = currentInventoryCue(caseData);
+    if (!view) return "";
+    const { item, cue } = view;
+    return `
+      <div class="inventory-add-cue" data-inventory-cue="${escapeHtml(cue.itemId)}" aria-live="polite">
+        <div class="inventory-flight-card">
+          ${renderEvidenceThumb(item, true, "flight", caseData)}
+          <span>收入记录</span>
+        </div>
+        <div class="inventory-target-burst" aria-hidden="true">记录</div>
       </div>
     `;
   }
@@ -3010,6 +3060,7 @@
     state.recordTab = "evidence";
     clearInvestigationBeat();
     clearEvidencePickup();
+    clearInventoryCue();
     setMessage("书记", "案件记录已经展开。先调查现场，再进入庭审。", "");
     renderCaseIntro();
   }
@@ -3020,6 +3071,7 @@
     state.recordInspectSpot = "";
     state.recordInspectView = "front";
     clearEvidencePickup();
+    clearInventoryCue();
     if (mode === "investigation") {
       state.recordOpen = false;
       clearInvestigationBeat();
@@ -3059,6 +3111,7 @@
     inv.command = command;
     clearInvestigationBeat();
     clearEvidencePickup();
+    clearInventoryCue();
     setMessage("调查", `已切换到“${commandLabel(command)}”。`, "");
     save();
     renderInvestigation();
@@ -3075,6 +3128,7 @@
     const location = caseData.locations[index];
     clearInvestigationBeat();
     clearEvidencePickup();
+    clearInventoryCue();
     setMessage("调查", `移动到${location.name}。${location.description}`, "");
     save();
     renderInvestigation();
@@ -3530,6 +3584,7 @@
     state.recordInspectView = "front";
     state.recordTab = "evidence";
     clearEvidencePickup();
+    clearInventoryCue();
     setMessage("书记", "旧判决已归档。本次重审会重新计算评价，但保留最佳奖章。", "");
     save();
     renderCaseIntro();
@@ -3553,6 +3608,7 @@
     state.recordInspectSpot = "";
     state.recordInspectView = "front";
     clearEvidencePickup();
+    clearInventoryCue();
     state.settingsOpen = false;
     state.homeView = "menu";
     setMessage("系统", "当前案件已重置，结案记录也已清除。", "");
@@ -3680,6 +3736,7 @@
     }
     if (target.dataset.openRecord !== undefined) {
       clearEvidencePickup();
+      clearInventoryCue();
       state.recordOpen = true;
       rerender();
     }
@@ -3718,6 +3775,7 @@
       event.preventDefault();
       playCue("click");
       clearEvidencePickup();
+      clearInventoryCue();
       rerender();
       return;
     }
@@ -3832,6 +3890,7 @@
     const inspect = currentRecordInspect(caseData);
     const inspectSpot = inspect?.type === "evidence" ? activeInspectSpot(inspect.item) : null;
     const pickup = currentEvidencePickup(caseData);
+    const inventoryCue = currentInventoryCue(caseData);
     const nextCaseIndex = continueCaseIndex();
     const nextCase = data.cases[nextCaseIndex] || caseData;
     const manualSlots = readSaveSlots();
@@ -3899,6 +3958,9 @@
       evidencePickupIndex: pickup ? `${pickup.index + 1}/${pickup.items.length}` : "",
       evidencePickupHasNext: pickup ? pickup.index < pickup.items.length - 1 : false,
       evidencePickupArt: pickup ? `${evidenceSheetPosition(pickup.item, caseData).row + 1}-${evidenceSheetPosition(pickup.item, caseData).col + 1}` : "",
+      inventoryCueOpen: Boolean(inventoryCue),
+      inventoryCueName: inventoryCue?.item?.name || "",
+      inventoryCueArt: inventoryCue ? `${evidenceSheetPosition(inventoryCue.item, caseData).row + 1}-${evidenceSheetPosition(inventoryCue.item, caseData).col + 1}` : "",
       guideOpen: state.guideOpen,
       guideTitle: guide.title,
       guideSeen: Boolean(state.guideSeen[guide.id]),
