@@ -553,19 +553,421 @@ def make_evidence(case: dict[str, object], lookup: dict[int, dict[str, object]])
     return evidence
 
 
+CASE_INVESTIGATION_SCRIPTS = {
+    "case-empress-seat": {
+        "site": {
+            "description": "立政殿门槛还压着散朝后的灰。宫人们站得很远，像谁靠近那张诏稿，谁就会被拖进婴儿死讯里。",
+            "talkTopics": [
+                {
+                    "title": "哭声从哪来",
+                    "speaker": "内廷记录官",
+                    "text": "我只写听见哭声，没写是谁喊废后。那两个字太重，落到纸上，就不是宫人能擦掉的了。",
+                },
+                {
+                    "title": "谁先退后",
+                    "speaker": "守门宫人",
+                    "text": "元老的人还没到，许敬宗身边的书吏先把案几让出来了。像是早知道这里要摆哪一份文书。",
+                },
+            ],
+            "examineSpots": [
+                {
+                    "name": "压着诏稿的镇纸",
+                    "text": "镇纸底下露出半个“后”字，墨还没完全干。有人不是在记录结果，而是在催结果快点变成事实。",
+                },
+                {
+                    "name": "屏风后的绣鞋印",
+                    "text": "脚印停在能听见殿内争执的位置。证人说自己只在门外，可这里有人站得比门外近得多。",
+                },
+            ],
+        },
+        "archive": {
+            "description": "案牍房里，后妃名册被重新穿线。新蜡盖住旧孔，却盖不住翻动过的顺序。",
+            "talkTopics": [
+                {
+                    "title": "名册为何重封",
+                    "speaker": "老史官",
+                    "text": "若只是婴儿夭折，翻后妃名册做什么？这册子一重封，宫里谁该站哪边，就都被重新点过名了。",
+                },
+                {
+                    "title": "元老折子的去向",
+                    "speaker": "随侍书吏",
+                    "text": "折子送来时还烫手，转眼就被压到最底下。不是没人反对，是有人不想让反对先被看见。",
+                },
+            ],
+            "examineSpots": [
+                {
+                    "name": "新蜡封口",
+                    "text": "封蜡压得很急，边上还有指甲划痕。封口的人像是怕别人马上翻回旧页。",
+                },
+                {
+                    "name": "被抽走的一页",
+                    "text": "页缝里残着细纸毛。缺掉的不是空白页，而是最容易说明当晚谁在场的那一页。",
+                },
+            ],
+        },
+        "defense": {
+            "description": "辩护席上摆着值夜签、名册和诏稿。只要顺序排错，许敬宗就能把它们说成互不相干。",
+            "talkTopics": [
+                {
+                    "title": "先别急着拍诏稿",
+                    "speaker": "辩方",
+                    "text": "诏稿最刺眼，但太早出示只会让对手说这是朝廷决定。先让证人承认哭声、值夜和名册不是同一双手能解释的。",
+                },
+                {
+                    "title": "宫人的沉默",
+                    "speaker": "书记助手",
+                    "text": "她不是不知道，她是不敢知道。逼她说人名之前，先拿到能替她挡住许敬宗的纸证。",
+                },
+            ],
+            "examineSpots": [
+                {
+                    "name": "未落笔的辩状",
+                    "text": "第一行只写了“哭声不是诏书”。后面空着，等你把谁听见、谁改签、谁封册排成一条线。",
+                },
+                {
+                    "name": "折起的元老名单",
+                    "text": "名单折在最外侧。最后一击不能只替宫人辩白，还要证明有人急着让元老闭嘴。",
+                },
+            ],
+        },
+    },
+    "case-crown-shadow": {
+        "site": {
+            "description": "东宫廊灯烧到天亮，灯油滴在石阶上。旧臣被押走时，账册还夹在袖里。",
+            "talkTopics": [
+                {
+                    "title": "账册是谁递的",
+                    "speaker": "邠王守礼",
+                    "text": "旧臣递账时手在抖。他怕的不是账册本身，是有人等他递出来，再说他借账册议储。",
+                },
+                {
+                    "title": "问安为何成罪",
+                    "speaker": "东宫旧臣",
+                    "text": "问病是礼，记在旁人笔下就成了试探。若连问安都能定罪，东宫还有谁敢开口？",
+                },
+            ],
+            "examineSpots": [
+                {
+                    "name": "灯油痕",
+                    "text": "灯油从廊柱一直滴到案前。有人在这里等了一整夜，不像临时听说出了事。",
+                },
+                {
+                    "name": "袖口墨痕",
+                    "text": "墨痕蹭在旧臣袖口内侧，说明账册被匆忙藏过。藏账的人未必有罪，抢账的人更可疑。",
+                },
+            ],
+        },
+        "archive": {
+            "description": "东宫旧档被摊成两排。一排写皇子待遇，一排写高宗病势，中间偏偏空着几日。",
+            "talkTopics": [
+                {
+                    "title": "空出来的日子",
+                    "speaker": "史官",
+                    "text": "最要紧的不是写了什么，是没写什么。那几天没人记问安，后来却突然补出一堆规矩话。",
+                },
+                {
+                    "title": "书记官的笔",
+                    "speaker": "誊录小吏",
+                    "text": "书记官说自己只是抄。可你看这些批注，谁能见驾、谁不能见驾，都是他先圈出来的。",
+                },
+            ],
+            "examineSpots": [
+                {
+                    "name": "换过纸的病榻记录",
+                    "text": "纸色比前后两页新，折痕却故意压旧。有人不想让这段记录看起来像后来补的。",
+                },
+                {
+                    "name": "皇子名册空格",
+                    "text": "几个名字后面留着空格，像等人补上命运。东宫案的刀不在字上，在空出来的位置上。",
+                },
+            ],
+        },
+        "defense": {
+            "description": "辩护席只剩一盏小灯。东宫案不能靠喊冤赢，必须让法庭看见谁把家事写成罪名。",
+            "talkTopics": [
+                {
+                    "title": "别被家事挡住",
+                    "speaker": "辩方",
+                    "text": "对手会说皇子之间本来就复杂。我们要问的是：谁把复杂整理成对旧臣最不利的顺序？",
+                },
+                {
+                    "title": "人物档案的用法",
+                    "speaker": "书记助手",
+                    "text": "书记官若说自己旁观，就打开人物档案。旁观的人不会提前圈好哪些记录该留下。",
+                },
+            ],
+            "examineSpots": [
+                {
+                    "name": "分开的两摞纸",
+                    "text": "一摞是待遇，一摞是病势。单看都像宫务，合在一起才像有人在替储位铺路。",
+                },
+                {
+                    "name": "旧臣的名牌",
+                    "text": "名牌边角被攥裂。一个传递文书的人，为什么会被摆到整场继承争议的最前面？",
+                },
+            ],
+        },
+    },
+    "case-rebellion-box": {
+        "site": {
+            "description": "洛阳明堂前，铜匦旁还挤着看榜的人。投书口安静，街口却已经替法庭喊完了判词。",
+            "talkTopics": [
+                {
+                    "title": "投书人看见什么",
+                    "speaker": "告密人",
+                    "text": "我只投了一张纸。纸离开铜匦之后，怎么变成满城都知道的谋反，我不敢问，也没人让我问。",
+                },
+                {
+                    "title": "榜文为何这么快",
+                    "speaker": "洛阳小吏",
+                    "text": "榜文贴得比传唤还快。来俊臣的人说先稳住人心，可街上人心一稳，被告就没法说话了。",
+                },
+            ],
+            "examineSpots": [
+                {
+                    "name": "铜匦投入口",
+                    "text": "入口边缘磨得发亮，说明来投书的人不少。告密制度像一张嘴，吞进去的是纸，吐出来的是罪名。",
+                },
+                {
+                    "name": "半干的榜文",
+                    "text": "浆糊还黏手，围观者的批注已经写满边角。舆论比审问先跑到街上。",
+                },
+            ],
+        },
+        "archive": {
+            "description": "审讯名册、残檄和缉捕令被摊在同一张桌上。每多一张纸，罪名就长出一层硬壳。",
+            "talkTopics": [
+                {
+                    "title": "檄文残页",
+                    "speaker": "誊录小吏",
+                    "text": "残页只剩最狠的几句，温和的前后文全没了。若有人只拿残页说话，谁都能被拖成同党。",
+                },
+                {
+                    "title": "名册里的同笔迹",
+                    "speaker": "史官",
+                    "text": "几个人的口供像同一只手扶着写出来的。人会怕得相似，字却不该相似到这个地步。",
+                },
+            ],
+            "examineSpots": [
+                {
+                    "name": "连夜加印的缉捕令",
+                    "text": "第一行抓一人，末尾已经变成一串旧臣。名单不是查出来的，是一路滚大的。",
+                },
+                {
+                    "name": "压在檄文上的官印",
+                    "text": "官印把残页压得很平，像不许任何人再把缺掉的部分找回来。",
+                },
+            ],
+        },
+        "defense": {
+            "description": "辩护席上，铜匦原札放在最左，缉捕令放在最右。中间每隔一寸，都是来俊臣能动手的地方。",
+            "talkTopics": [
+                {
+                    "title": "别替投书定案",
+                    "speaker": "辩方",
+                    "text": "原札只能证明有人告发，不能证明谋反成立。若你拿它硬打，来俊臣会说我们也承认告发可信。",
+                },
+                {
+                    "title": "真正要追的手",
+                    "speaker": "书记助手",
+                    "text": "盯住纸从铜匦到榜文的路。每一次转手，都可能有人往罪名里加一把火。",
+                },
+            ],
+            "examineSpots": [
+                {
+                    "name": "红线流向图",
+                    "text": "红线从投入口绕到街口，再绕进审讯房。线越长，投书人越不像唯一能决定案情的人。",
+                },
+                {
+                    "name": "被圈出的来俊臣",
+                    "text": "他的名字被圈了三次。不是因为他出现得早，而是因为每次罪名变重，他都在场。",
+                },
+            ],
+        },
+    },
+    "case-urn": {
+        "site": {
+            "description": "御史台暗室门缝里透着冷灰味。空瓮被推到墙边，像审讯结束后还没来得及装作无事发生。",
+            "talkTopics": [
+                {
+                    "title": "供状太干净",
+                    "speaker": "魏元忠",
+                    "text": "人若真是自己认罪，笔下会停，会改，会怕。那份供状干净得像周兴替他想好了每一次喘气。",
+                },
+                {
+                    "title": "暗室外的声音",
+                    "speaker": "狄府旧吏",
+                    "text": "我听见瓮被拖过地，随后才有人喊签字。供状说是自愿，可暗室先替它说了另一句话。",
+                },
+            ],
+            "examineSpots": [
+                {
+                    "name": "空瓮烙痕",
+                    "text": "瓮口黑得不均匀，像火刚被撤走。它不是摆设，是让人想象自己被装进去的威胁。",
+                },
+                {
+                    "name": "地上的拖痕",
+                    "text": "拖痕一直到供案前停下。若只是问话，刑具不该离笔墨这么近。",
+                },
+            ],
+        },
+        "archive": {
+            "description": "供状副本摊开后，几处停笔像刻意排练过。真正乱的不是纸，是纸背后的审讯。",
+            "talkTopics": [
+                {
+                    "title": "同一句话反复出现",
+                    "speaker": "史官",
+                    "text": "三份供状都在同一个地方说‘自愿’。越是拼命强调自愿，越像怕别人看见不自愿。",
+                },
+                {
+                    "title": "手册折角",
+                    "speaker": "誊录小吏",
+                    "text": "手册折在恐吓那页，不是偶然。办案的人常翻哪里，哪里就会先坏。",
+                },
+            ],
+            "examineSpots": [
+                {
+                    "name": "供状副本的停笔",
+                    "text": "停笔位置像被同一句话卡住。不是犯人想不起，而是写字的人在等别人点头。",
+                },
+                {
+                    "name": "审讯手册折角",
+                    "text": "折角处有指腹油痕。周兴若说从未用过这套办法，这页纸会比他诚实。",
+                },
+            ],
+        },
+        "defense": {
+            "description": "辩护席上，供状、空瓮和手册被摆成三角。周兴最怕的不是你喊冤，是你让它们互相作证。",
+            "talkTopics": [
+                {
+                    "title": "别只说供状假",
+                    "speaker": "辩方",
+                    "text": "说假很容易，被驳也很快。要让法庭看见供状为什么会长成这样：瓮、火、手册，一个都不能少。",
+                },
+                {
+                    "title": "让周兴解释步骤",
+                    "speaker": "书记助手",
+                    "text": "他熟悉恐吓流程，就会下意识替流程辩护。等他替流程说话，再让手册咬住他。",
+                },
+            ],
+            "examineSpots": [
+                {
+                    "name": "并排的三件证物",
+                    "text": "单看供状像认罪，单看空瓮像传闻，合起来才像一场被安排好的崩溃。",
+                },
+                {
+                    "name": "救援纸条",
+                    "text": "纸条来得太晚，却正好证明供状来得太快。有人在求救时，法庭已经准备相信签押了。",
+                },
+            ],
+        },
+    },
+    "case-half-hour-coup": {
+        "site": {
+            "description": "迎仙宫夜门外，灯影还没散。更漏牌停在半小时里，禁军却已经换过两道口令。",
+            "talkTopics": [
+                {
+                    "title": "半小时够做什么",
+                    "speaker": "玄宗旧部",
+                    "text": "若真是一团乱，没人会把赏赐簿写得那么稳。乱的是门外，稳的是早知道该奖谁的人。",
+                },
+                {
+                    "title": "张氏兄弟在哪里",
+                    "speaker": "禁军校尉",
+                    "text": "他们还没被押走时，换岗令已经传到第二道门。命令走得比人快，才是这案子最怪的地方。",
+                },
+            ],
+            "examineSpots": [
+                {
+                    "name": "夜门更漏牌",
+                    "text": "更漏牌只记时辰，不替谁圆谎。半小时内出现三道口令，说明有人提前知道该往哪儿调人。",
+                },
+                {
+                    "name": "门轴上的新划痕",
+                    "text": "划痕很新，却不是撞门留下的。有人在开门前就试过门缝，像在确认路线。",
+                },
+            ],
+        },
+        "archive": {
+            "description": "赏赐簿、换岗令和罪名纸条排在一起，像三封提前写好的结局。",
+            "talkTopics": [
+                {
+                    "title": "赏赐为何先到",
+                    "speaker": "史官",
+                    "text": "赏赐簿不该跑在审问前面。谁能先写赏赐，谁就不是事后才知道谁会赢。",
+                },
+                {
+                    "title": "罪名纸条太短",
+                    "speaker": "誊录小吏",
+                    "text": "短不是问题，短得刚好能塞进任何结论才是问题。它不像证据，像给结局找的标签。",
+                },
+            ],
+            "examineSpots": [
+                {
+                    "name": "抽走奏报的空痕",
+                    "text": "赏赐簿旁边缺了几张奏报。有人保留了奖赏，拿走了奖赏从何而来的解释。",
+                },
+                {
+                    "name": "换岗令签押",
+                    "text": "签押压得很重，墨点飞到边上。传令的人很急，但急不等于临时。",
+                },
+            ],
+        },
+        "defense": {
+            "description": "辩护席把半小时拆成几段：开门、换岗、定罪、赏赐。只要顺序一乱，对手就会把一切推给混乱。",
+            "talkTopics": [
+                {
+                    "title": "别被混乱骗了",
+                    "speaker": "辩方",
+                    "text": "越是混乱，越要相信时间。更漏牌不会站队，能帮我们拆穿谁早就知道下一步。",
+                },
+                {
+                    "title": "最后问谁受益",
+                    "speaker": "书记助手",
+                    "text": "夜门是谁撞开的，不一定是最后答案。半小时后谁拿到好处，谁才最怕时间被排清楚。",
+                },
+            ],
+            "examineSpots": [
+                {
+                    "name": "半小时分段图",
+                    "text": "每一段都能单独解释，合起来却太整齐。真正的突破点，是整齐本身。",
+                },
+                {
+                    "name": "张易之名牌",
+                    "text": "名牌被推到角落，却仍压住几张赏赐记录。对手越装作自己只是被卷入，越要看他压住了什么。",
+                },
+            ],
+        },
+    },
+}
+
+
+def investigation_script(case: dict[str, object], key: str) -> dict[str, object]:
+    scripts = CASE_INVESTIGATION_SCRIPTS.get(str(case["id"]), {})
+    return scripts.get(key, {})
+
+
 def make_locations(case: dict[str, object], evidence: list[dict[str, str]]) -> list[dict[str, object]]:
     investigation_evidence = [item for item in evidence if not item.get("trialOnly")]
     first = [item["id"] for item in investigation_evidence[:2]]
     second = [item["id"] for item in investigation_evidence[2:4]]
     third = [item["id"] for item in investigation_evidence[4:]]
+    site_script = investigation_script(case, "site")
+    archive_script = investigation_script(case, "archive")
+    defense_script = investigation_script(case, "defense")
     return [
         {
             "name": case["location"],
-            "description": f"{case['location']}仍留着事发当天的痕迹。先问清谁在场，再查看最显眼的物件。",
+            "description": site_script.get(
+                "description",
+                f"{case['location']}仍留着事发当天的痕迹。先问清谁在场，再查看最显眼的物件。",
+            ),
             "sceneVariant": "site",
             "visualNote": f"{case['scene']['name']}：{case['scene']['tone']}",
             "evidenceIds": first,
-            "talkTopics": [
+            "talkTopics": site_script.get(
+                "talkTopics",
+                [
                 {
                     "title": "事发那一刻",
                     "speaker": case["witness"],
@@ -576,8 +978,11 @@ def make_locations(case: dict[str, object], evidence: list[dict[str, str]]) -> l
                     "speaker": "随侍书吏",
                     "text": f"奇怪的是，平日最会表态的人那天都沉默了。要找破绽，别只盯着{case['witness']}说出口的话。",
                 },
-            ],
-            "examineSpots": [
+                ],
+            ),
+            "examineSpots": site_script.get(
+                "examineSpots",
+                [
                 {
                     "name": "朱漆案几",
                     "text": "案几上压着刚翻过的纸，边角有手汗和折痕。至少有两个人在庭审前抢着看过它们。",
@@ -586,15 +991,21 @@ def make_locations(case: dict[str, object], evidence: list[dict[str, str]]) -> l
                     "name": "屏风后的影子",
                     "text": "屏风后能听见低声争执。有人不想出面作证，却一直在提醒证人该怎么说。",
                 },
-            ],
+                ],
+            ),
         },
         {
             "name": "史官案牍房",
-            "description": "旧记录按日期堆在案几上。把前后几天连起来看，许多“偶然”就没那么偶然。",
+            "description": archive_script.get(
+                "description",
+                "旧记录按日期堆在案几上。把前后几天连起来看，许多“偶然”就没那么偶然。",
+            ),
             "sceneVariant": "archive",
             "visualNote": "案牍房里有旧账、旁注和被重新装订的纸页。",
             "evidenceIds": second,
-            "talkTopics": [
+            "talkTopics": archive_script.get(
+                "talkTopics",
+                [
                 {
                     "title": "时间顺序",
                     "speaker": "史官",
@@ -605,8 +1016,11 @@ def make_locations(case: dict[str, object], evidence: list[dict[str, str]]) -> l
                     "speaker": "史官",
                     "text": "别怕墨迹小。很多案子不是输在大事上，而是输在一个被换掉的名字、一句后来补上的罪名。",
                 },
-            ],
-            "examineSpots": [
+                ],
+            ),
+            "examineSpots": archive_script.get(
+                "examineSpots",
+                [
                 {
                     "name": "断裂的竹签",
                     "text": "竹签本来用来排序，却被折断。有人不希望这些纸按原本日期摆出来。",
@@ -615,15 +1029,21 @@ def make_locations(case: dict[str, object], evidence: list[dict[str, str]]) -> l
                     "name": "未干的墨迹",
                     "text": "一段旁注刚写不久：‘先看谁拿到好处，再看罪名落到谁身上。’",
                 },
-            ],
+                ],
+            ),
         },
         {
             "name": "辩护席",
-            "description": "把搜到的物件摆到一起，准备在庭上指出证人哪一句说不通。",
+            "description": defense_script.get(
+                "description",
+                "把搜到的物件摆到一起，准备在庭上指出证人哪一句说不通。",
+            ),
             "sceneVariant": "defense",
             "visualNote": "辩护席上铺着证物、人物名牌和一张等待补完的线索板。",
             "evidenceIds": third,
-            "talkTopics": [
+            "talkTopics": defense_script.get(
+                "talkTopics",
+                [
                 {
                     "title": "辩护策略",
                     "speaker": "书记助手",
@@ -634,8 +1054,11 @@ def make_locations(case: dict[str, object], evidence: list[dict[str, str]]) -> l
                     "speaker": "书记助手",
                     "text": "当证词说‘这些只是偶然’，就该拿出线索板。单件证物能打一句话，线索板能打整套说法。",
                 },
-            ],
-            "examineSpots": [
+                ],
+            ),
+            "examineSpots": defense_script.get(
+                "examineSpots",
+                [
                 {
                     "name": "空白辩状",
                     "text": "辩状还未落笔。所有证物收齐后，真正的庭审才开始。",
@@ -644,7 +1067,8 @@ def make_locations(case: dict[str, object], evidence: list[dict[str, str]]) -> l
                     "name": "铜铃",
                     "text": "每次举证前，铃声都会提醒你：错一次，信誉就少一分。",
                 },
-            ],
+                ],
+            ),
         },
     ]
 
