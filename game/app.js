@@ -2505,7 +2505,6 @@
             </div>
           <div class="action-row trial-actions">
             <button class="secondary-button compact-button" type="button" data-home>返回主菜单</button>
-            <button class="secondary-button" type="button" data-prev-statement ${progress.statementIndex === 0 ? "disabled" : ""}>上一句</button>
             <button class="primary-button" type="button" data-press>追问</button>
             <button class="secondary-button record-open-button ${readyToPresent ? "opportunity" : ""}" type="button" data-open-record>记录</button>
             <button class="danger-button present-button ${readyToPresent && selectedLabel ? "opportunity" : ""}" type="button" data-present ${selectedLabel ? "" : "disabled"}>举证</button>
@@ -2695,11 +2694,9 @@
           ? "左侧点击可回退一句，右侧点击可继续下一句"
           : "左侧点击可回退一句，当前句可直接追问 / 打开记录 / 举证"
         : hasNextStatement
-          ? "点击右侧继续下一句，或按空格/回车"
+          ? "右侧点击可继续下一句，或按空格/回车"
           : "当前句可直接追问 / 打开记录 / 举证"
       : "";
-    const prevHint = hasPrevStatement ? `<span class="dialogue-nav-zone dialogue-nav-left">左侧：回退证词</span>` : "";
-    const nextHint = hasNextStatement ? `<span class="dialogue-nav-zone dialogue-nav-right">右侧：继续证词</span>` : "";
     return `
       <div class="scene ${mode} ${sceneKey ? `scene-${sceneKey}` : ""} focus-${focus} pose-left-${stagePose.left} pose-right-${stagePose.right} ${vulnerabilityCue ? "vulnerability-ready" : ""} ${hasInvestigationBeat ? "has-investigation-beat" : ""} ${state.settings.reducedMotion ? "reduced-motion" : ""}" data-motif="${escapeHtml(sceneMotif)}" ${locationStyle}>
         ${
@@ -2724,8 +2721,6 @@
           <div class="dialogue-box ${speedClass} ${hasNextStatement ? "trial-dialogue-advance" : ""}" ${trialAdvanceAttr}>
             <span class="dialogue-speaker">${escapeHtml(speaker)}</span>
             <div>${escapeHtml(text)}</div>
-            ${prevHint}
-            ${nextHint}
             <div class="dialogue-advance-hint">${escapeHtml(trialAdvanceHint)}</div>
           </div>
         `}
