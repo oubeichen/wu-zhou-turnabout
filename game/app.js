@@ -999,6 +999,50 @@
     return deduction && evidence ? { evidence, deduction } : null;
   }
 
+  function deductionPursuitCopy(caseData, statement, deduction, recordLabel) {
+    const targetName = deduction?.targetName || "另一份证物";
+    const recordName = recordLabel || "这份记录";
+    const generic = {
+      title: "对照札记打开了新缺口",
+      defenseLine: `札记已经把“${recordName}”和“${targetName}”连在一起。证人必须解释这条连接为什么会存在。`,
+      witnessLine: "证人刚才只解释单件证物，却避开了两件证物为什么会互相咬合。",
+      button: "追击证人",
+    };
+    const byCase = {
+      "case-empress-seat": {
+        title: "哭声被写进了诏书",
+        defenseLine: `婴儿的哭声可以是传闻，但“${recordName}”和“${targetName}”对上以后，废后的话就不再是宫人随口一说。谁把哭声送进文书？`,
+        witnessLine: "内廷记录官的手指停在案卷边上。他能说听见哭声，却不敢说是谁先把废后的字写下来。",
+        button: "追问文书来源",
+      },
+      "case-crown-shadow": {
+        title: "家事被整理成罪名",
+        defenseLine: `如果这只是皇子之间的家事，“${recordName}”为什么会和“${targetName}”扣在同一条线上？谁把问安、名册和传位记录排成了罪证？`,
+        witnessLine: "邠王守礼垂下眼。他避开了高宗病榻，也避开了谁最早拿走那些记录。",
+        button: "追问记录流向",
+      },
+      "case-rebellion-box": {
+        title: "投书途中被加了罪",
+        defenseLine: `铜匦里的纸本来只是告发。可“${recordName}”一旦和“${targetName}”对上，谋反二字就是途中被人加重的。谁接过这张纸？`,
+        witnessLine: "告密人的声音低了下去。他敢说自己投书，却不敢说投书离开铜匦后经过了谁的手。",
+        button: "追问加罪之手",
+      },
+      "case-urn": {
+        title: "供词照着刑具长出来",
+        defenseLine: `自愿供词不会和“${targetName}”贴得这么紧。“${recordName}”对上以后，问题不再是谁签字，而是谁照着手册逼他签。`,
+        witnessLine: "魏元忠盯着瓮口烙痕，声音发哑：同样的话，他在暗室外听过不止一次。",
+        button: "追问逼供步骤",
+      },
+      "case-half-hour-coup": {
+        title: "半小时早被人排好",
+        defenseLine: `若真是仓促政变，“${recordName}”和“${targetName}”不该刚好咬住同一个时辰。谁在夜门撞开前就安排了结局？`,
+        witnessLine: "玄宗旧部不再看张易之。他知道更漏牌不会替任何人圆谎。",
+        button: "追问半小时安排",
+      },
+    };
+    return { ...generic, ...(byCase[caseData.id] || {}) };
+  }
+
   function visibleStatementEntries(testimony, progress) {
     return testimony.statements
       .map((statement, rawIndex) => ({ statement, rawIndex }))
@@ -2209,7 +2253,7 @@
       <section class="deduction-followup">
         <div class="deduction-followup-stage">
           <span class="hero-kicker">追击证词</span>
-          <h2>对照札记打开了新缺口</h2>
+          <h2>${escapeHtml(followUp.pursuitTitle || "对照札记打开了新缺口")}</h2>
           <p>${escapeHtml(statement?.text || followUp.target || "证人的说法已经动摇。")}</p>
           <div class="deduction-followup-grid">
             <div>
@@ -2220,9 +2264,13 @@
               <strong>证人露出的破绽</strong>
               <span>${escapeHtml(followUp.chaseLine || "既然证物之间已经对上，证人不能再把它说成孤立巧合。")}</span>
             </div>
+            <div>
+              <strong>${escapeHtml(caseData.witness || "证人")}的反应</strong>
+              <span>${escapeHtml(followUp.witnessLine || "证人没有立刻回答，反而看向了对手席。")}</span>
+            </div>
           </div>
           <div class="deduction-followup-actions">
-            <button class="primary-button" type="button" data-continue-deduction-followup>追击证人</button>
+            <button class="primary-button" type="button" data-continue-deduction-followup>${escapeHtml(followUp.buttonLabel || "追击证人")}</button>
           </div>
         </div>
       </section>
@@ -3978,6 +4026,7 @@
       progress.lastTurnabout = turnabout.title;
     }
     if (deduction) {
+      const pursuitCopy = deductionPursuitCopy(caseData, statement, deduction, presentedLabel);
       progress.pendingDeductionFollowUp = {
         testimonyIndex: progress.testimonyIndex,
         rawIndex: Number(key.split(":")[1]) || 0,
@@ -3992,9 +4041,10 @@
           : "",
         optionalRecovery: Boolean(statement.optionalRecovery),
         recoveryCredibility: Number(statement.recoveryCredibility) || 0,
-        chaseLine: deduction.targetName
-          ? `札记已经把它和“${deduction.targetName}”连在一起。证人必须解释这条连接为什么会存在。`
-          : "札记已经把证物之间的关系钉住。证人必须解释它为什么和证词相冲突。",
+        pursuitTitle: pursuitCopy.title,
+        chaseLine: pursuitCopy.defenseLine,
+        witnessLine: pursuitCopy.witnessLine,
+        buttonLabel: pursuitCopy.button,
       };
       progress.deductionPursuits += 1;
       setStage("clash", "对照追击", { left: "confident", right: "stagger" });
@@ -4036,9 +4086,9 @@
     const statement = testimony?.statements?.[Number(followUp.rawIndex) || 0];
     const key = followUp.key || statementKey(Number(followUp.testimonyIndex) || progress.testimonyIndex, Number(followUp.rawIndex) || 0);
     progress.pendingDeductionFollowUp = null;
-    progress.lastObjection = `${followUp.objectionText || statement?.objection || ""} ${followUp.chaseLine || ""}`.trim();
+    progress.lastObjection = `${followUp.objectionText || statement?.objection || ""} ${followUp.chaseLine || ""} ${followUp.witnessLine || ""}`.trim();
     setStage("clash", "追击成立", { left: "confident", right: "stagger" });
-    setMessage("辩方", `${followUp.chaseLine || "对照札记已经把证词推到新的缺口上。"} ${followUp.objectionText || statement?.objection || ""}`.trim(), "objection");
+    setMessage("辩方", `${followUp.chaseLine || "对照札记已经把证词推到新的缺口上。"} ${followUp.witnessLine || ""} ${followUp.objectionText || statement?.objection || ""}`.trim(), "objection");
     playCue("objection");
     save();
     if (!testimony || !statement) {
@@ -4723,7 +4773,10 @@
       pendingDeductionRecord: progress.pendingDeductionFollowUp?.record || "",
       pendingDeductionText: progress.pendingDeductionFollowUp?.deductionText || "",
       pendingDeductionTarget: progress.pendingDeductionFollowUp?.deductionTarget || "",
+      pendingDeductionPursuitTitle: progress.pendingDeductionFollowUp?.pursuitTitle || "",
       pendingDeductionChaseLine: progress.pendingDeductionFollowUp?.chaseLine || "",
+      pendingDeductionWitnessLine: progress.pendingDeductionFollowUp?.witnessLine || "",
+      pendingDeductionButton: progress.pendingDeductionFollowUp?.buttonLabel || "",
       turnaboutTitle: turnaboutBeat(caseData).title,
       turnaboutBody: turnaboutBeat(caseData).body,
       turnaboutOpponentLine: turnaboutBeat(caseData).opponentLine || "",

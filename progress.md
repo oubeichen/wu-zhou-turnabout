@@ -1913,3 +1913,28 @@ Remaining Ace Attorney gap list:
 - Browser visual verification needs to be rerun when local browser execution is available again.
 - Investigation dialogue, evidence descriptions, and trial testimony still need a broader character-voice rewrite.
 - Evidence icons are stronger bitmap props, but selected high-value items still lack curated per-prop Image API source exports.
+
+## 2026-06-18 iteration 70 result
+
+Implemented:
+- Rewrote saved `对照札记` pursuit copy so each case now has its own pursuit title, defense challenge, witness reaction, and action button.
+- Added case-specific pursuit beats for the five current cases: `哭声被写进了诏书`, `家事被整理成罪名`, `投书途中被加了罪`, `供词照着刑具长出来`, and `半小时早被人排好`.
+- Expanded the full-screen `追击证词` beat from two reasoning cards to three cards, adding the witness reaction as visible story feedback instead of hiding it in system text.
+- Included witness-reaction copy in the post-pursuit objection message so the branch feels like a courtroom exchange, not a generic confirmation.
+- Added `pendingDeductionPursuitTitle`, `pendingDeductionWitnessLine`, and `pendingDeductionButton` to `render_game_to_text` for regression checks.
+
+Verified:
+- `npm run check:js`
+- `PYTHONPYCACHEPREFIX="/Users/oubeichen/Projects/wuzetian2/.pycache" npm run check:py`
+- `git diff --check`
+- Source inspection confirmed the pursuit copy uses stable fallbacks for missing record names and exposes the new QA fields.
+
+Blocked verification:
+- `npm run qa:web-game` was attempted and still fails before page load because Chromium cannot register its Mach port rendezvous in this environment (`Permission denied (1100)`). No new browser screenshot was captured.
+
+Remaining Ace Attorney gap list:
+- Pursuit branches are now case-specific, but they still do not unlock unique evidence/testimony routes after the chase.
+- The latest case-home screenshot still reads too much like briefing copy rather than a playable story scene; the next iteration should rewrite the case-intro opening into witness/defense dialogue and make chapter source cards feel actionable.
+- Browser visual verification needs to be rerun when local browser execution is available again.
+- Investigation dialogue, evidence descriptions, and trial testimony still need a broader character-voice rewrite.
+- Evidence icons are stronger bitmap props, but selected high-value items still lack curated per-prop Image API source exports.
