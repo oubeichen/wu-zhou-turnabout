@@ -2124,7 +2124,9 @@
           ${renderRecordTab("timeline", "时间线")}
           ${renderRecordTab("backlog", "记录")}
         </div>
-        ${renderRecordBody(caseData, progress, selectable)}
+        <div class="record-body">
+          ${renderRecordBody(caseData, progress, selectable)}
+        </div>
       </aside>
     `;
   }

@@ -2339,7 +2339,7 @@ button:not(:disabled):hover {
 }
 
 .evidence-thumb.evidence-art {
-  background-image: url("./assets/evidence-card-sheet-v1.png");
+  background-image: url("./assets/evidence-item-sheet-v2.png");
   background-size: 700% 500%;
   background-position: var(--evidence-art-x, 0%) var(--evidence-art-y, 0%);
   background-repeat: no-repeat;
@@ -2478,6 +2478,46 @@ button:not(:disabled):hover {
   max-height: 44vh;
   overflow: auto;
   padding-right: 4px;
+}
+
+.record-body {
+  display: grid;
+  grid-template-rows: auto minmax(96px, 1fr) auto;
+  gap: 10px;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.record-body > p {
+  margin: 0;
+}
+
+.record-body > .record-list,
+.record-body > .timeline-list,
+.record-body > .backlog-list {
+  min-height: 0;
+  max-height: none;
+  margin-top: 0;
+  overflow: auto;
+}
+
+.record-body > .evidence-detail {
+  max-height: min(38vh, 360px);
+  margin-top: 0;
+  overflow: auto;
+}
+
+.record-body .evidence-button {
+  min-height: 64px;
+  overflow: hidden;
+  padding: 8px 10px;
+}
+
+.record-body .evidence-copy strong,
+.record-body .evidence-copy span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .record-drawer-layout .record-scrim {

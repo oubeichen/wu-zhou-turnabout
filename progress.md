@@ -2,6 +2,32 @@ Original prompt: 做一个仿照 《逆转裁判》 的完整游戏。始终检�
 
 # Progress
 
+## 2026-06-18 iteration 50 result
+
+Implemented:
+- Added `scripts/generate_evidence_item_sheet.py`, which reads the public game data and emits a 7x5 per-evidence bitmap sprite sheet at `game/assets/evidence-item-sheet-v2.png`.
+- Switched Court Record evidence thumbnails and large inspection art from the older generic card sheet to the new per-item evidence sheet, while preserving existing row/column sprite positioning.
+- Added the new generator to `npm run check:py` so syntax checks cover the asset-generation script.
+- Wrapped Court Record tab content in a dedicated `record-body` layout so the fixed drawer has clear header, tab, list, and detail regions.
+- Tightened Court Record evidence list items into compact one-line inventory rows, leaving full explanation in the selected detail panel and preventing list text from spilling into neighboring rows.
+
+Verified:
+- `npm run check:js`
+- `npm run check:py`
+- `git diff --check`
+- Public old-template scan on `game/`: no matches for previous opaque evidence phrases.
+- `npm run qa:web-game` passed; inspected `output/web-game/shot-0.png`.
+- Desktop 1440x810 Playwright flow verified Court Record thumbnails use `evidence-item-sheet-v2.png`, first four evidence positions are distinct, selected evidence detail remains readable, and page overflow is `0x0`.
+- Desktop 1440x810 Playwright flow opened evidence `详查` and confirmed the large inspection artwork also uses `evidence-item-sheet-v2.png`.
+- Mobile 390x844 Playwright flow verified the same record and inspect artwork, no horizontal overflow, stable list/detail spacing, and compact inventory rows without text overlap.
+- Screenshots inspected: `iteration50-desktop-evidence-sheet-record-compact.png`, `iteration50-mobile-evidence-sheet-record-compact.png`, `iteration50-desktop-evidence-sheet-inspect-fixed.png`, and `iteration50-mobile-evidence-sheet-inspect-fixed.png`.
+
+Remaining Ace Attorney gap list:
+- Evidence now has a per-item bitmap sheet and three-view inspection, but many document-type items still share a similar visual language; high-value evidence should get more bespoke object illustrations.
+- Correct objections have staged cut-ins, but animation still uses DOM/CSS composition rather than fully authored frame-by-frame sprites.
+- Courtroom acting keeps both portraits visible, but character animation remains limited to a shared multi-pose sheet rather than bespoke per-character animation strips.
+- Audio has local cue samples and looped music tracks, but the tracks are procedurally generated placeholders rather than fully authored soundtrack compositions.
+
 ## 2026-06-18 iteration 49 result
 
 Implemented:
