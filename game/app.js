@@ -2568,6 +2568,7 @@
           </div>
           <div class="deduction-followup-actions">
             ${followUp.unlockEvidenceName ? `<span class="deduction-followup-unlock">追击成立后写入法庭记录：${escapeHtml(followUp.unlockEvidenceName)}</span>` : ""}
+            <button class="secondary-button" type="button" data-home>返回主菜单</button>
             <button class="primary-button" type="button" data-continue-deduction-followup>${escapeHtml(followUp.buttonLabel || "追击证人")}</button>
           </div>
         </div>
@@ -2602,6 +2603,7 @@
             </div>
           </div>
           <div class="pursuit-unlock-actions">
+            <button class="secondary-button" type="button" data-home>返回主菜单</button>
             <button class="primary-button" type="button" data-continue-pursuit-unlock>返回庭审</button>
           </div>
         </section>
@@ -2646,6 +2648,7 @@
             <div><strong>${escapeHtml(previous?.title || "上一段证词")}</strong><span>已击破</span></div>
             <div><strong>${escapeHtml(testimony.title)}</strong><span>${escapeHtml(testimony.speaker)}｜${visibleStatementEntries(testimony, progress).length} 句证词</span></div>
           </div>
+          <button class="secondary-button" type="button" data-home>返回主菜单</button>
           <button class="primary-button" type="button" data-continue-testimony>继续交叉询问</button>
         </div>
       </section>
@@ -3909,6 +3912,7 @@
               .join("")}
           </div>
           <div class="reveal-actions">
+            <button class="secondary-button" type="button" data-home>返回主菜单</button>
             <button class="secondary-button" type="button" data-reveal-objection>跳过演出</button>
             <button class="primary-button" type="button" data-advance-reveal>${finalStep ? "揭示矛盾" : "下一幕"}</button>
           </div>
