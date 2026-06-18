@@ -2605,7 +2605,7 @@
     const rightPortrait = mode === "trial" ? caseData.opponentPortrait || "censor" : "empress";
     const focus = mode === "trial" ? state.stageFocus : "center";
     const stagePose = mode === "trial" ? currentStagePose() : defaultStagePose;
-    const sceneKey = mode === "investigation" ? caseData.scene?.key || "archive" : "";
+    const sceneKey = caseData.scene?.key || "archive";
     const sceneMotif = mode === "investigation" ? caseData.scene?.motif || "" : "";
     const sceneTone = mode === "investigation" ? caseData.scene?.tone || "" : "";
     const notice = mode === "trial" && state.stageNotice ? `<div class="camera-notice">${escapeHtml(state.stageNotice)}</div>` : "";
@@ -2616,7 +2616,9 @@
       ? `data-advance-trial-dialogue="1" role="button" tabindex="0" aria-label="继续查看证词下一句"`
       : "";
     const vulnerabilityCue = mode === "trial" ? renderTrialVulnerabilityCue() : "";
-    const locationArt = location ? locationBackgroundFile(caseData, location) : "";
+    const locationArt = location
+      ? locationBackgroundFile(caseData, location)
+      : trialBackgroundFile(caseData);
     const locationStyle = locationArt ? `style="--location-art: url('./assets/${escapeHtml(locationArt)}');"` : "";
     return `
       <div class="scene ${mode} ${sceneKey ? `scene-${sceneKey}` : ""} focus-${focus} pose-left-${stagePose.left} pose-right-${stagePose.right} ${vulnerabilityCue ? "vulnerability-ready" : ""} ${hasInvestigationBeat ? "has-investigation-beat" : ""} ${state.settings.reducedMotion ? "reduced-motion" : ""}" data-motif="${escapeHtml(sceneMotif)}" ${locationStyle}>
@@ -2652,6 +2654,18 @@
     const sceneKey = caseData.scene?.key || "palace";
     const variant = location.sceneVariant || "site";
     return `location-bg-${sceneKey}-${variant}.png`;
+  }
+
+  function trialBackgroundFile(caseData) {
+    const sceneKey = caseData.scene?.key || "palace";
+    const trialMap = {
+      palace: "episode-art-palace.png",
+      "east-palace": "episode-art-east-palace.png",
+      "bronze-urn": "episode-art-bronze-urn.png",
+      censorate: "episode-art-censorate.png",
+      "night-gate": "episode-art-night-gate.png",
+    };
+    return trialMap[sceneKey] || "courtroom-bg-v1.png";
   }
 
   function renderTrialVulnerabilityCue() {

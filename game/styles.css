@@ -1761,7 +1761,7 @@ button:not(:disabled):hover {
 .scene.trial {
   background:
     linear-gradient(rgba(31, 28, 25, 0.1), rgba(31, 28, 25, 0.7)),
-    url("./assets/courtroom-bg-v1.png") center / cover;
+    var(--location-art, url("./assets/courtroom-bg-v1.png")) center / cover;
 }
 
 .scene.trial::after {
