@@ -2481,8 +2481,8 @@
     state.screen = "trial";
     renderStatus();
     app.innerHTML = `
-      <section class="deduction-followup">
-        <div class="deduction-followup-stage">
+    <section class="deduction-followup" data-continue-deduction-followup-panel role="button" tabindex="0" aria-label="继续追击">
+      <div class="deduction-followup-stage">
           <span class="hero-kicker">追击证词</span>
           <h2>${escapeHtml(followUp.pursuitTitle || "对照札记打开了新缺口")}</h2>
           <p>${escapeHtml(statement?.text || followUp.target || "证人的说法已经动摇。")}</p>
@@ -2569,7 +2569,7 @@
     renderStatus();
     app.innerHTML = `
       <section class="trial-interlude">
-        <div class="interlude-stage portrait-${portraitForSpeaker(caseData, testimony.speaker, "trial")} pose-left-${stagePose.left}">
+        <div class="interlude-stage portrait-${portraitForSpeaker(caseData, testimony.speaker, "trial")} pose-left-${stagePose.left}" data-continue-testimony-panel role="button" tabindex="0" aria-label="继续交叉询问">
           ${interludePoseLabel ? `<span class="interlude-pose">${escapeHtml(interludePoseLabel)}</span>` : ""}
           <span class="hero-kicker">证词更新</span>
           <h2>${escapeHtml(testimony.title)}</h2>
@@ -3773,7 +3773,7 @@
     const step = steps[stepIndex] || steps[0];
     const finalStep = stepIndex >= steps.length - 1;
     return `
-      <div class="objection-reveal reveal-step-${stepIndex + 1}" role="dialog" aria-live="assertive" aria-label="异议揭示">
+      <div class="objection-reveal reveal-step-${stepIndex + 1} reveal-advance-panel" data-advance-reveal-panel role="dialog" aria-live="assertive" aria-label="异议揭示，点击任意位置推进">
         <div class="objection-reveal-inner">
           <div class="reveal-head">
             <span class="hero-kicker">${escapeHtml(step.kicker)}</span>
@@ -4721,6 +4721,30 @@
     if (beatPanel && !event.target.closest("button")) {
       playCue("click");
       advanceOrCloseInvestigationBeat();
+      return;
+    }
+    const interludePanel = event.target.closest("[data-continue-testimony-panel]");
+    if (interludePanel && !event.target.closest("button")) {
+      playCue("click");
+      continueTestimony();
+      return;
+    }
+    const pursuitPanel = event.target.closest("[data-continue-pursuit-unlock]");
+    if (pursuitPanel && !event.target.closest("button")) {
+      playCue("click");
+      continuePursuitUnlock();
+      return;
+    }
+    const deductionFollowupPanel = event.target.closest("[data-continue-deduction-followup-panel]");
+    if (deductionFollowupPanel && !event.target.closest("button")) {
+      playCue("click");
+      continueDeductionFollowUp();
+      return;
+    }
+    const revealPanel = event.target.closest("[data-advance-reveal-panel]");
+    if (revealPanel && !event.target.closest("button")) {
+      playCue("click");
+      advanceObjectionReveal();
       return;
     }
     const target = event.target.closest("button");
