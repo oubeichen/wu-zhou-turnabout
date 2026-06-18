@@ -2514,6 +2514,7 @@ button:not(:disabled):hover {
   display: grid;
   grid-template-columns: 1fr;
   grid-template-rows: 1fr;
+  justify-content: start;
   width: 56px;
   min-width: 56px;
   max-width: 56px;
@@ -6598,28 +6599,30 @@ button:not(:disabled):hover {
     width: 100%;
   }
 
-  .scene-hotspots {
-    position: relative;
-    inset: auto;
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 8px;
-    pointer-events: auto;
-  }
+.scene-hotspots {
+  position: relative;
+  inset: auto;
+  display: grid;
+  grid-template-columns: auto;
+  gap: 8px;
+  pointer-events: auto;
+}
 
-  .scene-hotspot {
-    position: static;
-    width: 100%;
-    min-height: 64px;
-    grid-template-columns: 72px minmax(0, 1fr);
-    grid-template-rows: 1fr;
-    justify-items: start;
-    align-items: center;
-    gap: 8px;
-    padding: 6px 8px;
-    background: rgba(31, 28, 25, 0.72);
-    border: 1px solid rgba(255, 241, 191, 0.22);
-    border-radius: 8px;
+.scene-hotspot {
+  position: static;
+  width: max-content;
+  justify-self: start;
+  max-width: min(100%, 300px);
+  min-height: 56px;
+  grid-template-columns: 56px minmax(0, 1fr);
+  grid-template-rows: 1fr;
+  justify-items: start;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  background: rgba(31, 28, 25, 0.72);
+  border: 1px solid rgba(255, 241, 191, 0.22);
+  border-radius: 8px;
   }
 
   .scene-hotspot::before {
@@ -6632,20 +6635,22 @@ button:not(:disabled):hover {
     background-position: -64px 0;
   }
 
-  .scene-hotspot span {
-    position: static;
-    max-width: 100%;
-    background: transparent;
-    border: 0;
-    padding: 0;
-    left: auto;
-    top: auto;
-    right: auto;
-    opacity: 1;
-    visibility: visible;
-    transform: none;
-    pointer-events: none;
-  }
+.scene-hotspot span {
+  position: static;
+  max-width: 100%;
+  width: auto;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  pointer-events: none;
+  white-space: normal;
+  text-overflow: unset;
+  font-size: 14px;
+  font-weight: 900;
+}
 
   .scene-hotspot small {
     display: none;
