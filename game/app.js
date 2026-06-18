@@ -1460,9 +1460,14 @@
             <span class="tag">对手：${escapeHtml(caseData.opponent)}</span>
             <span class="tag">证人：${escapeHtml(caseData.witness)}</span>
           </div>
-          <h2>${escapeHtml(caseData.title)}</h2>
-          <p>${escapeHtml(caseData.goal)}</p>
-          ${renderCaseSetup(caseData)}
+          <div class="case-brief-main">
+            <div class="case-brief-copy">
+              <h2>${escapeHtml(caseData.title)}</h2>
+              <p>${escapeHtml(caseData.goal)}</p>
+              ${renderCaseSetup(caseData)}
+            </div>
+            ${renderCaseIntroArt(caseData)}
+          </div>
           ${renderOpeningLines(caseData)}
           ${renderCaseSourcePanel(caseData)}
           <div class="action-row">
@@ -1479,24 +1484,130 @@
   }
 
   function renderCaseSetup(caseData) {
-    const firstLocation = caseData.locations?.[0]?.name || caseData.location;
-    const recordRoom = caseData.locations?.[1]?.name || "案牍房";
-    const firstEvidence = caseData.evidence?.slice(0, 3).map((item) => item.name).join("、") || "关键证物";
+    const cards = caseBriefingCards(caseData);
     return `
       <div class="case-setup" aria-label="案情导入">
-        <div>
-          <strong>现在发生了什么</strong>
-          <p>${escapeHtml(caseData.openingLines?.[0]?.text || caseData.theme)} 这不是一句证词能说完的事，先把现场、旧记录和证物摆到同一张桌上。</p>
-        </div>
-        <div>
-          <strong>先去哪里查</strong>
-          <p>从${escapeHtml(firstLocation)}看现场痕迹，再到${escapeHtml(recordRoom)}核对前后记录，最后回到辩护席整理矛盾。</p>
-        </div>
-        <div>
-          <strong>先盯哪些东西</strong>
-          <p>${escapeHtml(firstEvidence)}会决定开庭后第一轮追问的方向。</p>
-        </div>
+        ${cards
+          .map(
+            (card) => `
+              <div>
+                <strong>${escapeHtml(card.title)}</strong>
+                <p>${escapeHtml(card.body)}</p>
+              </div>
+            `
+          )
+          .join("")}
       </div>
+    `;
+  }
+
+  function caseBriefingCards(caseData) {
+    const firstLocation = caseData.locations?.[0]?.name || caseData.location;
+    const recordRoom = caseData.locations?.[1]?.name || "案牍房";
+    const fallbackEvidence = caseData.evidence?.slice(0, 3).map((item) => item.name).join("、") || "关键证物";
+    const byCase = {
+      "case-empress-seat": [
+        {
+          title: "谁先把废后喊出口",
+          body: "宫人只承认听见哭声，却避开了更要命的问题：是谁先把婴儿之死、废后诏书和元老抗议连成一件事。",
+        },
+        {
+          title: "第一步别审人，先看纸",
+          body: "去立政殿找破损奏章和值夜签，再到史官案牍房核对内廷名册。纸面改动比宫人口供更难撒谎。",
+        },
+        {
+          title: "庭上要打破的说法",
+          body: "对手会把一切说成后宫私怨。你要证明这不是闲话，而是一场已经被文书推动的权力改判。",
+        },
+      ],
+      "case-crown-shadow": [
+        {
+          title: "东宫旧臣为何突然成罪人",
+          body: "旧臣只是送文书，却被说成搅乱储位。真正危险的是账册、问安笺和传位记录被放到同一条线上。",
+        },
+        {
+          title: "先查待遇，再查时间",
+          body: `从${firstLocation}确认谁能出入，再到${recordRoom}核对皇子名册和病榻记录。储位案最怕只听一句“家事”。`,
+        },
+        {
+          title: "庭上要逼出的漏洞",
+          body: "证人会回避高宗病势和皇子待遇。让他说出“只是旧臣多嘴”，再用记录证明问题早就被安排好了。",
+        },
+      ],
+      "case-rebellion-box": [
+        {
+          title: "一张投书怎么变成大案",
+          body: "铜匦打开后，投书立刻被当成铁证。被告旧臣连看纸的机会都没有，就被推到谋反边上。",
+        },
+        {
+          title: "沿着纸的流向查",
+          body: "先看明堂前的铜匦，再查案牍房里的榜文、檄文和缉捕令。谁接过这张纸，谁就可能添过罪名。",
+        },
+        {
+          title: "庭上要拆开的恐惧",
+          body: "对手会说告密就是事实。你的目标是把投书、榜文、酷吏审讯分开，让法庭看见中间被加进去的手。",
+        },
+      ],
+      "case-urn": [
+        {
+          title: "供词太整齐，反而不对",
+          body: "狄仁杰的供词看似签得干净，但御史台暗室里还摆着空瓮。逼供留下的痕迹不会自己消失。",
+        },
+        {
+          title: "先看刑具，再看笔迹",
+          body: "从御史台审讯室的瓮口烙痕查起，再到案牍房核对供状副本。真正的矛盾藏在前后笔迹里。",
+        },
+        {
+          title: "庭上要反咬审讯者",
+          body: "周兴会把供词当成铁证。你要让他解释：如果供词自愿，为什么每份记录都像同一个模子压出来。",
+        },
+      ],
+      "case-half-hour-coup": [
+        {
+          title: "半小时不是空白",
+          body: "夜门被撞开到局势翻转，只隔半小时。证人说来不及看清，却又笃定罪名早已成立。",
+        },
+        {
+          title: "把夜门、赏赐、换岗放一起",
+          body: "先查夜门更漏牌，再看张氏兄弟赏赐簿和禁军换岗令。谁在半小时里失去保护，谁就最接近真相。",
+        },
+        {
+          title: "庭上要问清莫须有",
+          body: "对手会把政变说成顺理成章。你要抓住罪名纸条和换岗时间，逼出“莫须有”究竟是谁写下的。",
+        },
+      ],
+    };
+    return (
+      byCase[caseData.id] || [
+        {
+          title: "现在发生了什么",
+          body: `${caseData.openingLines?.[0]?.text || caseData.theme} 这不是一句证词能说完的事，先把现场、旧记录和证物摆到同一张桌上。`,
+        },
+        {
+          title: "先去哪里查",
+          body: `从${firstLocation}看现场痕迹，再到${recordRoom}核对前后记录，最后回到辩护席整理矛盾。`,
+        },
+        {
+          title: "先盯哪些东西",
+          body: `${fallbackEvidence}会决定开庭后第一轮追问的方向。`,
+        },
+      ]
+    );
+  }
+
+  function renderCaseIntroArt(caseData) {
+    const startLocation = caseData.locations?.[0] || { sceneVariant: "site", name: caseData.location };
+    const art = locationBackgroundFile(caseData, startLocation);
+    const evidence = caseData.evidence?.slice(0, 3) || [];
+    return `
+      <aside class="case-intro-art scene-${escapeHtml(caseData.scene?.key || "palace")}" data-motif="${escapeHtml(caseData.scene?.motif || "")}" style="--location-art: url('./assets/${escapeHtml(art)}');">
+        <span class="hero-kicker">现场档案</span>
+        <strong>${escapeHtml(startLocation.name || caseData.location)}</strong>
+        <small>${escapeHtml(caseData.scene?.name || caseData.location)}｜${escapeHtml(caseData.theme)}</small>
+        <div class="intro-evidence-strip">
+          ${evidence.map((item) => `<span>${escapeHtml(item.name)}</span>`).join("")}
+        </div>
+      </aside>
     `;
   }
 
@@ -3627,6 +3738,8 @@
       continueCase: nextCase.title,
       continueCaseIndex: nextCaseIndex,
       continueLabel: continueLabel(nextCase),
+      caseBriefingCards: caseBriefingCards(caseData).map((card) => card.title),
+      caseIntroArt: caseData.locations?.[0] ? locationBackgroundFile(caseData, caseData.locations[0]) : "",
       manualSaveSlots: manualSlots.map((slot, index) => ({
         index,
         filled: Boolean(slot?.data),

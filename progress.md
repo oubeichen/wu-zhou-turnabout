@@ -2,6 +2,38 @@ Original prompt: 做一个仿照 《逆转裁判》 的完整游戏。始终检�
 
 # Progress
 
+## 2026-06-18 iteration 52 result
+
+Implemented:
+- Rebuilt the case-intro top section into a two-column case dossier: written briefing on the left and a bitmap location-art dossier card on the right.
+- Added bespoke briefing cards for all five cases instead of shared generic cards:
+  - Case 1 focuses on who first pushed the废后 narrative.
+  - Case 2 focuses on why an East Palace retainer became the accused.
+  - Case 3 follows how one投书 became a political case.
+  - Case 4 frames the too-clean confession as the contradiction.
+  - Case 5 frames the half-hour coup as a timeline puzzle.
+- The case-intro art card now uses the case's first investigation background PNG through `locationBackgroundFile()`, so the entrance screen uses real bitmap scene art rather than only text.
+- Added the first three evidence names to the dossier art card as quick visual objectives.
+- Exposed `caseBriefingCards` and `caseIntroArt` through `window.render_game_to_text` for deterministic browser QA.
+- Added responsive styling so desktop keeps the dossier and action buttons in one viewport while mobile stacks the text and art without horizontal overflow.
+
+Verified:
+- `npm run check:js`
+- `PYTHONPYCACHEPREFIX=/Users/oubeichen/Projects/wuzetian2/.pycache npm run check:py`
+- `git diff --check`
+- Public old-template scan on `game/`: no matches for previous opaque evidence phrases.
+- `npm run qa:web-game` passed; inspected `output/web-game/shot-0.png`. The only warning is the external develop-web-game script's module-type warning.
+- Desktop 1440x810 Playwright flow opened all five cases and verified each has distinct briefing-card titles, a matching `caseIntroArt` background, visible action buttons, and no page overflow.
+- Mobile 390x844 Playwright flow verified the case-intro art loads, the bespoke cards are exposed, and there is no horizontal overflow.
+- Screenshots inspected: `iteration52-case-intro-1.png`, `iteration52-case-intro-5.png`, and `iteration52-case-intro-mobile.png`.
+
+Remaining Ace Attorney gap list:
+- Case intros now have bespoke incident framing and scene art, but the visual art is still generated/derived placeholder PNG; higher-quality image-gen exports should replace the complex location and evidence art once exportable files are available.
+- Investigation and Court Record interactions are functional, but there is still no animated evidence pickup fanfare or inventory add animation.
+- Correct objections have staged cut-ins, but animation still uses DOM/CSS composition rather than fully authored frame-by-frame sprites.
+- Courtroom acting keeps both portraits visible, but character animation remains limited to a shared multi-pose sheet rather than bespoke per-character animation strips.
+- Audio has local cue samples and looped music tracks, but the tracks are procedurally generated placeholders rather than fully authored soundtrack compositions.
+
 ## 2026-06-18 iteration 51 result
 
 Implemented:
