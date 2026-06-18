@@ -2427,8 +2427,9 @@ button:not(:disabled):hover {
   display: grid;
   grid-template-columns: 1fr;
   grid-template-rows: 1fr;
-  width: 56px;
-  min-height: 56px;
+  width: 52px;
+  min-height: 52px;
+  height: 52px;
   z-index: 2;
   padding: 0;
   color: #fff8e7;
@@ -2441,8 +2442,8 @@ button:not(:disabled):hover {
 
 .scene-hotspot::before {
   content: "";
-  width: 64px;
-  height: 64px;
+  width: 56px;
+  height: 56px;
   background-image: url("./assets/investigation-marker-sheet-v1.png");
   background-repeat: no-repeat;
   background-size: 256px 128px;
@@ -2459,8 +2460,8 @@ button:not(:disabled):hover {
 
 .scene-hotspot span {
   position: absolute;
-  left: 72px;
-  top: -12px;
+  left: 64px;
+  top: -54px;
   max-width: 150px;
   min-width: max-content;
   width: max-content;
@@ -2524,20 +2525,22 @@ button:not(:disabled):hover {
 
 .scene-hotspot-1 {
   left: 8%;
-  bottom: 23%;
+  top: 30%;
+  bottom: auto;
 }
 
 .scene-hotspot-2 {
   right: 8%;
-  bottom: 36%;
+  top: 44%;
+  bottom: auto;
 }
 
 .scene.investigation.has-investigation-beat .scene-hotspot-1 {
-  bottom: 36%;
+  top: 36%;
 }
 
 .scene.investigation.has-investigation-beat .scene-hotspot-2 {
-  bottom: 50%;
+  top: 52%;
 }
 
 .spot-status-list {
