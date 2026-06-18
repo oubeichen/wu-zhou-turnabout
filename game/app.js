@@ -1178,6 +1178,12 @@
     return "开始新案";
   }
 
+  function caseDisplayIndex(caseData) {
+    const index = data.cases.findIndex((entry) => entry.id === caseData?.id);
+    if (index < 0) return "";
+    return `第${index + 1}案`;
+  }
+
   function currentGuideContext() {
     const caseData = currentCase();
     if (state.screen === "home") {
@@ -1403,14 +1409,14 @@
           </div>
         </div>
         <nav class="menu-actions" aria-label="主菜单">
-          <button class="primary-button menu-button" type="button" data-continue-case>${escapeHtml(continueLabel(caseData))}</button>
+          <button class="primary-button menu-button" type="button" data-continue-case>${escapeHtml(`当前继续·${caseDisplayIndex(caseData)}：${continueLabel(caseData)}`)}</button>
           <button class="secondary-button menu-button" type="button" data-home-view="cases">案件选择</button>
           <button class="secondary-button menu-button" type="button" data-home-view="saves">存档/读档</button>
           <button class="secondary-button menu-button" type="button" data-home-view="archive">结案档案</button>
           <button class="secondary-button menu-button" type="button" data-toggle-settings>设置</button>
         </nav>
         <div class="menu-preview scene-${escapeHtml(caseData.scene?.key || "archive")}" data-motif="${escapeHtml(caseData.scene?.motif || "")}">
-          <span class="hero-kicker">当前继续</span>
+          <span class="hero-kicker">当前继续 · ${escapeHtml(caseDisplayIndex(caseData))}</span>
           <strong>${escapeHtml(caseData.title)}</strong>
           <p>${escapeHtml(caseMenuHook(caseData))}</p>
           <small>${escapeHtml(caseData.scene?.name || caseData.location)}｜${escapeHtml(caseData.theme)}</small>
