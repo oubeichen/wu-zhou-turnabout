@@ -2449,9 +2449,11 @@ button:not(:disabled):hover {
   display: grid;
   grid-template-columns: 1fr;
   grid-template-rows: 1fr;
-  width: 52px;
-  min-height: 52px;
-  height: 52px;
+  width: 56px;
+  min-width: 56px;
+  max-width: 56px;
+  min-height: 56px;
+  height: 56px;
   z-index: 2;
   padding: 0;
   color: #fff8e7;
@@ -4009,8 +4011,10 @@ button:not(:disabled):hover {
   grid-template-rows: 72px auto;
   justify-items: center;
   gap: 3px;
-  width: 118px;
-  min-height: 96px;
+  width: 72px;
+  min-width: 72px;
+  max-width: 72px;
+  min-height: 72px;
   padding: 0;
   color: #fff8e7;
   background: transparent;
@@ -4064,8 +4068,17 @@ button:not(:disabled):hover {
   border-radius: 8px;
   font-size: 12px;
   font-weight: 900;
+  max-width: 150px;
   text-overflow: ellipsis;
   white-space: nowrap;
+  position: absolute;
+  left: 80px;
+  top: 0;
+  transform: translateY(-4px);
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.14s ease, visibility 0.14s ease;
 }
 
 .inspect-hotspot.active::before {
@@ -4075,6 +4088,14 @@ button:not(:disabled):hover {
 .inspect-hotspot.active small {
   border-color: rgba(255, 241, 191, 0.72);
   box-shadow: 0 0 0 3px rgba(255, 241, 191, 0.14);
+  opacity: 1;
+  visibility: visible;
+}
+
+.inspect-hotspot:hover small,
+.inspect-hotspot:focus-visible small {
+  opacity: 1;
+  visibility: visible;
 }
 
 .inspect-hotspot.checked::before {
