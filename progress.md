@@ -1689,3 +1689,29 @@ Remaining Ace Attorney gap list:
 - Correct objections have a deliberate reveal beat, but the impact/reveal animation still uses CSS compositing rather than fully authored animated cut-ins.
 - Courtroom acting keeps both portraits visible, but character animation remains limited to a shared multi-pose sheet rather than bespoke per-character animation strips.
 - Audio has local cue samples and looped music tracks, but the tracks are procedurally generated placeholders rather than fully authored soundtrack compositions.
+
+## 2026-06-18 iteration 61 result
+
+Implemented:
+- Added a bitmap court-impact callout sheet with seven authored title frames: `异议成立`, `追问不足`, `驳回`, `反制`, `逆转`, `判决`, and `档案击破`.
+- Reworked court-impact rendering so the visible title is now drawn from `court-impact-callout-sheet-v1.png`; the DOM text remains only as an accessible fallback.
+- Added deterministic frame mapping for objection, penalty, rebuttal, reversal, verdict, and dossier-break cues.
+- Exposed `impactCalloutAsset` and `impactCalloutFrame` through `window.render_game_to_text` so browser QA can assert that the visual cue uses the sprite sheet instead of plain text.
+- Added the bitmap-sheet generator to Python checks so the asset pipeline stays reproducible.
+
+Verified:
+- `python3 scripts/generate_court_impact_callout_sheet.py`
+- `npm run check:js`
+- `PYTHONPYCACHEPREFIX="/Users/oubeichen/Projects/wuzetian2/.pycache" npm run check:py`
+- `git diff --check`
+- `npm run qa:web-game`
+- Desktop 1440x810 Playwright correct-present flow confirmed `impactKind=objection`, `impactCalloutAsset=court-impact-callout-sheet-v1.png`, `impactCalloutFrame=1`, callout sprite background loaded, hidden fallback text clipped, and no page-level overflow.
+- Desktop 1440x810 Playwright premature-present flow confirmed `impactKind=penalty`, `impactCalloutFrame=2`, sprite background-position switched to the second frame, and no page-level overflow.
+- Mobile 390x844 Playwright correct-present flow confirmed the bitmap callout is visible with no horizontal overflow.
+- Screenshots inspected: `iteration61-impact-callout-objection-desktop.png` and `iteration61-impact-callout-objection-mobile.png`.
+
+Remaining Ace Attorney gap list:
+- Impact, cut-in, and title callout cues now use bitmap layers, but case/opponent-specific high-fidelity animation strips are still missing.
+- Courtroom acting keeps both portraits visible, but character animation remains limited to a shared multi-pose sheet rather than bespoke per-character animation strips.
+- Evidence inspection has a full modal and item/card art, but complex evidence objects still need richer bitmap item illustrations and object-specific inspect interactions.
+- Audio has local cue samples and looped music tracks, but the tracks are procedurally generated placeholders rather than fully authored soundtrack compositions.

@@ -2905,12 +2905,14 @@
     };
     const title = cue.title || (cue.kind === "objection" ? "异议" : "驳回");
     const impactFrame = impactBitmapFrameFor(cue);
+    const calloutFrame = impactCalloutFrameFor(cue);
     return `
-      <div class="court-impact impact-${escapeHtml(cue.kind)} impact-bitmap-frame-${impactFrame} ${state.settings.reducedMotion ? "still" : ""}" data-impact-bitmap-frame="${impactFrame}">
+      <div class="court-impact impact-${escapeHtml(cue.kind)} impact-bitmap-frame-${impactFrame} impact-callout-frame-${calloutFrame} ${state.settings.reducedMotion ? "still" : ""}" data-impact-bitmap-frame="${impactFrame}" data-impact-callout-frame="${calloutFrame}" aria-label="${escapeHtml(title)}">
         <div class="impact-bitmap" aria-hidden="true"></div>
         <div class="impact-lines"></div>
         ${renderImpactFrames(cue)}
-        <strong>${escapeHtml(title)}</strong>
+        <div class="impact-callout" aria-hidden="true"></div>
+        <strong class="impact-title-fallback">${escapeHtml(title)}</strong>
         ${cue.subtitle ? `<em>${escapeHtml(cue.subtitle)}</em>` : ""}
         ${cue.record ? `<span>${escapeHtml(cue.record)}</span>` : ""}
       </div>
@@ -2921,6 +2923,17 @@
     if (cue?.kind === "penalty") return 2;
     const title = cue?.title || "";
     if (title.includes("逆转") || title.includes("判决") || title.includes("胜诉")) return 3;
+    return 1;
+  }
+
+  function impactCalloutFrameFor(cue) {
+    const title = cue?.title || "";
+    if (title.includes("追问不足")) return 2;
+    if (title.includes("驳回")) return 3;
+    if (title.includes("反制")) return 4;
+    if (title.includes("逆转")) return 5;
+    if (title.includes("判决") || title.includes("胜诉")) return 6;
+    if (title.includes("档案")) return 7;
     return 1;
   }
 
@@ -4109,6 +4122,8 @@
       impactFrames: (state.impactCue?.frames || []).map((frame) => `${frame.role}:${frame.label}:${frame.pose || "idle"}`),
       impactBitmapAsset: state.impactCue ? "court-impact-burst-sheet-v1.png" : "",
       impactBitmapFrame: state.impactCue ? impactBitmapFrameFor(state.impactCue) : 0,
+      impactCalloutAsset: state.impactCue ? "court-impact-callout-sheet-v1.png" : "",
+      impactCalloutFrame: state.impactCue ? impactCalloutFrameFor(state.impactCue) : 0,
       objectionReveal: Boolean(state.objectionReveal),
       objectionRevealTitle: state.objectionReveal?.title || "",
       objectionRevealRecord: state.objectionReveal?.record || "",
