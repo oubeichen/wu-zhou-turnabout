@@ -4079,7 +4079,7 @@
             <button class="secondary-button" type="button" data-reset-case>重置当前案</button>
             <button class="primary-button" type="button" data-toggle-settings>关闭</button>
           </div>
-          <p class="hint-text">键盘：方向键切换证词，空格/Enter 前进对话，P 追问，R 法庭记录，S 设置。</p>
+          <p class="hint-text">键盘：方向键切换证词，空格/Enter 前进对话，P 追问，R 法庭记录，S 设置，1-4 切换调查指令（移动/查看/交谈/出示）。</p>
         </section>
       </div>
     `;
@@ -5147,6 +5147,20 @@
       if (event.key === "Enter" || event.key === " ") {
         event.preventDefault();
         advanceCaseOpeningCutscene();
+        return;
+      }
+    }
+    if (state.screen === "investigation" && !state.recordOpen && !state.recordInspect && !state.settingsOpen && !state.guideOpen) {
+      const commandByKey = {
+        1: "move",
+        2: "examine",
+        3: "talk",
+        4: "present",
+      };
+      const command = commandByKey[event.key];
+      if (command) {
+        event.preventDefault();
+        setCommand(command);
         return;
       }
     }
