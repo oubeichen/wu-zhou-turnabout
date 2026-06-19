@@ -2222,7 +2222,7 @@ button:not(:disabled):hover {
 
 .scene-title {
   position: relative;
-  z-index: 11;
+  z-index: 20;
   width: fit-content;
   max-width: 100%;
   padding: 8px 12px;
@@ -2234,7 +2234,7 @@ button:not(:disabled):hover {
 
 .scene-atmosphere {
   position: relative;
-  z-index: 11;
+  z-index: 20;
   width: fit-content;
   max-width: min(720px, 100%);
   padding: 8px 12px;
@@ -2426,7 +2426,7 @@ button:not(:disabled):hover {
 
 .dialogue-box {
   position: relative;
-  z-index: 11;
+  z-index: 20;
   padding: 20px 22px;
   color: #1d1814;
   background: rgba(255, 250, 240, 0.98);
@@ -2578,10 +2578,12 @@ button:not(:disabled):hover {
 }
 
 .location-map > div {
+  position: relative;
   max-width: 100%;
   padding: 10px 12px;
   background: rgba(31, 28, 25, 0.72);
   border-radius: 8px;
+  z-index: 14;
 }
 
 .hotspot {
@@ -2630,7 +2632,7 @@ button:not(:disabled):hover {
   max-width: 44px;
   min-height: 44px;
   height: 44px;
-  z-index: auto;
+  z-index: 2;
   transform: scale(0.9);
   transform-origin: center center;
   padding: 0;
@@ -2727,13 +2729,13 @@ button:not(:disabled):hover {
 
 .location-map > div {
   position: relative;
-  z-index: 6;
+  z-index: 14;
 }
 
 .dialogue-box,
 .scene-atmosphere,
 .investigation-beat {
-  z-index: 9;
+  z-index: 12;
 }
 
 .scene-hotspot-2 span,
