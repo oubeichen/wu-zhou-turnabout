@@ -2570,6 +2570,14 @@ button:not(:disabled):hover {
   line-height: 1.45;
 }
 
+.location-map .location-hint {
+  display: inline-block;
+  margin-top: 6px;
+  color: #fff1bf;
+  font-weight: 800;
+  line-height: 1.35;
+}
+
 .location-map em {
   color: #fff1bf;
   font-size: 13px;

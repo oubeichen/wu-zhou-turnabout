@@ -2300,14 +2300,34 @@
     const variant = location.sceneVariant || "site";
     const mapArt = locationBackgroundFile(caseData, location);
     const inspected = location.examineSpots.filter((_, index) => inv.examined.includes(`${inv.locationIndex}:${index}`)).length;
+    const canMove = inv.command === "move";
+    const canTalk = inv.command === "talk";
+    const canPresent = inv.command === "present";
+    const canInspect = inv.command === "examine" && !state.investigationBeat;
+    const commandName = {
+      move: "移动现场",
+      examine: "查看可疑点",
+      talk: "交谈线索",
+      present: "出示证物",
+    };
     const mapArtStyle = mapArt ? `style="--map-art: url('./assets/${escapeHtml(mapArt)}');"` : "";
+    const quickHint = canMove
+      ? "可点击左侧场景切换案发现场"
+      : canTalk
+      ? "可点击右侧对话列表与线索人物"
+      : canPresent
+      ? "可点击右侧清单选择证物出示"
+      : canInspect
+      ? "可点击场景标记查看、复查可疑点"
+      : "目前进入“查看”面板后可继续点位检视";
     return `
       <div class="location-map scene-${sceneKey} variant-${variant}" ${mapArtStyle}>
         <div>
           <strong>${escapeHtml(location.name)}</strong>
           <span>${escapeHtml(location.description)}</span>
           <small>${escapeHtml(location.visualNote || caseData.scene?.tone || "")}</small>
-          <em>${inspected}/${location.examineSpots.length} 处已检视。直接点击左侧现场标记查看。</em>
+          <em>当前模式：${escapeHtml(commandName[inv.command] || "调查进行中")}。</em>
+          <small class="location-hint">${escapeHtml(quickHint)}（${inspected}/${location.examineSpots.length} 处已检视）</small>
         </div>
       </div>
     `;
