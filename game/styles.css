@@ -2850,37 +2850,37 @@ button:not(:disabled):hover {
 
 .scene-hotspot-1 {
   left: 8%;
-  top: 30%;
+  top: 26%;
   bottom: auto;
 }
 
 .scene-hotspot-2 {
   right: 8%;
-  top: 44%;
+  top: 40%;
   bottom: auto;
 }
 
 .scene-hotspot:nth-child(3) {
   left: 18%;
-  top: 58%;
+  top: 48%;
   bottom: auto;
 }
 
 .scene-hotspot:nth-child(4) {
   right: 18%;
-  top: 28%;
+  top: 30%;
   bottom: auto;
 }
 
 .scene-hotspot:nth-child(5) {
   left: 52%;
-  top: 62%;
+  top: 50%;
   bottom: auto;
 }
 
 .scene-hotspot:nth-child(6) {
   left: 38%;
-  top: 20%;
+  top: 34%;
   bottom: auto;
 }
 
@@ -2889,7 +2889,7 @@ button:not(:disabled):hover {
 }
 
 .scene.investigation.has-investigation-beat .scene-hotspot-2 {
-  top: 52%;
+  top: 46%;
 }
 
 .spot-status-list {
