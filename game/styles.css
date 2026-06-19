@@ -6780,6 +6780,19 @@ button:not(:disabled):hover {
   pointer-events: auto;
 }
 
+.scene.investigation .scene-hotspots {
+  pointer-events: none;
+}
+
+.scene.investigation:not(.has-investigation-beat) .scene-hotspots {
+  pointer-events: auto;
+}
+
+.scene.investigation.has-investigation-beat .scene-hotspot,
+.scene.investigation.has-investigation-beat .scene-hotspots {
+  pointer-events: none;
+}
+
 .scene-hotspot {
   position: static;
   width: max-content;
