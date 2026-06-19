@@ -9,6 +9,33 @@
   const storageCodec = window["J" + "SON"];
   const evidenceSheetColumns = 8;
   const evidenceSheetRows = 5;
+  const investigationHotspotLayoutByCase = {
+    "case-empress-seat": [
+      [{ left: "8%", top: "30%" }, { left: "64%", top: "52%" }],
+      [{ left: "10%", top: "62%" }, { left: "60%", top: "48%" }],
+      [{ left: "16%", top: "52%" }, { left: "56%", top: "29%" }],
+    ],
+    "case-crown-shadow": [
+      [{ left: "18%", top: "58%" }, { left: "66%", top: "26%" }],
+      [{ left: "12%", top: "64%" }, { left: "58%", top: "44%" }],
+      [{ left: "24%", top: "40%" }, { left: "64%", top: "58%" }],
+    ],
+    "case-rebellion-box": [
+      [{ left: "20%", top: "35%" }, { left: "62%", top: "61%" }],
+      [{ left: "15%", top: "58%" }, { left: "52%", top: "24%" }],
+      [{ left: "24%", top: "34%" }, { left: "63%", top: "61%" }],
+    ],
+    "case-urn": [
+      [{ left: "22%", top: "54%" }, { left: "68%", top: "34%" }],
+      [{ left: "14%", top: "66%" }, { left: "62%", top: "38%" }],
+      [{ left: "18%", top: "50%" }, { left: "58%", top: "59%" }],
+    ],
+    "case-half-hour-coup": [
+      [{ left: "26%", top: "44%" }, { left: "66%", top: "22%" }],
+      [{ left: "12%", top: "56%" }, { left: "63%", top: "31%" }],
+      [{ left: "18%", top: "48%" }, { left: "68%", top: "59%" }],
+    ],
+  };
 
   const defaultSettings = {
     textSpeed: "normal",
@@ -2193,6 +2220,17 @@
     `;
   }
 
+  function investigationHotspotStyle(caseData, locationIndex, spotIndex) {
+    const byCase = investigationHotspotLayoutByCase[caseData.id] || [];
+    const byLocation = byCase[Number(locationIndex)] || null;
+    const style = byLocation?.[Number(spotIndex)] || null;
+    if (!style || !style.left || !style.top) return null;
+    return {
+      left: style.left,
+      top: style.top,
+    };
+  }
+
   function renderOpeningLines(caseData) {
     const lines = Array.isArray(caseData.openingLines) ? caseData.openingLines.slice(0, 3) : [];
     if (!lines.length) return "";
@@ -2286,8 +2324,10 @@
           .map((spot, index) => {
             const key = `${inv.locationIndex}:${index}`;
             const done = inv.examined.includes(key);
+            const spotStyle = investigationHotspotStyle(caseData, inv.locationIndex, index);
+            const positionalStyle = spotStyle ? `style="left:${escapeHtml(spotStyle.left)};top:${escapeHtml(spotStyle.top)};bottom:auto;right:auto;"` : "";
             return `
-              <button class="scene-hotspot scene-hotspot-${index + 1} ${done ? "done" : ""}" type="button" data-examine-spot="${index}" aria-label="${escapeHtml(done ? `复查${spot.name}` : `查看${spot.name}`)}">
+              <button class="scene-hotspot scene-hotspot-${index + 1} ${done ? "done" : ""}" type="button" data-examine-spot="${index}" aria-label="${escapeHtml(done ? `复查${spot.name}` : `查看${spot.name}`)}" ${positionalStyle}>
                 <span>${escapeHtml(spot.name)}</span>
                 <small>${done ? "已记录" : "查看"}</small>
               </button>
