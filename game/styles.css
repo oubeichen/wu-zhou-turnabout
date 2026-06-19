@@ -873,7 +873,7 @@ button:not(:disabled):hover {
 }
 
 .trial-layout .scene {
-  min-height: clamp(250px, 42vh, 340px);
+  min-height: clamp(300px, 42vh, 340px);
 }
 
 .trial-layout .trial-panel {
@@ -2025,14 +2025,14 @@ button:not(:disabled):hover {
 
 .scene.trial .spotlight {
   bottom: clamp(96px, 12vw, 132px);
-  width: clamp(178px, 20vw, 260px);
-  height: clamp(220px, 25vw, 318px);
+  width: clamp(110px, min(20vw, 28vw), 220px);
+  height: clamp(130px, min(22vw, 32vh), 240px);
 }
 
 .scene.trial .portrait {
   z-index: 31;
-  bottom: clamp(104px, 13vw, 144px);
-  width: clamp(170px, 19vw, 246px);
+  bottom: clamp(52px, 12vw, 86px);
+  width: clamp(88px, min(17vw, calc((100% - 72px) / 2)), 184px);
 }
 
 .scene.trial .pose-cue {
