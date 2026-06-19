@@ -2620,11 +2620,11 @@ button:not(:disabled):hover {
   grid-template-columns: 1fr;
   grid-template-rows: 1fr;
   justify-content: start;
-  width: 56px;
-  min-width: 56px;
-  max-width: 56px;
-  min-height: 56px;
-  height: 56px;
+  width: 44px;
+  min-width: 44px;
+  max-width: 44px;
+  min-height: 44px;
+  height: 44px;
   z-index: 2;
   transform: scale(0.9);
   transform-origin: center center;
@@ -2636,14 +2636,14 @@ button:not(:disabled):hover {
   box-shadow: none;
   pointer-events: auto;
   z-index: 1;
-  clip-path: circle(22px at 50% 50%);
-  -webkit-clip-path: circle(22px at 50% 50%);
+  clip-path: circle(20px at 50% 50%);
+  -webkit-clip-path: circle(20px at 50% 50%);
 }
 
 .scene-hotspot::before {
   content: "";
-  width: 56px;
-  height: 56px;
+  width: 44px;
+  height: 44px;
   background-image: url("./assets/investigation-marker-sheet-v1.png");
   background-repeat: no-repeat;
   background-size: 256px 128px;
@@ -2661,8 +2661,8 @@ button:not(:disabled):hover {
 .scene-hotspot span {
   position: absolute;
   left: 50%;
-  top: -8px;
-  max-width: 128px;
+  top: -18px;
+  max-width: 150px;
   min-width: 0;
   width: max-content;
   opacity: 0;
@@ -2714,6 +2714,11 @@ button:not(:disabled):hover {
   opacity: 1;
   visibility: visible;
   filter: drop-shadow(0 0 0 2px rgba(255, 241, 191, 0.28));
+}
+
+.scene-hotspot:not(:hover):not(:focus-visible) span,
+.scene-hotspot:not(:hover):not(:focus-visible) small {
+  pointer-events: none;
 }
 
 .location-map > div {
@@ -4231,12 +4236,12 @@ button:not(:disabled):hover {
   grid-template-rows: 72px auto;
   justify-items: center;
   gap: 3px;
-  width: 72px;
-  min-width: 72px;
-  max-width: 72px;
-  min-height: 72px;
-  max-height: 72px;
-  height: 72px;
+  width: 58px;
+  min-width: 58px;
+  max-width: 58px;
+  min-height: 58px;
+  max-height: 58px;
+  height: 58px;
   padding: 0;
   color: #fff8e7;
   background: transparent;
@@ -4244,19 +4249,19 @@ button:not(:disabled):hover {
   border-radius: 999px;
   box-shadow: none;
   pointer-events: auto;
-  clip-path: circle(30px at 50% 36px);
-  -webkit-clip-path: circle(30px at 50% 36px);
+  clip-path: circle(24px at 50% 29px);
+  -webkit-clip-path: circle(24px at 50% 29px);
   transform: scale(0.9);
   transform-origin: center center;
 }
 
 .inspect-hotspot::before {
   content: "";
-  width: 72px;
-  height: 72px;
+  width: 58px;
+  height: 58px;
   background-image: url("./assets/inspect-hotspot-marker-sheet-v1.png");
   background-repeat: no-repeat;
-  background-size: 216px 72px;
+  background-size: 174px 58px;
   background-position: 0 0;
   filter: drop-shadow(0 9px 16px rgba(31, 28, 25, 0.36));
   transition: transform 0.16s ease, filter 0.16s ease;
@@ -4270,12 +4275,12 @@ button:not(:disabled):hover {
 
 .inspect-hotspot span {
   position: absolute;
-  left: 23px;
+  left: 17px;
   top: 1px;
   display: grid;
   place-items: center;
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
   color: #fff8e7;
   background: rgba(35, 27, 22, 0.78);
   border: 1px solid rgba(255, 241, 191, 0.74);
@@ -4308,7 +4313,7 @@ button:not(:disabled):hover {
 }
 
 .inspect-hotspot.active::before {
-  background-position: -72px 0;
+  background-position: -58px 0;
 }
 
 .inspect-hotspot.active small {
@@ -4325,7 +4330,7 @@ button:not(:disabled):hover {
 }
 
 .inspect-hotspot.checked::before {
-  background-position: -144px 0;
+  background-position: -116px 0;
 }
 
 .inspect-hotspot.checked span {

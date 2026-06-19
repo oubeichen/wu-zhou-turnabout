@@ -2948,11 +2948,11 @@
               .map((item) => `<div><strong>${escapeHtml(timelineLabel(item))}</strong><span>${escapeHtml(item.title)}</span></div>`)
               .join("")}
           </div>
-          <div class="action-row">
-            <button class="secondary-button" type="button" data-home>返回主菜单</button>
-            <button class="primary-button" type="button" data-home>返回案件</button>
-            <button class="secondary-button" type="button" data-next-case>下一案</button>
-          </div>
+            <div class="action-row">
+              <button class="secondary-button" type="button" data-home>返回主菜单</button>
+              <button class="primary-button" type="button" data-return-case>返回案件</button>
+              <button class="secondary-button" type="button" data-next-case>下一案</button>
+            </div>
         </div>
       </section>
       ${renderCue()}
@@ -2982,7 +2982,7 @@
             <button class="danger-button" type="button" data-retry-trial>重审庭审</button>
             <button class="secondary-button" type="button" data-open-intro>整理案卷</button>
             <button class="secondary-button" type="button" data-home>返回主菜单</button>
-            <button class="primary-button" type="button" data-home>返回案件</button>
+            <button class="primary-button" type="button" data-return-case>返回案件</button>
           </div>
           <div class="evidence-detail">
             <strong>最后压制</strong>
@@ -5068,6 +5068,11 @@
     if (target.dataset.continueTestimony !== undefined) continueTestimony();
     if (target.dataset.retryTrial !== undefined) retryTrial();
     if (target.dataset.home !== undefined) renderHome();
+    if (target.dataset.returnCase !== undefined) {
+      const index = Number.isFinite(state.caseIndex) ? Math.max(0, Math.min(data.cases.length - 1, state.caseIndex)) : continueCaseIndex();
+      openCase(index);
+      return;
+    }
     if (target.dataset.nextCase !== undefined) nextCase();
     if (target.dataset.toggleGuide !== undefined) {
       state.guideOpen = !state.guideOpen;
