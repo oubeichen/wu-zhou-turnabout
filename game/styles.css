@@ -2615,7 +2615,8 @@ button:not(:disabled):hover {
 
 .scene-hotspots {
   position: absolute;
-  inset: 20px 12px 12px;
+  inset: 20px 12px 138px 12px;
+  height: calc(100% - 158px);
   z-index: 0;
   pointer-events: none;
 }
