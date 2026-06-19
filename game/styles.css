@@ -2609,7 +2609,7 @@ button:not(:disabled):hover {
 
 .scene-hotspots {
   position: absolute;
-  inset: 0;
+  inset: 20px 12px 12px;
   z-index: 3;
   pointer-events: none;
 }
@@ -2626,15 +2626,18 @@ button:not(:disabled):hover {
   min-height: 56px;
   height: 56px;
   z-index: 2;
+  transform: scale(0.9);
+  transform-origin: center center;
   padding: 0;
   color: #fff8e7;
   background: transparent;
   border: 0;
-  border-radius: 0;
+  border-radius: 999px;
   box-shadow: none;
   pointer-events: auto;
   z-index: 1;
-  clip-path: circle(26px at 50% 50%);
+  clip-path: circle(22px at 50% 50%);
+  -webkit-clip-path: circle(22px at 50% 50%);
 }
 
 .scene-hotspot::before {
@@ -4232,14 +4235,19 @@ button:not(:disabled):hover {
   min-width: 72px;
   max-width: 72px;
   min-height: 72px;
+  max-height: 72px;
+  height: 72px;
   padding: 0;
   color: #fff8e7;
   background: transparent;
   border: 0;
-  border-radius: 0;
+  border-radius: 999px;
   box-shadow: none;
   pointer-events: auto;
-  clip-path: circle(36px at 50% 36px);
+  clip-path: circle(30px at 50% 36px);
+  -webkit-clip-path: circle(30px at 50% 36px);
+  transform: scale(0.9);
+  transform-origin: center center;
 }
 
 .inspect-hotspot::before {
