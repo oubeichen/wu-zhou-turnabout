@@ -2859,7 +2859,7 @@ button:not(:disabled):hover {
   max-width: 36px;
   min-height: 36px;
   height: 36px;
-  z-index: 4;
+  z-index: 2;
   transform: scale(0.9);
   transform-origin: center center;
   padding: 0;
@@ -2896,6 +2896,7 @@ button:not(:disabled):hover {
 
 .scene-hotspot span {
   position: absolute;
+  z-index: 24;
   left: 50%;
   top: -18px;
   max-width: 150px;
@@ -2917,7 +2918,6 @@ button:not(:disabled):hover {
   text-overflow: ellipsis;
   white-space: nowrap;
   pointer-events: none;
-  z-index: 2;
 }
 
 .scene-hotspot small {
@@ -2926,11 +2926,12 @@ button:not(:disabled):hover {
   visibility: hidden;
   transform: translateY(2px);
   transition: opacity 0.14s ease, visibility 0.14s ease, transform 0.14s ease;
-  z-index: 2;
+  z-index: 24;
 }
 
 .scene-hotspot-hint {
   position: absolute;
+  z-index: 24;
   left: 56px;
   top: 100%;
   margin-top: 2px;
@@ -2987,7 +2988,7 @@ button:not(:disabled):hover {
   opacity: 1;
   visibility: visible;
   filter: drop-shadow(0 0 0 2px rgba(255, 241, 191, 0.28));
-  z-index: 36;
+  z-index: 24;
 }
 
 @keyframes scene-crossfade {
@@ -4559,7 +4560,7 @@ button:not(:disabled):hover {
 
 .inspect-hotspot {
   position: absolute;
-  z-index: auto;
+  z-index: 2;
   display: grid;
   grid-template-rows: 72px auto;
   justify-items: center;
@@ -4605,6 +4606,7 @@ button:not(:disabled):hover {
   position: absolute;
   left: 17px;
   top: 1px;
+  z-index: 2;
   display: grid;
   place-items: center;
   width: 18px;
@@ -4635,6 +4637,7 @@ button:not(:disabled):hover {
   top: 0;
   transform: translateY(-4px);
   pointer-events: none;
+  z-index: 2;
   opacity: 0;
   visibility: hidden;
   transition: opacity 0.14s ease, visibility 0.14s ease;
@@ -7156,7 +7159,7 @@ button:not(:disabled):hover {
   justify-items: start;
   align-items: center;
   gap: 0;
-  z-index: 4;
+  z-index: 2;
 }
 
 .scene-hotspot.done::before {

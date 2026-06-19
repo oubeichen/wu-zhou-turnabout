@@ -3,6 +3,7 @@
 # John workspace internals and local agent state
 .john/
 .playwright-mcp/
+.playwright/
 .serena/
 .spec-workflow/
 
