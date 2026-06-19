@@ -2623,7 +2623,7 @@ button:not(:disabled):hover {
 
 .scene-hotspots {
   position: absolute;
-  inset: 16px 12px clamp(128px, 34vh, 176px) 12px;
+  inset: 16px 12px clamp(180px, 34vh, 236px) 12px;
   pointer-events: none;
   z-index: 0;
 }
@@ -2808,7 +2808,15 @@ button:not(:disabled):hover {
 .dialogue-box,
 .scene-atmosphere,
 .investigation-beat {
-  z-index: 12;
+  z-index: 32;
+}
+
+.scene-title,
+.scene-atmosphere,
+.dialogue-box,
+.investigation-beat {
+  position: relative;
+  z-index: 34;
 }
 
 .scene.investigation .scene-hotspots {

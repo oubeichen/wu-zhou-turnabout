@@ -145,6 +145,16 @@
     }
   }
 
+  function clampPercent(value, minPercent, maxPercent) {
+    const percentMatch = /^(-?\d+(?:\.\d+)?)%$/;
+    const m = typeof value === "string" ? value.trim().match(percentMatch) : null;
+    if (!m) return value;
+    const parsed = Number.parseFloat(m[1]);
+    if (!Number.isFinite(parsed)) return value;
+    const next = Math.min(maxPercent, Math.max(minPercent, parsed));
+    return `${next}%`;
+  }
+
   function snapshotSaveData() {
     return {
       version: 2,
@@ -2225,9 +2235,10 @@
     const byLocation = byCase[Number(locationIndex)] || null;
     const style = byLocation?.[Number(spotIndex)] || null;
     if (!style || !style.left || !style.top) return null;
+    const safeTop = clampPercent(style.top, 8, 56);
     return {
-      left: style.left,
-      top: style.top,
+      left: clampPercent(style.left, 8, 90),
+      top: safeTop,
     };
   }
 
