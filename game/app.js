@@ -2698,6 +2698,11 @@
         <section class="pursuit-unlock-card">
           <span class="hero-kicker">对照追击成立</span>
           <div class="pursuit-unlock-ribbon" aria-hidden="true">突破口已确认</div>
+          <div class="pursuit-unlock-timeline" role="list" aria-label="追击奖励解锁流程">
+            <span class="pursuit-unlock-step" role="listitem">追击成立</span>
+            <span class="pursuit-unlock-step" role="listitem">法庭记录扩展</span>
+            <span class="pursuit-unlock-step ${cue.unlockStatementText ? "pursuit-unlock-step-active" : ""}" role="listitem">新证词补强</span>
+          </div>
           <h2>${escapeHtml(cue.pursuitTitle || "法庭记录已扩展")}</h2>
           <div class="pursuit-unlock-main">
             ${item ? `<div class="pickup-art">${renderEvidenceThumb(item, true, "pickup", caseData)}</div>` : ""}

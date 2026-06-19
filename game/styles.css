@@ -1776,6 +1776,46 @@ button:not(:disabled):hover {
   animation: pursuit-unlock-ribbon 0.44s ease-out 0.2s both;
 }
 
+.pursuit-unlock-timeline {
+  position: relative;
+  display: flex;
+  gap: 8px;
+  padding: 7px 10px;
+  color: #fff1bf;
+  background: rgba(31, 28, 25, 0.48);
+  border: 1px solid rgba(255, 241, 191, 0.22);
+  border-radius: 999px;
+}
+
+.pursuit-unlock-step {
+  position: relative;
+  min-height: 28px;
+  padding: 0 10px;
+  display: inline-grid;
+  align-items: center;
+  font-size: 12px;
+  line-height: 1.3;
+  font-weight: 800;
+  border-radius: 999px;
+  background: rgba(92, 29, 24, 0.66);
+  border: 1px solid rgba(255, 241, 191, 0.22);
+  animation: pursuit-step-enter 0.28s ease both;
+}
+
+.pursuit-unlock-step:nth-child(2) {
+  animation-delay: 0.18s;
+}
+
+.pursuit-unlock-step:nth-child(3) {
+  animation-delay: 0.36s;
+}
+
+.pursuit-unlock-step-active {
+  background: rgba(221, 171, 61, 0.24);
+  border-color: rgba(221, 171, 61, 0.76);
+  color: #fff8e7;
+}
+
 .pursuit-unlock-main {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
@@ -1841,6 +1881,18 @@ button:not(:disabled):hover {
   border-radius: 6px;
   animation: pursuit-unlock-frame 1.2s linear infinite;
   opacity: 0;
+}
+
+@keyframes pursuit-step-enter {
+  from {
+    opacity: 0.22;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes pursuit-unlock-dim {
@@ -4099,7 +4151,12 @@ button:not(:disabled):hover {
   .inventory-target-active,
   .inventory-target-burst,
   .inspect-lens,
-  .inspect-gesture-active .evidence-thumb {
+  .inspect-gesture-active .evidence-thumb,
+  .pursuit-unlock-layer,
+  .pursuit-unlock-card,
+  .pursuit-unlock-ribbon,
+  .pursuit-unlock-step,
+  .pursuit-unlock-card::after {
     animation: none;
   }
 }
