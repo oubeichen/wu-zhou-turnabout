@@ -2785,6 +2785,7 @@
     const leftPoseLabel = mode === "trial" ? poseLabel(stagePose.left) : "";
     const rightPoseLabel = mode === "trial" ? poseLabel(stagePose.right) : "";
     const hasInvestigationBeat = mode === "investigation" && state.investigationBeat;
+    const pressure = mode === "trial" ? pressureLevel(progress) : "stable";
     const trialSceneAttr = mode === "trial"
       ? `data-advance-trial-scene="1" role="button" tabindex="0" aria-label="庭审场景区域可直接切换证词"`
       : "";
@@ -2806,7 +2807,7 @@
           : "当前句可直接追问 / 打开记录 / 举证"
       : "";
     return `
-      <div class="scene ${mode} ${sceneKey ? `scene-${sceneKey}` : ""} focus-${focus} pose-left-${stagePose.left} pose-right-${stagePose.right} ${vulnerabilityCue ? "vulnerability-ready" : ""} ${hasInvestigationBeat ? "has-investigation-beat" : ""} ${state.settings.reducedMotion ? "reduced-motion" : ""}" data-motif="${escapeHtml(sceneMotif)}" ${trialSceneAttr} ${locationStyle}>
+      <div class="scene ${mode} ${sceneKey ? `scene-${sceneKey}` : ""} focus-${focus} pose-left-${stagePose.left} pose-right-${stagePose.right} pressure-${pressure} ${vulnerabilityCue ? "vulnerability-ready" : ""} ${hasInvestigationBeat ? "has-investigation-beat" : ""} ${state.settings.reducedMotion ? "reduced-motion" : ""}" data-motif="${escapeHtml(sceneMotif)}" ${trialSceneAttr} ${locationStyle}>
         ${
           mode === "trial"
             ? `<div class="stage-layer">

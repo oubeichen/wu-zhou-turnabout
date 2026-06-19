@@ -2118,6 +2118,79 @@ button:not(:disabled):hover {
   opacity: 1;
 }
 
+.scene.trial.pressure-danger::after {
+  background:
+    linear-gradient(180deg, rgba(98, 18, 21, 0.35), rgba(98, 18, 21, 0) 40%),
+    radial-gradient(circle at 20% 50%, rgba(255, 84, 72, 0.2), transparent 34%),
+    radial-gradient(circle at 80% 50%, rgba(255, 84, 72, 0.2), transparent 34%);
+  opacity: 0.76;
+}
+
+.scene.trial.pressure-final-warning::after {
+  background:
+    linear-gradient(180deg, rgba(98, 18, 21, 0.5), rgba(98, 18, 21, 0) 38%),
+    repeating-linear-gradient(135deg, rgba(255, 84, 72, 0.16), rgba(255, 84, 72, 0.16) 1px, transparent 1px, transparent 8px),
+    radial-gradient(circle at 48% 48%, rgba(255, 241, 191, 0.22), transparent 32%);
+  opacity: 0.9;
+  animation: pressure-final-warning 1.2s ease-in-out infinite;
+}
+
+.scene.trial.pressure-danger .portrait-left,
+.scene.trial.pressure-danger .portrait-right {
+  animation: pressure-shiver 1.1s ease-in-out infinite;
+  transform: translateY(0) scale(1.01);
+  box-shadow: 0 18px 34px rgba(98, 18, 21, 0.44), 0 0 0 3px rgba(255, 241, 191, 0.24);
+}
+
+.scene.trial.pressure-final-warning .portrait-left,
+.scene.trial.pressure-final-warning .portrait-right {
+  animation: pressure-falter 0.6s ease-in-out infinite;
+  transform: translateY(-2px) scale(0.99);
+  filter: saturate(1.16) contrast(1.08);
+  box-shadow: 0 18px 34px rgba(98, 18, 21, 0.56), 0 0 0 3px rgba(255, 84, 72, 0.32);
+}
+
+.scene.trial.pressure-danger .pose-cue,
+.scene.trial.pressure-final-warning .pose-cue {
+  background: rgba(98, 18, 21, 0.7);
+  border-color: rgba(255, 84, 72, 0.8);
+  color: #ffe7d7;
+}
+
+@keyframes pressure-final-warning {
+  0% {
+    opacity: 0.86;
+  }
+  50% {
+    opacity: 0.68;
+  }
+  100% {
+    opacity: 0.86;
+  }
+}
+
+@keyframes pressure-shiver {
+  0%,
+  100% {
+    transform: translateY(1px) rotate(0.5deg) scale(1.01);
+  }
+  50% {
+    transform: translateY(0) rotate(-0.6deg) scale(1.01);
+  }
+}
+
+@keyframes pressure-falter {
+  0% {
+    transform: translateY(0) rotate(-0.5deg) scale(0.99);
+  }
+  50% {
+    transform: translateY(-2px) rotate(1deg) scale(0.98);
+  }
+  100% {
+    transform: translateY(0) rotate(-0.5deg) scale(0.99);
+  }
+}
+
 .vulnerability-cue {
   position: absolute;
   z-index: 4;
@@ -2456,6 +2529,16 @@ button:not(:disabled):hover {
 .scene.reduced-motion .spotlight {
   animation: none;
   transition: none;
+}
+
+.scene.reduced-motion.pressure-danger::after,
+.scene.reduced-motion.pressure-final-warning::after,
+.scene.reduced-motion.pressure-danger .portrait-left,
+.scene.reduced-motion.pressure-danger .portrait-right,
+.scene.reduced-motion.pressure-final-warning .portrait-left,
+.scene.reduced-motion.pressure-final-warning .portrait-right,
+.scene.reduced-motion.pressure-final-warning::after {
+  animation: none;
 }
 
 @keyframes camera-notice-in {
