@@ -5451,6 +5451,23 @@
       continuePursuitUnlock();
       return;
     }
+    if (state.screen === "trial" && !state.recordOpen) {
+      const scene = app.querySelector(".scene[data-advance-trial-dialogue], .scene[data-advance-trial-scene]");
+      const sceneRect = scene ? scene.getBoundingClientRect() : null;
+      if (event.key === " ") {
+        event.preventDefault();
+        if (state.selectedEvidenceId || state.selectedProfileName) {
+          return;
+        }
+        advanceTrialDialogueByPointer((sceneRect?.left || 0) + (sceneRect?.width || window.innerWidth) / 2, sceneRect);
+        return;
+      }
+      if (event.key === "Enter" && !(state.selectedEvidenceId || state.selectedProfileName)) {
+        event.preventDefault();
+        advanceTrialDialogueByPointer((sceneRect?.left || 0) + (sceneRect?.width || window.innerWidth) / 2, sceneRect);
+        return;
+      }
+    }
     if (state.screen !== "trial") return;
     if (event.key === "ArrowLeft") {
       playCue("click");
