@@ -2614,7 +2614,7 @@ button:not(:disabled):hover {
 .scene-hotspots {
   position: absolute;
   inset: 20px 12px 12px;
-  z-index: 3;
+  z-index: 0;
   pointer-events: none;
 }
 
@@ -2630,7 +2630,7 @@ button:not(:disabled):hover {
   max-width: 44px;
   min-height: 44px;
   height: 44px;
-  z-index: 1;
+  z-index: auto;
   transform: scale(0.9);
   transform-origin: center center;
   padding: 0;
@@ -4232,12 +4232,13 @@ button:not(:disabled):hover {
   position: absolute;
   inset: 0;
   isolation: isolate;
+  z-index: 0;
   pointer-events: none;
 }
 
 .inspect-hotspot {
   position: absolute;
-  z-index: 1;
+  z-index: auto;
   display: grid;
   grid-template-rows: 72px auto;
   justify-items: center;
