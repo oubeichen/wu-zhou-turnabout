@@ -2707,6 +2707,9 @@
     const leftPoseLabel = mode === "trial" ? poseLabel(stagePose.left) : "";
     const rightPoseLabel = mode === "trial" ? poseLabel(stagePose.right) : "";
     const hasInvestigationBeat = mode === "investigation" && state.investigationBeat;
+    const trialSceneAttr = mode === "trial"
+      ? `data-advance-trial-scene="1" role="button" tabindex="0" aria-label="庭审场景区域可直接切换证词"`
+      : "";
     const trialAdvanceAttr = mode === "trial"
       ? `data-advance-trial-dialogue="1" role="button" tabindex="0" aria-label="${hasPrevStatement ? "可回退/前进证词" : "继续查看证词下一句"}"`
       : "";
@@ -2725,7 +2728,7 @@
           : "当前句可直接追问 / 打开记录 / 举证"
       : "";
     return `
-      <div class="scene ${mode} ${sceneKey ? `scene-${sceneKey}` : ""} focus-${focus} pose-left-${stagePose.left} pose-right-${stagePose.right} ${vulnerabilityCue ? "vulnerability-ready" : ""} ${hasInvestigationBeat ? "has-investigation-beat" : ""} ${state.settings.reducedMotion ? "reduced-motion" : ""}" data-motif="${escapeHtml(sceneMotif)}" ${locationStyle}>
+      <div class="scene ${mode} ${sceneKey ? `scene-${sceneKey}` : ""} focus-${focus} pose-left-${stagePose.left} pose-right-${stagePose.right} ${vulnerabilityCue ? "vulnerability-ready" : ""} ${hasInvestigationBeat ? "has-investigation-beat" : ""} ${state.settings.reducedMotion ? "reduced-motion" : ""}" data-motif="${escapeHtml(sceneMotif)}" ${trialSceneAttr} ${locationStyle}>
         ${
           mode === "trial"
             ? `<div class="stage-layer">
@@ -4322,6 +4325,28 @@
     }
   }
 
+  function advanceTrialDialogueByPointer(clientX, sourceRect) {
+    if (state.screen !== "trial" || state.recordOpen) return;
+    const rect = sourceRect || null;
+    if (!rect || rect.width <= 0) {
+      return advanceTrialDialogueByClick();
+    }
+    const x = clientX - rect.left;
+    const caseData = currentCase();
+    const progress = caseProgress(caseData.id);
+    const testimony = caseData.testimony[progress.testimonyIndex];
+    const visibleStatements = testimony ? visibleStatementEntries(testimony, progress) : [];
+    const hasPrevStatement = progress.statementIndex > 0;
+    const hasNextStatement = progress.statementIndex < visibleStatements.length - 1;
+    if (x <= rect.width / 2 && hasPrevStatement) {
+      moveStatement(-1);
+      return;
+    }
+    if (hasNextStatement) {
+      advanceTrialDialogueByClick();
+    }
+  }
+
   function jumpStatement(index) {
     const caseData = currentCase();
     const progress = caseProgress(caseData.id);
@@ -4886,22 +4911,13 @@
     const trialDialogPanel = event.target.closest("[data-advance-trial-dialogue]");
     if (trialDialogPanel && !event.target.closest("button") && state.screen === "trial") {
       playCue("click");
-      const rect = trialDialogPanel.getBoundingClientRect();
-      const x = event.clientX - rect.left;
-      const progress = caseProgress(currentCase().id);
-      const hasPrevStatement = progress.statementIndex > 0;
-      const testimony = currentCase().testimony[progress.testimonyIndex];
-      const visibleStatements = testimony ? visibleStatementEntries(testimony, progress) : [];
-      const hasNextStatement = progress.statementIndex < visibleStatements.length - 1;
-      if (x <= rect.width / 2 && hasPrevStatement) {
-        moveStatement(-1);
-      } else if (x > rect.width / 2 && hasNextStatement) {
-        advanceTrialDialogueByClick();
-      } else {
-        if (hasNextStatement) {
-          advanceTrialDialogueByClick();
-        }
-      }
+      advanceTrialDialogueByPointer(event.clientX, trialDialogPanel.getBoundingClientRect());
+      return;
+    }
+    const trialScenePanel = event.target.closest("[data-advance-trial-scene]");
+    if (trialScenePanel && !event.target.closest("button") && state.screen === "trial") {
+      playCue("click");
+      advanceTrialDialogueByPointer(event.clientX, trialScenePanel.getBoundingClientRect());
       return;
     }
     const interludePanel = event.target.closest("[data-continue-testimony-panel]");
@@ -5208,6 +5224,20 @@
           presentEvidence();
           return;
         }
+        event.preventDefault();
+        playCue("click");
+        advanceTrialDialogueByClick();
+        return;
+      }
+    }
+    if (state.screen === "trial" && !state.recordOpen && !state.objectionReveal && !state.pursuitUnlockCue && !state.investigationBeat && !state.settingsOpen && !state.guideOpen) {
+      if (event.key === "ArrowLeft") {
+        event.preventDefault();
+        playCue("click");
+        moveStatement(-1);
+        return;
+      }
+      if (event.key === "ArrowRight") {
         event.preventDefault();
         playCue("click");
         advanceTrialDialogueByClick();

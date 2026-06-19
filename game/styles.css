@@ -1934,6 +1934,10 @@ button:not(:disabled):hover {
     var(--location-art, url("./assets/courtroom-bg-v1.png")) center / cover;
 }
 
+.scene.trial[data-advance-trial-scene] {
+  cursor: pointer;
+}
+
 .scene.trial::after {
   content: "";
   position: absolute;
