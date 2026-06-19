@@ -2674,6 +2674,7 @@ button:not(:disabled):hover {
   bottom: 40%;
   pointer-events: none;
   z-index: 0;
+  overflow: hidden;
 }
 
 .scene-hotspots-dormant {
@@ -6912,6 +6913,7 @@ button:not(:disabled):hover {
   left: 12px;
   right: 12px;
   bottom: 36%;
+  overflow: hidden;
   display: grid;
   grid-template-columns: auto;
   gap: 8px;
