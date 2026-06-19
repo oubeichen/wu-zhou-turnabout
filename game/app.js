@@ -2395,7 +2395,14 @@
   function renderCommandButton(command, label) {
     const caseData = currentCase();
     const inv = investigationProgress(caseData.id);
-    return `<button class="command-button ${inv.command === command ? "active" : ""}" type="button" data-command="${command}">${label}</button>`;
+    const keys = {
+      move: "1",
+      examine: "2",
+      talk: "3",
+      present: "4",
+    };
+    const key = keys[command] || "";
+    return `<button class="command-button ${inv.command === command ? "active" : ""}" type="button" data-command="${command}"><span class="command-key">${escapeHtml(key)}</span>${escapeHtml(label)}</button>`;
   }
 
   function renderInvestigationCommand(caseData, inv, location) {
