@@ -2635,7 +2635,6 @@ button:not(:disabled):hover {
   border-radius: 999px;
   box-shadow: none;
   pointer-events: auto;
-  z-index: 1;
   clip-path: circle(20px at 50% 50%);
   -webkit-clip-path: circle(20px at 50% 50%);
 }
@@ -4261,7 +4260,7 @@ button:not(:disabled):hover {
   height: 58px;
   background-image: url("./assets/inspect-hotspot-marker-sheet-v1.png");
   background-repeat: no-repeat;
-  background-size: 174px 58px;
+  background-size: 216px 72px;
   background-position: 0 0;
   filter: drop-shadow(0 9px 16px rgba(31, 28, 25, 0.36));
   transition: transform 0.16s ease, filter 0.16s ease;
@@ -4313,7 +4312,7 @@ button:not(:disabled):hover {
 }
 
 .inspect-hotspot.active::before {
-  background-position: -58px 0;
+  background-position: -72px 0;
 }
 
 .inspect-hotspot.active small {
@@ -4330,7 +4329,7 @@ button:not(:disabled):hover {
 }
 
 .inspect-hotspot.checked::before {
-  background-position: -116px 0;
+  background-position: -144px 0;
 }
 
 .inspect-hotspot.checked span {

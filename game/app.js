@@ -2948,11 +2948,11 @@
               .map((item) => `<div><strong>${escapeHtml(timelineLabel(item))}</strong><span>${escapeHtml(item.title)}</span></div>`)
               .join("")}
           </div>
-            <div class="action-row">
-              <button class="secondary-button" type="button" data-home>返回主菜单</button>
-              <button class="primary-button" type="button" data-return-case>返回案件</button>
-              <button class="secondary-button" type="button" data-next-case>下一案</button>
-            </div>
+          <div class="action-row">
+            <button class="secondary-button" type="button" data-home>返回主菜单</button>
+            <button class="primary-button" type="button" data-return-case>返回案件</button>
+            <button class="secondary-button" type="button" data-next-case>下一案</button>
+          </div>
         </div>
       </section>
       ${renderCue()}
