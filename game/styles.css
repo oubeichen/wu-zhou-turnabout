@@ -2806,7 +2806,7 @@ button:not(:disabled):hover {
   top: 16px;
   left: 12px;
   right: 12px;
-  bottom: 58%;
+  bottom: 64%;
   pointer-events: none;
   z-index: 0;
   overflow: hidden;
@@ -7081,7 +7081,7 @@ button:not(:disabled):hover {
   top: 10px;
   left: 10px;
   right: 10px;
-  bottom: 58%;
+  bottom: 64%;
   overflow: hidden;
   display: block;
   gap: 8px;
