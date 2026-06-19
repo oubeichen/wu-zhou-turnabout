@@ -3094,11 +3094,11 @@ button:not(:disabled):hover {
 }
 
 .scene.investigation.has-investigation-beat .scene-hotspot-1 {
-  top: 38%;
+  top: 36%;
 }
 
 .scene.investigation.has-investigation-beat .scene-hotspot-2 {
-  top: 46%;
+  top: 40%;
 }
 
 .spot-status-list {
