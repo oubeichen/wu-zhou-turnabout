@@ -19,7 +19,8 @@ html,
 body {
   margin: 0;
   height: 100%;
-  overflow: hidden;
+  min-height: 100%;
+  overflow: auto;
   background: #1f1c19;
   color: var(--ink);
   font-family: "Songti SC", "Noto Serif SC", "STSong", serif;
@@ -359,6 +360,13 @@ button:not(:disabled):hover {
   .dossier-stats {
     overflow: auto;
     max-height: 100%;
+  }
+}
+
+@media (min-width: 901px) {
+  html,
+  body {
+    overflow: hidden;
   }
 }
 

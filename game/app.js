@@ -5333,6 +5333,28 @@
         presentEvidence();
         return;
       }
+      if (!state.recordOpen) {
+        event.preventDefault();
+        if (!state.selectedEvidenceId && !state.selectedProfileName) {
+          state.recordOpen = true;
+          setMessage(
+            "法庭记录",
+            "尚未选中可提交的证物或人物档案。先打开记录，点选一项后按 E 再提交。",
+            ""
+          );
+          rerender();
+          return;
+        }
+        if (!readyToPresent) {
+          setMessage(
+            "法庭记录",
+            "当前句未形成可举证的破绽。先追问几句，看到“可举证”后再按 E。",
+            "penalty"
+          );
+          renderTrial();
+          return;
+        }
+      }
     }
     if (state.evidencePickup && state.screen === "investigation" && event.key === "Escape") {
       event.preventDefault();
