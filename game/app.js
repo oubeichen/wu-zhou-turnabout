@@ -2343,6 +2343,9 @@
     const hotspotAssist = canInspect
       ? "点击发光标记可以查看对应线索"
       : "当前在“查看”模式前切换到“查看”后再点标记";
+    if (!canInspect) {
+      return `<div class="scene-hotspots scene-hotspots-dormant" aria-label="现场可疑处" data-inactive-spots="1"><i>${escapeHtml("切到“查看”后可在现场标记点位收集线索")}</i></div>`;
+    }
     return `
       <div class="scene-hotspots" aria-label="现场可疑处">
         ${location.examineSpots

@@ -2628,6 +2628,29 @@ button:not(:disabled):hover {
   z-index: 0;
 }
 
+.scene-hotspots-dormant {
+  inset: 16px 12px auto 12px;
+  min-height: 0;
+  display: flex;
+  align-items: flex-end;
+}
+
+.scene-hotspots-dormant i {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 8px 10px;
+  border-radius: 8px;
+  color: #fff1bf;
+  background: rgba(31, 28, 25, 0.72);
+  border: 1px solid rgba(255, 241, 191, 0.28);
+  font-size: 12px;
+  font-style: normal;
+  line-height: 1.45;
+  z-index: 2;
+}
+
 .scene-hotspot {
   isolation: isolate;
   position: absolute;
