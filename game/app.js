@@ -2619,11 +2619,13 @@
       <section class="pursuit-unlock-layer" data-continue-pursuit-unlock role="button" tabindex="0" aria-label="返回庭审">
         <section class="pursuit-unlock-card">
           <span class="hero-kicker">对照追击成立</span>
+          <div class="pursuit-unlock-ribbon" aria-hidden="true">突破口已确认</div>
           <h2>${escapeHtml(cue.pursuitTitle || "法庭记录已扩展")}</h2>
           <div class="pursuit-unlock-main">
             ${item ? `<div class="pickup-art">${renderEvidenceThumb(item, true, "pickup", caseData)}</div>` : ""}
             <div class="pursuit-unlock-copy">
               <p>${escapeHtml(cue.unlockText || "追击成立后，新的证据与证词关系已经被补齐。")}</p>
+              ${cue.unlockEvidenceName ? `<span class="pursuit-unlock-evidence">${escapeHtml(cue.unlockEvidenceName)} · 已写入法庭记录</span>` : ""}
               ${cue.unlockStatementText ? `<span>新证词追加：${escapeHtml(cue.unlockStatementText)}</span>` : ""}
             </div>
           </div>
