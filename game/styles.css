@@ -2738,6 +2738,19 @@ button:not(:disabled):hover {
   z-index: 12;
 }
 
+.scene.investigation .scene-hotspots {
+  pointer-events: none;
+}
+
+.scene.investigation:not(.has-investigation-beat) .scene-hotspots {
+  pointer-events: auto;
+}
+
+.scene.investigation.has-investigation-beat .scene-hotspot,
+.scene.investigation.has-investigation-beat .scene-hotspots {
+  pointer-events: none;
+}
+
 .scene-hotspot-2 span,
 .scene-hotspot-2 small {
   left: 50%;
