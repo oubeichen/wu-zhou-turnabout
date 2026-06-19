@@ -6962,26 +6962,8 @@ button:not(:disabled):hover {
   z-index: 2;
 }
 
-.scene-hotspot::before {
-  content: "";
-  width: 44px;
-  height: 44px;
-  background-size: 128px 64px;
-}
-
 .scene-hotspot.done::before {
   background-position: -64px 0;
-}
-
-.scene-hotspot span,
-.scene-hotspot small {
-  display: none;
-}
-
-.scene-hotspot-2 span,
-.scene-hotspot-2 small {
-  left: auto;
-  right: auto;
 }
 
   .portrait {
