@@ -2714,6 +2714,16 @@ button:not(:disabled):hover {
   filter: drop-shadow(0 0 0 2px rgba(255, 241, 191, 0.28));
 }
 
+.scene-hotspot:disabled {
+  opacity: 0.68;
+  filter: grayscale(1);
+  cursor: default;
+}
+
+.scene-hotspot:disabled::before {
+  filter: grayscale(1) saturate(0.2);
+}
+
 .scene-hotspot:hover span,
 .scene-hotspot:focus-visible span {
   transform: translate(-50%, -8px);

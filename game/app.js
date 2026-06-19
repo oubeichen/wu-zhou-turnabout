@@ -2318,6 +2318,7 @@
     const caseData = currentCase();
     const inv = investigationProgress(caseData.id);
     const location = currentLocation(caseData);
+    const beatLocked = Boolean(state.investigationBeat);
     return `
       <div class="scene-hotspots" aria-label="现场可疑处">
         ${location.examineSpots
@@ -2326,8 +2327,9 @@
             const done = inv.examined.includes(key);
             const spotStyle = investigationHotspotStyle(caseData, inv.locationIndex, index);
             const positionalStyle = spotStyle ? `style="left:${escapeHtml(spotStyle.left)};top:${escapeHtml(spotStyle.top)};bottom:auto;right:auto;"` : "";
+            const disabledAttr = beatLocked ? "disabled aria-disabled=\"true\" tabindex=\"-1\" aria-label=\"\" " : "";
             return `
-              <button class="scene-hotspot scene-hotspot-${index + 1} ${done ? "done" : ""}" type="button" data-examine-spot="${index}" aria-label="${escapeHtml(done ? `复查${spot.name}` : `查看${spot.name}`)}" ${positionalStyle}>
+              <button class="scene-hotspot scene-hotspot-${index + 1} ${done ? "done" : ""}" type="button" ${beatLocked ? `${disabledAttr}` : `data-examine-spot="${index}"`} aria-label="${escapeHtml(done ? `复查${spot.name}` : `查看${spot.name}`)}" ${positionalStyle}>
                 <span>${escapeHtml(spot.name)}</span>
                 <small>${done ? "已记录" : "查看"}</small>
               </button>
