@@ -2339,13 +2339,11 @@
     const inv = investigationProgress(caseData.id);
     const location = currentLocation(caseData);
     const canInspect = inv.command === "examine" && !state.investigationBeat;
-    const beatLocked = Boolean(state.investigationBeat);
-    const hotspotAssist = canInspect
-      ? "点击发光标记可以查看对应线索"
-      : "当前在“查看”模式前切换到“查看”后再点标记";
     if (!canInspect) {
       return `<div class="scene-hotspots scene-hotspots-dormant" aria-label="现场可疑处" data-inactive-spots="1"><i>${escapeHtml("切到“查看”后可在现场标记点位收集线索")}</i></div>`;
     }
+
+    const beatLocked = Boolean(state.investigationBeat);
     return `
       <div class="scene-hotspots" aria-label="现场可疑处">
         ${location.examineSpots
@@ -2354,12 +2352,11 @@
             const done = inv.examined.includes(key);
             const spotStyle = investigationHotspotStyle(caseData, inv.locationIndex, index);
             const positionalStyle = spotStyle ? `style="left:${escapeHtml(spotStyle.left)};top:${escapeHtml(spotStyle.top)};bottom:auto;right:auto;"` : "";
-            const disabledAttr = beatLocked || !canInspect ? "disabled aria-disabled=\"true\" tabindex=\"-1\"" : `data-examine-spot="${index}"`;
+            const disabledAttr = beatLocked ? "disabled aria-disabled=\"true\" tabindex=\"-1\"" : `data-examine-spot="${index}"`;
             return `
-              <button class="scene-hotspot scene-hotspot-${index + 1} ${done ? "done" : ""} ${canInspect ? "" : "inactive"}" type="button" ${disabledAttr} aria-label="${escapeHtml(canInspect ? (done ? `复查${spot.name}` : `查看${spot.name}`) : `${spot.name}（请先切到查看）`)}" ${positionalStyle}>
+              <button class="scene-hotspot scene-hotspot-${index + 1} ${done ? "done" : ""}" type="button" ${disabledAttr} aria-label="${escapeHtml(done ? `复查${spot.name}` : `查看${spot.name}`)}" ${positionalStyle}>
                 <span>${escapeHtml(spot.name)}</span>
-                <small>${done ? "已记录" : canInspect ? "查看" : "先切换到查看"}</small>
-                <i class="scene-hotspot-hint" aria-hidden="true">${escapeHtml(hotspotAssist)}</i>
+                <small>${done ? "已记录" : "查看"}</small>
               </button>
             `;
           })
