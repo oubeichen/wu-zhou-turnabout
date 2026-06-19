@@ -2851,7 +2851,7 @@ button:not(:disabled):hover {
   max-width: 44px;
   min-height: 44px;
   height: 44px;
-  z-index: 2;
+  z-index: 12;
   transform: scale(0.9);
   transform-origin: center center;
   padding: 0;
@@ -2868,6 +2868,8 @@ button:not(:disabled):hover {
 
 .scene-hotspot::before {
   content: "";
+  position: relative;
+  z-index: 1;
   width: 44px;
   height: 44px;
   background-image: url("./assets/investigation-marker-sheet-v1.png");
@@ -7126,7 +7128,7 @@ button:not(:disabled):hover {
   justify-items: start;
   align-items: center;
   gap: 0;
-  z-index: 2;
+  z-index: 12;
 }
 
 .scene-hotspot.done::before {
