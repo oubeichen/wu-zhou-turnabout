@@ -2318,6 +2318,7 @@
     const caseData = currentCase();
     const inv = investigationProgress(caseData.id);
     const location = currentLocation(caseData);
+    const canInspect = inv.command === "examine" && !state.investigationBeat;
     const beatLocked = Boolean(state.investigationBeat);
     return `
       <div class="scene-hotspots" aria-label="现场可疑处">
@@ -2327,11 +2328,11 @@
             const done = inv.examined.includes(key);
             const spotStyle = investigationHotspotStyle(caseData, inv.locationIndex, index);
             const positionalStyle = spotStyle ? `style="left:${escapeHtml(spotStyle.left)};top:${escapeHtml(spotStyle.top)};bottom:auto;right:auto;"` : "";
-            const disabledAttr = beatLocked ? "disabled aria-disabled=\"true\" tabindex=\"-1\" aria-label=\"\" " : "";
+            const disabledAttr = beatLocked || !canInspect ? "disabled aria-disabled=\"true\" tabindex=\"-1\" aria-label=\"切换到查看指令后可点亮该线索\"" : `data-examine-spot="${index}"`;
             return `
-              <button class="scene-hotspot scene-hotspot-${index + 1} ${done ? "done" : ""}" type="button" ${beatLocked ? `${disabledAttr}` : `data-examine-spot="${index}"`} aria-label="${escapeHtml(done ? `复查${spot.name}` : `查看${spot.name}`)}" ${positionalStyle}>
+              <button class="scene-hotspot scene-hotspot-${index + 1} ${done ? "done" : ""} ${canInspect ? "" : "inactive"}" type="button" ${disabledAttr} aria-label="${escapeHtml(canInspect ? (done ? `复查${spot.name}` : `查看${spot.name}`) : `${spot.name}（请先切到查看）`)}" ${positionalStyle}>
                 <span>${escapeHtml(spot.name)}</span>
-                <small>${done ? "已记录" : "查看"}</small>
+                <small>${done ? "已记录" : canInspect ? "查看" : "先切换到查看"}</small>
               </button>
             `;
           })

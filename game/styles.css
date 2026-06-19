@@ -2771,6 +2771,12 @@ button:not(:disabled):hover {
   background-position: -128px 0;
 }
 
+.scene-hotspot.inactive {
+  opacity: 0.55;
+  transform: scale(0.88);
+  filter: saturate(0.55);
+}
+
 .scene-hotspot-1 {
   left: 8%;
   top: 30%;
