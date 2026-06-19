@@ -2615,6 +2615,7 @@ button:not(:disabled):hover {
 }
 
 .scene-hotspot {
+  isolation: isolate;
   position: absolute;
   display: grid;
   grid-template-columns: 1fr;
@@ -2625,7 +2626,7 @@ button:not(:disabled):hover {
   max-width: 44px;
   min-height: 44px;
   height: 44px;
-  z-index: 2;
+  z-index: 1;
   transform: scale(0.9);
   transform-origin: center center;
   padding: 0;
@@ -3958,6 +3959,7 @@ button:not(:disabled):hover {
   place-items: center;
   min-width: min(100%, 260px);
   min-height: 238px;
+  overflow: hidden;
   perspective: 780px;
   cursor: grab;
   touch-action: pan-y;
@@ -4225,12 +4227,13 @@ button:not(:disabled):hover {
 .inspect-hotspots {
   position: absolute;
   inset: 0;
+  isolation: isolate;
   pointer-events: none;
 }
 
 .inspect-hotspot {
   position: absolute;
-  z-index: 2;
+  z-index: 1;
   display: grid;
   grid-template-rows: 72px auto;
   justify-items: center;
