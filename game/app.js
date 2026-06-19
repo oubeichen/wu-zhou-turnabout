@@ -2504,7 +2504,7 @@
     const trialDeduction = trialDeductionForStatement(caseData, statement, progress, progress.testimonyIndex, rawIndex);
     const recordPrompt = readyToPresent
       ? selectedLabel
-        ? "破绽已经逼出来了。确认这份记录能反驳当前句，就点击“举证”。"
+        ? "破绽已经逼出来了。确认这份记录能反驳当前句，可直接按 E/Enter 提交举证。"
         : statement.answerProfile
           ? "破绽已经逼出来了。打开人物档案，选中能推翻当前句的人。"
           : "破绽已经逼出来了。打开证物记录，选中能推翻当前句的证物。可按 E 直接提交。"
@@ -5191,6 +5191,16 @@
     if (state.screen === "trial" && (event.key === "Enter" || event.key === " ")) {
       const isButtonFocus = event.target && event.target.closest && event.target.closest("button");
       if (!isButtonFocus && !state.recordOpen) {
+        const caseData = currentCase();
+        const progress = caseProgress(caseData.id);
+        const { statement, rawIndex } = currentStatementEntry(caseData.testimony[progress.testimonyIndex], progress);
+        const readyToPresent = statementReadyToPresent(statement, progress, progress.testimonyIndex, rawIndex);
+        if (readyToPresent && selectedRecordLabel(caseData) && !state.objectionReveal && !state.pursuitUnlockCue && !state.settingsOpen) {
+          event.preventDefault();
+          playCue("click");
+          presentEvidence();
+          return;
+        }
         event.preventDefault();
         playCue("click");
         advanceTrialDialogueByClick();

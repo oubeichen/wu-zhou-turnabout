@@ -2529,6 +2529,7 @@ button:not(:disabled):hover {
   box-shadow: none;
   pointer-events: auto;
   z-index: 1;
+  clip-path: circle(26px at 50% 50%);
 }
 
 .scene-hotspot::before {
@@ -4133,6 +4134,7 @@ button:not(:disabled):hover {
   border-radius: 0;
   box-shadow: none;
   pointer-events: auto;
+  clip-path: circle(36px at 50% 36px);
 }
 
 .inspect-hotspot::before {
