@@ -2650,6 +2650,7 @@ button:not(:disabled):hover {
   border-radius: 999px;
   box-shadow: none;
   pointer-events: auto;
+  cursor: pointer;
   clip-path: circle(20px at 50% 50%);
   -webkit-clip-path: circle(20px at 50% 50%);
 }
@@ -2732,12 +2733,13 @@ button:not(:disabled):hover {
 }
 
 .scene-hotspot.inactive .scene-hotspot-hint {
-  opacity: 1;
-  visibility: visible;
+  opacity: 0;
+  visibility: hidden;
 }
 
 .scene-hotspot.inactive:hover .scene-hotspot-hint {
   opacity: 0.9;
+  visibility: visible;
 }
 
 .scene-hotspot:focus-visible::before,
@@ -2751,6 +2753,7 @@ button:not(:disabled):hover {
   opacity: 0.68;
   filter: grayscale(1);
   cursor: default;
+  pointer-events: none;
 }
 
 .scene-hotspot:disabled::before {
