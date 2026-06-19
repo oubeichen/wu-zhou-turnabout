@@ -2235,7 +2235,7 @@
     const byLocation = byCase[Number(locationIndex)] || null;
     const style = byLocation?.[Number(spotIndex)] || null;
     if (!style || !style.left || !style.top) return null;
-    const safeTop = clampPercent(style.top, 30, 72);
+    const safeTop = clampPercent(style.top, 30, 60);
     return {
       left: clampPercent(style.left, 8, 90),
       top: safeTop,
