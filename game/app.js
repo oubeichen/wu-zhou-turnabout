@@ -1642,7 +1642,7 @@
             <div><dt>最近评价</dt><dd>${record.lastGrade ? escapeHtml(record.lastGrade) : "-"}</dd></div>
           </dl>
           <div class="source-brief">
-            <strong>卷宗范围</strong>
+            <strong>线索来源</strong>
             <ul>${sourceList}</ul>
           </div>
           ${latestRuns}
@@ -2206,7 +2206,7 @@
     return `
       <div class="case-source-panel">
         <div class="case-section-title">
-          <strong>翻开本案卷宗</strong>
+          <strong>查看本案线索</strong>
           <span>点选一条线索，看它怎样把现场、证人和证物接起来。</span>
         </div>
         <div class="source-tabs" aria-label="章节线索">
@@ -2288,7 +2288,7 @@
               ${renderCoachCard()}
             <div class="action-row investigation-actions">
               <button class="secondary-button" type="button" data-open-intro>案件概要</button>
-              <button class="secondary-button inventory-target ${inventoryCue ? "inventory-target-active" : ""}" type="button" data-open-record>记录</button>
+              <button class="secondary-button inventory-target ${inventoryCue ? "inventory-target-active" : ""}" type="button" data-open-record>法庭记录</button>
               <button class="primary-button" type="button" data-mode="trial" ${allEvidenceCollected(caseData) ? "" : "disabled"}>开庭</button>
               <button class="secondary-button compact-button" type="button" data-home>返回主菜单</button>
             </div>
@@ -2609,7 +2609,7 @@
           <div class="action-row trial-actions">
             <button class="secondary-button compact-button" type="button" data-home>返回主菜单</button>
             <button class="primary-button" type="button" data-press>追问</button>
-            <button class="secondary-button record-open-button ${readyToPresent ? "opportunity" : ""}" type="button" data-open-record>记录</button>
+            <button class="secondary-button record-open-button ${readyToPresent ? "opportunity" : ""}" type="button" data-open-record>法庭记录</button>
             <button class="danger-button present-button ${readyToPresent && selectedLabel ? "opportunity" : ""}" type="button" data-present ${selectedLabel ? "" : "disabled"}><span class="action-key">E</span>举证</button>
           </div>
         </div>
@@ -3223,7 +3223,7 @@
     }
     if (state.recordTab === "timeline") {
       const timelineSource = timelineSourceSummary(currentCase(), caseData.timeline[state.caseSourceIndex] || caseData.timeline[0]);
-      const timelineSourceText = timelineSource?.storyTitle || "尚未对应卷宗";
+    const timelineSourceText = timelineSource?.storyTitle || "尚未匹配到对应线索";
       const timelineSourceNote = timelineSource?.storyNote || "时间线条目可点击，快速定位线索文本。";
       return `
         <div class="timeline-list">
@@ -4183,7 +4183,7 @@
 
   function audioModeForScreenLabel() {
     const labels = {
-      home: "卷宗室",
+      home: "案件资料室",
       briefing: "案件简报",
       investigation: "现场调查",
       trial: "法庭攻防",
@@ -4191,7 +4191,7 @@
       collapse: "败诉复盘",
       verdict: "判决落定",
     };
-    return labels[audioModeForScreen()] || "卷宗室";
+    return labels[audioModeForScreen()] || "案件资料室";
   }
 
   function openCase(index) {
@@ -5080,7 +5080,7 @@
       const index = Math.max(0, Math.min(sources.length - 1, Number(target.dataset.timelineSource) || 0));
       state.caseSourceIndex = index;
       const source = sources[index];
-      setMessage("卷宗", source ? `已定位到线索：${source.storyTitle}` : "已定位到该线索。", "");
+      setMessage("法庭记录", source ? `已定位到线索：${source.storyTitle}` : "已定位到该线索。", "");
       rerender();
       return;
     }
