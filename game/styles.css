@@ -5049,6 +5049,33 @@ button:not(:disabled):hover {
   color: var(--red);
 }
 
+.pressure-pulse {
+  position: relative;
+  margin: 4px 0;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: linear-gradient(90deg, rgba(98, 18, 21, 0.38), rgba(127, 21, 21, 0.3));
+  border: 1px solid rgba(255, 241, 191, 0.38);
+  color: #fff8e7;
+  font-size: 13px;
+  line-height: 1.45;
+  font-weight: 700;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.34);
+  animation: pressure-pulse-pop 0.35s ease-out;
+}
+
+@keyframes pressure-pulse-pop {
+  0% {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .pressure-panel {
   display: grid;
   gap: 5px;

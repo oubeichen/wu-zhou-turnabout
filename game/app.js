@@ -123,6 +123,8 @@
     pursuitUnlockCue: null,
     objectionReveal: null,
     impactCue: null,
+    lastPressureLevel: "stable",
+    pressurePulse: "",
     stageFocus: "center",
     stageNotice: "",
     stagePose: { left: "idle", right: "idle" },
@@ -1007,6 +1009,30 @@
     const fallback = pressureCopy(level);
     const beat = caseData?.pressureBeats?.[level];
     return { ...fallback, ...(beat || {}) };
+  }
+
+  function syncPressurePulse(caseData, progress) {
+    const current = pressureLevel(progress);
+    const previous = state.lastPressureLevel || "stable";
+    state.lastPressureLevel = current;
+    if (!caseData?.pressureBeats) return;
+
+    const isRise = previous === "stable" && (current === "danger" || current === "final-warning");
+    const isCritical = previous === "danger" && current === "final-warning";
+    if (isRise || isCritical) {
+      const copy = pressureBeat(caseData, current);
+      state.pressurePulse = `${copy.title}：${copy.body}`;
+    } else if (previous === "collapse" && current !== "collapse") {
+      state.pressurePulse = "法庭节奏回稳：重新争取证据链。";
+    } else if (current === previous) {
+      // keep last message for current screen until acknowledged
+    } else {
+      state.pressurePulse = "";
+    }
+  }
+
+  function clearPressurePulse() {
+    state.pressurePulse = "";
   }
 
   function turnaboutBeat(caseData) {
@@ -2562,6 +2588,9 @@
   function renderTrial() {
     const caseData = currentCase();
     const progress = caseProgress(caseData.id);
+    syncPressurePulse(caseData, progress);
+    const pressurePulse = state.pressurePulse;
+    clearPressurePulse();
     if (state.pursuitUnlockCue && state.pursuitUnlockCue.caseId === caseData.id) {
       renderPursuitUnlockCue();
       return;
@@ -2596,6 +2625,7 @@
           <div class="panel trial-panel">
             ${renderTrialHeader(testimony, progress)}
             ${renderCredibility(progress)}
+            ${pressurePulse ? `<div class="pressure-pulse">${escapeHtml(pressurePulse)}</div>` : ""}
             ${renderPressurePanel(progress)}
             ${renderTurnaboutPanel(progress)}
             ${renderStatementNav(testimony, progress)}
