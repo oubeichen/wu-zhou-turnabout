@@ -1455,7 +1455,6 @@
       ${renderGuidePanel()}${renderSettings()}
     `;
     syncAudioForScreen();
-    if (!wasHome) window.scrollTo(0, 0);
   }
 
   function renderHomeMenu() {
@@ -2765,15 +2764,7 @@
   }
 
   function queueMobileTrialStageFocus() {
-    if (state.screen !== "trial" || state.recordOpen || state.recordInspect) return;
-    if (!window.matchMedia("(max-width: 820px)").matches) return;
-    requestAnimationFrame(() => {
-      const scene = app.querySelector(".scene.trial");
-      if (!scene) return;
-      const topbarHeight = document.querySelector(".topbar")?.getBoundingClientRect().height || 0;
-      const top = Math.max(0, window.scrollY + scene.getBoundingClientRect().top - topbarHeight - 8);
-      window.scrollTo({ top, behavior: "auto" });
-    });
+    // 保持单窗体交互：不再通过窗口滚动定位，避免跨页面滚动打断对话节奏
   }
 
   function renderTestimonyInterlude() {
@@ -3052,7 +3043,6 @@
     const progress = caseProgress(caseData.id);
     const record = caseRecord(caseData.id);
     state.screen = "result";
-    window.scrollTo(0, 0);
     renderStatus();
     app.innerHTML = `
       <section class="result">
@@ -3097,7 +3087,6 @@
     const caseData = currentCase();
     const progress = caseProgress(caseData.id);
     state.screen = "bad-ending";
-    window.scrollTo(0, 0);
     renderStatus();
     app.innerHTML = `
       <section class="result bad-ending">

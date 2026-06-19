@@ -20,7 +20,7 @@ body {
   margin: 0;
   height: 100%;
   min-height: 100%;
-  overflow: auto;
+  overflow: hidden;
   background: #1f1c19;
   color: var(--ink);
   font-family: "Songti SC", "Noto Serif SC", "STSong", serif;
@@ -2859,7 +2859,7 @@ button:not(:disabled):hover {
   max-width: 36px;
   min-height: 36px;
   height: 36px;
-  z-index: 2;
+  z-index: 6;
   transform: scale(0.9);
   transform-origin: center center;
   padding: 0;
@@ -2896,7 +2896,7 @@ button:not(:disabled):hover {
 
 .scene-hotspot span {
   position: absolute;
-  z-index: 24;
+  z-index: 10;
   left: 50%;
   top: -18px;
   max-width: 150px;
@@ -2926,12 +2926,12 @@ button:not(:disabled):hover {
   visibility: hidden;
   transform: translateY(2px);
   transition: opacity 0.14s ease, visibility 0.14s ease, transform 0.14s ease;
-  z-index: 24;
+  z-index: 10;
 }
 
 .scene-hotspot-hint {
   position: absolute;
-  z-index: 24;
+  z-index: 10;
   left: 56px;
   top: 100%;
   margin-top: 2px;
@@ -2988,7 +2988,7 @@ button:not(:disabled):hover {
   opacity: 1;
   visibility: visible;
   filter: drop-shadow(0 0 0 2px rgba(255, 241, 191, 0.28));
-  z-index: 24;
+  z-index: 10;
 }
 
 @keyframes scene-crossfade {
@@ -3065,37 +3065,37 @@ button:not(:disabled):hover {
 
 .scene-hotspot-1 {
   left: 12%;
-  top: 34%;
+  top: 30%;
   bottom: auto;
 }
 
 .scene-hotspot-2 {
   right: 12%;
-  top: 42%;
+  top: 36%;
   bottom: auto;
 }
 
 .scene-hotspot:nth-child(3) {
   left: 20%;
-  top: 50%;
+  top: 39%;
   bottom: auto;
 }
 
 .scene-hotspot:nth-child(4) {
   right: 20%;
-  top: 46%;
+  top: 40%;
   bottom: auto;
 }
 
 .scene-hotspot:nth-child(5) {
   left: 50%;
-  top: 54%;
+  top: 34%;
   bottom: auto;
 }
 
 .scene-hotspot:nth-child(6) {
   left: 38%;
-  top: 56%;
+  top: 38%;
   bottom: auto;
 }
 
@@ -7159,11 +7159,20 @@ button:not(:disabled):hover {
   justify-items: start;
   align-items: center;
   gap: 0;
-  z-index: 2;
+  z-index: 6;
 }
 
 .scene-hotspot.done::before {
   background-position: -64px 0;
+}
+
+.scene-hotspot::before,
+.scene-hotspot span,
+.scene-hotspot small,
+.scene-hotspot-hint,
+.scene-hotspot:hover span,
+.scene-hotspot:focus-visible span {
+  pointer-events: none;
 }
 
   .portrait {
