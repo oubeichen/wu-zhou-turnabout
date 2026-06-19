@@ -2671,7 +2671,7 @@ button:not(:disabled):hover {
   top: 16px;
   left: 12px;
   right: 12px;
-  bottom: 40%;
+  bottom: 35%;
   pointer-events: none;
   z-index: 0;
   overflow: hidden;
@@ -6909,13 +6909,12 @@ button:not(:disabled):hover {
 
 .scene-hotspots {
   position: absolute;
-  top: 16px;
-  left: 12px;
-  right: 12px;
-  bottom: 36%;
+  top: 10px;
+  left: 10px;
+  right: 10px;
+  bottom: 34%;
   overflow: hidden;
-  display: grid;
-  grid-template-columns: auto;
+  display: block;
   gap: 8px;
   pointer-events: auto;
 }
@@ -6934,66 +6933,56 @@ button:not(:disabled):hover {
 }
 
 .scene-hotspot {
-  position: static;
-  width: max-content;
-  justify-self: start;
-  max-width: min(100%, 300px);
-  min-height: 56px;
-  grid-template-columns: 56px minmax(0, 1fr);
+  position: absolute;
+  display: grid;
+  grid-template-columns: 1fr;
   grid-template-rows: 1fr;
-  justify-items: start;
-  align-items: center;
-  gap: 8px;
-  padding: 6px 8px;
-  background: rgba(31, 28, 25, 0.72);
-  border: 1px solid rgba(255, 241, 191, 0.22);
-  border-radius: 8px;
-  }
-
-  .scene-hotspot::before {
-    width: 64px;
-    height: 64px;
-    background-size: 128px 64px;
-  }
-
-  .scene-hotspot.done::before {
-    background-position: -64px 0;
-  }
-
-.scene-hotspot span {
-  position: static;
-  max-width: 100%;
-  width: min(100%, 160px);
+  justify-content: start;
+  width: 44px;
+  min-width: 44px;
+  max-width: 44px;
+  min-height: 44px;
+  height: 44px;
+  justify-self: start;
+  left: 0;
+  top: 0;
+  right: auto;
   background: transparent;
   border: 0;
+  border-radius: 999px;
+  clip-path: circle(20px at 50% 50%);
+  -webkit-clip-path: circle(20px at 50% 50%);
+  pointer-events: auto;
+  cursor: pointer;
+  box-shadow: none;
   padding: 0;
-  opacity: 1;
-  visibility: visible;
-  transform: none;
-  pointer-events: none;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  font-size: 14px;
-  font-weight: 900;
+  justify-items: start;
+  align-items: center;
+  gap: 0;
+  z-index: 2;
 }
 
-  .scene-hotspot small {
-    display: none;
-  }
+.scene-hotspot::before {
+  content: "";
+  width: 44px;
+  height: 44px;
+  background-size: 128px 64px;
+}
 
-  .scene-hotspot-2 span,
-  .scene-hotspot-2 small {
-    left: auto;
-    right: auto;
-  }
+.scene-hotspot.done::before {
+  background-position: -64px 0;
+}
 
-  .scene-hotspot:nth-child(3),
-  .scene-hotspot:nth-child(4),
-  .scene-hotspot:nth-child(5),
-  .scene-hotspot:nth-child(6) {
-    position: static;
-  }
+.scene-hotspot span,
+.scene-hotspot small {
+  display: none;
+}
+
+.scene-hotspot-2 span,
+.scene-hotspot-2 small {
+  left: auto;
+  right: auto;
+}
 
   .portrait {
     width: 72px;
