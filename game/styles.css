@@ -2671,7 +2671,7 @@ button:not(:disabled):hover {
   top: 16px;
   left: 12px;
   right: 12px;
-  max-height: clamp(120px, 46vh, 250px);
+  bottom: 40%;
   pointer-events: none;
   z-index: 0;
 }
@@ -2898,46 +2898,46 @@ button:not(:disabled):hover {
 
 .scene-hotspot-1 {
   left: 8%;
-  top: 22%;
+  top: 16%;
   bottom: auto;
 }
 
 .scene-hotspot-2 {
   right: 8%;
-  top: 32%;
+  top: 22%;
   bottom: auto;
 }
 
 .scene-hotspot:nth-child(3) {
   left: 18%;
-  top: 40%;
+  top: 30%;
   bottom: auto;
 }
 
 .scene-hotspot:nth-child(4) {
   right: 18%;
-  top: 25%;
+  top: 20%;
   bottom: auto;
 }
 
 .scene-hotspot:nth-child(5) {
   left: 52%;
-  top: 42%;
+  top: 34%;
   bottom: auto;
 }
 
 .scene-hotspot:nth-child(6) {
   left: 38%;
-  top: 28%;
+  top: 24%;
   bottom: auto;
 }
 
 .scene.investigation.has-investigation-beat .scene-hotspot-1 {
-  top: 36%;
+  top: 24%;
 }
 
 .scene.investigation.has-investigation-beat .scene-hotspot-2 {
-  top: 40%;
+  top: 30%;
 }
 
 .spot-status-list {
