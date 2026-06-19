@@ -47,6 +47,11 @@
     musicVolume: 0.3,
   };
 
+  const sceneTransitionState = {
+    lastLocationMapSignature: "",
+    lastSceneSignature: "",
+  };
+
   const audioState = {
     ctx: null,
     ambienceMode: "silent",
@@ -2336,6 +2341,11 @@
     const sceneKey = caseData.scene?.key || "archive";
     const variant = location.sceneVariant || "site";
     const mapArt = locationBackgroundFile(caseData, location);
+    const locationSignature = `${caseData.id}|${inv.locationIndex}|${sceneKey}|${variant}|${mapArt}`;
+    const transitionClass = sceneTransitionState.lastLocationMapSignature && sceneTransitionState.lastLocationMapSignature !== locationSignature
+      ? " scene-crossfade"
+      : "";
+    sceneTransitionState.lastLocationMapSignature = locationSignature;
     const inspected = location.examineSpots.filter((_, index) => inv.examined.includes(`${inv.locationIndex}:${index}`)).length;
     const canMove = inv.command === "move";
     const canTalk = inv.command === "talk";
@@ -2358,7 +2368,7 @@
       ? "可点击场景标记查看、复查可疑点"
       : "目前进入“查看”面板后可继续点位检视";
     return `
-      <div class="location-map scene-${sceneKey} variant-${variant}" ${mapArtStyle}>
+      <div class="location-map scene-${sceneKey} variant-${variant}${transitionClass}" ${mapArtStyle}>
         <div>
           <strong>${escapeHtml(location.name)}</strong>
           <span>${escapeHtml(location.description)}</span>
@@ -2841,8 +2851,13 @@
           ? "右侧点击可继续下一句，或按空格/回车"
           : "当前句可直接追问 / 打开记录 / 举证"
       : "";
+    const sceneSignature = `${caseData.id}|${mode}|${sceneKey}|${locationArt || "default"}`;
+    const sceneTransitionClass = sceneTransitionState.lastSceneSignature && sceneTransitionState.lastSceneSignature !== sceneSignature
+      ? "scene-crossfade"
+      : "";
+    sceneTransitionState.lastSceneSignature = sceneSignature;
     return `
-      <div class="scene ${mode} ${sceneKey ? `scene-${sceneKey}` : ""} focus-${focus} pose-left-${stagePose.left} pose-right-${stagePose.right} pressure-${pressure} ${vulnerabilityCue ? "vulnerability-ready" : ""} ${hasInvestigationBeat ? "has-investigation-beat" : ""} ${state.settings.reducedMotion ? "reduced-motion" : ""}" data-motif="${escapeHtml(sceneMotif)}" ${trialSceneAttr} ${locationStyle}>
+      <div class="scene ${mode} ${sceneKey ? `scene-${sceneKey}` : ""} focus-${focus} pose-left-${stagePose.left} pose-right-${stagePose.right} pressure-${pressure} ${sceneTransitionClass} ${vulnerabilityCue ? "vulnerability-ready" : ""} ${hasInvestigationBeat ? "has-investigation-beat" : ""} ${state.settings.reducedMotion ? "reduced-motion" : ""}" data-motif="${escapeHtml(sceneMotif)}" ${trialSceneAttr} ${locationStyle}>
         ${
           mode === "trial"
             ? `<div class="stage-layer">
