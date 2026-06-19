@@ -2945,6 +2945,21 @@ button:not(:disabled):hover {
   font-weight: 900;
 }
 
+.action-key {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  margin-right: 7px;
+  font-size: 12px;
+  font-weight: 900;
+  border: 1px solid rgba(255, 248, 231, 0.68);
+  border-radius: 999px;
+  color: #1f1c19;
+  background: rgba(255, 241, 191, 0.94);
+}
+
 .record-open-button.opportunity,
 .present-button.opportunity {
   outline: 3px solid rgba(221, 171, 61, 0.42);

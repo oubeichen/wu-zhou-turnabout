@@ -2532,7 +2532,7 @@
             <button class="secondary-button compact-button" type="button" data-home>返回主菜单</button>
             <button class="primary-button" type="button" data-press>追问</button>
             <button class="secondary-button record-open-button ${readyToPresent ? "opportunity" : ""}" type="button" data-open-record>记录</button>
-            <button class="danger-button present-button ${readyToPresent && selectedLabel ? "opportunity" : ""}" type="button" data-present ${selectedLabel ? "" : "disabled"}>举证</button>
+            <button class="danger-button present-button ${readyToPresent && selectedLabel ? "opportunity" : ""}" type="button" data-present ${selectedLabel ? "" : "disabled"}><span class="action-key">E</span>举证</button>
           </div>
         </div>
         </div>
