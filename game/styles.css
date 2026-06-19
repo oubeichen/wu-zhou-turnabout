@@ -6907,8 +6907,11 @@ button:not(:disabled):hover {
   }
 
 .scene-hotspots {
-  position: relative;
-  inset: auto;
+  position: absolute;
+  top: 16px;
+  left: 12px;
+  right: 12px;
+  bottom: 36%;
   display: grid;
   grid-template-columns: auto;
   gap: 8px;
