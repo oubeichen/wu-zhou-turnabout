@@ -3328,3 +3328,35 @@ Remaining Ace Attorney gap list:
 - Keep rewriting testimony-side helper text, evidence summaries, and late-case prompts that still sound like neutral interface metadata instead of escalating courtroom pressure.
 - Continue screenshot-first QA on dialogue hints, pressure labels, trial headers, statement cards, record drawer entries, and evidence detail panels.
 - Do not reopen already-fixed `举证` button, hotspot placement, or desktop no-scroll layout unless a fresh screenshot shows a concrete regression.
+
+## 2026-06-23 iteration 113 result
+
+Implemented:
+- Kept this round limited to one small readability pass on testimony titles in court-facing UI.
+- Added `testimonyTitleForDisplay()` in `game/app.js` to strip structural prefixes like `证词一：`.
+- Applied that display cleanup to the trial scene title, the trial header, and the testimony interlude surface.
+
+Why this round:
+- The latest verified courtroom screenshot still exposed a very visible structural label:
+  - `证词一：表面原因`
+- This was understandable, but for a normal player it still read more like an outline heading than a piece of live courtroom flow.
+- It was a good small-round target because the change is display-only, easy to verify visually, and affects multiple high-frequency surfaces without touching any trial logic.
+
+Verified:
+- `npm run check:js`
+- `git diff --check`
+- Ran an escalated local Playwright verification at `1600x960` using the same reproducible court-ready local save snapshot as recent trial-page checks
+- Captured a fresh screenshot:
+  - `output/trial-title-clean-current.png`
+- Live DOM capture confirmed:
+  - `sceneTitle: 表面原因`
+  - `headerTitle: 表面原因`
+- Screenshot inspection confirmed:
+  - the prefix `证词一：` no longer appears in the courtroom title surfaces;
+  - the shortened titles fit cleanly in both the top header and the left scene label;
+  - no new clipping, overlap, or spacing drift appeared.
+
+Remaining Ace Attorney gap list:
+- Keep rewriting testimony-side helper text, evidence summaries, and late-case prompts that still sound like neutral interface metadata instead of escalating courtroom pressure.
+- Continue screenshot-first QA on dialogue hints, pressure labels, testimony titles, trial headers, statement cards, record drawer entries, and evidence detail panels.
+- Do not reopen already-fixed `举证` button, hotspot placement, or desktop no-scroll layout unless a fresh screenshot shows a concrete regression.

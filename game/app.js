@@ -2449,6 +2449,11 @@
       .trim();
   }
 
+  function testimonyTitleForDisplay(raw) {
+    const text = String(raw || "").trim();
+    return text.replace(/^\s*证词[一二三四五六七八九十百\d]+\s*[:：]?\s*/, "").trim();
+  }
+
   function chapterShortTitle(title) {
     return sourceForDisplay(title)
       .replace(/^\s*卷宗\d+\s*[：:]\s*/, "")
@@ -2937,7 +2942,7 @@
     app.innerHTML = `
       <section class="play-layout trial-layout record-drawer-layout">
         <div>
-          ${renderScene(testimony.title, testimony.speaker, statement.text, "trial")}
+          ${renderScene(testimonyTitleForDisplay(testimony.title), testimony.speaker, statement.text, "trial")}
           <div class="panel trial-panel">
             ${renderTrialHeader(testimony, progress)}
             ${renderCredibility(progress)}
@@ -3090,13 +3095,13 @@
         <div class="interlude-stage portrait-${portraitForSpeaker(caseData, testimony.speaker, "trial")} pose-left-${stagePose.left}" data-continue-testimony-panel role="button" tabindex="0" aria-label="继续交叉询问">
           ${interludePoseLabel ? `<span class="interlude-pose">${escapeHtml(interludePoseLabel)}</span>` : ""}
           <span class="hero-kicker">证词更新</span>
-          <h2>${escapeHtml(testimony.title)}</h2>
+          <h2>${escapeHtml(testimonyTitleForDisplay(testimony.title))}</h2>
           <p>${escapeHtml(progress.lastObjection || "上一段证词已经动摇。证人席上，刚才那套说法站不住了。")}</p>
           ${renderCoachCard()}
           ${renderTurnaboutPanel(progress)}
           <div class="interlude-flow">
             <div><strong>${escapeHtml(previous?.title || "上一段证词")}</strong><span>已击破</span></div>
-            <div><strong>${escapeHtml(testimony.title)}</strong><span>${escapeHtml(testimony.speaker)}｜${visibleStatementEntries(testimony, progress).length} 句证词</span></div>
+            <div><strong>${escapeHtml(testimonyTitleForDisplay(testimony.title))}</strong><span>${escapeHtml(testimony.speaker)}｜${visibleStatementEntries(testimony, progress).length} 句证词</span></div>
           </div>
           <div class="interlude-actions">
             <button class="secondary-button" type="button" data-home>返回主菜单</button>
@@ -3314,7 +3319,7 @@
     return `
       <div class="trial-header">
         <span>交叉询问 ${progress.testimonyIndex + 1}/${currentCase().testimony.length}</span>
-        <strong>${escapeHtml(testimony.title)}</strong>
+        <strong>${escapeHtml(testimonyTitleForDisplay(testimony.title))}</strong>
         <span>${escapeHtml(testimony.speaker)}｜${moodLabels[testimony.mood] || "证言"}</span>
       </div>
     `;
