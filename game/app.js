@@ -1246,12 +1246,6 @@
     return "开始看这案";
   }
 
-  function caseDisplayIndex(caseData) {
-    const index = data.cases.findIndex((entry) => entry.id === caseData?.id);
-    if (index < 0) return "";
-    return `第${index + 1}案`;
-  }
-
   function currentGuideContext() {
     const caseData = currentCase();
     if (state.screen === "home") {
@@ -1600,11 +1594,10 @@
         aria-label="进入${escapeHtml(caseData.title)}：${escapeHtml(cardHook)}"
       >
         <button class="case-poster" type="button" data-focus-case="${index}" aria-label="查看${escapeHtml(caseData.title)}档案">
-          <span>${escapeHtml(caseData.scene?.motif || String(index + 1))}</span>
+          <span>${escapeHtml(caseData.scene?.motif || "案情")}</span>
           <small>${escapeHtml(caseData.scene?.name || "案件现场")}</small>
         </button>
         <div class="case-meta">
-          <span class="tag">第 ${index + 1} 案</span>
           <span class="tag">${done ? "已结案" : started ? "进行中" : "待审理"}</span>
           <span class="tag">证物 ${collected}/${total}</span>
           ${medal ? `<span class="tag medal-tag">${escapeHtml(medal)}</span>` : ""}
