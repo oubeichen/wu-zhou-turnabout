@@ -3039,3 +3039,38 @@ Remaining Ace Attorney gap list:
 - Keep sweeping later-case visible summaries that still sound more like historian annotation than immediate game-world tension.
 - The top “当前档案” dossier surface is cleaner now, but the whole cases screen still deserves a later dedicated visual/content pass once more narrative text settles.
 - Continue screenshot-first QA and do not reopen already-fixed button/layout issues unless a fresh screenshot shows a concrete regression.
+
+## 2026-06-22 iteration 104 result
+
+Implemented:
+- This round did not touch copy logic, `举证` button styling, investigation flow, evidence origin labels, or the timeline wording pass.
+- Fixed a concrete desktop layout bug on the case-selection screen in `game/styles.css`:
+  - under the desktop `view-cases` layout, the case gallery now uses five columns instead of four.
+
+Why this round:
+- A direct desktop Playwright layout check showed the real bug clearly:
+  - the app forbids desktop page scrolling as intended;
+  - but the case gallery was still laid out in 4 columns for 5 cases;
+  - as a result, the fifth case card sat below the viewport and was unreachable.
+- Measured before the fix at 1600x960:
+  - cards `0-3` were visible;
+  - card `4` had `top: 868.9`, `bottom: 1317.7`, `visible: false`.
+- This was more serious than any copy issue on that screen, because it made one entire case effectively inaccessible on desktop.
+
+Verified:
+- `git diff --check`
+- `npm run qa:web-game`
+- Ran an escalated local Playwright desktop layout check and capture:
+  - `output/cases-home-layout-current.png`
+- Post-fix metrics at 1600x960 confirmed:
+  - all five case cards now share the same row;
+  - all five report `visible: true`;
+  - `bodyScrollH === bodyClientH` and `appScrollH === appClientH`, so the desktop no-scroll rule still holds.
+- Screenshot inspection confirmed:
+  - all 5 cases are visible at once on desktop;
+  - no new overlap or card spill appeared after switching to 5 columns.
+
+Remaining Ace Attorney gap list:
+- Keep sweeping later-case visible summaries that still sound more like historian annotation than immediate game-world tension.
+- The case-selection screen is now fully reachable on desktop, but card density and line-clamp tradeoffs still deserve a later polish pass.
+- Continue screenshot-first QA and do not reopen already-fixed button/layout issues unless a fresh screenshot shows a concrete regression.

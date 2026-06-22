@@ -6279,6 +6279,7 @@ button:not(:disabled):hover {
 
   .view-cases .case-gallery {
     align-content: start;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
   }
 
   .view-cases .case-card {
