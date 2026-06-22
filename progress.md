@@ -2405,3 +2405,36 @@ Remaining Ace Attorney gap list:
 - Continue deeper per-character voice work in investigation talk/present lines so each witness reacts from their own social position and fear, not from narrator knowledge.
 - Trial scenes still need richer pressure-state character pose changes and stronger reaction timing.
 - Mobile record drawer is usable, but should later become a tighter game overlay with less full-page height.
+
+## 2026-06-22 iteration 89 result
+
+Implemented:
+- Kept the already-fixed hotspot layout untouched and moved this round back to writing/UX polish.
+- Reworked the player-visible record timeline so rows show story-facing clue names and clue meanings instead of raw chapter titles, `卷宗` labels, or generic “阶段性线索” notes.
+- Changed evidence source display from raw book chapter titles to player-facing provenance labels such as `旧案线索`, `庭上追问`, `追击札记`, and `线索归纳`.
+- Added case-specific investigation follow-up lines for `交谈`, so different cases now respond from their own pressure point: palace silence, East Palace record control, informant-chain fear, Censorate coercion, and night-gate timing.
+- Added case-specific `出示` reactions so the person reacting to an item changes by case and speaks from their role, instead of reusing one generic witness response.
+- Fixed mobile investigation UX after `交谈/出示/查看`: when a reaction panel appears, mobile now returns the viewport to the scene dialogue instead of leaving the player down at the command buttons.
+
+Verified:
+- `npm run check:js`
+- `PYTHONPYCACHEPREFIX="/Users/oubeichen/Projects/wuzetian2/.pycache" npm run check:py`
+- `git diff --check`
+- Escalated Chromium audit at 1600x960 and 390x844 confirmed:
+  - record timeline no longer shows raw `卷宗`, chapter labels, or generic `阶段性线索` copy,
+  - investigation `交谈` no longer shows the old generic “这句话听着轻...” follow-up,
+  - investigation `出示` no longer shows the old generic “他没有否认...” follow-up,
+  - first-case present reaction now reads as the inner-court recorder avoiding the words he must write down,
+  - mobile present reaction panel becomes visible after tapping an item from the bottom command area (`beatVisible=true`, beat top around 202px).
+- Screenshot inspection used:
+  - `/tmp/wuz-ui-audit-89/desktop-record-timeline.png`
+  - `/tmp/wuz-ui-audit-89/desktop-talk-beat.png`
+  - `/tmp/wuz-ui-audit-89/desktop-present-beat.png`
+  - `/tmp/wuz-ui-audit-89-mobile-fix3/mobile-present-beat.png`
+- `npm run qa:web-game` with escalated Chromium browser access succeeded. The only warning was the external web-game Playwright client being reparsed as an ES module.
+- Web reference check: Ace Attorney investigation phases are built around searching scenes, gathering evidence, talking to characters, and presenting evidence before trial cross-examination. This round specifically improved those investigation interactions.
+
+Remaining Ace Attorney gap list:
+- Continue deeper per-character voice work for trial `press` and `objection`; witnesses and prosecutors still need more distinct courtroom rhythms.
+- Trial scenes still need richer pressure-state character pose changes and stronger reaction timing.
+- Mobile record drawer is usable, but should later become a tighter game overlay with less full-page height.

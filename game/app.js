@@ -308,9 +308,17 @@
     return Math.max(0, Math.min(1, parsed));
   }
 
+  function audioEnabledForPlay() {
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    if (!AudioContext) return false;
+    if (state.settings.muted) return false;
+    const protocol = String(window.location?.protocol || "").toLowerCase();
+    return protocol === "http:" || protocol === "https:";
+  }
+
   function ensureAudioContext(create) {
     const AudioContext = window.AudioContext || window.webkitAudioContext;
-    if (!AudioContext) return null;
+    if (!AudioContext || !audioEnabledForPlay()) return null;
     if (!audioState.ctx && create) audioState.ctx = new AudioContext();
     const ctx = audioState.ctx;
     if (!ctx) return null;
@@ -319,6 +327,8 @@
   }
 
   function playTone(ctx, cue, delay) {
+    if (!audioEnabledForPlay()) return;
+    if (!ctx) return;
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
     const start = ctx.currentTime + delay;
@@ -336,6 +346,7 @@
   }
 
   function loadSampleCue(ctx, kind) {
+    if (!audioEnabledForPlay()) return null;
     const path = sampleCuePaths[kind];
     if (!path || !window.fetch) return null;
     if (audioState.sampleBuffers[kind]) return Promise.resolve(audioState.sampleBuffers[kind]);
@@ -355,6 +366,7 @@
   }
 
   function playSampleCue(ctx, kind) {
+    if (!audioEnabledForPlay()) return false;
     const buffer = audioState.sampleBuffers[kind];
     if (!buffer) {
       const pending = loadSampleCue(ctx, kind);
@@ -373,7 +385,7 @@
   }
 
   function playCue(kind) {
-    if (state.settings.muted) {
+    if (!audioEnabledForPlay() || state.settings.muted) {
       stopAmbience();
       stopMusic();
       return;
@@ -478,6 +490,7 @@
   }
 
   function loadMusicLoop(ctx, mode) {
+    if (!audioEnabledForPlay()) return null;
     const path = musicLoopPaths[mode];
     if (!path || !window.fetch) return null;
     if (audioState.musicBuffers[mode]) return Promise.resolve(audioState.musicBuffers[mode]);
@@ -562,6 +575,10 @@
   }
 
   function syncAmbienceForScreen() {
+    if (!audioEnabledForPlay()) {
+      stopAmbience();
+      return;
+    }
     const mode = audioModeForScreen();
     const volume = audioNumber(state.settings.ambienceVolume, defaultSettings.ambienceVolume);
     if (state.settings.muted || volume <= 0) {
@@ -579,6 +596,10 @@
   }
 
   function syncMusicForScreen() {
+    if (!audioEnabledForPlay()) {
+      stopMusic();
+      return;
+    }
     const mode = audioModeForScreen();
     const volume = audioNumber(state.settings.musicVolume, defaultSettings.musicVolume);
     if (state.settings.muted || volume <= 0) {
@@ -1469,6 +1490,22 @@
       ${renderGuidePanel()}${renderSettings()}
     `;
     syncAudioForScreen();
+    focusInvestigationBeatOnMobile();
+  }
+
+  function focusInvestigationBeatOnMobile() {
+    if (state.screen !== "investigation" || !state.investigationBeat || !window.matchMedia?.("(max-width: 820px)").matches) return;
+    const scrollToBeat = () => {
+      const beatPanel = app.querySelector("[data-advance-investigation-panel]");
+      if (!beatPanel) return;
+      const rect = beatPanel.getBoundingClientRect();
+      const targetTop = Math.max(0, window.scrollY + rect.top - Math.max(72, window.innerHeight * 0.24));
+      window.scrollTo({ top: targetTop, left: 0, behavior: "auto" });
+    };
+    window.requestAnimationFrame(() => {
+      scrollToBeat();
+      window.setTimeout(scrollToBeat, 80);
+    });
   }
 
   function renderHomeMenu() {
@@ -2216,6 +2253,11 @@
   }
 
   function sourceForDisplay(raw) {
+    const text = String(raw || "").trim();
+    if (/追击/.test(text)) return "追击札记";
+    if (/庭审|追问/.test(text)) return "庭上追问";
+    if (/由(?:本案|该案|本章|相关案件)相关章节归纳/.test(text)) return "线索归纳";
+    if (/卷宗|第[0-9一二三四五六七八九十百\d]+\s*章/.test(text)) return "旧案线索";
     const cleaned = sourceLabelClean(raw).trim();
     return cleaned || "这段记载";
   }
@@ -2279,6 +2321,13 @@
     const chapter = parseChapterNumber(item?.label || item?.title);
     if (chapter) return "关键线索";
     return `线索 ${timelineIndexLabel(fallbackIndex)}`;
+  }
+
+  function timelineStoryForRow(caseData, item, fallbackIndex = 0) {
+    return timelineSourceSummary(caseData, item) || {
+      storyTitle: sourceForDisplay(item?.title) || `线索 ${timelineIndexLabel(fallbackIndex)}`,
+      storyNote: item?.note || "这条线索还没被辩方说透。",
+    };
   }
 
   function timelineIndexLabel(index = 0) {
@@ -3353,11 +3402,12 @@
             .map((item, index) => {
               const sourceIndex = timelineSourceIndex(caseData, item, index);
               const activeSource = sourceIndex === state.caseSourceIndex;
+              const story = timelineStoryForRow(caseData, item, index);
               return `
                 <button class="timeline-row ${activeSource ? "active" : ""}" type="button" data-timeline-source="${sourceIndex}">
                   <strong>${escapeHtml(timelineLabel(item, index))}</strong>
-                  <span>${escapeHtml(sourceForDisplay(item.title))}</span>
-                  <small>${escapeHtml(item.note)}</small>
+                  <span>${escapeHtml(story.storyTitle)}</span>
+                  <small>${escapeHtml(story.storyNote)}</small>
                 </button>
               `;
             })
@@ -4446,6 +4496,7 @@
     );
     save();
     renderInvestigation();
+    focusInvestigationBeatOnMobile();
   }
 
   function collectEvidenceFromLocation(caseData, location, spotIndex) {
@@ -4475,14 +4526,15 @@
     const key = `${inv.locationIndex}:${index}`;
     if (!inv.talked.includes(key)) inv.talked.push(key);
     setMessage(topic.speaker, topic.text, "");
-    setInvestigationBeat("交谈", topic.speaker, topic.text, "证言已记录", [], [
+    setInvestigationBeat("交谈", topic.speaker, topic.text, "话里有缝", [], [
       {
         speaker: "辩方",
-        text: "这句话听着轻，先别放过。等它和现场的东西摆在一起，谁在躲话就清楚了。",
+        text: investigationTalkFollowUp(caseData, topic),
       },
     ]);
     save();
     renderInvestigation();
+    focusInvestigationBeatOnMobile();
   }
 
   function presentDuringInvestigation(evidenceId) {
@@ -4490,16 +4542,68 @@
     const inv = investigationProgress(caseData.id);
     const item = evidenceById(caseData, evidenceId);
     if (!inv.presented.includes(evidenceId)) inv.presented.push(evidenceId);
-    const reaction = `${caseData.witness}看了一眼${item.name}，声音压低了些：“这东西若真摆到庭上，有些话就不能只当传闻了。”`;
-    setMessage(caseData.witness, reaction, "");
-    setInvestigationBeat("出示", caseData.witness, reaction, "出示反应", [], [
+    const response = investigationPresentResponse(caseData, item);
+    setMessage(response.speaker, response.reaction, "");
+    setInvestigationBeat("出示", response.speaker, response.reaction, response.result, [], [
       {
         speaker: "辩方",
-        text: "他没有否认，只是绕开了。等他在庭上把话说满，再把这件东西放到他面前。",
+        text: response.followUp,
       },
     ]);
     save();
     renderInvestigation();
+    focusInvestigationBeatOnMobile();
+  }
+
+  function investigationTalkFollowUp(caseData, topic) {
+    const byCase = {
+      "case-empress-seat": "宫里人最会把名字吞回去。她不敢说谁递了话，纸上被改过的地方就要替她说。",
+      "case-crown-shadow": "东宫的人说话都绕着储位走。越是绕开的人名，越可能正压在账册或名册下面。",
+      "case-rebellion-box": "告密人怕的不是那张纸，是纸离手以后多出来的罪。顺着转手的人追，别顺着喊声跑。",
+      "case-urn": "御史台的人把恐惧说成规矩。先记住他说的先后顺序，等周兴替流程辩护时再收紧。",
+      "case-half-hour-coup": "夜门的人只敢说乱。越是乱，越要把半小时拆开，看哪一道命令走得比人还快。",
+    };
+    if (topic?.speaker?.includes("史官") || topic?.speaker?.includes("小吏") || topic?.speaker?.includes("书记")) {
+      return "写字的人习惯替自己留退路。先记下他避开的词，庭上再问他为什么偏偏不写清楚。";
+    }
+    return byCase[caseData.id] || "这句话听着轻，先别放过。等它和现场的东西摆在一起，谁在躲话就清楚了。";
+  }
+
+  function investigationPresentResponse(caseData, item) {
+    const evidenceName = item?.name || "这件证物";
+    const byCase = {
+      "case-empress-seat": {
+        speaker: "内廷记录官",
+        reaction: `内廷记录官盯着${evidenceName}，把笔尖悬在纸上：“这要是进了庭，我就不能再写‘听闻’两个字了。”`,
+        followUp: "他怕的不是证物真假，而是证物逼他写清谁先开口。庭上等他说成传闻时，再让纸压住他。",
+      },
+      "case-crown-shadow": {
+        speaker: "宫廷书记官",
+        reaction: `宫廷书记官扫过${evidenceName}，袖口往回收了半寸：“东宫的旧纸，未必都该在今天翻出来。”`,
+        followUp: "他在护的不是旧纸，是旧纸被谁挑出来的顺序。等他说自己只是誊录，再用它问谁先圈名。",
+      },
+      "case-rebellion-box": {
+        speaker: "来俊臣",
+        reaction: `来俊臣看见${evidenceName}，笑意没到眼底：“告密入匦以后，自有官府分辨，辩方何必替乱党操心？”`,
+        followUp: "他急着把“分辨”说成官府自己的事。庭上要逼他承认：每一次转手，都有人能加重罪名。",
+      },
+      "case-urn": {
+        speaker: "周兴",
+        reaction: `周兴瞥了${evidenceName}一眼，指节轻敲案面：“办案总要有办法。辩方别把旧法都说成刑逼。”`,
+        followUp: "他说出“办法”两个字就够了。等他把流程当成规矩护住，再让手册和供状一起反咬。",
+      },
+      "case-half-hour-coup": {
+        speaker: "张易之",
+        reaction: `张易之望着${evidenceName}，声音仍轻：“乱夜里什么都可能先后错位，别拿一张纸替半小时定罪。”`,
+        followUp: "他把错位当借口。庭上要让时间说话：若全是仓促，命令和赏赐不会准得像排过。",
+      },
+    };
+    const response = byCase[caseData.id] || {
+      speaker: caseData.witness,
+      reaction: `${caseData.witness}看了一眼${evidenceName}，声音压低了些：“这东西若真摆到庭上，有些话就不能只当传闻了。”`,
+      followUp: "他没有否认，只是绕开了。等他在庭上把话说满，再把这件东西放到他面前。",
+    };
+    return { result: "出示反应", ...response };
   }
 
   function moveStatement(delta) {
