@@ -1781,7 +1781,7 @@
             <button class="primary-button" type="button" data-mode="investigation">开始调查</button>
             <button class="secondary-button" type="button" data-mode="trial" ${allEvidenceCollected(caseData) ? "" : "disabled"}>进入庭审</button>
           </div>
-          ${allEvidenceCollected(caseData) ? `<p class="hint-text">你已经把主线证据补齐。庭审里继续追问，把对方不敢说的地方逼出来。</p>` : `<p class="hint-text">先把“现场、证人、文件”都找齐，别带着空杯直接进法庭。</p>`}
+          ${allEvidenceCollected(caseData) ? `<p class="hint-text">你已经把主线脉络串起来。庭审里先追一句、问一句，别急着把全部证据一次抛上去。</p>` : `<p class="hint-text">先把现场、证人说法和纸面细节对齐，再进入庭审，不然对手会把你推进错误结论。</p>`}
           ${renderCoachCard()}
         </div>
       </section>
@@ -1832,7 +1832,7 @@
     clearEvidencePickup();
     clearInventoryCue();
     clearPursuitUnlockCue();
-    setMessage("开幕", "幕布刚掀开。点在画面任意处，先听完这段开场。", "");
+    setMessage("开幕", "幕布刚掀开。点画面继续听完开场，再带着问题走向案发现场。", "");
     playCue("transition");
     renderCaseOpeningCutscene();
   }
@@ -1980,8 +1980,8 @@
     return `
       <div class="case-setup" aria-label="案情导入">
         <div class="case-section-title">
-          <strong>先走这三步，别让对手先把局势带偏</strong>
-          <span>先把“听到的事”变成“可追问的矛盾”。每一步都盯着“谁在最后受益”去问。</span>
+          <strong>先把案子立起来，再把每个人带进框</strong>
+          <span>先听见现场发生了什么，再问“谁最先把话说成结论”。每一步都要留出下一句可追问的话。</span>
         </div>
         ${cards
           .map(
@@ -2199,9 +2199,8 @@
     return text
       .replace(/^\s*\[?\s*卷宗\s*\d+\s*\]?\s*[：:\-—–]?\s*/, "")
       .replace(/^\s*卷宗\d+\s*[：:\-—–]?\s*/, "")
-      .replace(/^\s*\[?\s*第\d+\s*章\s*\]?\s*[：:\-—–]?\s*/, "")
-      .replace(/^\s*[（(]?\s*第\d+章[）)]?\s*[：:\-—–]?\s*/, "")
-      .replace(/^\s*[（(]?\s*[一二三四五六七八九十百\d]+\s*章[）)]?\s*[：:\-—–]?\s*/, "")
+      .replace(/^\s*[（(]?\s*第[0-9一二三四五六七八九十百]+\s*章\s*[）)]?\s*[：:\-—–]?\s*/, "")
+      .replace(/^\s*第[0-9一二三四五六七八九十百]+\s*章\s*[：:\-—–]?\s*/, "")
       .trim();
   }
 
@@ -2287,8 +2286,8 @@
     return `
       <div class="case-source-panel">
         <div class="case-section-title">
-          <strong>线索入口（点一个看看）</strong>
-          <span>先看“这条线从哪来”，再去证词里找一段能和它对上的话。</span>
+          <strong>先选一条线索入口</strong>
+          <span>先确认这条线索来自哪里，再回到证词里找能被它打断的话。</span>
         </div>
         <div class="source-tabs" aria-label="章节线索">
           ${items
