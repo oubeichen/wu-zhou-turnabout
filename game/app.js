@@ -52,6 +52,23 @@
     lastSceneSignature: "",
   };
 
+  function resetScreenState() {
+    sceneTransitionState.lastLocationMapSignature = "";
+    sceneTransitionState.lastSceneSignature = "";
+    if (app) {
+      app.scrollTop = 0;
+    }
+    if (window.scrollTo) {
+      window.scrollTo(0, 0);
+    }
+    if (document.documentElement) {
+      document.documentElement.scrollTop = 0;
+    }
+    if (document.body) {
+      document.body.scrollTop = 0;
+    }
+  }
+
   const audioState = {
     ctx: null,
     ambienceMode: "silent",
@@ -1426,6 +1443,7 @@
   function renderHome() {
     const wasHome = state.screen === "home";
     state.screen = "home";
+    resetScreenState();
     state.selectedEvidenceId = "";
     state.selectedProfileName = "";
     state.recordOpen = false;
@@ -1460,8 +1478,8 @@
     const gold = data.cases.filter((entry) => caseRecord(entry.id).bestMedal === "金章").length;
     const hasProgress = data.cases.some(caseHasProgress);
     const heroHint = hasProgress
-      ? `你上次在“${caseData ? caseData.title : data.title}”留下了进度。先把手头线索、证词和证物先接起来，再回去追问。`
-      : "你还没开案。先选一件案子，读完开场后直接去现场看第一处可疑点。";
+      ? `你上次在“${caseData ? caseData.title : data.title}”停下了。先记下谁先说、谁刻意沉默，再把“这处矛盾”拉回去追。`
+      : "先选一件案子，读完开场后先去现场。第一步不是找答案，是找一句站不住脚的话。";
     return `
       <div class="main-menu">
         <div class="menu-copy">
@@ -1497,7 +1515,7 @@
         <div class="subview-header">
           <div>
             <span class="hero-kicker">案件选择</span>
-            <h2>选择要调查的案件</h2>
+            <h2>选一件你想先查的案子</h2>
           </div>
           <button class="secondary-button" type="button" data-home-view="menu">返回主菜单</button>
         </div>
@@ -1582,7 +1600,7 @@
     const cardHook = caseMenuHook(caseData);
     const grade = record.bestGrade || state.trial[caseData.id]?.grade || "";
     const medal = record.bestMedal || medalForGrade(grade);
-    const label = done ? "再看这案" : started ? "继续调查" : "开始案件";
+    const label = done ? "再看这案" : started ? "继续调查" : "开始这个案子";
     const focused = state.homeFocusIndex === index;
     const sceneKey = caseData.scene?.key || "archive";
     return `
@@ -1655,7 +1673,7 @@
             <span class="tag">证词 ${caseData.testimony.length} 组</span>
           </div>
           <div class="dossier-actions">
-            <button class="primary-button" type="button" data-open-case="${index}">${state.completed.includes(caseData.id) ? "回到庭前导读" : collected ? "继续案件" : "开始这件案"}</button>
+            <button class="primary-button" type="button" data-open-case="${index}">${state.completed.includes(caseData.id) ? "回到庭前导读" : collected ? "继续案件" : "开始这个案子"}</button>
             ${state.completed.includes(caseData.id) ? `<button class="secondary-button" type="button" data-replay-case="${index}">再审此案</button>` : ""}
           </div>
         </div>
@@ -1752,6 +1770,7 @@
     const caseData = currentCase();
     const progress = caseProgress(caseData.id);
     state.screen = "case";
+    resetScreenState();
     state.recordOpen = false;
     state.recordInspect = null;
     clearRecordInspectCompare();
@@ -1776,14 +1795,14 @@
             ${renderCaseIntroArt(caseData)}
           </div>
           ${renderCaseSourcePanel(caseData)}
-          <div class="action-row">
+        <div class="action-row">
             <button class="secondary-button compact-button" type="button" data-home>返回主菜单</button>
-            <button class="primary-button" type="button" data-mode="investigation">先去现场</button>
+            <button class="primary-button" type="button" data-mode="investigation">先去现场看看</button>
             <button class="secondary-button" type="button" data-mode="trial" ${allEvidenceCollected(caseData) ? "" : "disabled"}>证据齐了就开庭</button>
           </div>
           ${allEvidenceCollected(caseData)
             ? `<p class="hint-text">你已经把主要证词和现场说法接好了。庭审里先问一处、再追一句，不要一次把所有证物都丢上桌。</p>`
-            : `<p class="hint-text">还没对齐，不建议先开庭。先把现场、证词和纸面说法放一起，对手就不容易把节奏抢走。</p>`}
+            : `<p class="hint-text">还没对齐，不建议先开庭。先把现场、证词和纸面说法先放在一处，再问一句“谁的说法先扯得不自然”。</p>`}
           ${renderCoachCard()}
         </div>
       </section>
@@ -1834,7 +1853,7 @@
     clearEvidencePickup();
     clearInventoryCue();
     clearPursuitUnlockCue();
-    setMessage("开幕", "开场已经来了，点画面把对白听完。每一句都可能是你后面开庭能用的线索。", "");
+    setMessage("开幕", "开场来了，点画面听对白。每一句都在给你线索，告诉你先盯哪里。", "");
     playCue("transition");
     renderCaseOpeningCutscene();
   }
@@ -1982,8 +2001,8 @@
     return `
       <div class="case-setup" aria-label="案情导入">
         <div class="case-section-title">
-          <strong>先把案情铺开，看看每个人在推什么</strong>
-          <span>谁先开口，谁在沉默，谁在替谁挡着说。每下一步，都在找下一句追问。</span>
+          <strong>先把案情拉平：谁先开口，谁先退场</strong>
+          <span>先看清每个人的立场，再去挑一句最值得追的矛盾。</span>
         </div>
         ${cards
           .map(
@@ -2107,14 +2126,18 @@
 
   function caseSourceItems(caseData) {
     const storyItems = Array.isArray(caseData.sourceStoryItems) ? caseData.sourceStoryItems : caseSourceStoryItems(caseData.id);
-    return (caseData.timeline || []).map((item, index) => ({
-      ...item,
-      index,
-      chapter: chapterLabel(item.title || item.label || ""),
-      shortTitle: chapterShortTitle(item.title || item.label || ""),
-      storyTitle: storyItems[index]?.title || chapterShortTitle(item.title || item.label || ""),
-      storyNote: storyItems[index]?.note || item.note || "",
-    }));
+    return (caseData.timeline || []).map((item, index) => {
+      const sourceLine = sourceForDisplay(item.title || item.label || "");
+      return {
+        ...item,
+        index,
+        chapter: chapterLabel(sourceLine),
+        shortTitle: chapterShortTitle(sourceLine),
+        storyTitle: storyItems[index]?.title || chapterShortTitle(sourceLine),
+        storyNote: storyItems[index]?.note || item.note || "",
+        sourceLine,
+      };
+    });
   }
 
   function caseSourceStoryItems(caseId) {
@@ -2201,6 +2224,8 @@
     return text
       .replace(/^\s*\[?\s*卷宗\s*\d+\s*\]?\s*[：:\-—–]?\s*/, "")
       .replace(/^\s*卷宗\d+\s*[：:\-—–]?\s*/, "")
+      .replace(/^\s*【?\s*第[0-9一二三四五六七八九十百\d]+\s*章\s*】?\s*[：:\-—–]?\s*/, "")
+      .replace(/^\s*第([0-9一二三四五六七八九十百]+)\s*章节?\s*[：:\-—–]?\s*/, "")
       .replace(/^\s*第(\d+)\s*章\s*(?:[:：]?\s*第[0-9一二三四五六七八九十百]+\s*章)?\s*[：:\-—–]?\s*/, "")
       .replace(/^\s*[（(]?\s*第[0-9一二三四五六七八九十百]+\s*章\s*[）)]?\s*[：:\-—–]?\s*/, "")
       .replace(/^\s*第[0-9一二三四五六七八九十百]+\s*章\s*[：:\-—–]?\s*/, "")
@@ -2215,7 +2240,7 @@
   }
 
   function chapterShortTitle(title) {
-    return String(title)
+    return sourceForDisplay(title)
       .replace(/^\s*卷宗\d+\s*[：:]\s*/, "")
       .replace(/^\s*第\d+章\s*/, "")
       .replace(/^\s*第[0-9一二三四五六七八九十百]+\s*章\s*/, "")
@@ -2296,8 +2321,8 @@
     return `
       <div class="case-source-panel">
         <div class="case-section-title">
-          <strong>先挑一条线索起点</strong>
-          <span>先确认它从哪来，再回到证词里问一句能对上它的位置。</span>
+          <strong>先选一条线索起点</strong>
+          <span>先确认它从哪来，再回到证词里问一句，哪句话会踩到这条线。</span>
         </div>
         <div class="source-tabs" aria-label="章节线索">
           ${items
@@ -2314,7 +2339,7 @@
         <div class="source-detail">
           <strong>当前查看：${escapeHtml(active.storyTitle)}</strong>
           <p>${escapeHtml(active.storyNote)}</p>
-          <small>来源：${escapeHtml(sourceForDisplay(active.title))}</small>
+          <small>来源：${escapeHtml(active.sourceLine || sourceForDisplay(active.title))}</small>
         </div>
       </div>
     `;

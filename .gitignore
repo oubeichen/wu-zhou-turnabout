@@ -24,6 +24,13 @@ debug-launch.html
 wz_audit_visual.*
 home-desktop.png
 .tmp-audit.cjs
+.tmp-wz_*.mjs
+.tmp*probe*
+.tmp*
+*.tmp*.mjs
+wz-audit-*.mjs
+wz-ui-audit*.mjs
+.tmp-*.png
 .playwright-browsers/
 
 # Python/runtime caches
