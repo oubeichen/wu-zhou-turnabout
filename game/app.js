@@ -3447,7 +3447,7 @@
     const level = pressureLevel(progress);
     return `
       <div class="meter pressure-${level}">
-        <strong>法庭信誉 <span>${escapeHtml(pressureBeat(caseData, level).label)}</span></strong>
+        <strong>庭上风向 <span>${escapeHtml(pressureBeat(caseData, level).label)}</span></strong>
         <div class="meter-bar"><div class="meter-fill" style="width:${percent}%"></div></div>
       </div>
     `;

@@ -3360,3 +3360,38 @@ Remaining Ace Attorney gap list:
 - Keep rewriting testimony-side helper text, evidence summaries, and late-case prompts that still sound like neutral interface metadata instead of escalating courtroom pressure.
 - Continue screenshot-first QA on dialogue hints, pressure labels, testimony titles, trial headers, statement cards, record drawer entries, and evidence detail panels.
 - Do not reopen already-fixed `举证` button, hotspot placement, or desktop no-scroll layout unless a fresh screenshot shows a concrete regression.
+
+## 2026-06-23 iteration 114 result
+
+Implemented:
+- Kept this round narrowed to one courtroom high-frequency label on the right panel meter.
+- Changed the meter heading in `game/app.js` from `法庭信誉` to `庭上风向`.
+- Left the credibility logic, thresholds, and bar rendering untouched.
+
+Why this round:
+- The latest verified courtroom screenshots had already cleaned up the testimony title and footer hint, but the meter heading still read like a visible system term.
+- For a normal player, `法庭信誉` is understandable yet still too much like a rules label; `庭上风向` keeps the same gameplay meaning while sounding closer to live courtroom pressure.
+- This was a safe small-round target because it is display-only and easy to verify with one fresh trial screenshot.
+
+Verified:
+- `git fetch origin main`
+- confirmed `HEAD` and `origin/main` both pointed to `e70888c3a77418db3348feead0e69b2801591f46` before this round's commit
+- `npm run check:js`
+- `git diff --check`
+- Used the in-app browser at `http://127.0.0.1:8788/game/` with a reproducible local save snapshot for case 1 court-ready state
+- Captured a fresh screenshot:
+  - `output/trial-meter-heading-current.png`
+- Live DOM capture confirmed the meter now renders as:
+  - `庭上风向 / 还压得住`
+- Screenshot inspection confirmed:
+  - the new heading fits cleanly in the right panel meter;
+  - the right panel, statement list, and action buttons stayed aligned;
+  - no new clipping, overlap, or layout regression appeared in this pass.
+
+Notes:
+- Checked `.gitignore` this round; current screenshot/test artifact rules already covered the generated validation files, so no `.gitignore` change was needed.
+
+Remaining Ace Attorney gap list:
+- Keep rewriting testimony-side helper text, evidence summaries, and late-case prompts that still sound like neutral interface metadata instead of escalating courtroom pressure.
+- Continue screenshot-first QA on pressure labels, trial headers, statement cards, record drawer entries, and evidence detail panels.
+- Do not reopen already-fixed `举证` button, hotspot placement, or desktop no-scroll layout unless a fresh screenshot shows a concrete regression.
