@@ -2469,9 +2469,7 @@
   }
 
   function timelineLabel(item, fallbackIndex = 0) {
-    const chapter = parseChapterNumber(item?.label || item?.title);
-    if (chapter) return "关键线索";
-    return `线索 ${timelineIndexLabel(fallbackIndex)}`;
+    return `第${Math.max(0, Number(fallbackIndex) || 0) + 1}步`;
   }
 
   function timelineStoryForRow(caseData, item, fallbackIndex = 0) {
@@ -3362,7 +3360,10 @@
         <div class="timeline-list">
             ${caseData.timeline
               .slice(0, 5)
-              .map((item) => `<div><strong>${escapeHtml(timelineLabel(item))}</strong><span>${escapeHtml(sourceForDisplay(item.title))}</span></div>`)
+              .map((item, index) => {
+                const story = timelineStoryForRow(caseData, item, index);
+                return `<div><strong>${escapeHtml(story.storyTitle)}</strong><span>${escapeHtml(story.storyNote)}</span></div>`;
+              })
               .join("")}
           </div>
           <div class="action-row">
@@ -3563,8 +3564,8 @@
               const story = timelineStoryForRow(caseData, item, index);
               return `
                 <button class="timeline-row ${activeSource ? "active" : ""}" type="button" data-timeline-source="${sourceIndex}">
-                  <strong>${escapeHtml(timelineLabel(item, index))}</strong>
-                  <span>${escapeHtml(story.storyTitle)}</span>
+                  <strong>${escapeHtml(story.storyTitle)}</strong>
+                  <span>${escapeHtml(timelineLabel(item, index))}</span>
                   <small>${escapeHtml(story.storyNote)}</small>
                 </button>
               `;

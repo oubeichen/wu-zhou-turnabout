@@ -2962,3 +2962,39 @@ Remaining Ace Attorney gap list:
 - Keep sweeping player-facing evidence `summary`, `detail`, and `use` lines that still sound more like compressed historian annotation than spoken game-world material.
 - Later-case evidence and timeline surfaces still deserve the same “remove source-provenance tone” pass, but this round intentionally stayed narrow.
 - Continue screenshot-first QA and do not reopen already-fixed button/layout issues unless a fresh screenshot shows a concrete regression.
+
+## 2026-06-22 iteration 102 result
+
+Implemented:
+- This round stayed off the already-fixed `举证` button, the already-adjusted investigation hotspot chain, and the newly-cleaned evidence origin labels.
+- Focused on another player-facing residue from the original chapter framing: the timeline tab still rendered every row with the same generic heading `关键线索`, and the result-page timeline strip still relied on chapter-derived display text.
+- Reworked the timeline presentation in `game/app.js`:
+  - `timelineLabel()` now returns sequential player-facing step labels like `第1步`, `第2步`;
+  - timeline rows in the record panel now use the actual story title as the main heading, with `第N步` as the secondary line;
+  - the result-page timeline strip now renders `storyTitle + storyNote` instead of falling back to chapter-cleaned source text.
+
+Why this round:
+- A real screenshot check on the timeline tab showed the player-facing list still reading like:
+  - `关键线索 / 宫门前的哭声 / ...`
+  - `关键线索 / 值夜签被改 / ...`
+- That presentation was not wrong, but it was too generic and repetitive. It made the list feel like metadata rather than a sequence the player can actually follow.
+
+Verified:
+- `git ls-remote origin refs/heads/main` matched local HEAD before editing.
+- `npm run check:js`
+- `git diff --check`
+- `npm run qa:web-game`
+- Ran an escalated local Playwright capture of the first-case timeline tab:
+  - `output/timeline-tab-current.png`
+- Playwright text extraction confirmed the first rows now read as:
+  - `宫门前的哭声 / 第1步 / ...`
+  - `值夜签被改 / 第2步 / ...`
+  - `名册重新封蜡 / 第3步 / ...`
+- Screenshot inspection confirmed:
+  - the timeline list now scans as an ordered case progression rather than repeated generic labels;
+  - the new `第N步` line fits without overflow in the right-side record panel.
+
+Remaining Ace Attorney gap list:
+- Keep rewriting later-case evidence/timeline copy that still sounds more like compressed historian annotation than scene pressure.
+- The result-page timeline strip now no longer depends on chapter display text, but that surface still deserves a dedicated visual sweep later.
+- Continue screenshot-first QA and do not reopen already-fixed button/layout issues unless a fresh screenshot shows a concrete regression.
