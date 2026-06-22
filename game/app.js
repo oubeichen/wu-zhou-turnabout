@@ -2282,7 +2282,7 @@
     const evidence = caseData.evidence?.slice(0, 3) || [];
     return `
       <aside class="case-intro-art scene-${escapeHtml(caseData.scene?.key || "palace")}" data-motif="${escapeHtml(caseData.scene?.motif || "")}" style="--location-art: url('./assets/${escapeHtml(art)}');">
-        <span class="hero-kicker">现场档案</span>
+        <span class="hero-kicker">当夜现场</span>
         <strong>${escapeHtml(startLocation.name || caseData.location)}</strong>
         <small>${escapeHtml(caseSceneCaption(caseData))}</small>
         <div class="intro-evidence-strip">
