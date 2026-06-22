@@ -2910,7 +2910,6 @@
             <button class="primary-button" type="button" data-press>追问</button>
             <button class="secondary-button record-open-button ${readyToPresent ? "opportunity" : ""}" type="button" data-open-record>法庭记录</button>
             <button class="danger-button present-button ${readyToPresent && selectedLabel ? "opportunity" : ""}" type="button" data-present ${selectedLabel ? "" : "disabled"}>
-              <span class="action-kicker">拍案</span>
               <span class="action-label">举证</span>
             </button>
           </div>

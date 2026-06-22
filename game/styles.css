@@ -3365,6 +3365,10 @@ button:not(:disabled):hover {
   align-items: stretch;
 }
 
+.trial-actions > button {
+  min-height: 42px;
+}
+
 .trial-actions .secondary-button {
   min-height: 36px;
   padding: 6px 10px;
@@ -3372,26 +3376,17 @@ button:not(:disabled):hover {
 }
 
 .present-button {
-  display: grid;
-  align-content: center;
-  justify-items: center;
-  gap: 2px;
-  min-height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 14px;
   font-weight: 900;
-}
-
-.action-kicker {
-  display: block;
-  font-size: 11px;
-  font-weight: 900;
-  letter-spacing: 0.08em;
-  color: rgba(255, 241, 191, 0.92);
-  text-transform: uppercase;
+  box-shadow: 0 4px 0 #2c0d0d, inset 0 1px 0 rgba(255, 241, 191, 0.12);
 }
 
 .action-label {
   display: block;
-  font-size: 20px;
+  font-size: 19px;
   line-height: 1;
 }
 

@@ -2607,3 +2607,30 @@ Verified:
 Remaining Ace Attorney gap list:
 - Continue replacing generic later-case `press` and `wrongEvidenceFeedback` lines with speaker-specific fear and cadence.
 - Keep checking visible button and panel copy in small batches rather than returning to already-fixed layout bugs without new evidence.
+
+## 2026-06-22 iteration 95 result
+
+Implemented:
+- Reopened the `举证` button issue after the previous double-line `拍案 / 举证` hierarchy still looked unlike a normal courtroom main action.
+- Removed the extra `拍案` kicker from the visible button face and restored the button to a single clear action label: `举证`.
+- Rebalanced the trial action row so all four buttons return to the same action-strip rhythm instead of letting `举证` stand taller than the rest.
+- Kept the emphasis where it belongs: selected-record guidance still sits in the selected-record bar, while the button itself is now only the action trigger.
+- Added a tiny `debug-launch.html?scenario=trial-action-preview` QA scene so the trial action strip can be screenshot-checked without replaying a whole case just to inspect one control.
+
+Already fixed and not revisited this round:
+- Hotspot/text overlap remains treated as fixed unless a new screenshot proves regression.
+- Record drawer overlay and objection reveal layering remain treated as fixed.
+- This round did not reopen broader trial layout work; it only normalized the present button itself.
+
+Verified:
+- `npm run check:js`
+- `PYTHONPYCACHEPREFIX="/Users/oubeichen/Projects/wuzetian2/.pycache" npm run check:py`
+- `git diff --check`
+- In-app browser desktop preview for `debug-launch.html?scenario=trial-action-preview` confirmed:
+  - the `举证` button is back to a single-line label,
+  - it aligns visually with `返回主菜单 / 追问 / 法庭记录`,
+  - the selected-record hint remains outside the button instead of being stuffed into the button face.
+
+Remaining Ace Attorney gap list:
+- Continue replacing later-case tactical helper copy with scene-native speech and case-file narration.
+- Keep using screenshot-first checks, but do not reopen already-recorded UI fixes without fresh evidence.
