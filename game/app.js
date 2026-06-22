@@ -1658,7 +1658,7 @@
           <span class="hero-kicker">当前继续</span>
           <strong>${escapeHtml(caseTitleForDisplay(caseData.title))}</strong>
           <p>${escapeHtml(caseMenuHook(caseData))}</p>
-          <small>${escapeHtml(caseData.scene?.name || caseData.location)}｜${escapeHtml(caseData.theme)}</small>
+          <small>${escapeHtml(caseSceneCaption(caseData))}</small>
         </div>
       </div>
     `;
@@ -1779,7 +1779,7 @@
         </div>
         <h2>${escapeHtml(caseTitleForDisplay(caseData.title))}</h2>
         <p>${escapeHtml(cardHook)}</p>
-        <p class="case-hook">${escapeHtml(caseData.theme)}</p>
+        <p class="case-hook">${escapeHtml(caseDeckline(caseData))}</p>
         <div class="case-actions">
           <button class="secondary-button" type="button" data-focus-case="${index}">案件简报</button>
           <button class="case-button" type="button" data-open-case="${index}">${label}</button>
@@ -1820,7 +1820,7 @@
         <div class="dossier-main">
           <span class="hero-kicker">当前档案</span>
           <h2>${escapeHtml(caseTitleForDisplay(caseData.title))}</h2>
-          <p>${escapeHtml(caseData.theme)}</p>
+          <p>${escapeHtml(caseDeckline(caseData))}</p>
           <div class="dossier-tags">
             <span class="tag">${escapeHtml(status)}</span>
             <span class="tag">现场：${escapeHtml(caseData.scene?.name || "案件现场")}</span>
@@ -2100,6 +2100,19 @@
     return body.length > 44 ? `${body.slice(0, 42)}…` : body;
   }
 
+  function caseDeckline(caseData) {
+    const opening = caseOpeningStory(caseData);
+    const text = opening.title || opening.stakes || caseData.goal || caseData.theme || "案卷已经翻开，真相还没站稳。";
+    return text.length > 40 ? `${text.slice(0, 38)}…` : text;
+  }
+
+  function caseSceneCaption(caseData) {
+    const opening = caseOpeningStory(caseData);
+    const scene = caseData.scene?.name || caseData.location || "案件现场";
+    const kicker = opening.kicker || "案情浮起";
+    return `${scene}｜${kicker}`;
+  }
+
   function caseOpeningStory(caseData) {
     if (caseData.openingStory && typeof caseData.openingStory === "object") {
       return {
@@ -2271,7 +2284,7 @@
       <aside class="case-intro-art scene-${escapeHtml(caseData.scene?.key || "palace")}" data-motif="${escapeHtml(caseData.scene?.motif || "")}" style="--location-art: url('./assets/${escapeHtml(art)}');">
         <span class="hero-kicker">现场档案</span>
         <strong>${escapeHtml(startLocation.name || caseData.location)}</strong>
-        <small>${escapeHtml(caseData.scene?.name || caseData.location)}｜${escapeHtml(caseData.theme)}</small>
+        <small>${escapeHtml(caseSceneCaption(caseData))}</small>
         <div class="intro-evidence-strip">
           ${evidence.map((item) => `<span>${escapeHtml(item.name)}</span>`).join("")}
         </div>

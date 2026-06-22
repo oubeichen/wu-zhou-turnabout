@@ -2998,3 +2998,44 @@ Remaining Ace Attorney gap list:
 - Keep rewriting later-case evidence/timeline copy that still sounds more like compressed historian annotation than scene pressure.
 - The result-page timeline strip now no longer depends on chapter display text, but that surface still deserves a dedicated visual sweep later.
 - Continue screenshot-first QA and do not reopen already-fixed button/layout issues unless a fresh screenshot shows a concrete regression.
+
+## 2026-06-22 iteration 103 result
+
+Implemented:
+- This round stayed off the already-fixed `举证` button, the investigation hotspot flow, the evidence-origin labels, and the newly-cleaned timeline presentation.
+- Focused on another still-visible “资料提纲” residue: the case-selection screen and case-intro art caption were still directly exposing `caseData.theme` text such as `宫廷后位之争、婴儿死亡疑云与元老反对`.
+- Reworked those visible surfaces in `game/app.js`:
+  - case cards now keep the existing `menuHook` as the first paragraph, but the second paragraph uses a player-facing deck line derived from the opening-story title instead of the raw `theme` field;
+  - the focused case dossier paragraph also now uses that same deck line instead of `theme`;
+  - the menu preview / intro-art small scene caption now uses `场景｜开场提示` style text via `caseSceneCaption(caseData)`, for example `立政殿内廷｜事发当晚`, instead of `场景｜theme`.
+- Added two small helpers:
+  - `caseDeckline(caseData)`
+  - `caseSceneCaption(caseData)`
+
+Why this round:
+- A fresh live screenshot of the case-selection page still showed cards ending with raw theme summaries like:
+  - `宫廷后位之争、婴儿死亡疑云与元老反对`
+  - `太子处境、皇子命运与高宗末期权力交接`
+- That was exactly the kind of ordinary-player readability issue the user has been flagging: the first paragraph on those cards already sounded like a story, but the second line abruptly fell back to outline metadata.
+
+Verified:
+- `git ls-remote origin refs/heads/main` matched local HEAD before editing.
+- `npm run check:js`
+- `git diff --check`
+- `npm run qa:web-game`
+- Ran escalated local Playwright captures for:
+  - `output/cases-home-copy-current.png`
+  - `output/case-intro-art-copy-current.png`
+- Playwright text extraction confirmed:
+  - first case card now ends with `婴儿死讯还没传出宫门，废后的名字已经先进了诏稿。`
+  - second case card now ends with `旧臣袖里的账册，被书记官摊开后变成了储位罪状。`
+  - case-intro art small line now reads `立政殿内廷｜事发当晚`.
+- Screenshot inspection confirmed:
+  - the case-selection cards now read like a two-line hook instead of hook + metadata;
+  - the case-intro art caption no longer leaks theme-summary wording;
+  - no new text overflow appeared on desktop in the changed surfaces.
+
+Remaining Ace Attorney gap list:
+- Keep sweeping later-case visible summaries that still sound more like historian annotation than immediate game-world tension.
+- The top “当前档案” dossier surface is cleaner now, but the whole cases screen still deserves a later dedicated visual/content pass once more narrative text settles.
+- Continue screenshot-first QA and do not reopen already-fixed button/layout issues unless a fresh screenshot shows a concrete regression.
