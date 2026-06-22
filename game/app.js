@@ -3333,7 +3333,7 @@
             const revealed = Boolean(statement.hiddenUntilPressed);
             const suspicious = statementHasAnswer(statement);
             const ready = statementReadyToPresent(statement, progress, progress.testimonyIndex, rawIndex);
-            const status = solved ? "已突破" : ready ? "可举证" : pressed ? "已追问" : revealed ? "新证词" : suspicious ? "有疑点" : "未追问";
+            const status = solved ? "已突破" : ready ? "露破绽" : pressed ? "已追问" : revealed ? "新证词" : suspicious ? "这句发虚" : "还没逼问";
             return `
               <button class="statement-card ${active ? "active" : ""} ${pressed ? "pressed" : ""} ${solved ? "solved" : ""} ${revealed ? "revealed" : ""} ${suspicious ? "suspicious" : ""} ${ready ? "ready-present" : ""}" type="button" data-jump-statement="${index}">
                 <span>${index + 1}</span>

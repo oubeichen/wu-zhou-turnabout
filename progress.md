@@ -3201,3 +3201,36 @@ Remaining Ace Attorney gap list:
 - Keep rewriting late-case evidence summaries, locked hints, and court-facing prompts that still sound like archive annotation instead of pressure on the witness.
 - Continue screenshot-first QA on court record entries, evidence detail copy, and testimony-side helper text.
 - Do not reopen already-fixed `举证` button, hotspot placement, or desktop no-scroll layout unless a fresh screenshot shows a concrete regression.
+
+## 2026-06-23 iteration 109 result
+
+Implemented:
+- Kept this round limited to one very small but high-frequency court surface: the status labels on the testimony strip.
+- Updated the visible state words in `game/app.js` so they read less like feature flags and more like quick judgments a player can scan during cross-examination.
+- Narrow scope only: no changes to statement order, press/present logic, button behavior, or any layout rules.
+
+Why this round:
+- After the record-drawer grey-card pass, the next remaining system-like phrasing was on the testimony strip itself.
+- Labels such as `可举证`, `有疑点`, and `未追问` were functional, but still read closer to interface state than courtroom pressure.
+- This mattered because the player scans these tags constantly while moving across statements.
+- It was a good small-round target because the copy is highly visible and easy to validate from one reproducible courtroom screenshot.
+
+Verified:
+- `npm run check:js`
+- `git diff --check`
+- Ran an escalated local Playwright verification at `1600x960` using the same reproducible court-ready local save snapshot as recent trial-page checks
+- Captured a fresh screenshot:
+  - `output/trial-statement-status-voice-current.png`
+- Live DOM capture confirmed the visible statuses now render as:
+  - `还没逼问`
+  - `这句发虚`
+  - `还没逼问`
+- Screenshot inspection confirmed:
+  - the revised status words fit inside the testimony cards;
+  - the right-column statement rail still aligns cleanly;
+  - no new overflow, clipping, or spacing regression appeared.
+
+Remaining Ace Attorney gap list:
+- Keep rewriting testimony-side helper text, evidence summaries, and late-case prompts that still sound more like feature labels than escalating courtroom pressure.
+- Continue screenshot-first QA on statement cards, record drawer entries, and evidence detail panels.
+- Do not reopen already-fixed `举证` button, hotspot placement, or desktop no-scroll layout unless a fresh screenshot shows a concrete regression.
