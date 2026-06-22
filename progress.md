@@ -2832,3 +2832,52 @@ Verified:
 Remaining Ace Attorney gap list:
 - Continue the text-polish pass on later-case testimony, profile notes, and evidence descriptions.
 - Treat the `举证` button visuals as fixed again unless a new screenshot shows another concrete regression.
+
+## 2026-06-22 iteration 99 result
+
+Implemented:
+- This round stayed off the already-fixed `举证` button visuals and focused only on player-facing copy.
+- Used one read-only explorer subagent to rank the worst remaining tutorial-like lines before editing; the highest-priority hits were the visible `案旁札记` bodies in `game/app.js`, later-case `openingStory.stakes`, several `evidence.use` lines, and a few profile notes that still sounded like design notes.
+- Reworked a visible batch in `game/app.js` so the main flow reads like case pressure instead of system guidance:
+  - `札记` now defaults hidden again through settings, keeping the play surface cleaner by default;
+  - visible `案旁札记` titles/bodies in investigation and trial were rewritten from “怎么做” into “眼前这句话/这张纸正在暴露什么”;
+  - trial selected-record prompt copy was tightened so it no longer says `去记录里挑` / `去人物档案里找` / `别让案卷空着`;
+  - wrong-timing / drawer-close / return-to-trial messages were rewritten to sound like courtroom pressure rather than explicit puzzle instructions;
+  - record drawer empty-state text, evidence pickup note text, and evidence detail helper labels were rewritten away from `慎用提示` / `对应哪一句` style wording.
+- Reworked a second visible batch in `game/game-data.js`:
+  - first-case opening `body` / `stakes`;
+  - several second-case `evidence.use` lines;
+  - one third-case opponent opening line;
+  - fourth-case opening `stakes` plus several `evidence.use` lines;
+  - fifth-case timing-evidence `use` / `counterRisk` plus pursuit-note `use`;
+  - four profile notes (`武则天` / `来俊臣` / `邠王守礼` / `玄宗旧部`) that previously read like summary cards or future-spoiler hints.
+- Reworked a repeated batch of later-case `wrongEvidenceFeedback` strings so they stop reading like solver hints such as “只有那份补记” / “堵住退路的，是接住后续动作的记录” and instead read like in-world reactions to the wrong pressure point.
+
+Did not reopen this round:
+- `举证` button hierarchy, disabled styling, and action-row layout.
+- Hotspot overlap, portrait placement, objection overlays, or other already-recorded UI bug work.
+
+Verified:
+- `npm run check:js`
+- `git diff --check`
+- `npm run qa:web-game`
+- Old tutorial-like strings confirmed removed from the changed batch, including:
+  - `证人这段开始乱了。确认他说了什么新话`
+  - `把相关人物档案拿出来`
+  - `这份记录有使用边界`
+  - `辩方若怀疑民声，最好先想清楚自己站在谁的对面`
+  - `所有案件围绕她的权力上升`
+  - `象征告密、酷刑和冤案生产机制`
+- Ran escalated external Playwright screenshots to inspect the rewritten visible copy in real layouts:
+  - `output/case-intro-copy-current.png`
+  - `output/trial-start-copy-current.png`
+  - `output/trial-record-open-copy-current.png`
+- Screenshot inspection confirmed:
+  - case intro now reads more like opening scene setup and less like a case-analysis card;
+  - trial right rail no longer tells the player to go fetch a record, but states the current courtroom pressure directly;
+  - the record drawer footer no longer reads like a mechanics explanation, and the longer rewritten lines still fit without overflow.
+
+Remaining Ace Attorney gap list:
+- Keep rewriting later-case `wrongEvidenceFeedback`, `counterRisk`, and `use` text in `game/game-data.js`; many repeated lines are better now, but a full sweep is still unfinished.
+- Some hidden `案旁札记` step labels are intentionally compact now, but the hidden panel still carries more game-logic structure than ideal notebook prose.
+- Keep screenshot-first copy QA; do not reopen already-fixed button/layout issues unless a fresh screenshot shows a concrete regression.
