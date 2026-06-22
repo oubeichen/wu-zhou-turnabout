@@ -1072,9 +1072,9 @@
   function pressureCopy(level) {
     return {
       stable: {
-        label: "稳定",
-        title: "节奏稳定",
-        body: "法官的锤声还没落下。每句证词下面，都还藏着能撬开的缝。",
+        label: "还压得住",
+        title: "局面还压得住",
+        body: "法官的锤还没偏过去。每句证词底下，都还藏着能撬开的缝。",
       },
       danger: {
         label: "危险",

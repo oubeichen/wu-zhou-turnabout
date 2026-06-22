@@ -3266,3 +3266,33 @@ Remaining Ace Attorney gap list:
 - Keep rewriting testimony-side helper text, evidence summaries, and late-case prompts that still sound like neutral interface metadata instead of escalating courtroom pressure.
 - Continue screenshot-first QA on trial headers, statement cards, record drawer entries, and evidence detail panels.
 - Do not reopen already-fixed `举证` button, hotspot placement, or desktop no-scroll layout unless a fresh screenshot shows a concrete regression.
+
+## 2026-06-23 iteration 111 result
+
+Implemented:
+- Kept this round limited to one tiny but always-visible trial surface: the pressure-meter stable label.
+- Updated the stable pressure copy in `game/app.js` so the meter no longer reads like a raw enum state.
+- Scope stayed narrow: no changes to credibility values, thresholds, warning transitions, or any layout/interaction logic.
+
+Why this round:
+- After the testimony-strip and trial-header passes, the next remaining system-like term in the same cluster was the pressure-meter label `稳定`.
+- That wording worked mechanically, but it still sounded like UI state rather than the sense that the defense has not yet lost control of the courtroom.
+- This was a good small-round target because the label is always visible during court, easy to validate in a single reproducible screenshot, and low risk to behavior.
+
+Verified:
+- `npm run check:js`
+- `git diff --check`
+- Ran an escalated local Playwright verification at `1600x960` using the same reproducible court-ready local save snapshot as the previous trial-page checks
+- Captured a fresh screenshot:
+  - `output/trial-pressure-label-current.png`
+- Live DOM capture confirmed the meter now renders as:
+  - `法庭信誉 还压得住`
+- Screenshot inspection confirmed:
+  - the new label fits cleanly on the right panel;
+  - the pressure meter still aligns with the surrounding header content;
+  - no new clipping, wrapping, or spacing regression appeared.
+
+Remaining Ace Attorney gap list:
+- Keep rewriting testimony-side helper text, evidence summaries, and late-case prompts that still sound like neutral interface metadata instead of escalating courtroom pressure.
+- Continue screenshot-first QA on pressure labels, trial headers, statement cards, record drawer entries, and evidence detail panels.
+- Do not reopen already-fixed `举证` button, hotspot placement, or desktop no-scroll layout unless a fresh screenshot shows a concrete regression.
