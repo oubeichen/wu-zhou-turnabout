@@ -3103,3 +3103,33 @@ Remaining Ace Attorney gap list:
 - Continue rewriting later-case summaries and opening beats so they read as scene tension, not dossier annotation.
 - Keep auditing all high-frequency story surfaces for any remaining raw structural labels that leak through to players.
 - Do not reopen already-fixed `举证` button or hotspot layout work unless fresh screenshots show a real regression.
+
+## 2026-06-23 iteration 106 result
+
+Implemented:
+- Kept this round scoped to one high-frequency copy surface on the case intro page: the bottom source/beat panel under the opening scene.
+- Rewrote the panel title and helper lines in `game/app.js` so it sounds less like an instructional UI and more like the player is actively piecing a case back together.
+- Also removed the tab sublabels `线索 A｜正在看 / 待翻`, replacing them with more natural in-world states.
+
+Why this round:
+- A fresh inspection of `output/case-intro-art-copy-current.png` still showed one obvious remaining problem:
+  - the opening scene itself had improved;
+  - but the bottom panel still used phrasing like `先把这几步看明白` and `线索 A｜正在看`, which reads like a product walkthrough instead of a story game surface.
+- The user has repeatedly asked to eliminate “说明书式” language, especially in high-frequency reading areas.
+- This was a strong small-round target because it changed no layout structure, no buttons, and no already-stable interaction logic.
+
+Verified:
+- `npm run check:js`
+- `git diff --check`
+- Ran an escalated local Playwright desktop verification at `1600x960` against `http://127.0.0.1:8788/game/`
+- Captured a fresh screenshot:
+  - `output/case-intro-source-voice-current.png`
+- Screenshot inspection confirmed:
+  - the intro page still fits in one desktop screen;
+  - the updated panel title `先把散开的线头接起来` renders cleanly;
+  - no new overlap, overflow, or button displacement appeared after the copy change.
+
+Remaining Ace Attorney gap list:
+- Keep rewriting later-case intros, source notes, and court-facing prompts until they consistently sound like scene tension rather than annotated summary.
+- Continue screenshot-first QA on intro/investigation/trial high-frequency text surfaces.
+- Do not reopen already-fixed `举证` button, hotspot placement, or desktop no-scroll layout unless fresh screenshots show a concrete regression.

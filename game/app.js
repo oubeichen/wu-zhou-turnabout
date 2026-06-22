@@ -2536,8 +2536,8 @@
     return `
       <div class="case-source-panel">
         <div class="case-section-title">
-          <strong>先把这几步看明白</strong>
-          <span>每翻开一条，现场里就多一个不肯认账的人。</span>
+          <strong>先把散开的线头接起来</strong>
+          <span>纸、人、口供一旦摆到一处，总有人会先把话往回吞。</span>
         </div>
         <div class="source-tabs" aria-label="案件线索">
           ${items
@@ -2545,7 +2545,7 @@
               (item) => `
                 <button class="source-tab ${active?.index === item.index ? "active" : ""}" type="button" data-case-source="${item.index}">
                   <strong>${escapeHtml(item.storyTitle)}</strong>
-                  <span>线索 ${timelineIndexLabel(item.index)}｜${active?.index === item.index ? "正在看" : "待翻"}</span>
+                  <span>${active?.index === item.index ? "已经翻到这里" : "这一步还压着"}</span>
                 </button>
               `
             )
@@ -2554,7 +2554,7 @@
         <div class="source-detail">
           <strong>${escapeHtml(active.storyTitle)}</strong>
           <p>${escapeHtml(active.storyNote)}</p>
-          <small>这一步要是接住了，庭上第一个改口的人不会太远。</small>
+          <small>接住这一页，庭上先心虚的人就快坐不住了。</small>
         </div>
       </div>
     `;
