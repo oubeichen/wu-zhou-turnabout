@@ -3297,6 +3297,44 @@ Remaining Ace Attorney gap list:
 - Continue screenshot-first QA on pressure labels, trial headers, statement cards, record drawer entries, and evidence detail panels.
 - Do not reopen already-fixed `举证` button, hotspot placement, or desktop no-scroll layout unless a fresh screenshot shows a concrete regression.
 
+## 2026-06-23 iteration 122 result
+
+Implemented:
+- Kept this round limited to the top-left brand subtitle on the home screen header.
+- Changed the visible subtitle in `game/index.html` from `宫廷法庭推理` to `宫门翻案`.
+- Left all menu layout, button sizes, and home-screen structure untouched.
+
+Why this round:
+- The latest home screenshot still had one very high-frequency phrase that read like a product category label instead of story-facing game language.
+- For a normal player, `宫廷法庭推理` explains the genre but it does not help the header sound like part of the world.
+- `宫门翻案` is shorter, easier to scan in the narrow topbar slot, and keeps the palace-case tone without turning the header into interface documentation.
+
+Verified:
+- `git fetch origin main`
+- confirmed `HEAD` and `origin/main` both pointed to `07d1acf32fd138a3fdeefa4a1f2dcf82da32d15f` before this round's commit
+- `npm run check:js`
+- `git diff --check`
+- verified the served page source with `curl http://127.0.0.1:8788/game/`
+- used the in-app browser on `http://127.0.0.1:8788/game/?v=20260623-brand`
+- captured and inspected:
+  - `output/home-brand-element-current.png`
+  - `output/home-brand-element-snapshot.md`
+- live DOM snapshot confirmed the header brand block now renders:
+  - `武周逆转录 / 宫门翻案`
+- element screenshot inspection confirmed:
+  - the updated subtitle fits cleanly inside the topbar brand area;
+  - the line height and spacing stayed aligned;
+  - no truncation or overlap appeared in the changed element.
+
+Notes:
+- Checked `.gitignore` this round; existing rules already covered the generated verification artifacts, so no `.gitignore` change was needed.
+- A separate headless Playwright shell launch still hit the known macOS `MachPortRendezvous` permission failure in this environment, so this round's visual verification stayed on the in-app browser path.
+
+Remaining Ace Attorney gap list:
+- Keep rewriting testimony-side helper text, evidence summaries, and late-case prompts that still sound like neutral interface metadata instead of escalating courtroom pressure.
+- Continue screenshot-first QA on dialogue hints, topbar copy, trial headers, statement cards, record drawer entries, and evidence detail panels.
+- Do not reopen already-fixed `举证` button, hotspot placement, or desktop no-scroll layout unless a fresh screenshot shows a concrete regression.
+
 ## 2026-06-23 iteration 117 result
 
 Implemented:
