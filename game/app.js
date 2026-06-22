@@ -2299,13 +2299,13 @@
   function caseSourceStoryItems(caseId) {
     const byCase = {
       "case-empress-seat": [
-        { title: "宫门前的哭声", note: "流言从这里开始：有人把婴儿死亡和废后连到一起，却没人敢承认第一句话出自谁口。" },
-        { title: "值夜签被改", note: "名单上少了一段关键时辰，又多出后来补上的人名。它像一扇没关严的门，露出现场真正的动静。" },
-        { title: "名册重新封蜡", note: "后宫、外戚和当值官员被放进同一本册子，说明这不是宫人之间的私怨，而是有人在清点站位。" },
-        { title: "元老终于出声", note: "朝臣们的反对不是替谁哭冤，而是在抗拒后位突然改写。有人急着让他们闭嘴。" },
-        { title: "诏稿上盖住的名字", note: "墨迹遮住了反对者，却留下新后的称号。结果像是早就写好，只等一个理由送上来。" },
-        { title: "第一刀落下", note: "风波开始变成惩罚。谁被推出去承罪，谁被留下来受益，线索在这一刻分得最清楚。" },
-        { title: "宝座终于空出缺口", note: "所有纸张、证词和沉默都指向同一个结局：后位不是自然空出来的，是被一步步挪开的。" },
+        { title: "宫门前的哭声", note: "哭声刚起，就有人顺手把它往“废后”上引。可究竟是谁先开的头，人人都装作没听清。" },
+        { title: "值夜签被改", note: "最该写清时辰的值夜签，偏偏被刮花又补写。摇篮旁到底站过谁，他们一直没敢说死。" },
+        { title: "名册重新封蜡", note: "后宫、外戚和值夜人忽然被压进同一本名册里。这不像查一场意外，更像在盘谁该跟着谁站队。" },
+        { title: "元老终于出声", note: "朝里不是没人反对，而是反对声刚冒头就被往下压。有人怕他们把后位这件事说穿。" },
+        { title: "诏稿上盖住的名字", note: "反对者的名字被墨盖住，新后的称号却留得干干净净。像是结局早写好了，只差一声哭来垫背。" },
+        { title: "第一刀落下", note: "风波一变成惩罚，就能看出谁被推出去受罪，谁又稳稳站在后面等着得利。" },
+        { title: "宝座终于空出缺口", note: "哭声、诏稿和沉默一路接下去，后位就不是自然空出来的了，而是被人一步步腾开的。" },
       ],
       "case-crown-shadow": [
         { title: "旧臣递来的账", note: "一份旧账册让东宫旧事重新浮出水面，也让递账的人变成最方便的嫌疑人。" },
@@ -2495,8 +2495,8 @@
     return `
       <div class="case-source-panel">
         <div class="case-section-title">
-          <strong>这卷案子最硬的一条线</strong>
-          <span>它一旦接上，后面的人就再也站不安稳。</span>
+          <strong>先把这几步看明白</strong>
+          <span>每翻开一条，现场里就多一个不肯认账的人。</span>
         </div>
         <div class="source-tabs" aria-label="案件线索">
           ${items
@@ -2504,7 +2504,7 @@
               (item) => `
                 <button class="source-tab ${active?.index === item.index ? "active" : ""}" type="button" data-case-source="${item.index}">
                   <strong>${escapeHtml(item.storyTitle)}</strong>
-                  <span>线索 ${timelineIndexLabel(item.index)}｜${active?.index === item.index ? "案上" : "卷中"}</span>
+                  <span>线索 ${timelineIndexLabel(item.index)}｜${active?.index === item.index ? "正在看" : "待翻"}</span>
                 </button>
               `
             )
@@ -2513,7 +2513,7 @@
         <div class="source-detail">
           <strong>${escapeHtml(active.storyTitle)}</strong>
           <p>${escapeHtml(active.storyNote)}</p>
-          <small>这条线若断不了，庭上总有人要改口。</small>
+          <small>这一步要是接住了，庭上第一个改口的人不会太远。</small>
         </div>
       </div>
     `;
@@ -2608,7 +2608,7 @@
     const canMove = inv.command === "move";
     const canTalk = inv.command === "talk";
     const canPresent = inv.command === "present";
-    const canInspect = inv.command === "examine" && !state.investigationBeat;
+    const canInspect = inv.command === "examine" && !state.evidencePickup;
     const commandName = {
       move: "移动现场",
       examine: "查看可疑点",
@@ -2643,12 +2643,14 @@
     const caseData = currentCase();
     const inv = investigationProgress(caseData.id);
     const location = currentLocation(caseData);
-    const canInspect = inv.command === "examine" && !state.investigationBeat;
+    const blockedByPickup = Boolean(state.evidencePickup);
+    const canInspect = inv.command === "examine" && !blockedByPickup;
     if (!canInspect) {
-      return `<div class="scene-hotspots scene-hotspots-dormant" aria-label="现场可疑处" data-inactive-spots="1"><i>${escapeHtml("此刻不是勘验，可疑处已经收起来了。")}</i></div>`;
+      const inactiveText = inv.command !== "examine"
+        ? "此刻先听人说话，可疑处已经收起来了。"
+        : "证物刚收进案卷，先让这句话落稳。";
+      return `<div class="scene-hotspots scene-hotspots-dormant" aria-label="现场可疑处" data-inactive-spots="1"><i>${escapeHtml(inactiveText)}</i></div>`;
     }
-
-    const beatLocked = Boolean(state.investigationBeat);
     return `
       <div class="scene-hotspots" aria-label="现场可疑处">
         ${location.examineSpots
@@ -2657,7 +2659,7 @@
             const done = inv.examined.includes(key);
             const spotStyle = investigationHotspotStyle(caseData, inv.locationIndex, index);
             const positionalStyle = spotStyle ? `style="left:${escapeHtml(spotStyle.left)};top:${escapeHtml(spotStyle.top)};bottom:auto;right:auto;"` : "";
-            const disabledAttr = beatLocked ? "disabled aria-disabled=\"true\" tabindex=\"-1\"" : `data-examine-spot="${index}"`;
+            const disabledAttr = blockedByPickup ? "disabled aria-disabled=\"true\" tabindex=\"-1\"" : `data-examine-spot="${index}"`;
             return `
               <button class="scene-hotspot scene-hotspot-${index + 1} ${done ? "done" : ""}" type="button" ${disabledAttr} aria-label="${escapeHtml(done ? `复查${spot.name}` : `查看${spot.name}`)}" ${positionalStyle}>
                 <span>${escapeHtml(spot.name)}</span>

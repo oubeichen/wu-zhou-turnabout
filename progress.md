@@ -2881,3 +2881,42 @@ Remaining Ace Attorney gap list:
 - Keep rewriting later-case `wrongEvidenceFeedback`, `counterRisk`, and `use` text in `game/game-data.js`; many repeated lines are better now, but a full sweep is still unfinished.
 - Some hidden `案旁札记` step labels are intentionally compact now, but the hidden panel still carries more game-logic structure than ideal notebook prose.
 - Keep screenshot-first copy QA; do not reopen already-fixed button/layout issues unless a fresh screenshot shows a concrete regression.
+
+## 2026-06-22 iteration 100 result
+
+Implemented:
+- This round stayed off the already-fixed `举证` button and focused on one real interaction chain plus one highly visible copy block.
+- Relaxed the investigation hotspot lock in `game/app.js`:
+  - hotspot mode is no longer blocked just because the bottom investigation beat is still open;
+  - hotspots remain temporarily locked only while the evidence-pickup card itself is on screen;
+  - the dormant hotspot copy now distinguishes between “not in examine mode” and “pickup still settling”.
+- Updated the related hotspot interaction CSS in `game/styles.css` so desktop investigation hotspots stay clickable even when the bottom beat panel remains open after the player closes a pickup card.
+- Reworked the first-case source-line copy in both `game/app.js` fallback data and `game/game-data.js`:
+  - replaced the case-intro header `这卷案子最硬的一条线` with `先把这几步看明白`;
+  - changed tab state labels from `案上 / 卷中` to `正在看 / 待翻`;
+  - rewrote all seven first-case source-note blurbs to sound more like immediate story pressure and less like abstract outline commentary.
+
+Why this round:
+- The latest local UI audit report already on disk showed a concrete `collect-error` during investigation and left trial readiness at `1/2`.
+- Code inspection showed the immediate cause: after one examine action, the bottom investigation beat kept the hotspot layer inactive until the player manually closed that beat, which made the interaction chain heavier than it needed to be.
+- The same screenshots also showed the first-case source panel still carrying more “策划卡片” phrasing than normal-player story framing.
+
+Verified:
+- `npm run check:js`
+- `git diff --check`
+- `npm run qa:web-game`
+- Ran two escalated local Playwright checks because sandboxed Chromium still hit the existing MachPort permission failure:
+  - first case intro capture: `output/case-intro-source-copy-current.png`
+  - investigation chain capture: `output/investigation-hotspot-after-second-close-current.png`
+- Escalated Playwright state checks confirmed:
+  - after closing the first pickup card, the second hotspot can now be clicked without first dismissing the bottom investigation beat;
+  - after the second hotspot chain, local state reported `collected: 2` while still remaining in `investigationCommand: examine`;
+  - the first-case source panel now displays the rewritten header/subtitle and the active note reads like scene pressure rather than book-club summary.
+
+Environment note:
+- The in-app browser and a read-only copy-review subagent both hit the current external-usage limit during this round, so verification fell back to local shell checks plus escalated local Playwright runs only.
+
+Remaining Ace Attorney gap list:
+- Keep rewriting first-screen-visible evidence summaries and later-case source/evidence blurbs that still sound like condensed historian notes.
+- The investigation beat can now coexist with hotspot clicking, but mobile and desktop should be re-swept later for broader command-flow QA beyond the first case’s first location.
+- Continue treating `举证` button visuals as fixed unless a fresh screenshot shows a new concrete regression.
