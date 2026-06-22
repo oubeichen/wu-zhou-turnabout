@@ -2115,8 +2115,10 @@
 
   function caseOpeningStory(caseData) {
     if (caseData.openingStory && typeof caseData.openingStory === "object") {
+      const rawKicker = caseData.openingStory.kicker || "案件开场";
+      const kicker = rawKicker === "事发当晚" ? "那一夜" : rawKicker;
       return {
-        kicker: caseData.openingStory.kicker || "案件开场",
+        kicker,
         title: caseData.openingStory.title || caseNarrativeLead(caseData),
         body: caseData.openingStory.body || caseData.goal || caseData.theme,
         stakes: caseData.openingStory.stakes || "口供和证物只要接上，躲在后面的人就站不稳了。",

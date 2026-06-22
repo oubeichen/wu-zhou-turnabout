@@ -3369,6 +3369,47 @@ Remaining Ace Attorney gap list:
 - Continue screenshot-first QA on case-intro source panels, scene-card labels, top-bar tags, pressure labels, trial headers, statement cards, record drawer entries, and evidence detail panels.
 - Do not reopen already-fixed `举证` button, hotspot placement, or desktop no-scroll layout unless a fresh screenshot shows a concrete regression.
 
+## 2026-06-23 iteration 119 result
+
+Implemented:
+- Kept this round centered on one case-intro high-frequency label and one related local-debugging fix.
+- Changed the first case opening-story kicker from `事发当晚` to `那一夜` in `game/game-data.js`.
+- Added a display-side normalization in `game/app.js` so any stale `事发当晚` opening kicker is rendered as `那一夜`.
+- Added timestamped asset loading in [game/index.html](/Users/oubeichen/Projects/wuzetian2/game/index.html) so the in-app browser stops reusing stale cached CSS/JS during local iteration.
+
+Why this round:
+- The latest case-intro screenshots still showed `事发当晚`, which read more like archive metadata than story-facing scene language.
+- `那一夜` keeps the same meaning but sounds closer to a player entering a scene, not reading a dossier heading.
+- During verification, the in-app browser kept serving stale cached assets, so a small local cache-busting fix was necessary to make screenshot-first QA trustworthy again instead of validating old files.
+
+Verified:
+- `git fetch origin main`
+- confirmed `HEAD` and `origin/main` both pointed to `6ac5c5aee7e8663b10aca5de2229603e1b1d9142` before this round's commit
+- `npm run check:js`
+- `git diff --check`
+- Used the in-app browser at `http://127.0.0.1:8788/game/` after the cache-busting entry update
+- Confirmed on the home/current-continue surface:
+  - `立政殿内廷｜那一夜`
+- Reopened the current case-intro screen and captured a fresh screenshot:
+  - `output/case-opening-kicker-current.png`
+- Live DOM capture on the case-intro screen confirmed:
+  - `openingKicker: 那一夜`
+  - `rightCaption: 立政殿内廷｜那一夜`
+  - `bodyHasOld: false`
+  - `bodyHasNew: true`
+- Screenshot inspection confirmed:
+  - the new kicker fits cleanly on both the left opening-story card and the right scene card caption;
+  - the intro layout, tabs, and bottom action buttons remained aligned at `1600x960`;
+  - the local browser now reflects fresh asset changes instead of stale cached files.
+
+Notes:
+- Checked `.gitignore` this round; current rules still cover the generated validation artifacts, so no `.gitignore` change was needed.
+
+Remaining Ace Attorney gap list:
+- Keep rewriting case-intro source labels, evidence summaries, and late-case prompts that still sound like neutral interface metadata instead of scene pressure.
+- Continue screenshot-first QA on case-intro source panels, scene-card labels, opening kickers, top-bar tags, pressure labels, trial headers, statement cards, record drawer entries, and evidence detail panels.
+- Do not reopen already-fixed `举证` button, hotspot placement, or desktop no-scroll layout unless a fresh screenshot shows a concrete regression.
+
 ## 2026-06-23 iteration 116 result
 
 Implemented:
