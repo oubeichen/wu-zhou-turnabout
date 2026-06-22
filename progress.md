@@ -2539,3 +2539,40 @@ Remaining Ace Attorney gap list:
 - Keep rewriting per-character trial `press`, `wrongEvidenceFeedback`, and `counterFeedback`; many are still too close to tactical notes instead of character speech.
 - Add more authored branch outcomes after correct objections: new testimony, opponent counterpressure, courtroom momentum shifts, and witness-specific breakdown beats.
 - Continue screenshot-first QA, but avoid reworking already fixed layout issues without new evidence.
+
+## 2026-06-22 iteration 93 result
+
+Implemented:
+- Continued the copy-polish loop without reworking already-fixed hotspot, record drawer, or objection overlay layout.
+- Spawned one worker subagent for `game/game-data.js` and one explorer subagent for `game/app.js`.
+- Rewrote all 30 `timeline.note` entries that still used the `与...相关的阶段性线索` template. Each timeline item now states what changed in the case and why that chapter matters.
+- Rewrote 8 generated `profiles.note` entries that still said `直接相关，庭审中可能...`, replacing them with character stance, fear, and likely courtroom exposure.
+- Rewrote 5 repeated `badEnding` templates that used `单一罪名 / 定案理由 / 真正该查的人`, so failure outcomes now name the concrete loss in each case.
+- Replaced runtime UI-ish text in `game/app.js`: `书记提示` became `案旁札记`, visible `点击任意处...` hints became in-world continuation text, command buttons no longer show `1/2/3/4`, the trial present button no longer shows `E`, and record drawer no longer shows `Tab 切换`.
+- Rewrote selected-evidence empty state, profile detail hint, evidence inspect progress, deduction panel copy, save-slot copy, and trial opening message so they read like case-file narration instead of controls.
+
+Already fixed and not revisited this round:
+- Investigation hotspot/text overlap remains treated as fixed unless a new screenshot proves regression.
+- Record drawer overlay and objection reveal layering remain treated as fixed; this round only verified they did not regress.
+
+Verified:
+- Residual template scan only found the settings-page keyboard help line, which is intentionally hidden in the settings/help surface.
+- `global.window=global; require('./game/game-data.js')` loaded `cases=5`, `timelineCount=30`, `profiles=12`.
+- `npm run check:js`
+- `PYTHONPYCACHEPREFIX="/Users/oubeichen/Projects/wuzetian2/.pycache" npm run check:py`
+- `git diff --check`
+- Escalated Chromium screenshot audit at 1600x960 and 390x844 covered home, case intro, investigation, trial start, ready-to-present, record drawer, and objection reveal step 4.
+- Screenshot state audit confirmed hotspot/text overlap stayed `0`, desktop active play surface remained one-window (`appHeight=896`, `appClientHeight=896`), and mobile still uses vertical layout without blocking core flow.
+- Screenshot inspection files:
+  - `/tmp/wz_audit_live/v1600x960-investigation-start.png`
+  - `/tmp/wz_audit_live/v1600x960-trial-start.png`
+  - `/tmp/wz_audit_live/v1600x960-trial-record-drawer.png`
+  - `/tmp/wz_audit_live/v390x844-investigation-start.png`
+  - `/tmp/wz_audit_live/v390x844-trial-start.png`
+  - `/tmp/wz_audit_live/v390x844-trial-record-drawer.png`
+- `npm run qa:web-game` with escalated Chromium browser access succeeded. The only warning was the external web-game Playwright client being reparsed as an ES module.
+
+Remaining Ace Attorney gap list:
+- Continue replacing generic `press` and `objection` lines with witness-specific cadence across later cases.
+- Add more branch variety after correct objections: prosecutor counterpressure, witness breakdown stages, and new testimony routes.
+- Continue screenshot-first QA, but keep avoiding repeated fixes for bugs already recorded as resolved.

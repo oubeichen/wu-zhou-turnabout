@@ -1408,8 +1408,8 @@
       return {
         id: "home-gallery",
         title: "案卷选择",
-        body: "点开一件你想追的案子，先读三行简报，再决定是否直接去现场。",
-        steps: ["先看简报", "进入现场", "到位后再上庭"],
+        body: "案卷尚未择定。案头三行旧话，会把第一处现场推到灯下。",
+        steps: ["翻开案卷", "踏进现场", "带证上庭"],
       };
     }
     const progress = caseProgress(caseData.id);
@@ -1526,11 +1526,11 @@
     const seen = state.guideSeen[guide.id];
     return `
       <div class="coach-card ${seen ? "" : "new"}">
-        <strong>书记提示：${escapeHtml(guide.title)}</strong>
+        <strong>案旁札记：${escapeHtml(guide.title)}</strong>
         <p>${escapeHtml(guide.body)}</p>
         <div class="coach-actions">
-          <button class="coach-link" type="button" data-toggle-guide>详阅</button>
-          <button class="coach-link ghost" type="button" data-hide-guides>隐藏</button>
+          <button class="coach-link" type="button" data-toggle-guide>展开札记</button>
+          <button class="coach-link ghost" type="button" data-hide-guides>收起札记</button>
         </div>
       </div>
     `;
@@ -1543,7 +1543,7 @@
       <div class="modal-scrim">
         <section class="guide-panel">
           <div class="guide-header">
-            <span class="hero-kicker">书记提示</span>
+            <span class="hero-kicker">案旁札记</span>
             <h2>${escapeHtml(guide.title)}</h2>
           </div>
           <p>${escapeHtml(guide.body)}</p>
@@ -1551,8 +1551,8 @@
             ${guide.steps.map((step, index) => `<span><b>${index + 1}</b>${escapeHtml(step)}</span>`).join("")}
           </div>
           <div class="action-row">
-            <button class="secondary-button" type="button" data-hide-guides>以后隐藏</button>
-            <button class="primary-button" type="button" data-toggle-guide>明白</button>
+            <button class="secondary-button" type="button" data-hide-guides>暂不翻阅</button>
+            <button class="primary-button" type="button" data-toggle-guide>记下了</button>
           </div>
         </section>
       </div>
@@ -1564,7 +1564,7 @@
     if (state.screen === "home") {
       statusStrip.innerHTML = `
         <span class="tag">已结案 ${state.completed.length}/${data.cases.length}</span>
-        <button class="top-action" type="button" data-toggle-guide>提示</button>
+        <button class="top-action" type="button" data-toggle-guide>札记</button>
         <button class="top-action" type="button" data-toggle-settings>设置</button>
       `;
       return;
@@ -1714,7 +1714,7 @@
             <strong>自动存档</strong>
             <span>${escapeHtml(autoSummary.caseTitle)}｜${escapeHtml(autoSummary.stage)}｜结案 ${autoSummary.completed}/${data.cases.length}</span>
           </div>
-          <small>自动存档会在调查、庭审、设置和结案后更新。手动槽用于保留关键审理节点。</small>
+          <small>书记会在案情转折处留底。空白卷格，可另存庭前、反制前或结案前的一页。</small>
         </div>
         <div class="save-slot-grid">
           ${slots.map((slot, index) => renderSaveSlot(slot, index)).join("")}
@@ -1735,7 +1735,7 @@
         ${
           summary
             ? `<p>${escapeHtml(summary.stage)}｜证物 ${summary.collected}/${summary.evidenceTotal}｜结案 ${summary.completed}/${data.cases.length}${summary.bestMedal ? `｜最佳 ${escapeHtml(summary.bestMedal)}` : ""}</p><small>${escapeHtml(savedAt)}</small>`
-            : `<p>还没有写入记录。可以把当前自动存档复制到这里。</p><small>适合在庭审前、反制前或结案前保留进度。</small>`
+            : `<p>这格卷页还空着。可以把当前案卷另抄一份留底。</p><small>庭前、反制前或结案前，都是值得落笔的地方。</small>`
         }
         <div class="save-slot-actions">
           <button class="primary-button" type="button" data-save-slot="${index}">${slot ? "覆盖保存" : "保存"}</button>
@@ -2767,14 +2767,13 @@
   function renderCommandButton(command, label) {
     const caseData = currentCase();
     const inv = investigationProgress(caseData.id);
-    const keys = {
-      move: "1",
-      examine: "2",
-      talk: "3",
-      present: "4",
+    const actionLabels = {
+      move: "移步",
+      examine: "勘验",
+      talk: "问话",
+      present: "呈物",
     };
-    const key = keys[command] || "";
-    return `<button class="command-button ${inv.command === command ? "active" : ""}" type="button" data-command="${command}"><span class="command-key">${escapeHtml(key)}</span>${escapeHtml(label)}</button>`;
+    return `<button class="command-button ${inv.command === command ? "active" : ""}" type="button" data-command="${command}"><span class="command-key">${escapeHtml(actionLabels[command] || label)}</span>${escapeHtml(label)}</button>`;
   }
 
   function renderInvestigationCommand(caseData, inv, location) {
@@ -2910,7 +2909,7 @@
             <button class="secondary-button compact-button" type="button" data-home>返回主菜单</button>
             <button class="primary-button" type="button" data-press>追问</button>
             <button class="secondary-button record-open-button ${readyToPresent ? "opportunity" : ""}" type="button" data-open-record>法庭记录</button>
-            <button class="danger-button present-button ${readyToPresent && selectedLabel ? "opportunity" : ""}" type="button" data-present ${selectedLabel ? "" : "disabled"}><span class="action-key">E</span>举证</button>
+            <button class="danger-button present-button ${readyToPresent && selectedLabel ? "opportunity" : ""}" type="button" data-present ${selectedLabel ? "" : "disabled"}><span class="action-key">拍案</span>举证</button>
           </div>
         </div>
         </div>
@@ -2932,7 +2931,7 @@
       <div class="trial-deduction-card">
         <strong>对照札记可用</strong>
         <span>${escapeHtml(trialDeduction.deduction.text)}</span>
-        <small>这条札记来自已对照证物。回到证物记录，找带有“已对照”的记录后再正式举证。</small>
+        <small>带有对照墨记的卷页，已经能压上证席。</small>
       </div>
     `;
   }
@@ -3014,7 +3013,7 @@
           </div>
           <div class="pursuit-unlock-actions">
             <button class="secondary-button" type="button" data-home>返回主菜单</button>
-            <span class="panel-continue-hint">点击任意处返回庭审</span>
+            <span class="panel-continue-hint">回到证席</span>
           </div>
         </section>
       </section>
@@ -3052,7 +3051,7 @@
           </div>
           <div class="interlude-actions">
             <button class="secondary-button" type="button" data-home>返回主菜单</button>
-            <span class="panel-continue-hint">点击任意处继续交叉询问</span>
+            <span class="panel-continue-hint">证词继续</span>
           </div>
         </div>
       </section>
@@ -3430,7 +3429,7 @@
         <div class="record-header">
           <h2>法庭记录</h2>
           <div class="record-header-actions">
-            <span class="tag">Tab 切换</span>
+            <span class="tag">翻阅卷页</span>
             <button class="record-close-button" type="button" data-close-record>关闭</button>
           </div>
         </div>
@@ -3511,15 +3510,15 @@
         </div>
         ${
           selectedProfile
-            ? `<div class="evidence-detail profile-detail"><strong>${escapeHtml(selectedProfile.name)}</strong><span>${escapeHtml(selectedProfile.role)}</span><p>${escapeHtml(selectedProfile.note)}</p><small>${state.screen === "trial" ? "人物档案已拿在手上；带回庭审后再正式举证。" : "庭审中选中人物后也可以“举证”。"}</small><div class="detail-actions"><button class="secondary-button" type="button" data-inspect-record="profile">详查人物</button></div>${renderRecordReturnAction()}</div>`
-            : `<p class="hint-text">选择人物查看档案。庭审中人物档案也可能成为矛盾证据。</p>`
+            ? `<div class="evidence-detail profile-detail"><strong>${escapeHtml(selectedProfile.name)}</strong><span>${escapeHtml(selectedProfile.role)}</span><p>${escapeHtml(selectedProfile.note)}</p><small>${state.screen === "trial" ? "人物档案已在辩方手边；证席上的那句话，可能正绕着他打转。" : "人物不只是旁观者。有些矛盾，落在人身上才看得清。"}</small><div class="detail-actions"><button class="secondary-button" type="button" data-inspect-record="profile">详查人物</button></div>${renderRecordReturnAction()}</div>`
+            : `<p class="hint-text">人物不只是旁观者。有些矛盾，落在人身上才看得清。</p>`
         }
       `;
     }
     if (state.recordTab === "timeline") {
       const timelineSource = timelineSourceSummary(currentCase(), caseData.timeline[state.caseSourceIndex] || caseData.timeline[0]);
     const timelineSourceText = timelineSource?.storyTitle || "尚未匹配到对应线索";
-      const timelineSourceNote = timelineSource?.storyNote || "时间线条目可点击，快速定位线索文本。";
+      const timelineSourceNote = timelineSource?.storyNote || "时间线还缺一份能落到纸面的线索。";
       return `
         <div class="timeline-list">
           ${caseData.timeline
@@ -3584,7 +3583,7 @@
   function renderSelectedEvidence(caseData) {
     const item = state.selectedEvidenceId ? evidenceById(caseData, state.selectedEvidenceId) : null;
     if (!item) {
-      return `<p class="hint-text">点一件证物看细节。庭上先拿在手边，等证词露出破绽再“举证”；人物档案也能站上庭。</p>`;
+      return `<p class="hint-text">卷中尚无选中证物。一份记录浮到案前时，证词里的破口才会有重量。</p>`;
     }
     const deduction = deductionForEvidence(caseData, item.id);
     return `
@@ -4130,8 +4129,8 @@
       </div>
       <div class="inspect-art-stage inspect-view-${escapeHtml(view.id)} inspect-spot-${escapeHtml(activeSpot?.id || "trace")} ${state.recordInspectGesture ? "inspect-gesture-active" : ""}" data-view="${escapeHtml(view.title)}" data-active-lens="${escapeHtml(`${view.id}:${activeSpot?.id || ""}`)}" data-inspect-drag-stage>
         ${renderEvidenceThumb(item, true, "inspect", caseData)}
-        <div class="inspect-progress" aria-label="${escapeHtml(`已查 ${progress.label}`)}"><b>${escapeHtml(progress.label)}</b><span>已查</span></div>
-        <div class="inspect-drag-hint" aria-hidden="true"><span>拖动切换角度</span></div>
+        <div class="inspect-progress" aria-label="${escapeHtml(`已阅 ${progress.label}`)}"><b>${escapeHtml(progress.label)}</b><span>已阅</span></div>
+        <div class="inspect-drag-hint" aria-hidden="true"><span>翻面查看</span></div>
         ${
           activeSpot
             ? `<div class="inspect-lens ${escapeHtml(inspectLensClass(view.id, activeSpot.id))} inspect-lens-slot-${activeSpotIndex + 1}" data-inspect-lens aria-label="${escapeHtml(`放大查看：${activeSpot.label}`)}">
@@ -4166,10 +4165,10 @@
     const compare = state.recordInspectCompare?.sourceId === item.id ? state.recordInspectCompare : null;
     const deduction = deductionForEvidence(caseData, item.id);
     if (!isRecordInspectComplete(item)) {
-      return `<div class="inspect-compare locked"><b>二次推理</b><span>这份记录还没看透。正反与边角都过一遍，再谈对照。当前进度：${escapeHtml(progress.label)}</span></div>`;
+      return `<div class="inspect-compare locked"><b>二次推理</b><span>卷页尚浅。正面、背面、边角仍有未照见处；待墨痕全明，再与旁证相合。当前：${escapeHtml(progress.label)}</span></div>`;
     }
     if (!options.length) {
-      return `<div class="inspect-compare locked"><b>二次推理</b><span>证物还不够。继续调查后，再回来把它和另一件记录对照。</span></div>`;
+      return `<div class="inspect-compare locked"><b>二次推理</b><span>案卷还薄，暂时没有能与它相咬的旁证。</span></div>`;
     }
     const target = compare?.targetId ? evidenceById(caseData, compare.targetId) : null;
     return `
@@ -4332,7 +4331,7 @@
         <div class="reveal-actions">
             <button class="secondary-button" type="button" data-home>返回主菜单</button>
             <button class="secondary-button" type="button" data-reveal-objection>跳过演出</button>
-            <span class="panel-continue-hint">点击任意处${finalStep ? "揭示矛盾" : "继续下一幕"}</span>
+            <span class="panel-continue-hint">${finalStep ? "矛盾揭开" : "下一幕"}</span>
           </div>
         </div>
       </div>
@@ -4562,7 +4561,7 @@
       state.recordOpen = false;
       setStage("witness", `${testimony.speaker}入庭`, { left: "enter", right: "observe" });
       playCue("transition");
-      setMessage("审判长", "开始交叉询问。追问每句证词，找到能被证物击穿的矛盾。", "");
+      setMessage("审判长", "证人既已入庭，就让每一句话都落在案卷上。经不起记录的地方，法庭自然会听见。", "");
       renderTrial();
     }
   }
