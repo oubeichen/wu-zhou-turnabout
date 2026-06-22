@@ -3133,3 +3133,38 @@ Remaining Ace Attorney gap list:
 - Keep rewriting later-case intros, source notes, and court-facing prompts until they consistently sound like scene tension rather than annotated summary.
 - Continue screenshot-first QA on intro/investigation/trial high-frequency text surfaces.
 - Do not reopen already-fixed `举证` button, hotspot placement, or desktop no-scroll layout unless fresh screenshots show a concrete regression.
+
+## 2026-06-23 iteration 107 result
+
+Implemented:
+- Kept this round limited to one high-frequency court UI surface: the empty-state guidance on the trial page and the empty hint inside the record drawer.
+- Rewrote the trial-entry message, the right-column “no record selected” bar, and the record drawer empty hint in `game/app.js`.
+- The new copy keeps the same function, but sounds like the court is waiting for the witness to overstate his case, instead of the UI explaining a feature.
+
+Why this round:
+- Fresh screenshot review showed the next clear remaining mismatch after the intro-page pass:
+  - the case intro page was improving;
+  - but the trial page still used helper copy like `案卷还是空的，庭上眼下只有他一个人在说话` and `卷中尚无选中证物`, which still read as system narration.
+- The user has explicitly asked to keep stripping out “说明书式” language from high-frequency screens.
+- This was a good small-round target because it was highly visible, easy to validate in real screenshots, and did not require touching the already-stable trial controls.
+
+Verified:
+- `npm run check:js`
+- `git diff --check`
+- Ran an escalated local Playwright verification at `1600x960` using a reproducible local save snapshot that opens case 1 directly into court-ready state
+- Captured fresh screenshots:
+  - `output/trial-start-voice-current.png`
+  - `output/trial-record-empty-voice-current.png`
+- Live DOM capture confirmed the new text was actually rendered:
+  - `证人既然开口，就让他把每个字都落稳。站不住的地方，用不着多久就会自己裂开。`
+  - `案上还没摆出能顶住这句话的那一页`
+  - `先让他把话说满。真要把它顶回去，得从卷里翻出一页硬证。`
+  - `卷里还没抽出证物。先听他把话说满，再决定哪一页该拍上案桌。`
+- Screenshot inspection confirmed:
+  - the new lines fit cleanly in the right panel and record drawer;
+  - no new overflow, overlap, or button displacement appeared.
+
+Remaining Ace Attorney gap list:
+- Keep rewriting court-side prompts, evidence summaries, and late-case scene notes that still sound more like annotated archive text than spoken pressure.
+- Continue screenshot-first QA on the court record drawer, testimony rail, and evidence detail panel.
+- Do not reopen already-fixed `举证` button, hotspot placement, or desktop no-scroll layout unless a fresh screenshot shows a concrete regression.

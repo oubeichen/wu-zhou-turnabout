@@ -2931,7 +2931,7 @@
         ? state.selectedProfileName
           ? "人已经被盯住了，他还在等一句能把自己卖出来的话。"
           : "这份记录还压不到这一句，证人嘴里的缝还没张开。"
-        : "案卷还是空的，庭上眼下只有他一个人在说话。";
+        : "先让他把话说满。真要把它顶回去，得从卷里翻出一页硬证。";
     state.screen = "trial";
     renderStatus();
     app.innerHTML = `
@@ -2949,7 +2949,7 @@
             ${renderCoachCard()}
             ${renderTrialDeductionPanel(trialDeduction)}
             <div class="selected-record-bar ${selectedLabel ? "ready" : ""} ${readyToPresent ? "opportunity" : ""}">
-              <span>${selectedLabel ? `案上：${escapeHtml(selectedLabel)}` : "案上还没有压住这句话的记录"}</span>
+              <span>${selectedLabel ? `案上：${escapeHtml(selectedLabel)}` : "案上还没摆出能顶住这句话的那一页"}</span>
               <small>${escapeHtml(recordPrompt)}</small>
             </div>
           <div class="action-row trial-actions">
@@ -3635,7 +3635,7 @@
   function renderSelectedEvidence(caseData) {
     const item = state.selectedEvidenceId ? evidenceById(caseData, state.selectedEvidenceId) : null;
     if (!item) {
-      return `<p class="hint-text">卷中尚无选中证物。眼下案上只有他一个人在说话，那道破口还没有纸面的分量。</p>`;
+      return `<p class="hint-text">卷里还没抽出证物。先听他把话说满，再决定哪一页该拍上案桌。</p>`;
     }
     const deduction = deductionForEvidence(caseData, item.id);
     return `
@@ -4613,7 +4613,7 @@
       state.recordOpen = false;
       setStage("witness", `${testimony.speaker}入庭`, { left: "enter", right: "observe" });
       playCue("transition");
-      setMessage("审判长", "证人既已入庭，就让每一句话都落在案卷上。经不起记录的地方，法庭自然会听见。", "");
+      setMessage("审判长", "证人既然开口，就让他把每个字都落稳。站不住的地方，用不着多久就会自己裂开。", "");
       renderTrial();
     }
   }
