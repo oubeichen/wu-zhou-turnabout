@@ -14,6 +14,11 @@ iteration*-*.png
 iteration*-*.json
 iteration*-*.md
 wuzetian-*.png
+state-*.png
+wuz_audit.js
+debug-launch.html
+wz_audit_visual.*
+home-desktop.png
 
 # Python/runtime caches
 __pycache__/

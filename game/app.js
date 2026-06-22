@@ -665,7 +665,7 @@
     if (!state.investigation[caseId]) {
       state.investigation[caseId] = {
         locationIndex: 0,
-        command: "move",
+        command: "examine",
         examined: [],
         talked: [],
         presented: [],
@@ -990,7 +990,7 @@
       stable: {
         label: "稳定",
         title: "节奏稳定",
-        body: "法庭仍愿意听取辩方推理。继续先追问、再举证。",
+        body: "法庭还没定你一句话是否站得住。先把每句证词问到能翻车的缝再举证。",
       },
       danger: {
         label: "危险",
@@ -1258,8 +1258,8 @@
       return {
         id: "home-gallery",
         title: "案卷选择",
-        body: "先选一案查看档案。结案后，本页会留下奖章、最佳失误和复盘记录。",
-        steps: ["查看当前档案", "进入案件", "结案后重审刷更好评价"],
+        body: "先选一件你想捅破的案子。之前的探索不会丢，只会变成你下一次更快的判断。",
+        steps: ["先看案子档案", "进入案件", "有了结果后再回头重看"],
       };
     }
     const progress = caseProgress(caseData.id);
@@ -1267,7 +1267,9 @@
       return {
         id: "case-brief",
         title: "庭前整理",
-        body: allEvidenceCollected(caseData) ? "庭前证物已齐，可以开庭。庭上仍可能通过追问写入新线索。" : "先完成三处调查。证物齐全后，开庭按钮会开放。",
+        body: allEvidenceCollected(caseData)
+          ? "案前线索已经能上庭了。庭审里你还可以继续追问，把不稳的地方一口气压出来。"
+          : "先把现场再走一遍：证人、文件、地点和动作都要能互相解释。齐全后再开庭，节奏更稳。",
         steps: ["开始调查", "查看可疑处", "证物齐后开庭"],
       };
     }
@@ -1275,10 +1277,10 @@
       const inv = investigationProgress(caseData.id);
       const location = currentLocation(caseData);
       const commandTips = {
-        move: `移动到不同地点补全现场。当前地点：${location.name}。`,
-        examine: "查看现场可疑处会取得证物；热点和列表按钮都能记录线索。",
-        talk: "交谈能补足证人立场，也会把疑点写入对话记录。",
-        present: "向现场人物出示已取得证物，可提前听到庭审用途。",
+        move: `先从「${location.name}」离开一下，看一眼下一个空间。证据常藏在你没盯上的路口。`,
+        examine: "先把现场发亮的点点亮起。看见的人、看到的物、听见的回音都要先落账再下结论。",
+        talk: "每段对话都可能夹带辩解。挑一个你还不信的角落，把细节问干净。",
+        present: "证物只是线头，不是答案。现在先试探，对方会不自觉暴露他最怕承认的那一段。",
       };
       return {
         id: `investigation-${inv.command}`,
@@ -1291,7 +1293,7 @@
       return {
         id: "trial-interlude",
         title: "证词更新",
-        body: "上一段证词已动摇。确认新证词后继续交叉询问，证人会换一套说法。",
+        body: "证人这段开始乱了。确认他说了什么新话，再追到底这句话会怎么牵动整段证词。",
         steps: ["确认更新", "继续询问", "寻找新矛盾"],
       };
     }
@@ -1627,7 +1629,7 @@
     const sourceItems = caseSourceItems(caseData);
     const sourceList = sourceItems
       .slice(0, 4)
-      .map(
+        .map(
         (item) => `
             <li>
               <button
@@ -1638,7 +1640,7 @@
               >
                 ${escapeHtml(item.storyTitle)}
               </button>
-              <small>${escapeHtml(item.title)}</small>
+              <small>${escapeHtml(sourceForDisplay(item.title))}</small>
             </li>
           `
       )
@@ -1834,7 +1836,7 @@
     clearEvidencePickup();
     clearInventoryCue();
     clearPursuitUnlockCue();
-    setMessage("开幕", "案件开场。点击画面或按 Enter 继续。", "");
+    setMessage("开幕", "幕布刚掀开。点在画面任意处，先听完这段开场。", "");
     playCue("transition");
     renderCaseOpeningCutscene();
   }
@@ -1847,9 +1849,9 @@
     const step = Math.max(0, Math.min(beats.length - 1, Number(cutscene.step) || 0));
     const beat = beats[step];
     const startLocation = caseData.locations?.[0] || { sceneVariant: "site", name: caseData.location };
-    const art = locationBackgroundFile(caseData, startLocation);
-    renderStatus();
-    app.innerHTML = `
+      const art = locationBackgroundFile(caseData, startLocation);
+      renderStatus();
+      app.innerHTML = `
       <section class="opening-cutscene scene-${escapeHtml(caseData.scene?.key || "palace")} focus-${escapeHtml(beat.focus)}" data-motif="${escapeHtml(caseData.scene?.motif || "")}" data-advance-opening-panel style="--location-art: url('./assets/${escapeHtml(art)}');">
         <div class="opening-cutscene-shade"></div>
         <div class="opening-cutscene-card">
@@ -1864,7 +1866,7 @@
         <div class="opening-cutscene-actions">
           <span>${step + 1}/${beats.length}</span>
           <button class="secondary-button" type="button" data-skip-opening>跳过开场</button>
-          <span class="opening-continue-hint">${step >= beats.length - 1 ? "点击任意处开始调查" : "点击任意处继续开场"}</span>
+          <span class="opening-continue-hint">${step >= beats.length - 1 ? "点画面任意处，走向案发现场" : "点画面继续开场"}</span>
         </div>
       </section>
       ${renderSettings()}
@@ -2166,10 +2168,33 @@
     return match ? match[0] : "章节";
   }
 
+  function sourceForDisplay(raw) {
+    const cleaned = sourceLabelClean(raw).trim();
+    return cleaned || "这段记载";
+  }
+
+  function sourceLabelClean(raw) {
+    const text = String(raw || "").trim();
+    return text
+      .replace(/^卷宗\s*\d+\s*[：:\-—–]?\s*/, "")
+      .replace(/^第\d+章\s*[：:\-—–]?\s*/, "")
+      .replace(/^第[一二三四五六七八九十百\d]+章\s*[：:\-—–]?\s*/, "")
+      .replace(/^\[?\s*卷宗\s*\d+\s*\]?\s*[：:\-—–]?\s*/, "")
+      .replace(/^\[?\s*第\d+\s*章\s*\]?\s*[：:\-—–]?\s*/, "")
+      .replace(/^\s*[（(]第[一二三四五六七八九十百\d]+章[）)]\s*/, "")
+      .replace(/^\s*[（(]第\d+章[）)]\s*/, "")
+      .trim();
+  }
+
   function chapterShortTitle(title) {
     return String(title)
+      .replace(/^第\d+章\s*/, "")
       .replace(/^第[一二三四五六七八九十百\d]+章\s*/, "")
       .replace(/^[:：]\s*/, "")
+      .replace(/^卷宗\s*\d+\s*[：:]\s*/, "")
+      .replace(/^卷宗\s*\d+\s*/, "")
+      .replace(/^[（(]第\d+章[）)]\s*/, "")
+      .replace(/^\s*[（(]第[一二三四五六七八九十百\d]+章[）)]\s*/, "")
       .slice(0, 14);
   }
 
@@ -2236,8 +2261,8 @@
     return `
       <div class="case-source-panel">
         <div class="case-section-title">
-          <strong>查看本案线索</strong>
-          <span>点选一条线索，看它怎样把现场、证人和证物接起来。</span>
+          <strong>先看一条线索</strong>
+          <span>点开下面的线索，把现场细节和人物说法接在一起。</span>
         </div>
         <div class="source-tabs" aria-label="章节线索">
           ${items
@@ -2252,9 +2277,9 @@
             .join("")}
         </div>
         <div class="source-detail">
-          <strong>翻到这里，看见：${escapeHtml(active.storyTitle)}</strong>
+          <strong>线索焦点：${escapeHtml(active.storyTitle)}</strong>
           <p>${escapeHtml(active.storyNote)}</p>
-          <small>出处：${escapeHtml(active.title)}</small>
+          <small>来源：${escapeHtml(sourceForDisplay(active.title))}</small>
         </div>
       </div>
     `;
@@ -2297,12 +2322,12 @@
     const inv = investigationProgress(caseData.id);
     const location = currentLocation(caseData);
     const inventoryCue = currentInventoryCue(caseData);
-    state.screen = "investigation";
+      state.screen = "investigation";
     renderStatus();
     app.innerHTML = `
       <section class="play-layout investigation-layout record-drawer-layout">
         <div>
-          ${renderScene(location.name, state.speaker || "调查", state.message || "选择指令。移动到现场，查看可疑处，交谈获得提示，必要时向证人出示证物。", "investigation")}
+          ${renderScene(location.name, state.speaker || "调查", state.message || "先用“查看”扫一遍可疑点，再根据人物反应决定下一步。", "investigation")}
           ${renderInvestigationMap(inv, location)}
           ${renderClueBoard(caseData, inv, location)}
           <div class="panel command-panel">
@@ -2358,14 +2383,14 @@
     };
     const mapArtStyle = mapArt ? `style="--map-art: url('./assets/${escapeHtml(mapArt)}');"` : "";
     const quickHint = canMove
-      ? "可点击左侧场景切换案发现场"
+      ? "在左侧换地方，连着走一遍这起案子更快定向"
       : canTalk
-      ? "可点击右侧对话列表与线索人物"
+      ? "点开右侧对话，先从人物口供里找冲突"
       : canPresent
-      ? "可点击右侧清单选择证物出示"
+      ? "右侧清单里选一件证物，先听对方如何接住它"
       : canInspect
-      ? "可点击场景标记查看、复查可疑点"
-      : "目前进入“查看”面板后可继续点位检视";
+      ? "在场景标记上点“可疑处”，点过的地方会变成已记录"
+      : "先切“查看”，继续复查场景标记";
     return `
       <div class="location-map scene-${sceneKey} variant-${variant}${transitionClass}" ${mapArtStyle}>
         <div>
@@ -2541,17 +2566,17 @@
         <h2>查看</h2>
         <p class="hint-text">在左侧现场图上点击发光标记。已记录的位置会变成绿色，可随时复查。</p>
         <div class="spot-status-list">
-          ${location.examineSpots
-            .map((spot, index) => {
-              const key = `${inv.locationIndex}:${index}`;
-              const done = inv.examined.includes(key);
-              return `
+      ${location.examineSpots
+          .map((spot, index) => {
+            const key = `${inv.locationIndex}:${index}`;
+            const done = inv.examined.includes(key);
+            return `
                 <div class="spot-status ${done ? "done" : ""}">
                   <strong>${escapeHtml(spot.name)}</strong>
-                  <span>${done ? "已记录" : "待查看"}</span>
+                  <span>${done ? "已记录" : "待触发"}</span>
                 </div>
               `;
-            })
+          })
             .join("")}
         </div>
       `;
@@ -2578,10 +2603,10 @@
     const owned = collectedEvidence(caseData);
     return `
       <h2>出示</h2>
-      <p class="hint-text">向现场人物出示证物可获得提示。庭审中才会正式扣除信誉。</p>
+      <p class="hint-text">拿你已收进案卷的物证先试探一下。法庭里再确认是否够硬后，再真的点“举证”。</p>
       <div class="location-list">
         ${owned
-          .map(
+      .map(
             (item) => `
               <button class="location-button" type="button" data-present-investigation="${item.id}">
                 <strong>${escapeHtml(item.name)}</strong>
@@ -2620,11 +2645,11 @@
     const trialDeduction = trialDeductionForStatement(caseData, statement, progress, progress.testimonyIndex, rawIndex);
     const recordPrompt = readyToPresent
       ? selectedLabel
-        ? "破绽已经逼出来了。确认这份记录能反驳当前句，可直接按 E/Enter 提交举证。"
+        ? "这句话的破绽已经露头。确认选中的证据和这句对不上，再按 E/Enter 试一发。"
         : statement.answerProfile
-          ? "破绽已经逼出来了。打开人物档案，选中能推翻当前句的人。"
-          : "破绽已经逼出来了。打开证物记录，选中能推翻当前句的证物。可按 E 直接提交。"
-      : "右侧法庭记录只负责选择；点击下方“举证”才会提交。";
+          ? "这段话不稳了。打开人物档案，选一个会把它反咬回来的人。"
+          : "这段话不稳了。打开证物记录，选一件能戳穿它的证物。可按 E 直接提交。"
+      : "法庭记录只是你的手牌。先选好，点下“举证”后才会真正进入法官面前。";
     state.screen = "trial";
     renderStatus();
     app.innerHTML = `
@@ -2965,7 +2990,7 @@
             <div class="pickup-copy">
               <h2>${escapeHtml(item.name)}</h2>
               <p>${escapeHtml(item.summary || item.detail || "这件物品已经加入法庭记录。")}</p>
-              <small>${escapeHtml(item.type)}｜${escapeHtml(item.source)}</small>
+              <small>${escapeHtml(item.type)}｜${escapeHtml(sourceForDisplay(item.source))}</small>
             </div>
           </div>
           <div class="pickup-note">
@@ -3064,10 +3089,10 @@
             <div><strong>${record.clears || 1}</strong><span>结案次数</span></div>
           </div>
           ${renderCoachCard()}
-          <div class="timeline-list">
+        <div class="timeline-list">
             ${caseData.timeline
               .slice(0, 5)
-              .map((item) => `<div><strong>${escapeHtml(timelineLabel(item))}</strong><span>${escapeHtml(item.title)}</span></div>`)
+              .map((item) => `<div><strong>${escapeHtml(timelineLabel(item))}</strong><span>${escapeHtml(sourceForDisplay(item.title))}</span></div>`)
               .join("")}
           </div>
           <div class="action-row">
@@ -3268,7 +3293,7 @@
               return `
                 <button class="timeline-row ${activeSource ? "active" : ""}" type="button" data-timeline-source="${sourceIndex}">
                   <strong>${escapeHtml(timelineLabel(item, index))}</strong>
-                  <span>${escapeHtml(item.title)}</span>
+                  <span>${escapeHtml(sourceForDisplay(item.title))}</span>
                   <small>${escapeHtml(item.note)}</small>
                 </button>
               `;
@@ -3331,8 +3356,8 @@
           ${renderEvidenceThumb(item, true, "large", caseData)}
           <span class="evidence-detail-copy">
             <strong>${escapeHtml(item.name)}</strong>
-            <span>${escapeHtml(item.type)}｜${escapeHtml(item.source)}</span>
-            <small>${state.screen === "trial" ? "证物已经拿在手上；带回庭审后点“举证”才会提交。" : "已收进法庭记录。开庭后可打开记录，先选好，再举证。"}</small>
+            <span>${escapeHtml(item.type)}｜${escapeHtml(sourceForDisplay(item.source))}</span>
+            <small>${state.screen === "trial" ? "这件证物先在你手里留着，回到庭审后确认它能卡住哪句，再点“举证”。" : "证物已进法庭记录。开庭后再点“举证”，别让它先白花钱。"} </small>
           </span>
         </div>
         <p>${escapeHtml(item.detail)}</p>
@@ -3463,7 +3488,7 @@
     if (!item) return [];
     const specific = specificInspectSpotsForEvidence(item, viewId);
     if (specific.length) return specific;
-    const source = item.source ? `来源：${item.source}` : "来源仍需和证词互相印证。";
+    const source = item.source ? `来源：${sourceForDisplay(item.source)}` : "先把它和现场说法对上，再当证据出场。";
     const risk = item.counterRisk ? ` 慎用点：${item.counterRisk}` : "";
     const common = {
       trace: {
@@ -3534,7 +3559,7 @@
   }
 
   function specificInspectSpotsForEvidence(item, viewId) {
-    const source = item.source ? `来源：${item.source}` : "来源仍需和证词互相印证。";
+    const source = item.source ? `来源：${sourceForDisplay(item.source)}` : "这份资料先对齐证词，再看它能否直接进庭。";
     const risk = item.counterRisk ? `慎用点：${item.counterRisk}` : "太早出示只会让对手把争点带偏。";
     const map = {
       board: {
@@ -3938,7 +3963,7 @@
     if (!inspect) return "";
     const { type, item, index, items } = inspect;
     const title = type === "profile" ? item.name : item.name;
-    const subtitle = type === "profile" ? item.role : `${item.type}｜${item.source}`;
+    const subtitle = type === "profile" ? item.role : `${item.type}｜${sourceForDisplay(item.source)}`;
     const spot = type === "evidence" ? activeInspectSpot(item) : null;
     return `
       <div class="modal-scrim record-inspect-scrim" role="dialog" aria-modal="true" aria-label="法庭记录详查">
@@ -4266,7 +4291,7 @@
       }
       state.recordOpen = false;
       clearInvestigationBeat();
-      setMessage("调查", "选择指令。移动、查看、交谈、出示，每一步都可能改变法庭记录。", "");
+      setMessage("调查", "先选个动作开始。移动、查看、交谈、出示都能改写线索，顺着嫌疑人的反应走。", "");
       renderInvestigation();
     } else {
       const caseData = currentCase();
@@ -4350,7 +4375,9 @@
       [
         {
           speaker: gainedNames.length ? "辩方" : "调查",
-          text: gainedNames.length ? `这件东西先收进法庭记录。等证词说到这里，再把它拿出来。` : "这里已经查过一遍。与其反复翻找，不如换个可疑处继续看。",
+          text: gainedNames.length
+            ? `这件东西先收进法庭记录。下一段证词可能把它拉上场。`
+            : "这里已经看过一遍了。再停在这里只会浪费时间，换个可疑点继续。",
         },
       ]
     );
