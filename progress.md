@@ -3297,6 +3297,43 @@ Remaining Ace Attorney gap list:
 - Continue screenshot-first QA on pressure labels, trial headers, statement cards, record drawer entries, and evidence detail panels.
 - Do not reopen already-fixed `举证` button, hotspot placement, or desktop no-scroll layout unless a fresh screenshot shows a concrete regression.
 
+## 2026-06-23 iteration 115 result
+
+Implemented:
+- Kept this round limited to one global top-bar status label in `game/app.js`.
+- Changed the non-home header tag from `信誉 ${progress.credibility}/5` to `庭势 ${progress.credibility}/5`.
+- Left the underlying credibility number, meter, and trial-state logic untouched.
+
+Why this round:
+- The latest verified courtroom screenshot already showed `庭上风向` on the right meter, but the top status bar still exposed `信誉 5/5`, which read more like a rules HUD than an in-world courtroom state.
+- This was the next obvious high-frequency mismatch because the tag appears across案件页、调查页、庭审页顶部，而且一直跟着玩家。
+- It was a safe small-round target because the change is display-only, easy to verify in a fresh screenshot, and does not reopen any previously stabilized layout or interaction issues.
+
+Verified:
+- `git fetch origin main`
+- confirmed `HEAD` and `origin/main` both pointed to `ea51f43e95400da7367d59ad1df3e7de2873e99c` before this round's commit
+- `npm run check:js`
+- `git diff --check`
+- Used the in-app browser at `http://127.0.0.1:8788/game/` with a reproducible local save snapshot for case 1 court-ready progress
+- Captured a fresh screenshot:
+  - `output/case-status-tag-current.png`
+- Live DOM capture confirmed the top bar tags now render as:
+  - `皇后宝座的缺口`
+  - `庭势 5/5`
+  - `证物 8/8`
+- Screenshot inspection confirmed:
+  - the new top-bar label fits cleanly beside the case title and evidence count;
+  - the top actions (`札记` / `设置`) remain aligned;
+  - no new clipping, overlap, or crowding appeared in the top bar at `1600x960`.
+
+Notes:
+- Checked `.gitignore` this round; current rules still cover the generated validation artifacts, so no `.gitignore` change was needed.
+
+Remaining Ace Attorney gap list:
+- Keep rewriting testimony-side helper text, evidence summaries, and late-case prompts that still sound like neutral interface metadata instead of escalating courtroom pressure.
+- Continue screenshot-first QA on top-bar tags, pressure labels, trial headers, statement cards, record drawer entries, and evidence detail panels.
+- Do not reopen already-fixed `举证` button, hotspot placement, or desktop no-scroll layout unless a fresh screenshot shows a concrete regression.
+
 ## 2026-06-23 iteration 112 result
 
 Implemented:

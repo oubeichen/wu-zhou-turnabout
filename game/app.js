@@ -1572,7 +1572,7 @@
     const progress = caseProgress(caseData.id);
     statusStrip.innerHTML = `
         <span class="tag">${escapeHtml(caseTitleForDisplay(caseData.title))}</span>
-      <span class="tag">信誉 ${progress.credibility}/5</span>
+      <span class="tag">庭势 ${progress.credibility}/5</span>
       <span class="tag">证物 ${(state.collected[caseData.id] || []).length}/${caseData.evidence.length}</span>
       <button class="top-action" type="button" data-toggle-guide>札记</button>
       <button class="top-action" type="button" data-toggle-settings>设置</button>
