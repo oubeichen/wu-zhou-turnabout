@@ -3372,23 +3372,27 @@ button:not(:disabled):hover {
 }
 
 .present-button {
-  font-size: 18px;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: 2px;
+  min-height: 56px;
   font-weight: 900;
 }
 
-.action-key {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 20px;
-  height: 20px;
-  margin-right: 7px;
-  font-size: 12px;
+.action-kicker {
+  display: block;
+  font-size: 11px;
   font-weight: 900;
-  border: 1px solid rgba(255, 248, 231, 0.68);
-  border-radius: 999px;
-  color: #1f1c19;
-  background: rgba(255, 241, 191, 0.94);
+  letter-spacing: 0.08em;
+  color: rgba(255, 241, 191, 0.92);
+  text-transform: uppercase;
+}
+
+.action-label {
+  display: block;
+  font-size: 20px;
+  line-height: 1;
 }
 
 .record-open-button.opportunity,

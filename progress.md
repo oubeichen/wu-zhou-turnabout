@@ -2576,3 +2576,34 @@ Remaining Ace Attorney gap list:
 - Continue replacing generic `press` and `objection` lines with witness-specific cadence across later cases.
 - Add more branch variety after correct objections: prosecutor counterpressure, witness breakdown stages, and new testimony routes.
 - Continue screenshot-first QA, but keep avoiding repeated fixes for bugs already recorded as resolved.
+
+## 2026-06-22 iteration 94 result
+
+Implemented:
+- Continued the copy-polish loop in smaller batches instead of another broad rewrite.
+- Reworked a second batch of main-flow `game/app.js` visible copy: home guide text, guide card wording, save-slot copy, empty selected-evidence hint, profile-detail hint, evidence inspect progress, compare-panel copy, and trial opening message.
+- Reworked the trial present button structure itself after screenshot inspection showed the previous `拍案` text had been incorrectly stuffed into the old 20x20 key badge slot.
+- The present button now uses a two-line hierarchy: small `拍案` kicker plus large `举证` label, with dedicated CSS sizing instead of the old circular hotkey badge.
+- Verified that the remaining visible `点击任意处...` / `Tab 切换` / `E 举证` style text was removed from the primary play surface, leaving only the optional settings help for keyboard guidance.
+
+Already fixed and not revisited this round:
+- Hotspot/text overlap remains treated as fixed unless a new screenshot proves regression.
+- Record drawer overlay and objection reveal layering remain treated as fixed; this round only rechecked they stayed correct.
+- Present button abnormal text badge is now treated as fixed unless a new screenshot shows another layout regression.
+
+Verified:
+- `npm run check:js`
+- `git diff --check`
+- Residual scan of `game/app.js` / `game/game-data.js` left only the settings-page keyboard help line as intentional explicit controls text.
+- Re-ran escalated Chromium screenshot audit at 1600x960 and 390x844 after the button fix.
+- Screenshot state audit confirmed:
+  - desktop `trial-start` still stays one-window (`appHeight=896`, `appClientHeight=896`),
+  - mobile `trial-start` remains readable with no hotspot overlap,
+  - the new `拍案 / 举证` button no longer collapses into the broken circular badge layout.
+- Screenshot inspection files:
+  - `/tmp/wz_audit_live/v1600x960-trial-start.png`
+  - `/tmp/wz_audit_live/v390x844-trial-start.png`
+
+Remaining Ace Attorney gap list:
+- Continue replacing generic later-case `press` and `wrongEvidenceFeedback` lines with speaker-specific fear and cadence.
+- Keep checking visible button and panel copy in small batches rather than returning to already-fixed layout bugs without new evidence.
