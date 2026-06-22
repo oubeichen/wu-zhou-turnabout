@@ -3539,6 +3539,25 @@
     `;
   }
 
+  function lockedEvidenceTitle(item) {
+    const name = String(item?.name || "").trim();
+    if (item?.pursuitOnly) {
+      const cleaned = name.replace(/^\s*追击补记\s*[:：]?\s*/, "").trim();
+      return cleaned || "追出来的补记";
+    }
+    if (item?.trialOnly) {
+      const cleaned = name.replace(/^\s*庭上追问记录\s*[:：]?\s*/, "").replace(/^\s*庭上追加\s*[:：]?\s*/, "").trim();
+      return cleaned || "还没问出来的那一页";
+    }
+    return name || "未取得证物";
+  }
+
+  function lockedEvidenceSummary(item) {
+    if (item?.pursuitOnly) return "还得把他追到失口，这页才会落进案卷。";
+    if (item?.trialOnly) return "得先在庭上戳开这道缝，这页记录才会掉下来。";
+    return "这页东西还没落到辩方手里。";
+  }
+
   function renderRecordBody(caseData, progress, selectable) {
     if (state.recordTab === "profiles") {
       const selectedProfile = exactProfileByName(state.selectedProfileName);
@@ -3612,15 +3631,16 @@
             const owned = collected.includes(item.id);
             const active = state.selectedEvidenceId === item.id;
             const disabled = !owned ? "disabled" : "";
-            const lockedText = item.trialOnly ? "庭审追问可取得" : "尚未取得";
+            const displayName = owned ? item.name : lockedEvidenceTitle(item);
+            const lockedText = owned ? item.summary : lockedEvidenceSummary(item);
             const deduction = deductionForEvidence(caseData, item.id);
             return `
               <button class="evidence-button ${active ? "selected" : ""}" type="button" data-select-evidence="${item.id}" ${disabled}>
                 <span class="evidence-row">
                   ${renderEvidenceThumb(item, owned, "small", caseData)}
                   <span class="evidence-copy">
-                    <strong>${escapeHtml(item.name)}${deduction ? `<em class="deduction-badge">已对照</em>` : ""}</strong>
-                    <span>${owned ? escapeHtml(item.summary) : lockedText}</span>
+                    <strong>${escapeHtml(displayName)}${deduction ? `<em class="deduction-badge">已对照</em>` : ""}</strong>
+                    <span>${escapeHtml(lockedText)}</span>
                   </span>
                 </span>
               </button>

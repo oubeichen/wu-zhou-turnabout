@@ -3168,3 +3168,36 @@ Remaining Ace Attorney gap list:
 - Keep rewriting court-side prompts, evidence summaries, and late-case scene notes that still sound more like annotated archive text than spoken pressure.
 - Continue screenshot-first QA on the court record drawer, testimony rail, and evidence detail panel.
 - Do not reopen already-fixed `举证` button, hotspot placement, or desktop no-scroll layout unless a fresh screenshot shows a concrete regression.
+
+## 2026-06-23 iteration 108 result
+
+Implemented:
+- Kept this round focused on one remaining player-facing mismatch inside the court record drawer: the two locked evidence cards at the bottom of the evidence list.
+- Rewrote how locked evidence cards are titled and described in `game/app.js`.
+- Instead of exposing raw structural labels such as `庭审追问可取得`, locked cards now read like missing case pages the player still has to force out of the witness.
+
+Why this round:
+- After the previous trial-page pass, the next obvious remaining “system UI” phrase was still visible in the latest record-drawer screenshot:
+  - unlocked evidence had already become more readable;
+  - but locked evidence still used direct tool-like labels, which felt closer to a debug inventory than an Ace Attorney-style record page.
+- This mattered because the record drawer is one of the highest-frequency screens during court play.
+- It was also a good small-round target because it only changed locked-card naming/copy and did not touch any button behavior, unlock logic, or record layout.
+
+Verified:
+- `npm run check:js`
+- `git diff --check`
+- Ran an escalated local Playwright verification at `1600x960` using the same reproducible court-ready local save snapshot as the previous round
+- Captured a fresh screenshot:
+  - `output/trial-record-locked-voice-current.png`
+- Live DOM capture confirmed the last two locked cards now render as:
+  - `还没问出来的那一页` / `得先在庭上戳开这道缝，这页记录才会掉下来。`
+  - `哭声入诏` / `还得把他追到失口，这页才会落进案卷。`
+- Screenshot inspection confirmed:
+  - the new copy fits inside the disabled cards;
+  - the drawer list still aligns cleanly;
+  - no new overflow, clipping, or button displacement appeared.
+
+Remaining Ace Attorney gap list:
+- Keep rewriting late-case evidence summaries, locked hints, and court-facing prompts that still sound like archive annotation instead of pressure on the witness.
+- Continue screenshot-first QA on court record entries, evidence detail copy, and testimony-side helper text.
+- Do not reopen already-fixed `举证` button, hotspot placement, or desktop no-scroll layout unless a fresh screenshot shows a concrete regression.
