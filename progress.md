@@ -2745,3 +2745,30 @@ Verified:
 Remaining Ace Attorney gap list:
 - Continue the copy-polish pass on later-case testimony, evidence `use`, and profile notes that still sound like tactical notes instead of in-world speech.
 - Revisit courtroom action labels only if a fresh screenshot shows a concrete defect; do not churn this area again without evidence.
+
+## 2026-06-22 iteration 98 result
+
+Implemented:
+- Rechecked the real trial flow after a fresh user report that the `举证` button still looked odd.
+- Confirmed with live screenshots that the problem was concentrated in the disabled state: the enabled `举证` button was fine, but the unselected state still looked like a washed-out rendering error.
+- Narrowed the fix to `game/styles.css` only:
+  - kept the active `举证` face on a stable dark-red gradient,
+  - replaced the old muddy disabled face with a deliberate dormant style,
+  - added a restrained gold edge and clearer label contrast so the button now reads as “主操作未就绪” rather than “控件坏了”.
+
+Did not reopen this round:
+- Trial action-strip layout and control hierarchy.
+- Investigation UI or hotspot work.
+- Any of the already-recorded overlay / portrait fixes.
+
+Verified:
+- `npm run check:js`
+- `git diff --check`
+- Ran an escalated external Playwright capture because sandboxed Chromium still hits the local MachPort restriction.
+- Fresh desktop 1600x960 screenshots confirmed:
+  - `output/trial-start-current.png`: disabled `举证` no longer发灰发脏，仍然清楚是同一组主操作的一部分；
+  - `output/trial-present-ready-current.png`: ready state stays dark red and does not lose emphasis after the disabled-state tweak.
+
+Remaining Ace Attorney gap list:
+- Continue the text-polish pass on later-case testimony, profile notes, and evidence descriptions.
+- Treat the `举证` button visuals as fixed again unless a new screenshot shows another concrete regression.

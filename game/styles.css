@@ -3413,6 +3413,7 @@ button:not(:disabled):hover {
   justify-content: center;
   padding: 8px 14px;
   font-weight: 900;
+  background: linear-gradient(180deg, #6d241f 0%, #5a1a1a 100%);
   box-shadow: 0 4px 0 #2c0d0d, inset 0 1px 0 rgba(255, 241, 191, 0.12);
 }
 
@@ -3430,10 +3431,17 @@ button:not(:disabled):hover {
 
 .present-button:disabled {
   opacity: 1;
-  color: rgba(255, 248, 231, 0.88);
-  background: linear-gradient(180deg, #9a7974, #85625f);
-  border-color: #6b4c48;
-  box-shadow: 0 4px 0 #523a38;
+  color: #6d3932;
+  background:
+    linear-gradient(180deg, rgba(255, 248, 231, 0.34), rgba(255, 248, 231, 0.08)),
+    linear-gradient(180deg, #dfd0c7 0%, #ceb8b2 100%);
+  border-color: rgba(92, 29, 24, 0.34);
+  box-shadow: inset 4px 0 0 rgba(179, 123, 36, 0.58), inset 0 1px 0 rgba(255, 248, 231, 0.72);
+}
+
+.present-button:disabled .action-label {
+  color: #6d3932;
+  text-shadow: 0 1px 0 rgba(255, 248, 231, 0.56);
 }
 
 .selected-record-bar {
