@@ -2634,3 +2634,73 @@ Verified:
 Remaining Ace Attorney gap list:
 - Continue replacing later-case tactical helper copy with scene-native speech and case-file narration.
 - Keep using screenshot-first checks, but do not reopen already-recorded UI fixes without fresh evidence.
+
+## 2026-06-22 iteration 96 result
+
+Implemented:
+- Continued the copy-polish loop in one focused batch instead of reopening already-fixed layout bugs.
+- Rewrote a visible batch in `game/app.js` so the main flow stops sounding like a built-in walkthrough:
+  - home hero hint,
+  - case gallery heading and `案件简报` button wording,
+  - case intro action buttons (`进入现场` / `进入庭审`),
+  - case intro status hint under the action row,
+  - source panel helper copy,
+  - investigation map quick hints,
+  - dormant hotspot line,
+  - investigation command-panel hints for `移动 / 查看 / 交谈 / 出示`,
+  - vulnerability cue text,
+  - investigation start message,
+  - trial penalty / wrong-present default messages.
+- Rewrote a second batch of optional guide text in `game/app.js` so even the hidden `案旁札记` panel reads like case judgment instead of numbered tactics:
+  - `追问突破`,
+  - `话没说完`,
+  - `交叉询问`.
+- Rewrote a visible batch in `game/game-data.js`:
+  - first-case opening stakes,
+  - first-case intro card,
+  - first-case defense/opponent opening lines,
+  - second-case defense opening line,
+  - first-case two core evidence `use` descriptions,
+  - first-case legality testimony `press` / `wrongEvidenceFeedback`,
+  - one later-case opening `stakes`.
+- Rewrote several profile notes that previously spoiled the solution path or used explicit courtroom攻略口吻:
+  - `内廷记录官`,
+  - `许敬宗`,
+  - `宫廷书记官`,
+  - `告密人`,
+  - `魏元忠`,
+  - `周兴`.
+- Rewrote a small but obvious batch in record inspection copy so it stops telling the player what to do and instead states what the object means:
+  - generic source/risk text,
+  - red-line board wording,
+  - bronze-box origin wording,
+  - edict title wording,
+  - compare-failure wording.
+- Used one read-only explorer subagent to rank the worst remaining tutorial-like strings before finalizing the batch; the implementation still happened in the main worktree.
+
+Already fixed and not revisited this round:
+- `举证` button hierarchy/layout remains treated as fixed from iteration 95.
+- Hotspot overlap, record drawer layering, and objection reveal layering were not reopened.
+- This round stayed on text only; no renewed layout churn without new evidence.
+
+Verified:
+- `npm run check:js`
+- `PYTHONPYCACHEPREFIX="/Users/oubeichen/Projects/wuzetian2/.pycache" npm run check:py`
+- `git diff --check`
+- `node -e "global.window=global; require('./game/game-data.js'); ..."` confirmed `cases=5` and `profiles=12`.
+- Targeted string verification confirmed the old visible tutorial wording is gone for the changed hotspots:
+  - removed: `先去现场看看`
+  - removed: `证据齐了就开庭`
+  - removed: `想摸现场，先回到“查看”这一手。`
+  - removed: `先盯住最像被人碰过的地方。`
+  - removed: `这件证物压不到当前这句话。`
+  - removed: `先追问，再举证`
+  - removed: `先找能替她开口的现场记录。`
+  - removed: `太子之争不能只听一句‘家事’。`
+  - removed: `辩方若拿不出纸证，就别让一场哭声惊动朝堂。`
+- In-app browser screenshot verification could not be rerun at the end of this round because the `iab` browser surface was unavailable after the browser runtime reset; this round therefore stopped at code-level and string-level verification.
+
+Remaining Ace Attorney gap list:
+- Keep rewriting later-case testimony `press`, `wrongEvidenceFeedback`, and profile/evidence descriptions that still leak tactics instead of character stance.
+- Continue reducing instructional phrasing inside optional guide content; it is hidden now, but some `steps` lists still read more like workflow than story.
+- When the in-app browser surface is available again, rerun screenshot checks on case intro, investigation, and trial to visually confirm these new lines fit cleanly.
