@@ -2749,6 +2749,66 @@ Remaining Ace Attorney gap list:
 ## 2026-06-22 iteration 98 result
 
 Implemented:
+- Used one read-only explorer subagent to rank the worst remaining visible tutorial-like copy before editing.
+- Treated the main problem as systemic rather than sentence-by-sentence only: `案旁札记` was still default-open behavior in practice because `hideGuides` defaulted to `false`.
+- Changed `game/app.js` so guide cards are now hidden by default:
+  - `hideGuides` default is now `true`,
+  - top-right action reads `札记` instead of `提示`,
+  - settings label now reads `收起案旁札记` instead of `隐藏新手提示卡`.
+- Rewrote the visible copy in the hidden guide system so, when opened, it reads more like case notes and less like step-by-step controls:
+  - removed explicit sequences such as `翻证物 / 选中记录 / 举证`,
+  - replaced them with noun-style beats like `证物 / 记录 / 举证`,
+  - rewrote several guide titles and bodies around investigation, interlude, press-first, recovery, and counter-risk states.
+- Rewrote a visible batch in the courtroom sidebar and record surfaces:
+  - selected-record bar no longer says `尚未选择证物或人物档案`,
+  - prompt text now describes whether the current line has met a record instead of telling the player what to click,
+  - `慎用提示` became `卷边批注`,
+  - trial return text now reads like in-world tension instead of a command.
+- Rewrote a visible batch in record inspection:
+  - many `出示时机 / 举证时机` labels became `分量`-style notes,
+  - imperative risk text such as `等对方…再用` was replaced with descriptive weight/meaning text,
+  - `现场说法 / 庭审用途` became `纸面说法 / 落到庭上`,
+  - locked compare text no longer says `待墨痕全明，再与旁证相合`.
+- Rewrote several visible story lines in `game/game-data.js`:
+  - first-case opening body/stakes,
+  - first-case and fourth-case case-brief cards that used second-person or direct tactical coaching,
+  - first-case defense-location description,
+  - crown-shadow talk topic titles and one helper line.
+
+Did not reopen this round:
+- Hotspot overlap fixes.
+- Trial main-button hierarchy/layout from iteration 97.
+- Portrait sizing and other previously recorded UI bugs.
+
+Verified:
+- `npm run check:js`
+- `PYTHONPYCACHEPREFIX="/Users/oubeichen/Projects/wuzetian2/.pycache" npm run check:py`
+- `git diff --check`
+- Escalated Playwright screenshot verification because the in-app browser surface remained unavailable.
+- Desktop 1440x900 screenshots confirmed:
+  - home screen shows `札记` and no default coach card,
+  - case intro no longer shows a default guide card,
+  - trial screen no longer shows a default guide card and the right sidebar now reads `案上还没有压住这句话的记录 / 案卷还是空的，庭上眼下只有他一个人在说话`,
+  - record inspection edge-risk view now reads `分量`-style notes such as `它更像收尾`, and the adjacent cards read `纸面说法 / 落到庭上`.
+- Targeted search confirmed the worst previously visible imperative strings were removed from the main guide/trial surfaces:
+  - removed: `翻证物`
+  - removed: `选中记录`
+  - removed: `翻人物档案`
+  - removed: `选中人物`
+  - removed: `追问当前句`
+  - removed: `先查现场`
+  - removed: `准备开庭`
+  - removed: `别和他比嗓门`
+  - removed: `隐藏新手提示卡`
+
+Remaining Ace Attorney gap list:
+- Continue rewriting later-case `use`, `counterRisk`, and testimony follow-up text in `game/game-data.js`; many are better now, but some still explain tactic timing instead of just stating what the paper means.
+- The hidden `案旁札记` system is now correctly optional, but some of its bodies still speak in a slightly omniscient system voice and can be pushed closer to notebook prose.
+- Keep using screenshot-first validation on copy changes; do not reopen already-fixed layout bugs unless a fresh screenshot shows a regression.
+
+## 2026-06-22 iteration 98 result
+
+Implemented:
 - Rechecked the real trial flow after a fresh user report that the `举证` button still looked odd.
 - Confirmed with live screenshots that the problem was concentrated in the disabled state: the enabled `举证` button was fine, but the unselected state still looked like a washed-out rendering error.
 - Narrowed the fix to `game/styles.css` only:
