@@ -1323,9 +1323,9 @@
       if (statementHasAnswer(statement) && !progress.pressed.includes(key)) {
         return {
           id: "trial-press-first",
-          title: "先追问",
-          body: "可疑句不能急着举证。先追问，让矛盾完全暴露，再选择记录。",
-          steps: ["追问当前句", "听完整回应", "再准备举证"],
+          title: "先逼他说完",
+          body: "这句话还滑得太快。先把他按在原句上问清楚，等他补出细节，再拿记录堵住退路。",
+          steps: ["追问当前句", "听他补话", "再准备举证"],
         };
       }
       if (statement.optionalRecovery) {
@@ -1340,13 +1340,13 @@
         const trialDeduction = trialDeductionForStatement(caseData, statement, progress, progress.testimonyIndex, rawIndex);
         return {
           id: trialDeduction ? "trial-deduction" : statement.answerProfile ? "trial-profile" : "trial-evidence",
-          title: trialDeduction ? "对照札记可用" : statement.answerProfile ? "人物也能举证" : "选择证物",
+          title: trialDeduction ? "札记已经接上" : statement.answerProfile ? "让这个人站出来" : "把证物拿在手边",
           body: trialDeduction
-            ? `你已经在记录里做过一条对照札记：${trialDeduction.deduction.text} 打开证物，找带有“已对照”的那件记录。`
+            ? `庭前那条对照没有白做：${trialDeduction.deduction.text} 找到带有“已对照”的那件记录，别让证人把话撤回去。`
             : statement.answerProfile
-              ? "有些矛盾要用人物档案击破。切到人物，选中相关人物后再举证。"
-              : "切到证物，选中能反驳当前句的记录，再点击举证。",
-          steps: statement.answerProfile ? ["打开人物", "选中人物", "举证"] : ["打开证物", "选中记录", "举证"],
+              ? "这处破绽不在纸上，在人身上。把相关人物档案拿出来，让法庭看清他不是旁观者。"
+              : "这句话已经说死了。先把能顶住它的证物拿在手边，再正式举证。",
+          steps: statement.answerProfile ? ["翻人物档案", "选中人物", "举证"] : ["翻证物", "选中记录", "举证"],
         };
       }
       if (statement.counterEvidence && state.selectedEvidenceId === statement.counterEvidence) {
@@ -1361,8 +1361,8 @@
       return {
         id: "trial-scan",
         title: "交叉询问",
-        body: "逐句切换证词，先追问，再用法庭记录击破绝对说法。",
-        steps: ["左右方向键切换证词", "追问", "举证"],
+        body: "先听他说满，再挑最硬的那一句下手。越绝对的话，越怕被记录摆在旁边。",
+        steps: ["切换证词", "追问", "举证"],
       };
     }
     if (state.screen === "bad-ending") {
@@ -1520,7 +1520,7 @@
           <button class="secondary-button" type="button" data-home-view="menu">返回主菜单</button>
         </div>
         ${renderFocusedCasePanel(focusedCase)}
-        <div class="case-gallery" aria-label="案件章节画廊">
+        <div class="case-gallery" aria-label="案件画廊">
           ${data.cases.map(renderCaseCard).join("")}
         </div>
       </div>
@@ -2325,7 +2325,7 @@
           <strong>先选一条线索起点</strong>
           <span>先确认它从哪来，再回到证词里问一句，哪句话会踩到这条线。</span>
         </div>
-        <div class="source-tabs" aria-label="章节线索">
+        <div class="source-tabs" aria-label="案件线索">
           ${items
             .map(
               (item) => `
@@ -2338,9 +2338,9 @@
             .join("")}
         </div>
         <div class="source-detail">
-          <strong>当前查看：${escapeHtml(active.storyTitle)}</strong>
+          <strong>现在盯住：${escapeHtml(active.storyTitle)}</strong>
           <p>${escapeHtml(active.storyNote)}</p>
-          <small>这条线索和你看到的现场对应：${escapeHtml(active.sourceLine || sourceForDisplay(active.title))}</small>
+          <small>回到现场时，先问它能戳破谁的说法。</small>
         </div>
       </div>
     `;
@@ -3038,7 +3038,7 @@
     if (!view) return "";
     const { item, index, items } = view;
     const hasNext = index < items.length - 1;
-    const counterCopy = item.counterRisk ? `慎用：${item.counterRisk}` : "已收入法庭记录，庭审中可以先选中它，再正式举证。";
+    const counterCopy = item.counterRisk ? `慎用：${item.counterRisk}` : "这东西先别急着拍上桌。等证词说死，再让它出声。";
     return `
       <div class="evidence-pickup-layer" aria-live="assertive">
         <section class="evidence-pickup-card" data-advance-pickup-panel role="button" tabindex="0" aria-label="${hasNext ? "点击收入下一件证物" : "点击收起证物取得演出"}">
@@ -3057,11 +3057,11 @@
             </div>
           </div>
           <div class="pickup-note">
-            <strong>记录提示</strong>
+            <strong>辩方札记</strong>
             <span>${escapeHtml(counterCopy)}</span>
           </div>
           <div class="pickup-actions">
-            <button class="secondary-button" type="button" data-open-record>打开记录</button>
+            <button class="secondary-button" type="button" data-open-record>翻看记录</button>
             <span class="panel-continue-hint">点击任意处${hasNext ? "收入下一件证物" : "离开收集界面"}</span>
           </div>
         </section>
@@ -4439,8 +4439,8 @@
         {
           speaker: gainedNames.length ? "辩方" : "调查",
           text: gainedNames.length
-            ? `这件东西先收进法庭记录。下一段证词可能把它拉上场。`
-            : "这里已经看过一遍了。再停在这里只会浪费时间，换个可疑点继续。",
+            ? `先收好。等有人把话说死，这件东西就能逼他改口。`
+            : "这里的痕迹已经记下了。再盯着同一处看，只会让真正动过手脚的人松口气。",
         },
       ]
     );
@@ -4478,7 +4478,7 @@
     setInvestigationBeat("交谈", topic.speaker, topic.text, "证言已记录", [], [
       {
         speaker: "辩方",
-        text: "这句话先记下。真正的破绽，往往要和现场证物摆在一起才看得出来。",
+        text: "这句话听着轻，先别放过。等它和现场的东西摆在一起，谁在躲话就清楚了。",
       },
     ]);
     save();
@@ -4490,12 +4490,12 @@
     const inv = investigationProgress(caseData.id);
     const item = evidenceById(caseData, evidenceId);
     if (!inv.presented.includes(evidenceId)) inv.presented.push(evidenceId);
-    const reaction = `这份${item.type}能帮助你在庭审中说明：${item.use}`;
+    const reaction = `${caseData.witness}看了一眼${item.name}，声音压低了些：“这东西若真摆到庭上，有些话就不能只当传闻了。”`;
     setMessage(caseData.witness, reaction, "");
     setInvestigationBeat("出示", caseData.witness, reaction, "出示反应", [], [
       {
         speaker: "辩方",
-        text: "庭审时别急着乱拍证物。先听证词哪里说死了，再用这份记录顶回去。",
+        text: "他没有否认，只是绕开了。等他在庭上把话说满，再把这件东西放到他面前。",
       },
     ]);
     save();

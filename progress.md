@@ -2312,3 +2312,32 @@ Remaining Ace Attorney gap list:
 - Continue replacing explanation-like dialogue with character-viewpoint lines; prioritize case-opening beats and investigation follow-up lines.
 - Trial scenes still need richer pressure-state character pose changes and stronger reaction timing.
 - Mobile record drawer is readable and closeable, but later passes should reduce the long full-page height created by full-page screenshot capture and make the drawer feel more like a native game overlay.
+
+## 2026-06-22 iteration 86 result
+
+Implemented:
+- Rewrote high-frequency coach/investigation copy so prompts sound like defense-side judgment instead of system instructions.
+- Replaced visible `章节/当前查看/记录提示/打开记录` style wording with player-facing `案件线索/现在盯住/辩方札记/翻看记录` language.
+- Reworked evidence pickup feedback so new evidence feels like something the defense can use later, rather than a dry inventory notification.
+- Rewrote investigation `交谈` and `出示` follow-up lines into character-viewpoint reactions.
+- Replaced all repeated pursuit-note trial prompts that said `这是对照追击后才出现...打开法庭记录...` with a more dramatic “证人嘴滑、辩方抓住补记” line.
+- Rewrote the six visible evidence `use` strings that began with `用于...` into direct courtroom action language.
+
+Verified:
+- `npm run check:js`
+- `PYTHONPYCACHEPREFIX="/Users/oubeichen/Projects/wuzetian2/.pycache" npm run check:py`
+- `git diff --check`
+- Escalated Playwright visual audit at 1600x960 and 390x844 confirmed:
+  - opening cutscene still advances into investigation,
+  - investigation hotspots remain visible in examine mode,
+  - `hotspotsOverlapText=0` on desktop and mobile,
+  - evidence pickup and record drawer still render after the text changes,
+  - returning home still lands on `topText='宫廷法庭推理'`.
+- Screenshot inspection of `/tmp/wuz-audit-shots-v2/1600x960-case-intro.png`, `/tmp/wuz-audit-shots-v2/1600x960-after-hotspot-click.png`, `/tmp/wuz-audit-shots-v2/1600x960-record-open.png`, and `/tmp/wuz-audit-shots-v2/390x844-after-hotspot-click.png` confirmed the rewritten copy is readable and not overlapping.
+- `npm run qa:web-game` with escalated Chromium browser access succeeded.
+- Web gameplay reference check: Ace Attorney's core loop remains investigation actions (`examine/move/talk/present`) followed by trial cross-examination (`press/present evidence`). This iteration kept that loop intact while making the text less instructional.
+
+Remaining Ace Attorney gap list:
+- Continue line-by-line review of testimony `press`, `wrongEvidenceFeedback`, and `objection` text for character-specific voice.
+- Trial scenes still need richer pressure-state character pose changes and stronger reaction timing.
+- Mobile record drawer is usable, but should later become a tighter game overlay with less full-page height.
