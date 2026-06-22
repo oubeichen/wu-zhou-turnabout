@@ -2438,3 +2438,38 @@ Remaining Ace Attorney gap list:
 - Continue deeper per-character voice work for trial `press` and `objection`; witnesses and prosecutors still need more distinct courtroom rhythms.
 - Trial scenes still need richer pressure-state character pose changes and stronger reaction timing.
 - Mobile record drawer is usable, but should later become a tighter game overlay with less full-page height.
+
+## 2026-06-22 iteration 90 result
+
+Implemented:
+- Continued the trial-side polish loop instead of touching the already-fixed investigation hotspot layout.
+- Replaced the opening cutscene system message with scene-grounded copy: the player is now asked to notice what the door, papers, and witnesses are hiding, instead of being told to click through a tutorial sentence.
+- Shortened the opening cutscene continue hint from button-like instructions to in-world action prompts.
+- Rewrote the ready-to-present vulnerability cue so it sounds like a courtroom opening has appeared rather than a UI manual: the cue now says the witness has left a retreat path and the player should bring the matching record to hand.
+- Fixed a courtroom feedback regression found by screenshot inspection: pressing a suspicious statement no longer fires the oversized `异议成立` impact overlay before the player has actually presented evidence, so the record drawer stays readable.
+
+Verified:
+- `npm run check:js`
+- `PYTHONPYCACHEPREFIX="/Users/oubeichen/Projects/wuzetian2/.pycache" npm run check:py`
+- `git diff --check`
+- Escalated Chromium screenshot audit at 1600x960 and 390x844 covered home, case list, case intro, opening cutscene, three investigation locations, record drawer open/close, trial start, first press, suspicious statement, ready-to-present state, trial record drawer, selected record return, and objection reveal.
+- Desktop audit confirmed the whole active play surface remains one-window: `appHeight=896` and `appClientHeight=896` across investigated and trial states, with no page scroll required.
+- Mobile audit confirmed scrolling remains available where expected, and the full flow now reaches real trial states after the record drawer closes.
+- Hotspot/text overlap count stayed `0` in every desktop and mobile investigation screenshot.
+- Trial stage state now visibly changes through `enter/observe`, `thinking/observe`, `tense/thinking`, `shock/confident`, and `confident/stagger` across the press-present-objection flow.
+- Mobile record drawer screenshot after pressing now shows the record list and confirm button without the pre-objection impact card covering the usable area.
+- Screenshot inspection used:
+  - `/tmp/wz_audit_live/v1600x960-trial-start.png`
+  - `/tmp/wz_audit_live/v1600x960-trial-ready-present.png`
+  - `/tmp/wz_audit_live/v1600x960-trial-record-drawer.png`
+  - `/tmp/wz_audit_live/v1600x960-trial-objection-reveal.png`
+  - `/tmp/wz_audit_live/v390x844-trial-start.png`
+  - `/tmp/wz_audit_live/v390x844-trial-ready-present.png`
+  - `/tmp/wz_audit_live/v390x844-trial-record-drawer.png`
+  - `/tmp/wz_audit_live/v390x844-trial-objection-reveal.png`
+- `npm run qa:web-game` with escalated Chromium browser access succeeded. The only warning was the external web-game Playwright client being reparsed as an ES module.
+
+Remaining Ace Attorney gap list:
+- Continue deeper per-character voice work for trial `press` and `objection`; each witness and opponent should expose a different fear, habit, and social position.
+- Add more authored reaction beats after correct objections so the victory moment is not only a mechanical reveal.
+- Mobile record drawer is usable, but should later become a tighter game overlay with less full-page height.

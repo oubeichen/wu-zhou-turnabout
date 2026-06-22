@@ -1936,7 +1936,7 @@
     clearEvidencePickup();
     clearInventoryCue();
     clearPursuitUnlockCue();
-    setMessage("开幕", "开场来了，点画面听对白。每一句都在给你线索，告诉你先盯哪里。", "");
+    setMessage("开幕", "殿门、纸页和证人都已经摆到面前。先听他们各自想藏住什么。", "");
     playCue("transition");
     renderCaseOpeningCutscene();
   }
@@ -1966,7 +1966,7 @@
         <div class="opening-cutscene-actions">
           <span>${step + 1}/${beats.length}</span>
           <button class="secondary-button" type="button" data-skip-opening>跳过开场</button>
-          <span class="opening-continue-hint">${step >= beats.length - 1 ? "点画面任意处，走向案发现场" : "点画面继续开场"}</span>
+          <span class="opening-continue-hint">${step >= beats.length - 1 ? "走向案发现场" : "继续听下去"}</span>
         </div>
       </section>
       ${renderSettings()}
@@ -3097,7 +3097,7 @@
       <div class="vulnerability-cue" aria-live="polite">
         <strong>破绽已现</strong>
         <span>${escapeHtml(target)}能反驳当前句</span>
-        <small>打开记录，选准后再举证。</small>
+        <small>证人已经露出退路；把能咬住这句话的记录拿到手边。</small>
       </div>
     `;
   }
@@ -4754,7 +4754,7 @@
     } else {
       applyCurrentStatementStage(statement, progress, progress.testimonyIndex, rawIndex, progress.statementIndex, "press");
     }
-    setMessage("追问", `${statement.press}${extra}${unlockText}${revealText}`, statementHasAnswer(statement) || unlocked || unlockedStatement ? "objection" : "");
+    setMessage("追问", `${statement.press}${extra}${unlockText}${revealText}`, "");
     save();
     renderTrial();
   }
