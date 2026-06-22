@@ -2341,3 +2341,28 @@ Remaining Ace Attorney gap list:
 - Continue line-by-line review of testimony `press`, `wrongEvidenceFeedback`, and `objection` text for character-specific voice.
 - Trial scenes still need richer pressure-state character pose changes and stronger reaction timing.
 - Mobile record drawer is usable, but should later become a tighter game overlay with less full-page height.
+
+## 2026-06-22 iteration 87 result
+
+Implemented:
+- Continued the line-by-line courtroom text review, focusing on repeated `wrongEvidenceFeedback`, final-proof prompts, and pursuit-note `objection` lines.
+- Replaced repeated system-like strings such as “这句只是传闻入口”, “不是正式矛盾点”, “最后一击需要...”, and “补救追问需要...” with defense-side courtroom judgment.
+- Reworked pursuit-note objections across cases so they read as a witness being trapped by their own leaked words, not as a generic “supplementary testimony is pinned” instruction.
+- Rewrote two remaining visible `app.js` helper strings that still used `用于/需要` language in evidence detail and record inspection.
+
+Verified:
+- `npm run check:js`
+- `PYTHONPYCACHEPREFIX="/Users/oubeichen/Projects/wuzetian2/.pycache" npm run check:py`
+- `git diff --check`
+- Escalated Playwright trial audit created a completed-investigation save, entered the first trial, pressed the first statement, opened the Court Record, and confirmed:
+  - `pressedStatements=1`,
+  - record drawer opens at desktop size,
+  - no old copy matching `这是对照追击|打开法庭记录，使用|普通证物只能` remains in the rendered page,
+  - new press feedback is present.
+- Screenshot inspection of `/tmp/wuz-trial-audit-shots/trial-start.png`, `/tmp/wuz-trial-audit-shots/trial-after-press.png`, and `/tmp/wuz-trial-audit-shots/trial-record-open.png` confirmed the trial UI remains readable and the record drawer does not overlap the main dialogue incoherently.
+- `npm run qa:web-game` with escalated Chromium browser access succeeded.
+
+Remaining Ace Attorney gap list:
+- Continue deeper per-character voice work for `press` and `objection`: each witness should sound less interchangeable.
+- Trial scenes still need richer pressure-state character pose changes and stronger reaction timing.
+- Mobile record drawer is usable, but should later become a tighter game overlay with less full-page height.

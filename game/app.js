@@ -3410,7 +3410,7 @@
   function renderSelectedEvidence(caseData) {
     const item = state.selectedEvidenceId ? evidenceById(caseData, state.selectedEvidenceId) : null;
     if (!item) {
-      return `<p class="hint-text">选择证物查看详情。庭审中选中证物后再点“举证”；人物档案也可用于举证。</p>`;
+      return `<p class="hint-text">点一件证物看细节。庭上先拿在手边，等证词露出破绽再“举证”；人物档案也能站上庭。</p>`;
     }
     const deduction = deductionForEvidence(caseData, item.id);
     return `
@@ -3706,7 +3706,7 @@
         ],
         edge: [
           ["wear", "折痕", "被急着收过", "折痕压在字迹上，像是写完后很快被收走。"],
-          ["risk", "举证风险", "不能只说供词可疑", `${risk} 需要和逼供工具或审讯手册一起形成链条。`],
+          ["risk", "举证风险", "不能只说供词可疑", `${risk} 还得和逼供工具或审讯手册扣在一起，才像一条完整的链。`],
         ],
       },
       order: {
