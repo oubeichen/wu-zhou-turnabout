@@ -2559,7 +2559,7 @@
         <div class="source-detail">
           <strong>${escapeHtml(active.storyTitle)}</strong>
           <p>${escapeHtml(active.storyNote)}</p>
-          <small>接住这一页，庭上先心虚的人就快坐不住了。</small>
+          <small>这一页一露到庭上，先心虚的人就该坐不住了。</small>
         </div>
       </div>
     `;

@@ -3297,6 +3297,43 @@ Remaining Ace Attorney gap list:
 - Continue screenshot-first QA on pressure labels, trial headers, statement cards, record drawer entries, and evidence detail panels.
 - Do not reopen already-fixed `举证` button, hotspot placement, or desktop no-scroll layout unless a fresh screenshot shows a concrete regression.
 
+## 2026-06-23 iteration 116 result
+
+Implemented:
+- Kept this round limited to one sentence in the case-intro source detail panel.
+- Changed the footer line in `game/app.js` from `接住这一页，庭上先心虚的人就快坐不住了。` to `这一页一露到庭上，先心虚的人就该坐不住了。`
+- Left the source tabs, case intro flow, and evidence logic untouched.
+
+Why this round:
+- The latest verified case-intro screenshot still exposed a line that directly instructed the player what to do.
+- That wording carried the right dramatic meaning, but it still sounded like the interface nudging the player instead of the案情 itself在发力。
+- This was a good small-round target because it is visible on the first case landing screen, easy to verify in one fresh screenshot, and does not touch any already-stable layout or interaction behavior.
+
+Verified:
+- `git fetch origin main`
+- confirmed `HEAD` and `origin/main` both pointed to `b3cf083fefd69e990e5d1c5eb5348b042e70f445` before this round's commit
+- `npm run check:js`
+- `git diff --check`
+- Used the in-app browser at `http://127.0.0.1:8788/game/` and reopened the case-intro screen from the persisted case-1 progress snapshot
+- Captured a fresh screenshot:
+  - `output/case-source-footer-current.png`
+- Live DOM capture confirmed:
+  - `sourceTitle: 宫门前的哭声`
+  - `sourceFooter: 这一页一露到庭上，先心虚的人就该坐不住了。`
+  - `bodyHasOldText: false`
+- Screenshot inspection confirmed:
+  - the rewritten line fits cleanly in the right-side source detail card;
+  - no new overflow, clipping, or panel misalignment appeared at `1600x960`;
+  - the source tabs and bottom action buttons remained stable.
+
+Notes:
+- Checked `.gitignore` this round; current rules still cover the generated validation artifacts, so no `.gitignore` change was needed.
+
+Remaining Ace Attorney gap list:
+- Keep rewriting case-intro source notes, evidence summaries, and late-case prompts that still sound like neutral interface metadata instead of scene pressure.
+- Continue screenshot-first QA on case-intro source cards, top-bar tags, pressure labels, trial headers, statement cards, record drawer entries, and evidence detail panels.
+- Do not reopen already-fixed `举证` button, hotspot placement, or desktop no-scroll layout unless a fresh screenshot shows a concrete regression.
+
 ## 2026-06-23 iteration 115 result
 
 Implemented:
