@@ -2498,3 +2498,44 @@ Remaining Ace Attorney gap list:
 - Continue deeper per-character voice work for trial `press` and `objection` across later cases, especially prosecutors and hostile witnesses.
 - Add more after-correct-objection branch variety: some wins should unlock new testimony, some should pressure the opponent, and some should change court momentum.
 - Mobile record drawer is usable, but should later become a tighter game overlay with less full-page height.
+
+## 2026-06-22 iteration 92 result
+
+Implemented:
+- Added `scripts/sleep_after_round.sh` and the `npm run round:sleep` command. Default sleep is 20 minutes; `ROUND_SLEEP_SECONDS=1 npm run round:sleep` is available for a fast smoke test.
+- Continued the writing polish loop using the novel-writing guidance and web reference check for Ace Attorney-style investigation/cross-examination pacing: short scene beats, witness reactions, and evidence-driven reversals instead of system-like instructions.
+- Spawned a subagent review pass for `game/game-data.js` and a separate `game/app.js` runtime-copy review. The data-file pass edited case briefs, evidence copy, investigation text, testimony press text, wrong-evidence feedback, and counter-feedback across all five cases; the app-copy review identified high-priority runtime UI copy that still sounded like system instructions.
+- Replaced the flagged investigation command copy `换个做法：查看。别急...` with scene-grounded lines for move, examine, talk, and present.
+- Replaced the flagged first-case present follow-up `他怕的不是证物真假...` with an in-world recorder reaction, and adjusted one similar case-2 line that used the same rhetorical shape.
+- Made correct-objection aftermath copy depend on the actual testimony speaker, so the first case can distinguish 内廷记录官、许敬宗、御前书记 instead of always speaking as one generic witness.
+- Rewrote several correct-objection follow-up lines away from imperative coaching such as `别让...` / `继续追...` into courtroom reactions and exposed contradictions.
+- Rewrote runtime copy flagged by the app-copy review: selected-record prompt, key failure feedback, trial advance hint, objection reveal copy, evidence inspect details, record return action, pursuit unlock wording, and evidence pickup hints now avoid `玩家`、`主操作区`、`按 E`、`面板`、`预演` 等出戏词。
+
+Already fixed and not revisited this round:
+- Investigation hotspot buttons covering text: previous audits showed overlap count stayed `0`; do not rework hotspot layout again unless a new screenshot shows a regression.
+- Trial record drawer being covered by premature `异议成立` impact: previous screenshot audit fixed it; this round only keeps verifying it is not back.
+- Fourth objection reveal beat being hidden by impact overlay: previous screenshot audit fixed it; this round only checks for regression.
+
+Verified in this round:
+- Keyword scan confirmed the two user-flagged exact strings no longer remain in `game/app.js` or `game/game-data.js`.
+- `global.window=global; require('./game/game-data.js')` loaded all 5 cases successfully.
+- `npm run check:js`
+- `PYTHONPYCACHEPREFIX="/Users/oubeichen/Projects/wuzetian2/.pycache" npm run check:py`
+- `git diff --check`
+- `ROUND_SLEEP_SECONDS=1 npm run round:sleep`
+- Escalated Chromium screenshot audit at 1600x960 and 390x844 covered case intro, investigation start, first investigation location, ready-to-present, record drawer, and objection reveal step 4.
+- Screenshot state audit confirmed hotspot/text overlap stayed `0` on desktop and mobile for the checked states, desktop active play surface stayed single-window (`appHeight=896`, `appClientHeight=896`), and the updated ready-to-present copy displayed as a courtroom beat instead of a UI instruction.
+- Screenshot inspection files:
+  - `/tmp/wz_audit_live/v1600x960-investigation-location-1.png`
+  - `/tmp/wz_audit_live/v1600x960-trial-ready-present.png`
+  - `/tmp/wz_audit_live/v1600x960-trial-objection-reveal-step-4.png`
+  - `/tmp/wz_audit_live/v390x844-investigation-location-1.png`
+  - `/tmp/wz_audit_live/v390x844-trial-ready-present.png`
+  - `/tmp/wz_audit_live/v390x844-trial-objection-reveal-step-4.png`
+- `npm run qa:web-game` with escalated Chromium browser access succeeded. The only warning was the external web-game Playwright client being reparsed as an ES module.
+- Commit and push pending below, then default 20-minute round sleep.
+
+Remaining Ace Attorney gap list:
+- Keep rewriting per-character trial `press`, `wrongEvidenceFeedback`, and `counterFeedback`; many are still too close to tactical notes instead of character speech.
+- Add more authored branch outcomes after correct objections: new testimony, opponent counterpressure, courtroom momentum shifts, and witness-specific breakdown beats.
+- Continue screenshot-first QA, but avoid reworking already fixed layout issues without new evidence.

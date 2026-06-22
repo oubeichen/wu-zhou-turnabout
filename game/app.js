@@ -1074,22 +1074,22 @@
       stable: {
         label: "稳定",
         title: "节奏稳定",
-        body: "法庭还没定你一句话是否站得住。先把每句证词问到能翻车的缝再举证。",
+        body: "法官的锤声还没落下。每句证词下面，都还藏着能撬开的缝。",
       },
       danger: {
         label: "危险",
         title: "法庭警戒",
-        body: "信誉已经偏低。下一次错误会让对手夺走节奏，先用追问确认矛盾再行动。",
+        body: "法庭的目光已经偏向对手。下一份记录若落空，节奏就会被夺走。",
       },
       "final-warning": {
         label: "最后警告",
         title: "最后警告",
-        body: "法官已经准备维持原判。只能选择最能击穿当前证词的记录。",
+        body: "法官已经把判词压在手边。下一份记录若偏半寸，对手就会把案卷合上。",
       },
       collapse: {
         label: "崩盘",
         title: "庭审崩盘",
-        body: "信誉归零，必须重审庭审。",
+        body: "法槌落下，辩方席上的灯暗了下去。",
       },
     }[level];
   }
@@ -1179,13 +1179,14 @@
     return deduction && evidence ? { evidence, deduction } : null;
   }
 
-  function deductionPursuitCopy(caseData, statement, deduction, recordLabel) {
+  function deductionPursuitCopy(caseData, testimony, statement, deduction, recordLabel) {
     const targetName = deduction?.targetName || "另一份证物";
     const recordName = recordLabel || "这份记录";
+    const speaker = testimony?.speaker || caseData.witness || "证人";
     const generic = {
       title: "对照札记打开了新缺口",
-      defenseLine: `札记已经把“${recordName}”和“${targetName}”连在一起。证人必须解释这条连接为什么会存在。`,
-      witnessLine: "证人刚才只解释单件证物，却避开了两件证物为什么会互相咬合。",
+      defenseLine: `札记把“${recordName}”和“${targetName}”压到同一行。证人席上的沉默，比刚才那句证词更重。`,
+      witnessLine: `${speaker}刚才只解释单件证物，却避开了两件证物为什么会互相咬合。`,
       button: "追击证人",
     };
     const byCase = {
@@ -1220,36 +1221,54 @@
         button: "追问半小时安排",
       },
     };
-    return { ...generic, ...(byCase[caseData.id] || {}) };
+    const copy = { ...generic, ...(byCase[caseData.id] || {}) };
+    if (caseData.id === "case-empress-seat" && speaker === caseData.opponent) {
+      return {
+        title: "折子从诏稿下翻出来",
+        defenseLine: `许敬宗刚才把反对声说成没有。“${recordName}”和“${targetName}”一对上，问题就变成：谁把元老折子压到诏稿下面？`,
+        witnessLine: "许敬宗的袖口压住案边。他还想谈旧例，却不肯再看折子上的联名。",
+        button: "追问压折子的人",
+      };
+    }
+    if (caseData.id === "case-empress-seat" && speaker.includes("书记")) {
+      return {
+        title: "散开的纸被写成一线",
+        defenseLine: `“${recordName}”已经把哭声、名册和诏稿压到同一张桌上。书记不能再把它们拆成几件巧合。`,
+        witnessLine: "御前书记的笔停在最后一行。他等着法庭给结论，却先写下了证人答不上来的停顿。",
+        button: "追问谁把线串起",
+      };
+    }
+    return copy;
   }
 
   function deductionPursuitUnlock(caseData) {
     return evidenceById(caseData, `${caseData.id}-ev-pursuit-note`);
   }
 
-  function objectionAftermathCopy(caseData, statement, recordLabel, deduction) {
+  function objectionAftermathCopy(caseData, testimony, statement, recordLabel, deduction) {
     const recordName = recordLabel || "这份记录";
     const targetName = deduction?.targetName || (statement?.answerProfile ? `${statement.answerProfile}的档案` : "当前证词");
+    const speaker = testimony?.speaker || caseData.witness || "证人";
     const generic = {
       title: "证人退了一步",
-      reaction: `${caseData.witness || "证人"}没有马上接话。${recordName}已经压到证词最薄的地方，他再往前说一句，就得解释${targetName}为什么会在那里。`,
-      defenseLine: "别急着收手。证词刚裂开时，最容易听见他真正害怕解释的那一段。",
+      reaction: `${speaker}没有马上接话。${recordName}已经压到证词最薄的地方，他再往前说一句，就得解释${targetName}为什么会在那里。`,
+      defenseLine: "证词裂开的那一瞬间，证人席上先响起的不是辩解，而是吞回去的半句话。",
     };
     const byCase = {
       "case-empress-seat": {
         title: "记录官的笔停住了",
         reaction: `内廷记录官看着${recordName}，笔尖悬在纸上。他可以继续写“听闻”，却没法解释值夜签为什么偏偏在摇篮旁被改过。`,
-        defenseLine: "现在别让他退回“宫人旧怨”。问清谁先把哭声送进文书，后位案才会露出真正的手。",
+        defenseLine: "“宫人旧怨”四个字落不稳了。哭声进文书之前，案边已经有人把废后的字递了过去。",
       },
       "case-crown-shadow": {
         title: "东宫旧纸翻了面",
         reaction: `邠王守礼避开${recordName}，声音低了半截。旧臣递账不是终点，真正要命的是谁把账册和${targetName}排到一起。`,
-        defenseLine: "继续压记录流向。只要书记官承认挑选顺序，东宫家事就不再只是家事。",
+        defenseLine: "账册不是自己走进法庭的。谁挑出它，谁就先把东宫家事写成了罪名。",
       },
       "case-rebellion-box": {
         title: "告密声卡住了",
         reaction: `告密人盯着${recordName}，先前那句“民声”忽然轻了。投书可以进铜匦，却不会自己长出${targetName}。`,
-        defenseLine: "追纸离开铜匦后的路。每转一手，谁加重了罪名，谁就离证人席更近。",
+        defenseLine: "纸离开铜匦后，每多过一只手，罪名就多一层墨。证人席离那层新墨并不远。",
       },
       "case-urn": {
         title: "暗室里的热气回来了",
@@ -1259,10 +1278,25 @@
       "case-half-hour-coup": {
         title: "半小时安静了下来",
         reaction: `张易之把目光从${recordName}挪开。若只是夜里仓促，${targetName}不该像提前排好一样准。`,
-        defenseLine: "继续追时间表。越说混乱，越要问谁先知道哪一道门会开、哪一道命令会落下。",
+        defenseLine: "混乱挡不住更漏声。门还没开，命令落下的时辰已经写得太准。",
       },
     };
-    return { ...generic, ...(byCase[caseData.id] || {}) };
+    const copy = { ...generic, ...(byCase[caseData.id] || {}) };
+    if (caseData.id === "case-empress-seat" && speaker === caseData.opponent) {
+      return {
+        title: "许敬宗收住了笑",
+        reaction: `许敬宗看着人物档案，脸上的笑意收得很快。他可以说文书有印有押，却没法把自己从诏稿署名旁边摘出去。`,
+        defenseLine: "“旧例”两个字还挂在他嘴边，诏稿署名却已经把他推到灯下。",
+      };
+    }
+    if (caseData.id === "case-empress-seat" && speaker.includes("书记")) {
+      return {
+        title: "书记的笔改了方向",
+        reaction: `御前书记重新看向${recordName}。刚才还散着的哭声、名册和诏稿，现在被他自己写成了一条线。`,
+        defenseLine: "这条线一写出来，受益的人、沉默的人、被推出来背罪的人，都不再站在暗处。",
+      };
+    }
+    return copy;
   }
 
   function visibleStatementEntries(testimony, progress) {
@@ -1384,8 +1418,8 @@
         id: "case-brief",
         title: "庭前整理",
         body: allEvidenceCollected(caseData)
-          ? "线索已经勾到一条线了，庭审里再往下追，把含糊的话按到底。"
-          : "先把现场、证词和证物放在一起看，别让对手把它们当作一堆孤立碎片。",
+          ? "线索已经勾到一条线。庭上一开口，含糊的话就会先露出缝。"
+          : "现场、证词和证物还散着。对手最喜欢把散开的碎片说成互不相干。",
         steps: ["先查现场", "追问一句", "准备开庭"],
       };
     }
@@ -1393,10 +1427,10 @@
       const inv = investigationProgress(caseData.id);
       const location = currentLocation(caseData);
       const commandTips = {
-        move: `先从「${location.name}」离开一下，看一眼下一个空间。证据常藏在你没盯上的路口。`,
-        examine: "先把现场亮起的点都看一遍。谁出入得最勤、谁最晚离场，常就是关键。",
-        talk: "每句回答都有回避。挑一句你最不放心的话往下追，别让空泛结论过关。",
-        present: "证物是线索，不是结论。先试探反应，再决定是否在法庭里直接拿出来。",
+        move: `「${location.name}」的风声还没散，下一处门后也许留着同一串脚步。`,
+        examine: "亮起的可疑处不替任何人圆谎。谁出入最勤、谁最晚离场，痕迹会说。",
+        talk: "每句回答都有自己护住的部分。停顿和改口，常比完整供词更响。",
+        present: "证物一亮出来，人会先替自己护住最怕被看见的那句话。",
       };
       return {
         id: `investigation-${inv.command}`,
@@ -1429,7 +1463,7 @@
         return {
           id: "trial-press-first",
           title: "先逼他说完",
-          body: "这句话还滑得太快。先把他按在原句上问清楚，等他补出细节，再拿记录堵住退路。",
+          body: "这句话滑得太快。证人一旦被按回原句，藏起来的细节就会从牙缝里漏出来。",
           steps: ["追问当前句", "听他补话", "再准备举证"],
         };
       }
@@ -1437,7 +1471,7 @@
         return {
           id: "trial-recovery",
           title: "补救破绽",
-          body: "对手反制后有了新口子。别再硬扛上一次的证物，换一件更能解释后续动作的人物或物证继续追。",
+          body: "对手反制后，话里多了一道新口子。上一份记录压不住的地方，另一张纸也许正等着出声。",
           steps: ["确认补救句", "换正确证物", "追回信誉"],
         };
       }
@@ -1447,10 +1481,10 @@
           id: trialDeduction ? "trial-deduction" : statement.answerProfile ? "trial-profile" : "trial-evidence",
           title: trialDeduction ? "札记已经接上" : statement.answerProfile ? "让这个人站出来" : "把证物拿在手边",
           body: trialDeduction
-            ? `庭前那条对照没有白做：${trialDeduction.deduction.text} 找到带有“已对照”的那件记录，别让证人把话撤回去。`
+            ? `庭前那条对照没有白做：${trialDeduction.deduction.text} 带着“已对照”的记录，正好压在证人退路上。`
             : statement.answerProfile
               ? "这处破绽不在纸上，在人身上。把相关人物档案拿出来，让法庭看清他不是旁观者。"
-              : "这句话已经说死了。先把能顶住它的证物拿在手边，再正式举证。",
+              : "这句话已经说死。能顶住它的那件证物，正在法庭记录里等着上案。",
           steps: statement.answerProfile ? ["翻人物档案", "选中人物", "举证"] : ["翻证物", "选中记录", "举证"],
         };
       }
@@ -1922,8 +1956,8 @@
             <button class="secondary-button" type="button" data-mode="trial" ${allEvidenceCollected(caseData) ? "" : "disabled"}>证据齐了就开庭</button>
           </div>
           ${allEvidenceCollected(caseData)
-            ? `<p class="hint-text">你已经把主要证词和现场说法接好了。庭审里先问一处、再追一句，不要一次把所有证物都丢上桌。</p>`
-            : `<p class="hint-text">还没对齐，不建议先开庭。先把现场、证词和纸面说法先放在一处，再问一句“谁的说法先扯得不自然”。</p>`}
+            ? `<p class="hint-text">主要证词和现场说法已经接上。庭上每一次发难，都该压住一句具体证词。</p>`
+            : `<p class="hint-text">现场、证词和纸面说法还没合到一处。现在开庭，只会让对手把空白写成定论。</p>`}
           ${renderCoachCard()}
         </div>
       </section>
@@ -2112,7 +2146,7 @@
         kicker: "案件开场",
         title: caseNarrativeLead(caseData),
         body: caseData.goal || caseData.theme || "案卷已经打开，先听现场的人怎么说。",
-        stakes: "先找到能把口供和证物连起来的裂缝，再把它带上庭。",
+        stakes: "口供和证物之间若有裂缝，庭上的风会先从那里灌进来。",
       }
     );
   }
@@ -2122,8 +2156,8 @@
     return `
       <div class="case-setup" aria-label="案情导入">
         <div class="case-section-title">
-          <strong>先把案情拉平：谁先开口，谁先退场</strong>
-          <span>先看清每个人的立场，再去挑一句最值得追的矛盾。</span>
+          <strong>谁先开口，谁先退场</strong>
+          <span>每个人都站在自己的阴影里，矛盾会从立场最紧的地方露出来。</span>
         </div>
         ${cards
           .map(
@@ -2461,8 +2495,8 @@
     return `
       <div class="case-source-panel">
         <div class="case-section-title">
-          <strong>先盯住一条最有用的线</strong>
-          <span>先把这条线放进脑子，再回到证词里问一句：谁的说法最先踩到这里。</span>
+          <strong>案卷里最硬的一条线</strong>
+          <span>谁的说法踩到这里，谁就会先露出退路。</span>
         </div>
         <div class="source-tabs" aria-label="案件线索">
           ${items
@@ -2527,7 +2561,7 @@
     app.innerHTML = `
       <section class="play-layout investigation-layout record-drawer-layout">
         <div>
-          ${renderScene(location.name, state.speaker || "调查", state.message || "先别急着问罪。地上的痕、桌上的纸、人的沉默，都比传闻老实。", "investigation")}
+          ${renderScene(location.name, state.speaker || "调查", state.message || "地上的痕、桌上的纸、人的沉默，都比传闻老实。", "investigation")}
           ${renderInvestigationMap(inv, location)}
           ${renderClueBoard(caseData, inv, location)}
           <div class="panel command-panel">
@@ -2590,7 +2624,7 @@
       ? "拿一件东西试探，对方接得住还是接不住，一听便知"
       : canInspect
       ? "朱标落在可疑处，看过的地方会留下辩方札记"
-      : "想摸现场，先回到“查看”这一手";
+      : "朱标还没落在可疑处，现场暂时只剩风声";
     return `
       <div class="location-map scene-${sceneKey} variant-${variant}${transitionClass}" ${mapArtStyle}>
         <div>
@@ -2785,7 +2819,7 @@
     if (inv.command === "talk") {
       return `
         <h2>交谈</h2>
-        <p class="hint-text">别急着追凶。先让人多说半句，胆怯和遮掩会自己露头。</p>
+        <p class="hint-text">人多说半句，胆怯和遮掩就会自己露头。</p>
         <div class="location-list">
           ${location.talkTopics
             .map((topic, index) => {
@@ -2847,11 +2881,11 @@
     const trialDeduction = trialDeductionForStatement(caseData, statement, progress, progress.testimonyIndex, rawIndex);
     const recordPrompt = readyToPresent
       ? selectedLabel
-        ? "你已经抓到这句里的破绽。把可用证物先放进面板，再按 E/Enter 一口气反击。"
+        ? "破口已经露出。能咬住这句话的记录，已经压到案前。"
         : statement.answerProfile
-          ? "这句站不稳，先打开人物档案，选出能拆穿它的人。"
-          : "这句像半句拼图。先在法庭记录里找一项能对上的线索，先预演，再决定举证。"
-      : "法庭记录是你的演练台。先把证物、人物和证词对齐，确认方向后再点“举证”进庭。";
+          ? "这句站不稳。真正能拆穿它的人，不在证物里，在人物档案里。"
+          : "这句像半块拼图。法庭记录里，总有一处边角能与它咬合。"
+      : "案卷还摊在辩方席上。证物、人物和证词，得在同一处破口上合拢。";
     state.screen = "trial";
     renderStatus();
     app.innerHTML = `
@@ -2916,7 +2950,7 @@
     state.screen = "trial";
     renderStatus();
     app.innerHTML = `
-    <section class="deduction-followup" data-continue-deduction-followup-panel role="button" tabindex="0" aria-label="继续追击">
+    <section class="deduction-followup" data-continue-deduction-followup-panel role="button" tabindex="0" aria-label="追击继续">
       <div class="deduction-followup-stage">
           <span class="hero-kicker">追击证词</span>
           <h2>${escapeHtml(followUp.pursuitTitle || "对照札记打开了新缺口")}</h2>
@@ -2938,7 +2972,7 @@
           <div class="deduction-followup-actions">
             ${followUp.unlockEvidenceName ? `<span class="deduction-followup-unlock">追击成立后写入法庭记录：${escapeHtml(followUp.unlockEvidenceName)}</span>` : ""}
             <button class="secondary-button" type="button" data-home>返回主菜单</button>
-            <span class="panel-continue-hint">点击任意处继续追击</span>
+            <span class="panel-continue-hint">追击继续</span>
           </div>
         </div>
       </section>
@@ -2965,16 +2999,16 @@
           <span class="hero-kicker">对照追击成立</span>
           <div class="pursuit-unlock-ribbon" aria-hidden="true">突破口已确认</div>
           <div class="pursuit-unlock-timeline" role="list" aria-label="追击奖励解锁流程">
-            <span class="pursuit-unlock-step" role="listitem">追击成立</span>
-            <span class="pursuit-unlock-step" role="listitem">法庭记录扩展</span>
-            <span class="pursuit-unlock-step ${cue.unlockStatementText ? "pursuit-unlock-step-active" : ""}" role="listitem">新证词补强</span>
+            <span class="pursuit-unlock-step" role="listitem">书记补录</span>
+            <span class="pursuit-unlock-step" role="listitem">案卷添页</span>
+            <span class="pursuit-unlock-step ${cue.unlockStatementText ? "pursuit-unlock-step-active" : ""}" role="listitem">证词改口</span>
           </div>
           <h2>${escapeHtml(cue.pursuitTitle || "法庭记录已扩展")}</h2>
           <div class="pursuit-unlock-main">
             ${item ? `<div class="pickup-art">${renderEvidenceThumb(item, true, "pickup", caseData)}</div>` : ""}
             <div class="pursuit-unlock-copy">
-              <p>${escapeHtml(cue.unlockText || "追击成立后，新的证据与证词关系已经被补齐。")}</p>
-              ${cue.unlockEvidenceName ? `<span class="pursuit-unlock-evidence">${escapeHtml(cue.unlockEvidenceName)} · 已写入法庭记录</span>` : ""}
+              <p>${escapeHtml(cue.unlockText || "证人改口后，案卷里多了一条能回咬旧证词的线。")}</p>
+              ${cue.unlockEvidenceName ? `<span class="pursuit-unlock-evidence">${escapeHtml(cue.unlockEvidenceName)} · 已归入案卷</span>` : ""}
               ${cue.unlockStatementText ? `<span>新证词追加：${escapeHtml(cue.unlockStatementText)}</span>` : ""}
             </div>
           </div>
@@ -3009,7 +3043,7 @@
           ${interludePoseLabel ? `<span class="interlude-pose">${escapeHtml(interludePoseLabel)}</span>` : ""}
           <span class="hero-kicker">证词更新</span>
           <h2>${escapeHtml(testimony.title)}</h2>
-          <p>${escapeHtml(progress.lastObjection || "上一段证词已经动摇。证人必须重新组织说法。")}</p>
+          <p>${escapeHtml(progress.lastObjection || "上一段证词已经动摇。证人席上，刚才那套说法站不住了。")}</p>
           ${renderCoachCard()}
           ${renderTurnaboutPanel(progress)}
           <div class="interlude-flow">
@@ -3063,11 +3097,11 @@
     const trialAdvanceHint = mode === "trial"
       ? hasPrevStatement
         ? hasNextStatement
-          ? "左侧点击可回退一句，右侧点击可继续下一句"
-          : "左侧点击可回退一句，当前句可直接追问 / 打开记录 / 举证"
+          ? "证词尚未说完，这句话也还能回头细看"
+          : "这句话仍在案上，可以追问，也可以让记录开口"
         : hasNextStatement
-          ? "右侧点击可继续下一句，或按空格/回车"
-          : "当前句可直接追问 / 打开记录 / 举证"
+          ? "证词尚未说完"
+          : "这句话仍在案上，可以追问，也可以让记录开口"
       : "";
     const sceneSignature = `${caseData.id}|${mode}|${sceneKey}|${locationArt || "default"}`;
     const sceneTransitionClass = sceneTransitionState.lastSceneSignature && sceneTransitionState.lastSceneSignature !== sceneSignature
@@ -3177,10 +3211,10 @@
     if (!view) return "";
     const { item, index, items } = view;
     const hasNext = index < items.length - 1;
-    const counterCopy = item.counterRisk ? `慎用：${item.counterRisk}` : "这东西先别急着拍上桌。等证词说死，再让它出声。";
+    const counterCopy = item.counterRisk ? `慎用：${item.counterRisk}` : "这东西现在还安静地躺在案卷里。等证词说死，它再出声。";
     return `
       <div class="evidence-pickup-layer" aria-live="assertive">
-        <section class="evidence-pickup-card" data-advance-pickup-panel role="button" tabindex="0" aria-label="${hasNext ? "点击收入下一件证物" : "点击收起证物取得演出"}">
+        <section class="evidence-pickup-card" data-advance-pickup-panel role="button" tabindex="0" aria-label="${hasNext ? "收下下一件证物" : "合上证物记录"}">
           <div class="pickup-kicker">
             <span>证物取得</span>
             <b>${index + 1}/${items.length}</b>
@@ -3201,7 +3235,7 @@
           </div>
           <div class="pickup-actions">
             <button class="secondary-button" type="button" data-open-record>翻看记录</button>
-            <span class="panel-continue-hint">点击任意处${hasNext ? "收入下一件证物" : "离开收集界面"}</span>
+            <span class="panel-continue-hint">${hasNext ? "收下下一件证物" : "合上这页记录"}</span>
           </div>
         </section>
       </div>
@@ -3560,7 +3594,7 @@
           <span class="evidence-detail-copy">
             <strong>${escapeHtml(item.name)}</strong>
             <span>${escapeHtml(item.type)}｜${escapeHtml(sourceForDisplay(item.source))}</span>
-            <small>${state.screen === "trial" ? "这件证物先在你手里留着，回到庭审后确认它能卡住哪句，再点“举证”。" : "证物已进法庭记录。开庭后再点“举证”，别让它先白花钱。"} </small>
+            <small>${state.screen === "trial" ? "这件证物已经在辩方手边。它要卡住哪一句，回到证席就会见分晓。" : "证物已进法庭记录。开庭后，它会等到真正咬住证词的那一刻。"} </small>
           </span>
         </div>
         <p>${escapeHtml(item.detail)}</p>
@@ -3691,7 +3725,7 @@
     if (!item) return [];
     const specific = specificInspectSpotsForEvidence(item, viewId);
     if (specific.length) return specific;
-    const source = item.source ? `来源：${sourceForDisplay(item.source)}` : "先把它和现场说法对上，再当证据出场。";
+    const source = item.source ? `来源：${sourceForDisplay(item.source)}` : "它得先和现场说法对上，才能在庭上站稳。";
     const risk = item.counterRisk ? ` 慎用点：${item.counterRisk}` : "";
     const common = {
       trace: {
@@ -3729,7 +3763,7 @@
           id: "wear",
           label: "磨损边角",
           title: "它经历过怎样的传递",
-          text: `${item.name}不是凭空出现的线索。边角痕迹提醒玩家：先问它怎样到场，再问谁从它受益。`,
+          text: `${item.name}不是凭空出现的线索。边角痕迹把问题推回来源：它怎样到场，又让谁受益。`,
         },
         {
           id: "risk",
@@ -3768,7 +3802,7 @@
       board: {
         front: [
           ["thread", "红线关系", "先看线怎么连", `${item.name}把受益者、被推出来背罪的人和关键时辰绑在一起。庭上如果有人说“一切只是巧合”，先点这条红线。`],
-          ["pin", "钉住节点", "哪几个点不能分开", `${item.summary} 玩家要记住：线索板不是新传闻，而是把已经取得的证物摆成同一条因果链。`],
+          ["pin", "钉住节点", "哪几个点不能分开", `${item.summary} 线索板不是新传闻，而是把已经取得的证物钉成同一条因果线。`],
         ],
         back: [
           ["order", "排列顺序", "背面的排序痕迹", `${item.detail} 背面排序提醒你先讲时间，再讲动机，最后讲谁受益。`],
@@ -3790,7 +3824,7 @@
         ],
         edge: [
           ["wear", "抽换痕", "册页边缘", "边缘厚薄不齐，说明这类名单最怕有人事后补页或抽页。"],
-          ["risk", "举证风险", "不能只念名字", `${risk} 必须先把名单和现场时辰连起来。`],
+          ["risk", "举证风险", "不能只念名字", `${risk} 名单若不和现场时辰连上，只会变成一串没有重量的名字。`],
         ],
       },
       ledger: {
@@ -3870,7 +3904,7 @@
         ],
         back: [
           ["source", "递呈出处", "从哪一路送来", `${source} 背面递呈痕迹能把它从私下抱怨变成正式朝臣文书。`],
-          ["gap", "删改空白", "谁的话被压掉", `${item.detail} 空白处提醒玩家：有人不只是在反对，也可能在被迫沉默。`],
+          ["gap", "删改空白", "谁的话被压掉", `${item.detail} 空白处留下的不是单纯反对，也可能是被迫沉默。`],
         ],
         edge: [
           ["wear", "传阅磨损", "被多少人摸过", "边角磨损越集中，越能说明它经历了多次传阅。"],
@@ -4132,7 +4166,7 @@
     const compare = state.recordInspectCompare?.sourceId === item.id ? state.recordInspectCompare : null;
     const deduction = deductionForEvidence(caseData, item.id);
     if (!isRecordInspectComplete(item)) {
-      return `<div class="inspect-compare locked"><b>二次推理</b><span>先把这件证物的全部检查点看完。当前进度：${escapeHtml(progress.label)}</span></div>`;
+      return `<div class="inspect-compare locked"><b>二次推理</b><span>这份记录还没看透。正反与边角都过一遍，再谈对照。当前进度：${escapeHtml(progress.label)}</span></div>`;
     }
     if (!options.length) {
       return `<div class="inspect-compare locked"><b>二次推理</b><span>证物还不够。继续调查后，再回来把它和另一件记录对照。</span></div>`;
@@ -4142,7 +4176,7 @@
       <div class="inspect-compare ${compare?.result === "match" ? "matched" : compare?.result === "miss" ? "missed" : ""}">
         <div>
           <b>${compare?.result === "match" ? "推理确认" : "证物对照"}</b>
-          <span>${compare ? escapeHtml(compare.text) : deduction ? escapeHtml(deduction.text) : "选择一件已取得证物，确认它能不能和当前证物组成新的推理链。"}</span>
+          <span>${compare ? escapeHtml(compare.text) : deduction ? escapeHtml(deduction.text) : "另一份记录若能与它咬合，案卷里的空白就会少一块。"}</span>
           ${target ? `<small>已对照：${escapeHtml(target.name)}</small>` : ""}
           ${!target && deduction ? `<small>已写入：${escapeHtml(deduction.targetName)}</small>` : ""}
         </div>
@@ -4214,7 +4248,7 @@
     if (state.screen !== "trial") return "";
     return `
       <div class="record-return-action">
-        <span>点“带回庭审”后先回到庭审主操作区，确认方向对了再正式举证。</span>
+        <span>这份记录已经拿稳。回到证席，等那句话露出破口再发难。</span>
         <button class="primary-button" type="button" data-return-to-trial>带回庭审</button>
       </div>
     `;
@@ -4318,14 +4352,14 @@
       {
         kicker: "异议切入",
         title,
-        body: deductionText ? "先打断证词节奏。辩方不是临场猜测，而是已经在法庭记录里完成过证物对照。" : "先打断证词节奏，把法庭注意力从证人的说法拉回记录本身。",
+        body: deductionText ? "辩方一声截断证词，法庭的目光被拉回案卷；这不是临场猜测，札记早已把两份记录对上。" : "辩方一声截断证词，法庭的目光从证人脸上落回记录本身。",
         recordLabel: "辩方发声",
         targetLabel: line,
       },
       {
         kicker: "证物对照",
         title: record,
-        body: deductionText ? `札记写得很清楚：${deductionText}` : "把证物摆到证词旁边看：哪一句话经不起这份记录的检查？",
+        body: deductionText ? `札记写得很清楚：${deductionText}` : "证物与证词并排，空白处自己露了出来。",
         recordLabel: record,
         targetLabel: deductionTarget || target,
       },
@@ -4341,7 +4375,7 @@
         title: reactionTitle,
         body: reactionText,
         recordLabel: "证人席",
-        targetLabel: reveal.defenseLine || "趁他退后，继续追问真正回避的地方。",
+        targetLabel: reveal.defenseLine || "他退后的那一步，正踩在真正回避的地方。",
       },
     ];
   }
@@ -4481,7 +4515,7 @@
     clearEvidencePickup();
     clearInventoryCue();
     clearPursuitUnlockCue();
-    setMessage("书记", "案件记录已经展开。先调查现场，再进入庭审。", "");
+    setMessage("书记", "案卷已经展开。现场还没说完的话，会在庭上变成第一道裂缝。", "");
     renderCaseIntro();
   }
 
@@ -4510,7 +4544,7 @@
       if (!allEvidenceCollected(caseData)) {
         const missing = missingTrialEvidence(caseData);
         setStage("record", "庭前证物不足", { left: "thinking", right: "observe" });
-        setMessage("书记", `案卷还没合上。先把${missing.slice(0, 2).join("、") || "庭前证物"}找齐，再进殿受审。`, "");
+        setMessage("书记", `案卷还没合上。${missing.slice(0, 2).join("、") || "庭前证物"}还缺在纸面上，现在进殿只会被对手抓住空白。`, "");
         save();
         renderInvestigation();
         return;
@@ -4541,13 +4575,24 @@
     clearEvidencePickup();
     clearPursuitUnlockCue();
     clearInventoryCue();
-    setMessage("调查", `换个做法：${commandLabel(command)}。别急，先看谁的反应最不自然。`, "");
+    setMessage("调查", commandSceneLine(command, currentLocation(caseData)), "");
     save();
     renderInvestigation();
   }
 
   function commandLabel(command) {
     return { move: "移动", examine: "查看", talk: "交谈", present: "出示" }[command] || "调查";
+  }
+
+  function commandSceneLine(command, location) {
+    const place = location?.name || "这里";
+    const lines = {
+      move: `${place}的风声已经记住了。下一处门后，或许还有人没来得及收回表情。`,
+      examine: `${place}安静下来以后，桌角、封蜡和脚印反而比人更诚实。`,
+      talk: `${place}里的人都把话说得很轻。停顿、改口和没说完的半句，全都留在空气里。`,
+      present: `手里的记录一亮出来，${place}里先变的往往不是供词，而是看它的人。`,
+    };
+    return lines[command] || `${place}的痕迹还没散。`;
   }
 
   function moveLocation(index) {
@@ -4588,7 +4633,7 @@
         {
           speaker: gainedNames.length ? "辩方" : "调查",
           text: gainedNames.length
-            ? `先收好。等有人把话说死，这件东西就能逼他改口。`
+            ? `这件东西进了法庭记录。有人再把话说死时，它会自己发出响声。`
             : "这里的痕迹已经记下了。再盯着同一处看，只会让真正动过手脚的人松口气。",
         },
       ]
@@ -4659,11 +4704,11 @@
       "case-empress-seat": "宫里人最会把名字吞回去。她不敢说谁递了话，纸上被改过的地方就要替她说。",
       "case-crown-shadow": "东宫的人说话都绕着储位走。越是绕开的人名，越可能正压在账册或名册下面。",
       "case-rebellion-box": "告密人怕的不是那张纸，是纸离手以后多出来的罪。顺着转手的人追，别顺着喊声跑。",
-      "case-urn": "御史台的人把恐惧说成规矩。先记住他说的先后顺序，等周兴替流程辩护时再收紧。",
+      "case-urn": "御史台的人把恐惧说成规矩。顺序一旦被他说顺了，刑具也会披上公文的皮。",
       "case-half-hour-coup": "夜门的人只敢说乱。越是乱，越要把半小时拆开，看哪一道命令走得比人还快。",
     };
     if (topic?.speaker?.includes("史官") || topic?.speaker?.includes("小吏") || topic?.speaker?.includes("书记")) {
-      return "写字的人习惯替自己留退路。先记下他避开的词，庭上再问他为什么偏偏不写清楚。";
+      return "写字的人习惯替自己留退路。他避开的那个词，迟早会从纸缝里露出来。";
     }
     return byCase[caseData.id] || "这句话听着轻，先别放过。等它和现场的东西摆在一起，谁在躲话就清楚了。";
   }
@@ -4674,17 +4719,17 @@
       "case-empress-seat": {
         speaker: "内廷记录官",
         reaction: `内廷记录官盯着${evidenceName}，把笔尖悬在纸上：“这要是进了庭，我就不能再写‘听闻’两个字了。”`,
-        followUp: "他怕的不是证物真假，而是证物逼他写清谁先开口。庭上等他说成传闻时，再让纸压住他。",
+        followUp: "“听闻”两个字忽然变得很薄。纸一到案前，记录官就得写下那个原本被吞掉的名字。",
       },
       "case-crown-shadow": {
         speaker: "宫廷书记官",
         reaction: `宫廷书记官扫过${evidenceName}，袖口往回收了半寸：“东宫的旧纸，未必都该在今天翻出来。”`,
-        followUp: "他在护的不是旧纸，是旧纸被谁挑出来的顺序。等他说自己只是誊录，再用它问谁先圈名。",
+        followUp: "他护住的不是旧纸，是旧纸被挑出来的顺序。谁先圈名，谁就先把家事推向罪名。",
       },
       "case-rebellion-box": {
         speaker: "来俊臣",
         reaction: `来俊臣看见${evidenceName}，笑意没到眼底：“告密入匦以后，自有官府分辨，辩方何必替乱党操心？”`,
-        followUp: "他急着把“分辨”说成官府自己的事。庭上要逼他承认：每一次转手，都有人能加重罪名。",
+        followUp: "“分辨”两个字被他说得太干净了。纸每转一手，罪名就可能多一笔。",
       },
       "case-urn": {
         speaker: "周兴",
@@ -4694,13 +4739,13 @@
       "case-half-hour-coup": {
         speaker: "张易之",
         reaction: `张易之望着${evidenceName}，声音仍轻：“乱夜里什么都可能先后错位，别拿一张纸替半小时定罪。”`,
-        followUp: "他把错位当借口。庭上要让时间说话：若全是仓促，命令和赏赐不会准得像排过。",
+        followUp: "他把错位说得像夜色一样自然。可命令和赏赐准得太齐，像早有人替半小时排过座次。",
       },
     };
     const response = byCase[caseData.id] || {
       speaker: caseData.witness,
       reaction: `${caseData.witness}看了一眼${evidenceName}，声音压低了些：“这东西若真摆到庭上，有些话就不能只当传闻了。”`,
-      followUp: "他没有否认，只是绕开了。等他在庭上把话说满，再把这件东西放到他面前。",
+      followUp: "他没有否认，只把话绕到旁边。证物一入庭，那条旁路就会变窄。",
     };
     return { result: "出示反应", ...response };
   }
@@ -4788,9 +4833,9 @@
     }
     const ready = statementReadyToPresent(statement, progress, progress.testimonyIndex, rawIndex);
     const extra = ready
-      ? " 他刚才多补的这一句已经让证词漏风了。先别急着乱拍，打开法庭记录，选最能咬住这句话的证物。"
+      ? " 他刚才多补的这一句已经让证词漏风了。法庭记录里，有东西正好咬住这道风口。"
       : statementHasAnswer(statement)
-        ? " 这句话开始发紧，但还差一口气。继续看它和手边记录哪里接不上。"
+        ? " 这句话开始发紧，但还差一口气。它和手边记录，总有一处接不上。"
         : "";
     const unlockText = unlocked ? ` 新线索已加入法庭记录：${unlocked}。` : "";
     const revealText = unlockedStatement ? ` 新证词被逼出来了：${unlockedStatement}。` : "";
@@ -4820,7 +4865,7 @@
   function prepareObjectionReveal(caseData, progress, statement, rawIndex, presentedLabel) {
     const turnabout = !statement.optionalRecovery && pressureLevel(progress) !== "stable" ? turnaboutBeat(caseData) : null;
     const deduction = statement.answerEvidence ? deductionForEvidence(caseData, statement.answerEvidence) : null;
-    const aftermath = objectionAftermathCopy(caseData, statement, presentedLabel, deduction);
+    const aftermath = objectionAftermathCopy(caseData, caseData.testimony[progress.testimonyIndex], statement, presentedLabel, deduction);
     const title = turnabout ? "逆转" : statement.answerProfile ? "档案击破" : "异议成立";
     const subtitle = deduction ? "对照札记补上证物链条" : turnabout ? turnabout.title : statement.answerProfile ? "人物档案刺穿证词" : "证物与证词正面冲突";
     setStage("clash", "异议切入", { left: "confident", right: "stagger" });
@@ -4882,7 +4927,7 @@
     const rescuedFromPressure = !statement.optionalRecovery && pressureLevel(progress) !== "stable";
     const turnabout = rescuedFromPressure ? turnaboutBeat(caseData) : null;
     const deduction = statement.answerEvidence ? deductionForEvidence(caseData, statement.answerEvidence) : null;
-    const aftermath = objectionAftermathCopy(caseData, statement, presentedLabel, deduction);
+    const aftermath = objectionAftermathCopy(caseData, testimony, statement, presentedLabel, deduction);
     progress.solved.push(key);
     setStage("clash", turnabout ? turnabout.title : statement.answerProfile ? "人物档案击中矛盾" : "证物击中矛盾", { left: "shock", right: "stagger" });
     setImpactCue(
@@ -4903,7 +4948,7 @@
       progress.lastTurnabout = turnabout.title;
     }
     if (deduction) {
-      const pursuitCopy = deductionPursuitCopy(caseData, statement, deduction, presentedLabel);
+      const pursuitCopy = deductionPursuitCopy(caseData, testimony, statement, deduction, presentedLabel);
       const pursuitUnlock = deductionPursuitUnlock(caseData);
       progress.pendingDeductionFollowUp = {
         testimonyIndex: progress.testimonyIndex,
@@ -5461,7 +5506,7 @@
       state.selectedProfileName = "";
       state.recordTab = "evidence";
       state.recordOpen = state.screen === "trial" ? false : state.recordOpen;
-      setMessage("法庭记录", "证物已放到手边；还没有提交。确认要用它时，再点主操作区的“举证”。", "");
+      setMessage("法庭记录", "证物已放到辩方手边，还没有呈上法庭。", "");
       rerender();
     }
     if (target.dataset.selectProfile) {
@@ -5496,7 +5541,7 @@
       state.recordInspectSpot = "";
       state.recordInspectView = "front";
       clearRecordInspectCompare();
-      setMessage("法庭记录", "记录已合上。现在可以在主操作区点击“举证”正式提交。", "");
+      setMessage("法庭记录", "记录已合上。证物还在辩方手边，等那句话露出破口。", "");
       rerender();
     }
     if (target.dataset.prevStatement !== undefined) moveStatement(-1);
@@ -5689,7 +5734,7 @@
           state.recordOpen = true;
           setMessage(
             "法庭记录",
-            "尚未选中可提交的证物或人物档案。先打开记录，点选一项后按 E 再提交。",
+            "案前还空着。法庭记录里得有一件能压住这句话的证物或档案。",
             ""
           );
           rerender();
@@ -5698,7 +5743,7 @@
         if (!readyToPresent) {
           setMessage(
             "法庭记录",
-            "当前句未形成可举证的破绽。先追问几句，看到“可举证”后再按 E。",
+            "这句话还没有露出能呈证的破口。证人还得再多说半句。",
             "penalty"
           );
           renderTrial();

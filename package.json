@@ -6,7 +6,8 @@
   "scripts": {
     "check:js": "node --check game/app.js && node --check game/game-data.js",
     "check:py": "python3 -m py_compile scripts/build_game_content.py scripts/parse_epub_to_markdown.py scripts/generate_evidence_item_sheet.py scripts/generate_location_backgrounds.py scripts/generate_prop_closeups.py scripts/generate_objection_cutin_sheet.py scripts/generate_court_impact_sheet.py scripts/generate_court_impact_callout_sheet.py",
-    "qa:web-game": "node $HOME/.codex/skills/develop-web-game/scripts/web_game_playwright_client.js --url http://127.0.0.1:8788/game/ --actions-json '{\"steps\":[{\"buttons\":[],\"frames\":2},{\"buttons\":[\"left_mouse_button\"],\"frames\":2,\"mouse_x\":120,\"mouse_y\":120},{\"buttons\":[],\"frames\":2}]}' --iterations 1 --pause-ms 200"
+    "qa:web-game": "node $HOME/.codex/skills/develop-web-game/scripts/web_game_playwright_client.js --url http://127.0.0.1:8788/game/ --actions-json '{\"steps\":[{\"buttons\":[],\"frames\":2},{\"buttons\":[\"left_mouse_button\"],\"frames\":2,\"mouse_x\":120,\"mouse_y\":120},{\"buttons\":[],\"frames\":2}]}' --iterations 1 --pause-ms 200",
+    "round:sleep": "bash scripts/sleep_after_round.sh"
   },
   "repository": {
     "type": "git",
