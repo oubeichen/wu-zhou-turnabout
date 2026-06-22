@@ -2257,21 +2257,15 @@
     if (/追击/.test(text)) return "追击札记";
     if (/庭审|追问/.test(text)) return "庭上追问";
     if (/由(?:本案|该案|本章|相关案件)相关章节归纳/.test(text)) return "线索归纳";
+    if (/卷宗|第[0-9一二三四五六七八九十百\d]+\s*章/.test(text)) return "旧案线索";
     const cleaned = sourceLabelClean(raw).trim();
-    if (!cleaned || /^[:：\s]*$/.test(cleaned)) return "这段记载";
-    if (cleaned.includes("：")) {
-      const tail = cleaned.split("：").slice(1).join("：").trim();
-      if (tail && !/^第[0-9一二三四五六七八九十百\d]+\s*$/.test(tail)) {
-        return tail;
-      }
-    }
     return cleaned || "这段记载";
   }
 
   function sourceLabelClean(raw) {
     const text = String(raw || "").trim();
     return text
-      .replace(/^\s*(?:\[[^\\]]*\]\s*)?(?:卷宗\d+|第[0-9一二三四五六七八九十百\d]+\s*章)\s*:?\s*/, "")
+      .replace(/^\s*\[?\s*卷宗\s*\d+\s*\]?\s*[：:\-—–]?\s*/, "")
       .replace(/^\s*卷宗\d+\s*[：:\-—–]?\s*/, "")
       .replace(/^\s*【?\s*第[0-9一二三四五六七八九十百\d]+\s*章\s*】?\s*[：:\-—–]?\s*/, "")
       .replace(/^\s*第([0-9一二三四五六七八九十百]+)\s*章节?\s*[：:\-—–]?\s*/, "")
@@ -2377,8 +2371,8 @@
     return `
       <div class="case-source-panel">
         <div class="case-section-title">
-          <strong>先拽住一根最有用的线</strong>
-          <span>你先把时间线放进脑子，再回到证词里问一句：谁的说法最先踩到这处破绽。</span>
+          <strong>先盯住一条最有用的线</strong>
+          <span>先把这条线放进脑子，再回到证词里问一句：谁的说法最先踩到这里。</span>
         </div>
         <div class="source-tabs" aria-label="案件线索">
           ${items
@@ -2386,7 +2380,7 @@
               (item) => `
                 <button class="source-tab ${active?.index === item.index ? "active" : ""}" type="button" data-case-source="${item.index}">
                   <strong>${escapeHtml(item.storyTitle)}</strong>
-                  <span>线索 ${timelineIndexLabel(item.index)}｜${active?.index === item.index ? "正在盯" : "点我看详情"}</span>
+                  <span>线索 ${timelineIndexLabel(item.index)}｜${active?.index === item.index ? "正在盯" : "点开看"}</span>
                 </button>
               `
             )
@@ -2395,7 +2389,7 @@
         <div class="source-detail">
           <strong>现在盯住：${escapeHtml(active.storyTitle)}</strong>
           <p>${escapeHtml(active.storyNote)}</p>
-          <small>回到现场后，先问一句“是谁先把这件事挡在后面”。</small>
+          <small>回到现场后，先问它能戳破谁的说法。</small>
         </div>
       </div>
     `;
