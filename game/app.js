@@ -2351,7 +2351,7 @@
     const byLocation = byCase[Number(locationIndex)] || null;
     const style = byLocation?.[Number(spotIndex)] || null;
     if (!style || !style.left || !style.top) return null;
-    const safeTop = clampPercent(style.top, 42, 78);
+    const safeTop = clampPercent(style.top, 16, 56);
     return {
       left: clampPercent(style.left, 8, 90),
       top: safeTop,
@@ -2388,7 +2388,7 @@
     app.innerHTML = `
       <section class="play-layout investigation-layout record-drawer-layout">
         <div>
-          ${renderScene(location.name, state.speaker || "调查", state.message || "先用“查看”扫一遍可疑点，再根据人物反应决定下一步。", "investigation")}
+          ${renderScene(location.name, state.speaker || "调查", state.message || "先别急着问罪。地上的痕、桌上的纸、人的沉默，都比传闻老实。", "investigation")}
           ${renderInvestigationMap(inv, location)}
           ${renderClueBoard(caseData, inv, location)}
           <div class="panel command-panel">
@@ -2444,21 +2444,21 @@
     };
     const mapArtStyle = mapArt ? `style="--map-art: url('./assets/${escapeHtml(mapArt)}');"` : "";
     const quickHint = canMove
-      ? "在左侧换地方，连着走一遍这起案子更快定向"
+      ? "换个地方看，前后脚印常比一张供词诚实"
       : canTalk
-      ? "点开右侧对话，先从人物口供里找冲突"
+      ? "人一开口就会挑自己敢说的部分，漏掉的地方更要听"
       : canPresent
-      ? "右侧清单里选一件证物，先听对方如何接住它"
+      ? "拿一件东西试探，对方接得住还是接不住，一听便知"
       : canInspect
-      ? "在场景标记上点“可疑处”，点过的地方会变成已记录"
-      : "先切“查看”，继续复查场景标记";
+      ? "朱标落在可疑处，看过的地方会留下辩方札记"
+      : "想摸现场，先回到“查看”这一手";
     return `
       <div class="location-map scene-${sceneKey} variant-${variant}${transitionClass}" ${mapArtStyle}>
         <div>
           <strong>${escapeHtml(location.name)}</strong>
           <span>${escapeHtml(location.description)}</span>
           <small>${escapeHtml(location.visualNote || caseData.scene?.tone || "")}</small>
-          <em>当前模式：${escapeHtml(commandName[inv.command] || "调查进行中")}。</em>
+          <em>正在做：${escapeHtml(commandName[inv.command] || "调查进行中")}。</em>
           <small class="location-hint">${escapeHtml(quickHint)}（${inspected}/${location.examineSpots.length} 处已检视）</small>
         </div>
       </div>
@@ -2472,7 +2472,7 @@
     const location = currentLocation(caseData);
     const canInspect = inv.command === "examine" && !state.investigationBeat;
     if (!canInspect) {
-      return `<div class="scene-hotspots scene-hotspots-dormant" aria-label="现场可疑处" data-inactive-spots="1"><i>${escapeHtml("切到“查看”后可在现场标记点位收集线索")}</i></div>`;
+      return `<div class="scene-hotspots scene-hotspots-dormant" aria-label="现场可疑处" data-inactive-spots="1"><i>${escapeHtml("想摸现场，先回到“查看”这一手。")}</i></div>`;
     }
 
     const beatLocked = Boolean(state.investigationBeat);
@@ -2608,7 +2608,7 @@
     if (inv.command === "move") {
       return `
         <h2>移动</h2>
-        <p class="hint-text">换到别的地点，先把“这个场景还有哪些人和物可以问”看清楚。</p>
+        <p class="hint-text">换个地方站，前后说法才对得上。宫里没人会把全话放在同一处。</p>
         <div class="location-list">
           ${caseData.locations
             .map(
@@ -2626,7 +2626,7 @@
     if (inv.command === "examine") {
       return `
         <h2>查看</h2>
-        <p class="hint-text">先盯住场景里最像被动过手脚的地方。每找一处都会留下可复核痕迹。</p>
+        <p class="hint-text">先盯住最像被人碰过的地方。纸、墨、脚步，比宫人口风稳。</p>
         <div class="spot-status-list">
       ${location.examineSpots
             .map((spot, index) => {
@@ -2646,7 +2646,7 @@
     if (inv.command === "talk") {
       return `
         <h2>交谈</h2>
-        <p class="hint-text">先问一句能引出细节的问题，回答出来再决定下一步。</p>
+        <p class="hint-text">别急着追凶。先让人多说半句，胆怯和遮掩会自己露头。</p>
         <div class="location-list">
           ${location.talkTopics
             .map((topic, index) => {
@@ -2666,7 +2666,7 @@
     const owned = collectedEvidence(caseData);
     return `
       <h2>出示</h2>
-      <p class="hint-text">先把你已收的证据做“试探展示”。确认对方反应后，再回到庭审面板正式举证。</p>
+      <p class="hint-text">把手里的东西递出去试一试。对方若忽然改口，这件东西就该留到庭上。</p>
       <div class="location-list">
         ${owned
       .map(
@@ -4354,7 +4354,7 @@
       }
       state.recordOpen = false;
       clearInvestigationBeat();
-    setMessage("调查", "先从一个动作下手：移动、查看、交谈、出示都能改变线索。先看人和现场的反应，再决定下一步。", "");
+    setMessage("调查", "这地方不肯自己开口。先盯住人手碰过的地方，再让话从缝里漏出来。", "");
       renderInvestigation();
     } else {
       const caseData = currentCase();
@@ -4392,7 +4392,7 @@
     clearEvidencePickup();
     clearPursuitUnlockCue();
     clearInventoryCue();
-    setMessage("调查", `已切换到“${commandLabel(command)}”。`, "");
+    setMessage("调查", `换个做法：${commandLabel(command)}。别急，先看谁的反应最不自然。`, "");
     save();
     renderInvestigation();
   }
@@ -4410,7 +4410,7 @@
     clearEvidencePickup();
     clearInventoryCue();
     clearPursuitUnlockCue();
-    setMessage("调查", `移动到${location.name}。${location.description}`, "");
+    setMessage("调查", `转到${location.name}。${location.description}`, "");
     save();
     renderInvestigation();
   }

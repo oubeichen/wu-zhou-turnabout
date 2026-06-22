@@ -2366,3 +2366,42 @@ Remaining Ace Attorney gap list:
 - Continue deeper per-character voice work for `press` and `objection`: each witness should sound less interchangeable.
 - Trial scenes still need richer pressure-state character pose changes and stronger reaction timing.
 - Mobile record drawer is usable, but should later become a tighter game overlay with less full-page height.
+
+## 2026-06-22 iteration 88 result
+
+Implemented:
+- Fixed the investigation hotspot safe zone so clickable markers stay in the upper scene image area instead of being clamped toward the dialogue area.
+- Restored mobile page scrolling while keeping the desktop play surface in a single-window, non-page-scrolling layout.
+- Raised and darkened the evidence pickup modal layer, then tightened its mobile layout so the collected-evidence card reads as a foreground game panel instead of mixing with the investigation dialogue behind it.
+- Rewrote high-frequency investigation hints and default dialogue from operation-manual phrasing into defense-side scene judgment, for example replacing the generic “先从一个动作下手” instruction with a line about the room refusing to speak for itself.
+
+Verified:
+- `npm run check:js`
+- `PYTHONPYCACHEPREFIX="/Users/oubeichen/Projects/wuzetian2/.pycache" npm run check:py`
+- `git diff --check`
+- Escalated Chromium visual audit captured desktop and mobile screenshots covering home, case intro, opening, investigation, hotspot pickup, record drawer, and trial start.
+- Desktop investigation at 1600x960 confirmed:
+  - page scroll remains locked at the game window height,
+  - 2/2 investigation hotspots are visible,
+  - hotspot/text overlap count is 0,
+  - record drawer and trial start remain readable.
+- Mobile investigation at 390x844 confirmed:
+  - the page can scroll from `scrollY=38` to `scrollY=500`,
+  - 2/2 investigation hotspots are visible,
+  - hotspot/text overlap count is 0,
+  - the evidence pickup card no longer visually collides with the investigation beat.
+- Screenshot inspection used:
+  - `/tmp/wuz-ui-audit-88/04-investigation.png`
+  - `/tmp/wuz-ui-audit-88/05-hotspot-beat.png`
+  - `/tmp/wuz-ui-audit-88/07-record-open.png`
+  - `/tmp/wuz-ui-audit-88/08-trial-start.png`
+  - `/tmp/wuz-ui-audit-88-rerun/mobile-pickup.png`
+  - `/tmp/wuz-ui-audit-88-copy/desktop-investigation-copy.png`
+  - `/tmp/wuz-ui-audit-88-copy/mobile-investigation-copy.png`
+- `npm run qa:web-game` with escalated Chromium browser access succeeded.
+- Web reference check for Ace Attorney loop: investigation remains centered on examining scenes, talking, presenting, and collecting evidence before trial; trial remains centered on press/present contradiction play.
+
+Remaining Ace Attorney gap list:
+- Continue deeper per-character voice work in investigation talk/present lines so each witness reacts from their own social position and fear, not from narrator knowledge.
+- Trial scenes still need richer pressure-state character pose changes and stronger reaction timing.
+- Mobile record drawer is usable, but should later become a tighter game overlay with less full-page height.
