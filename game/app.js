@@ -1655,7 +1655,7 @@
           <button class="secondary-button menu-button" type="button" data-toggle-settings>设置</button>
         </nav>
         <div class="menu-preview scene-${escapeHtml(caseData.scene?.key || "archive")}" data-motif="${escapeHtml(caseData.scene?.motif || "")}">
-          <span class="hero-kicker">当前继续</span>
+          <span class="hero-kicker">上回停在这里</span>
           <strong>${escapeHtml(caseTitleForDisplay(caseData.title))}</strong>
           <p>${escapeHtml(caseMenuHook(caseData))}</p>
           <small>${escapeHtml(caseSceneCaption(caseData))}</small>

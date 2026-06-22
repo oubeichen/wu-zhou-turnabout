@@ -3410,6 +3410,43 @@ Remaining Ace Attorney gap list:
 - Continue screenshot-first QA on case-intro source panels, scene-card labels, opening kickers, top-bar tags, pressure labels, trial headers, statement cards, record drawer entries, and evidence detail panels.
 - Do not reopen already-fixed `举证` button, hotspot placement, or desktop no-scroll layout unless a fresh screenshot shows a concrete regression.
 
+## 2026-06-23 iteration 120 result
+
+Implemented:
+- Kept this round limited to one visible home-screen label in `game/app.js`.
+- Changed the preview kicker on the home “continue” card from `当前继续` to `上回停在这里`.
+- Left continue-case logic, menu buttons, and case preview content untouched.
+
+Why this round:
+- After the recent case-intro passes, the home screen still had one very obvious interface-style label on a high-frequency surface.
+- `当前继续` was clear but cold; `上回停在这里` keeps the same meaning while sounding more like the player is resuming a suspended case, not reading a system panel.
+- This was a safe small-round target because it is display-only, easy to validate on one fresh home screenshot, and does not reopen any settled interaction work.
+
+Verified:
+- `git fetch origin main`
+- confirmed `HEAD` and `origin/main` both pointed to `c12d6b81232ec68a3615f8a040935007ca3aa548` before this round's commit
+- `npm run check:js`
+- `git diff --check`
+- Used the in-app browser at `http://127.0.0.1:8788/game/` with the cache-busted local entry from the previous round
+- Captured a fresh screenshot:
+  - `output/home-preview-kicker-current.png`
+- Live DOM capture confirmed:
+  - `previewKicker: 上回停在这里`
+  - `bodyHasOld: false`
+  - `bodyHasNew: true`
+- Screenshot inspection confirmed:
+  - the new kicker fits cleanly inside the home preview card;
+  - the card headline, summary text, and menu buttons remained aligned at `1600x960`;
+  - no new clipping, overlap, or spacing regression appeared on the home screen.
+
+Notes:
+- Checked `.gitignore` this round; current rules still cover the generated validation artifacts, so no `.gitignore` change was needed.
+
+Remaining Ace Attorney gap list:
+- Keep rewriting case-intro source labels, evidence summaries, and late-case prompts that still sound like neutral interface metadata instead of scene pressure.
+- Continue screenshot-first QA on home preview labels, case-intro source panels, scene-card labels, opening kickers, top-bar tags, pressure labels, trial headers, statement cards, record drawer entries, and evidence detail panels.
+- Do not reopen already-fixed `举证` button, hotspot placement, or desktop no-scroll layout unless a fresh screenshot shows a concrete regression.
+
 ## 2026-06-23 iteration 116 result
 
 Implemented:
