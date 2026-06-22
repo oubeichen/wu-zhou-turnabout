@@ -22,6 +22,7 @@ wz_ui_audit*
 .tmp-wz-screens.mjs
 debug-launch.html
 wz_audit_visual.*
+wz_audit*.mjs
 home-desktop.png
 .tmp-audit.cjs
 .tmp-wz_*.mjs

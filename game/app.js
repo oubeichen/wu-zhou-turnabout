@@ -1001,6 +1001,52 @@
     state.stagePose = { ...defaultStagePose, ...(pose || {}) };
   }
 
+  function currentStatementBeat(statement, progress, testimonyIndex, rawIndex, visibleIndex, action = "move") {
+    const hasAnswer = statementHasAnswer(statement);
+    const ready = statementReadyToPresent(statement, progress, testimonyIndex, rawIndex);
+    const solved = progress.solved.includes(statementKey(testimonyIndex, rawIndex));
+    const revealed = Boolean(statement.hiddenUntilPressed);
+    if (solved) {
+      return {
+        focus: "witness",
+        notice: "这句已经倒下",
+        pose: { left: "stagger", right: "observe" },
+      };
+    }
+    if (ready) {
+      return {
+        focus: "clash",
+        notice: action === "press" ? "话被追到发虚" : "破绽已经露出来",
+        pose: { left: "shock", right: "confident" },
+      };
+    }
+    if (hasAnswer) {
+      return {
+        focus: "clash",
+        notice: action === "press" ? "这句话不肯站稳" : "证词里有硬伤",
+        pose: { left: "tense", right: "thinking" },
+      };
+    }
+    if (revealed) {
+      return {
+        focus: "clash",
+        notice: "新证词冒出来",
+        pose: { left: "shock", right: "observe" },
+      };
+    }
+    return {
+      focus: "witness",
+      notice: action === "press" ? "证人被迫补话" : `证词第 ${visibleIndex + 1} 句`,
+      pose: { left: action === "press" ? "thinking" : "testify", right: "observe" },
+    };
+  }
+
+  function applyCurrentStatementStage(statement, progress, testimonyIndex, rawIndex, visibleIndex, action) {
+    const beat = currentStatementBeat(statement, progress, testimonyIndex, rawIndex, visibleIndex, action);
+    setStage(beat.focus, beat.notice, beat.pose);
+    return beat;
+  }
+
   function poseLabel(pose) {
     return {
       idle: "",
@@ -1279,9 +1325,9 @@
   }
 
   function continueLabel(caseData) {
-    if (caseHasProgress(caseData) && !state.completed.includes(caseData.id)) return "接着调查";
-    if (state.completed.includes(caseData.id)) return "再看复盘";
-    return "开始这案";
+    if (caseHasProgress(caseData) && !state.completed.includes(caseData.id)) return "继续查案";
+    if (state.completed.includes(caseData.id)) return "复盘这案";
+    return "开始查案";
   }
 
   function currentGuideContext() {
@@ -1515,8 +1561,8 @@
     const gold = data.cases.filter((entry) => caseRecord(entry.id).bestMedal === "金章").length;
     const hasProgress = data.cases.some(caseHasProgress);
     const heroHint = hasProgress
-      ? `你上次在“${caseData ? caseData.title : data.title}”停下了。先记下谁先说、谁刻意沉默，再把“这处矛盾”拉回去追。`
-      : "先选一件案子，读完开场后先去现场。第一步不是找答案，是找一句站不住脚的话。";
+      ? `你上次在“${caseData ? caseTitleForDisplay(caseData.title) : data.title}”停下了。先记下谁先回避细节，谁先讲了不该讲的内容。`
+      : "先挑一件案子，先看开场，再到现场。我们要先抓住“谁的说法先开始变得不完整”。";
     return `
       <div class="main-menu">
         <div class="menu-copy">
@@ -1637,7 +1683,7 @@
     const cardHook = caseMenuHook(caseData);
     const grade = record.bestGrade || state.trial[caseData.id]?.grade || "";
     const medal = record.bestMedal || medalForGrade(grade);
-    const label = done ? "再看这案" : started ? "继续调查" : "开始这个案子";
+    const label = done ? "回看这案" : started ? "继续查案" : "开始查案";
     const focused = state.homeFocusIndex === index;
     const sceneKey = caseData.scene?.key || "archive";
     return `
@@ -1710,7 +1756,7 @@
             <span class="tag">证词 ${caseData.testimony.length} 组</span>
           </div>
           <div class="dossier-actions">
-            <button class="primary-button" type="button" data-open-case="${index}">${state.completed.includes(caseData.id) ? "回到庭前导读" : collected ? "继续案件" : "开始这个案子"}</button>
+          <button class="primary-button" type="button" data-open-case="${index}">${state.completed.includes(caseData.id) ? "回到庭前梳理" : collected ? "继续查案" : "开始查案"}</button>
             ${state.completed.includes(caseData.id) ? `<button class="secondary-button" type="button" data-replay-case="${index}">再审此案</button>` : ""}
           </div>
         </div>
@@ -2257,9 +2303,10 @@
     if (/追击/.test(text)) return "追击札记";
     if (/庭审|追问/.test(text)) return "庭上追问";
     if (/由(?:本案|该案|本章|相关案件)相关章节归纳/.test(text)) return "线索归纳";
-    if (/卷宗|第[0-9一二三四五六七八九十百\d]+\s*章/.test(text)) return "旧案线索";
     const cleaned = sourceLabelClean(raw).trim();
-    return cleaned || "这段记载";
+    if (cleaned) return cleaned;
+    if (/卷宗|第[0-9一二三四五六七八九十百\d]+\s*章/.test(text)) return "关键线索";
+    return "这段记载";
   }
 
   function sourceLabelClean(raw) {
@@ -2268,10 +2315,15 @@
       .replace(/^\s*\[?\s*卷宗\s*\d+\s*\]?\s*[：:\-—–]?\s*/, "")
       .replace(/^\s*卷宗\d+\s*[：:\-—–]?\s*/, "")
       .replace(/^\s*【?\s*第[0-9一二三四五六七八九十百\d]+\s*章\s*】?\s*[：:\-—–]?\s*/, "")
+      .replace(/^\s*第[0-9一二三四五六七八九十百\d]+\s*章\s*[:：]?\s*/, "")
       .replace(/^\s*第([0-9一二三四五六七八九十百]+)\s*章节?\s*[：:\-—–]?\s*/, "")
       .replace(/^\s*第(\d+)\s*章\s*(?:[:：]?\s*第[0-9一二三四五六七八九十百]+\s*章)?\s*[：:\-—–]?\s*/, "")
       .replace(/^\s*[（(]?\s*第[0-9一二三四五六七八九十百]+\s*章\s*[）)]?\s*[：:\-—–]?\s*/, "")
       .replace(/^\s*第[0-9一二三四五六七八九十百]+\s*章\s*[：:\-—–]?\s*/, "")
+      .replace(/^\s*【\s*|\s*】\s*$/g, "")
+      .replace(/^\s*[【\[]?\s*第[0-9一二三四五六七八九十百\d]+\s*案\s*[】\]]?\s*[:：]?\s*/g, "")
+      .replace(/^\s*【?\s*第[0-9一二三四五六七八九十百\d]+\s*节\s*】?\s*[：:\-—–]?\s*/g, "")
+      .replace(/^\s*【?\s*[（(]?\s*第[0-9一二三四五六七八九十百\d]+\s*章\s*[）)]?\s*】?\s*[：:\-—–]?\s*/g, "")
       .replace(/^\s*由(?:本案|该案|本章|相关案件)相关章节归纳\s*$/, "相关线索汇总")
       .replace(/^第[0-9一二三四五六七八九十百]+\s*章\s*/, "")
       .trim();
@@ -4616,11 +4668,7 @@
       Math.min(visibleStatements.length - 1, progress.statementIndex + delta)
     );
     const { statement, rawIndex } = currentStatementEntry(testimony, progress);
-    const ready = statementReadyToPresent(statement, progress, progress.testimonyIndex, rawIndex);
-    setStage(statementHasAnswer(statement) ? "clash" : "witness", ready ? "破绽已现" : `证词第 ${progress.statementIndex + 1} 句`, {
-      left: ready ? "shock" : statementHasAnswer(statement) ? "tense" : "testify",
-      right: "observe",
-    });
+    applyCurrentStatementStage(statement, progress, progress.testimonyIndex, rawIndex, progress.statementIndex, "move");
     setMessage(testimony.speaker, statement.text, "");
     save();
     renderTrial();
@@ -4667,11 +4715,7 @@
     const nextIndex = Math.max(0, Math.min(visibleStatements.length - 1, Number(index) || 0));
     progress.statementIndex = nextIndex;
     const { statement, rawIndex } = currentStatementEntry(testimony, progress);
-    const ready = statementReadyToPresent(statement, progress, progress.testimonyIndex, rawIndex);
-    setStage(statementHasAnswer(statement) ? "clash" : "witness", ready ? "破绽已现" : `证词第 ${nextIndex + 1} 句`, {
-      left: ready ? "shock" : statementHasAnswer(statement) ? "tense" : "testify",
-      right: "observe",
-    });
+    applyCurrentStatementStage(statement, progress, progress.testimonyIndex, rawIndex, nextIndex, "jump");
     setMessage(testimony.speaker, statement.text, "");
     save();
     renderTrial();
@@ -4695,15 +4739,21 @@
       unlockedStatement = revealed?.revealLabel || "新的证词";
       playCue("transition");
     }
-    const extra = statementHasAnswer(statement) ? " 这句证词已经动摇，现在可以考虑举证。" : "";
+    const ready = statementReadyToPresent(statement, progress, progress.testimonyIndex, rawIndex);
+    const extra = ready
+      ? " 他刚才多补的这一句已经让证词漏风了。先别急着乱拍，打开法庭记录，选最能咬住这句话的证物。"
+      : statementHasAnswer(statement)
+        ? " 这句话开始发紧，但还差一口气。继续看它和手边记录哪里接不上。"
+        : "";
     const unlockText = unlocked ? ` 新线索已加入法庭记录：${unlocked}。` : "";
-    const revealText = unlockedStatement ? ` 新证词浮出水面：${unlockedStatement}。` : "";
-    const focus = unlocked ? "record" : statementHasAnswer(statement) || unlockedStatement ? "clash" : "defense";
-    const notice = unlocked ? "新线索写入法庭记录" : unlockedStatement ? "隐藏证词解锁" : statementHasAnswer(statement) ? "破绽已现" : "追问证词";
-    setStage(focus, notice, {
-      left: unlockedStatement || statementHasAnswer(statement) ? "shock" : "thinking",
-      right: unlocked ? "observe" : "thinking",
-    });
+    const revealText = unlockedStatement ? ` 新证词被逼出来了：${unlockedStatement}。` : "";
+    if (unlocked) {
+      setStage("record", "新线索落到手边", { left: "thinking", right: "observe" });
+    } else if (unlockedStatement) {
+      setStage("clash", "对方漏出新说法", { left: "shock", right: "thinking" });
+    } else {
+      applyCurrentStatementStage(statement, progress, progress.testimonyIndex, rawIndex, progress.statementIndex, "press");
+    }
     setMessage("追问", `${statement.press}${extra}${unlockText}${revealText}`, statementHasAnswer(statement) || unlocked || unlockedStatement ? "objection" : "");
     save();
     renderTrial();
@@ -4980,7 +5030,7 @@
       setImpactCue("penalty", "追问不足", presentedLabel, "先追问，再举证");
       state.selectedEvidenceId = "";
       state.selectedProfileName = "";
-      setMessage("审判长", "这句还没被问出破绽。先追问，把话逼实了，再拍证物。", "penalty");
+      setMessage("审判长", "这句还没被问出破绽。先追问，让证人把话说完整，再决定拿哪件证物反击。", "penalty");
       playCue("penalty");
       renderTrial();
       return;
@@ -5013,7 +5063,7 @@
       } else {
         setStage("opponent", "异议被驳回", { left: "stagger", right: "attack" });
         setImpactCue("penalty", "驳回", presentedLabel, "证物没有击中这句证词");
-        setMessage("审判长", statement.wrongEvidenceFeedback || "异议被驳回。证物与这句证词没有形成矛盾。", "penalty");
+        setMessage("审判长", statement.wrongEvidenceFeedback || "这件证物压不到当前这句话。先回到证词，找证人真正说过头的地方。", "penalty");
       }
       if (progress.credibility <= 0) {
         progress.failed = true;
