@@ -1241,7 +1241,7 @@
   }
 
   function continueLabel(caseData) {
-    if (caseHasProgress(caseData) && !state.completed.includes(caseData.id)) return "继续这案";
+    if (caseHasProgress(caseData) && !state.completed.includes(caseData.id)) return "继续推进";
     if (state.completed.includes(caseData.id)) return "再看一次";
     return "开始看这案";
   }
@@ -1481,14 +1481,14 @@
           </div>
         </div>
         <nav class="menu-actions" aria-label="主菜单">
-          <button class="primary-button menu-button" type="button" data-continue-case>${escapeHtml(`当前继续·${caseDisplayIndex(caseData)}：${continueLabel(caseData)}`)}</button>
+          <button class="primary-button menu-button" type="button" data-continue-case>${escapeHtml(`返回：${continueLabel(caseData)}`)}</button>
           <button class="secondary-button menu-button" type="button" data-home-view="cases">案件选择</button>
           <button class="secondary-button menu-button" type="button" data-home-view="saves">存档/读档</button>
           <button class="secondary-button menu-button" type="button" data-home-view="archive">结案档案</button>
           <button class="secondary-button menu-button" type="button" data-toggle-settings>设置</button>
         </nav>
         <div class="menu-preview scene-${escapeHtml(caseData.scene?.key || "archive")}" data-motif="${escapeHtml(caseData.scene?.motif || "")}">
-          <span class="hero-kicker">当前继续 · ${escapeHtml(caseDisplayIndex(caseData))}</span>
+          <span class="hero-kicker">当前继续</span>
           <strong>${escapeHtml(caseData.title)}</strong>
           <p>${escapeHtml(caseMenuHook(caseData))}</p>
           <small>${escapeHtml(caseData.scene?.name || caseData.location)}｜${escapeHtml(caseData.theme)}</small>
@@ -2315,7 +2315,7 @@
     const byLocation = byCase[Number(locationIndex)] || null;
     const style = byLocation?.[Number(spotIndex)] || null;
     if (!style || !style.left || !style.top) return null;
-    const safeTop = clampPercent(style.top, 28, 40);
+    const safeTop = clampPercent(style.top, 42, 78);
     return {
       left: clampPercent(style.left, 8, 90),
       top: safeTop,
