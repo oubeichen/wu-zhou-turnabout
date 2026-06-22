@@ -2286,3 +2286,29 @@ Remaining Ace Attorney gap list:
 - The pursuit-note flow has distinct evidence art now, but the unlock moment itself still needs a stronger courtroom reward animation.
 - Trial scenes still need richer pressure-state character pose changes and stronger reaction timing.
 - Case-opening scenes are staged, but later passes should add beat-specific motion/camera timing and audio stingers.
+
+## 2026-06-22 iteration 85 result
+
+Implemented:
+- Fixed the in-game `返回主菜单` route so investigation/trial buttons reset `homeView` to `menu` before rendering home. Players now return to the real main menu instead of landing on the previous `案件选择` subpage.
+- Kept the previously committed screen-reset guard that clears scene transition signatures and scroll positions when rendering home/case intro.
+- Reworked source-line display in case dossier/source panels so player-facing text leads with story notes and readable clue summaries, not chapter/archive labels.
+
+Verified:
+- `npm run check:js`
+- `PYTHONPYCACHEPREFIX="/Users/oubeichen/Projects/wuzetian2/.pycache" npm run check:py`
+- `git diff --check`
+- Escalated Playwright visual audit at 1600x960 and 390x844 confirmed:
+  - opening cutscene advances into investigation,
+  - investigation hotspots are visible only in examine mode,
+  - `hotspotsOverlapText=0` on desktop and mobile,
+  - clicking a hotspot opens the evidence pickup flow,
+  - closing record and clicking `返回主菜单` now returns to `topText='宫廷法庭推理'` on both desktop and mobile,
+  - no stale investigation scene remains after returning home.
+- Screenshot inspection of `/tmp/wuz-audit-shots-v2/1600x960-back-home.png`, `/tmp/wuz-audit-shots-v2/390x844-back-home.png`, and `/tmp/wuz-audit-shots-v2/1600x960-record-open.png` confirmed the returned main menu and record drawer are visually readable.
+- `npm run qa:web-game` with escalated Chromium browser access succeeded.
+
+Remaining Ace Attorney gap list:
+- Continue replacing explanation-like dialogue with character-viewpoint lines; prioritize case-opening beats and investigation follow-up lines.
+- Trial scenes still need richer pressure-state character pose changes and stronger reaction timing.
+- Mobile record drawer is readable and closeable, but later passes should reduce the long full-page height created by full-page screenshot capture and make the drawer feel more like a native game overlay.

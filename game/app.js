@@ -1654,7 +1654,7 @@
               >
                 ${escapeHtml(item.storyTitle)}
               </button>
-              <small>${escapeHtml(sourceForDisplay(item.title))}</small>
+              <small>${escapeHtml(item.storyNote || sourceForDisplay(item.title))}</small>
             </li>
           `
       )
@@ -2128,13 +2128,14 @@
     const storyItems = Array.isArray(caseData.sourceStoryItems) ? caseData.sourceStoryItems : caseSourceStoryItems(caseData.id);
     return (caseData.timeline || []).map((item, index) => {
       const sourceLine = sourceForDisplay(item.title || item.label || "");
+      const storyItem = storyItems[index] || {};
       return {
         ...item,
         index,
         chapter: chapterLabel(sourceLine),
         shortTitle: chapterShortTitle(sourceLine),
-        storyTitle: storyItems[index]?.title || chapterShortTitle(sourceLine),
-        storyNote: storyItems[index]?.note || item.note || "",
+        storyTitle: storyItem.title || `线索 ${index + 1}`,
+        storyNote: storyItem.note || item.note || sourceLine || "线索方向",
         sourceLine,
       };
     });
@@ -2339,7 +2340,7 @@
         <div class="source-detail">
           <strong>当前查看：${escapeHtml(active.storyTitle)}</strong>
           <p>${escapeHtml(active.storyNote)}</p>
-          <small>来源：${escapeHtml(active.sourceLine || sourceForDisplay(active.title))}</small>
+          <small>这条线索和你看到的现场对应：${escapeHtml(active.sourceLine || sourceForDisplay(active.title))}</small>
         </div>
       </div>
     `;
@@ -5290,7 +5291,10 @@
     if (target.dataset.continuePursuitUnlock !== undefined) continuePursuitUnlock();
     if (target.dataset.continueTestimony !== undefined) continueTestimony();
     if (target.dataset.retryTrial !== undefined) retryTrial();
-    if (target.dataset.home !== undefined) renderHome();
+    if (target.dataset.home !== undefined) {
+      state.homeView = "menu";
+      renderHome();
+    }
     if (target.dataset.returnCase !== undefined) {
       const index = Number.isFinite(state.caseIndex) ? Math.max(0, Math.min(data.cases.length - 1, state.caseIndex)) : continueCaseIndex();
       openCase(index);
