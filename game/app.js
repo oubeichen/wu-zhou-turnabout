@@ -3145,11 +3145,11 @@
     const trialAdvanceHint = mode === "trial"
       ? hasPrevStatement
         ? hasNextStatement
-          ? "证词尚未说完，这句话也还能回头细看"
-          : "这句话仍在案上，可以追问，也可以让记录开口"
+          ? "他的话还没说尽，这一句也还来得及回头咬住。"
+          : "这句话还悬在案上。现在可以逼问，也可以让案卷开口。"
         : hasNextStatement
-          ? "证词尚未说完"
-          : "这句话仍在案上，可以追问，也可以让记录开口"
+          ? "先让他往下说。下一句也许就会自己露风。"
+          : "这句话还悬在案上。现在可以逼问，也可以让案卷开口。"
       : "";
     const sceneSignature = `${caseData.id}|${mode}|${sceneKey}|${locationArt || "default"}`;
     const sceneTransitionClass = sceneTransitionState.lastSceneSignature && sceneTransitionState.lastSceneSignature !== sceneSignature

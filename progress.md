@@ -3296,3 +3296,35 @@ Remaining Ace Attorney gap list:
 - Keep rewriting testimony-side helper text, evidence summaries, and late-case prompts that still sound like neutral interface metadata instead of escalating courtroom pressure.
 - Continue screenshot-first QA on pressure labels, trial headers, statement cards, record drawer entries, and evidence detail panels.
 - Do not reopen already-fixed `举证` button, hotspot placement, or desktop no-scroll layout unless a fresh screenshot shows a concrete regression.
+
+## 2026-06-23 iteration 112 result
+
+Implemented:
+- Kept this round limited to one small but high-frequency courtroom line: the hint text at the bottom of the testimony dialogue box.
+- Rewrote the trial dialogue advance hints in `game/app.js` so they no longer read like system prompts such as `证词尚未说完`.
+- Scope stayed narrow: no changes to dialogue advancement behavior, pointer navigation, record interaction, or layout structure.
+
+Why this round:
+- After the pressure-label pass, the next obvious system-like phrase still visible in the latest trial screenshot was the dialogue-box footer hint.
+- The old wording explained interface state correctly, but it still sounded like the game UI describing itself rather than the player reading pressure off the witness.
+- This was a good small-round target because the line appears constantly during court and can be validated cleanly across three statement positions with the same reproducible trial snapshot.
+
+Verified:
+- `npm run check:js`
+- `git diff --check`
+- Ran an escalated local Playwright verification at `1600x960` using the same reproducible court-ready local save snapshot as recent trial-page checks
+- Captured a fresh screenshot:
+  - `output/trial-dialogue-hint-current.png`
+- Live DOM capture confirmed the three dialogue footer hints now render as:
+  - `先让他往下说。下一句也许就会自己露风。`
+  - `他的话还没说尽，这一句也还来得及回头咬住。`
+  - `这句话还悬在案上。现在可以逼问，也可以让案卷开口。`
+- Screenshot inspection confirmed:
+  - the revised hint fits inside the dialogue footer bar;
+  - the dialogue box and right panel remain aligned;
+  - no new clipping or overflow appeared after the copy change.
+
+Remaining Ace Attorney gap list:
+- Keep rewriting testimony-side helper text, evidence summaries, and late-case prompts that still sound like neutral interface metadata instead of escalating courtroom pressure.
+- Continue screenshot-first QA on dialogue hints, pressure labels, trial headers, statement cards, record drawer entries, and evidence detail panels.
+- Do not reopen already-fixed `举证` button, hotspot placement, or desktop no-scroll layout unless a fresh screenshot shows a concrete regression.
