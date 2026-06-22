@@ -3074,3 +3074,32 @@ Remaining Ace Attorney gap list:
 - Keep sweeping later-case visible summaries that still sound more like historian annotation than immediate game-world tension.
 - The case-selection screen is now fully reachable on desktop, but card density and line-clamp tradeoffs still deserve a later polish pass.
 - Continue screenshot-first QA and do not reopen already-fixed button/layout issues unless a fresh screenshot shows a concrete regression.
+
+## 2026-06-22 iteration 105 result
+
+Implemented:
+- Kept this round tightly scoped to one visible inconsistency on the case-selection screen.
+- Updated `caseTitleForDisplay()` in `game/app.js` so the final case title now strips `最终案：` and `终局案：` the same way earlier cases already strip `第一案：` style prefixes.
+- This keeps shared title surfaces consistent wherever the helper is reused, instead of only patching one card template.
+
+Why this round:
+- After the previous layout fix, a fresh desktop screenshot still showed one obvious mismatch:
+  - cases 1-4 displayed short playable names;
+  - case 5 alone still exposed the structural label `最终案：半小时政变`.
+- For a normal player, that prefix reads more like a catalog label than a playable case name.
+- This was a good small-round target because it was easy to verify visually, low risk, and it improved consistency across multiple title surfaces at once.
+
+Verified:
+- `npm run check:js`
+- `git diff --check`
+- Ran an escalated local Playwright desktop verification at `1600x960` against `http://127.0.0.1:8788/game/`
+- Captured a fresh screenshot:
+  - `output/cases-home-title-current.png`
+- Captured live DOM titles from the actual rendered case cards:
+  - `["皇后宝座的缺口", "东宫阴影", "告密铜匦", "请君入瓮", "半小时政变"]`
+- Screenshot inspection confirmed the fifth card now shows `半小时政变`, matching the naming style of the other four cards.
+
+Remaining Ace Attorney gap list:
+- Continue rewriting later-case summaries and opening beats so they read as scene tension, not dossier annotation.
+- Keep auditing all high-frequency story surfaces for any remaining raw structural labels that leak through to players.
+- Do not reopen already-fixed `举证` button or hotspot layout work unless fresh screenshots show a real regression.

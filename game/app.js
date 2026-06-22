@@ -2443,7 +2443,10 @@
 
   function caseTitleForDisplay(raw) {
     const text = String(raw || "").trim();
-    return text.replace(/^\s*第[0-9一二三四五六七八九十百]+\s*案\s*[:：]?\s*/, "").trim();
+    return text
+      .replace(/^\s*第[0-9一二三四五六七八九十百]+\s*案\s*[:：]?\s*/, "")
+      .replace(/^\s*(?:最终案|终局案)\s*[:：]?\s*/, "")
+      .trim();
   }
 
   function chapterShortTitle(title) {
