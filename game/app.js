@@ -1582,7 +1582,7 @@
     const cardHook = caseMenuHook(caseData);
     const grade = record.bestGrade || state.trial[caseData.id]?.grade || "";
     const medal = record.bestMedal || medalForGrade(grade);
-    const label = done ? "查看案件" : started ? "继续案件" : "进入案件";
+    const label = done ? "回看案情" : started ? "继续调查" : "开始调查";
     const focused = state.homeFocusIndex === index;
     const sceneKey = caseData.scene?.key || "archive";
     return `
@@ -1599,7 +1599,7 @@
         </button>
         <div class="case-meta">
           <span class="tag">${done ? "已结案" : started ? "进行中" : "待审理"}</span>
-          <span class="tag">证物 ${collected}/${total}</span>
+          <span class="tag">已搜集证物 ${collected}/${total}</span>
           ${medal ? `<span class="tag medal-tag">${escapeHtml(medal)}</span>` : ""}
           ${grade ? `<span class="tag">评价 ${escapeHtml(grade)}</span>` : ""}
           ${record.clears ? `<span class="tag">结案 ${record.clears} 次</span>` : ""}
@@ -1608,7 +1608,7 @@
         <p>${escapeHtml(cardHook)}</p>
         <p class="case-hook">${escapeHtml(caseData.theme)}</p>
         <div class="case-actions">
-          <button class="secondary-button" type="button" data-focus-case="${index}">查看档案</button>
+          <button class="secondary-button" type="button" data-focus-case="${index}">先看档案</button>
           <button class="case-button" type="button" data-open-case="${index}">${label}</button>
           ${done ? `<button class="secondary-button" type="button" data-replay-case="${index}">重审此案</button>` : ""}
         </div>
@@ -1778,10 +1778,12 @@
           ${renderCaseSourcePanel(caseData)}
           <div class="action-row">
             <button class="secondary-button compact-button" type="button" data-home>返回主菜单</button>
-            <button class="primary-button" type="button" data-mode="investigation">开始调查</button>
-            <button class="secondary-button" type="button" data-mode="trial" ${allEvidenceCollected(caseData) ? "" : "disabled"}>进入庭审</button>
+            <button class="primary-button" type="button" data-mode="investigation">去现场看一看</button>
+            <button class="secondary-button" type="button" data-mode="trial" ${allEvidenceCollected(caseData) ? "" : "disabled"}>直接开庭</button>
           </div>
-          ${allEvidenceCollected(caseData) ? `<p class="hint-text">你已经把主线脉络串起来。庭审里先追一句、问一句，别急着把全部证据一次抛上去。</p>` : `<p class="hint-text">先把现场、证人说法和纸面细节对齐，再进入庭审，不然对手会把你推进错误结论。</p>`}
+          ${allEvidenceCollected(caseData)
+            ? `<p class="hint-text">你已经把主要证词和现场说法连在一起了。庭审里先问一处、再追一句，别一次把所有证物都丢上桌。</p>`
+            : `<p class="hint-text">先把现场线索、证人说法和纸面记载对齐。没对齐就开庭，对手就容易把你带偏。</p>`}
           ${renderCoachCard()}
         </div>
       </section>
@@ -1832,7 +1834,7 @@
     clearEvidencePickup();
     clearInventoryCue();
     clearPursuitUnlockCue();
-    setMessage("开幕", "幕布刚掀开。点画面继续听完开场，再带着问题走向案发现场。", "");
+    setMessage("开幕", "开场已经来了，点画面把对白听完。每一句都可能是你后面开庭能用的线索。", "");
     playCue("transition");
     renderCaseOpeningCutscene();
   }
@@ -1980,8 +1982,8 @@
     return `
       <div class="case-setup" aria-label="案情导入">
         <div class="case-section-title">
-          <strong>先把案子立起来，再把每个人带进框</strong>
-          <span>先听见现场发生了什么，再问“谁最先把话说成结论”。每一步都要留出下一句可追问的话。</span>
+          <strong>先把案情铺开，再把每个人拉进来对照</strong>
+          <span>先看清“谁在先开口”，再问下一句“谁在后面推动了结果”。你每一步，都要留句追问。</span>
         </div>
         ${cards
           .map(
@@ -2199,8 +2201,10 @@
     return text
       .replace(/^\s*\[?\s*卷宗\s*\d+\s*\]?\s*[：:\-—–]?\s*/, "")
       .replace(/^\s*卷宗\d+\s*[：:\-—–]?\s*/, "")
+      .replace(/^\s*第(\d+)\s*章\s*[：:\-—–]?\s*/, "")
       .replace(/^\s*[（(]?\s*第[0-9一二三四五六七八九十百]+\s*章\s*[）)]?\s*[：:\-—–]?\s*/, "")
       .replace(/^\s*第[0-9一二三四五六七八九十百]+\s*章\s*[：:\-—–]?\s*/, "")
+      .replace(/^第[0-9一二三四五六七八九十百]+\s*章\s*/, "")
       .trim();
   }
 
@@ -2208,7 +2212,7 @@
     return String(title)
       .replace(/^\s*卷宗\d+\s*[：:]\s*/, "")
       .replace(/^\s*第\d+章\s*/, "")
-      .replace(/^\s*[一二三四五六七八九十百]+章\s*/, "")
+      .replace(/^\s*第[0-9一二三四五六七八九十百]+\s*章\s*/, "")
       .replace(/^[:：]\s*/, "")
       .slice(0, 14);
   }
@@ -2572,6 +2576,7 @@
     if (inv.command === "move") {
       return `
         <h2>移动</h2>
+        <p class="hint-text">换到别的地点，先把“这个场景还有哪些人和物可以问”看清楚。</p>
         <div class="location-list">
           ${caseData.locations
             .map(
@@ -2589,7 +2594,7 @@
     if (inv.command === "examine") {
       return `
         <h2>查看</h2>
-        <p class="hint-text">点亮场景里的可疑点继续看。看过的标记会留痕，回头来可复查。</p>
+        <p class="hint-text">先盯住场景里最像被动过手脚的地方。每找一处都会留下可复核痕迹。</p>
         <div class="spot-status-list">
       ${location.examineSpots
             .map((spot, index) => {
@@ -2609,6 +2614,7 @@
     if (inv.command === "talk") {
       return `
         <h2>交谈</h2>
+        <p class="hint-text">先问一句能引出细节的问题，回答出来再决定下一步。</p>
         <div class="location-list">
           ${location.talkTopics
             .map((topic, index) => {
@@ -2628,7 +2634,7 @@
     const owned = collectedEvidence(caseData);
     return `
       <h2>出示</h2>
-      <p class="hint-text">拿你已收进案卷的物证先试探一下。法庭里再确认是否够硬后，再真的点“举证”。</p>
+      <p class="hint-text">先把你已收的证据做“试探展示”。确认对方反应后，再回到庭审面板正式举证。</p>
       <div class="location-list">
         ${owned
       .map(
@@ -2670,11 +2676,11 @@
     const trialDeduction = trialDeductionForStatement(caseData, statement, progress, progress.testimonyIndex, rawIndex);
     const recordPrompt = readyToPresent
       ? selectedLabel
-        ? "这句话里有明显缝。先把你手里的证物和它对应起来，再按 E/Enter 直接冲一口。"
+        ? "你已经抓到这句里的破绽。把可用证物先放进面板，再按 E/Enter 一口气反击。"
         : statement.answerProfile
-          ? "这段话有点站不住。先开人物档案，选能揭穿它的人。"
-          : "这段话不完整，先在法庭记录里找一件能把对方说法打掉的线索，选中后可直接按 E 试一下。"
-      : "法庭记录先是你的工作台，别急着交付。先定好要出的线索，点“举证”才会真正上庭。";
+          ? "这句站不稳，先打开人物档案，选出能拆穿它的人。"
+          : "这句像半句拼图。先在法庭记录里找一项能对上的线索，先预演，再决定举证。"
+      : "法庭记录是你的演练台。先把证物、人物和证词对齐，确认方向后再点“举证”进庭。";
     state.screen = "trial";
     renderStatus();
     app.innerHTML = `
@@ -4036,7 +4042,7 @@
     if (state.screen !== "trial") return "";
     return `
       <div class="record-return-action">
-        <span>确认选择后回到庭审主操作区，再决定是否正式举证。</span>
+        <span>点“带回庭审”后先回到庭审主操作区，确认方向对了再正式举证。</span>
         <button class="primary-button" type="button" data-return-to-trial>带回庭审</button>
       </div>
     `;
@@ -4316,7 +4322,7 @@
       }
       state.recordOpen = false;
       clearInvestigationBeat();
-      setMessage("调查", "先选个动作开始。移动、查看、交谈、出示都能改写线索，顺着嫌疑人的反应走。", "");
+    setMessage("调查", "先从一个动作下手：移动、查看、交谈、出示都能改变线索。先看人和现场的反应，再决定下一步。", "");
       renderInvestigation();
     } else {
       const caseData = currentCase();

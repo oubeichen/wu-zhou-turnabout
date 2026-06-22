@@ -6810,6 +6810,43 @@ button:not(:disabled):hover {
     grid-template-columns: 1fr;
   }
 
+  .play-layout,
+  .play-layout > div:first-child,
+  .investigation-layout > div:first-child,
+  .trial-layout > div:first-child,
+  .case-intro-layout,
+  .case-intro-layout > .case-brief {
+    display: block;
+    min-height: 0;
+  }
+
+  .investigation-layout > div:first-child,
+  .trial-layout > div:first-child {
+    gap: 10px;
+  }
+
+  .investigation-layout .scene,
+  .trial-layout .scene,
+  .interlude-stage {
+    min-height: min(500px, 68vh);
+  }
+
+  .investigation-layout .location-map,
+  .investigation-layout .clue-board,
+  .investigation-layout .command-panel,
+  .trial-layout .trial-panel {
+    overflow: visible;
+  }
+
+  .investigation-layout .command-body,
+  .trial-panel .record-list,
+  .trial-panel .timeline-list,
+  .location-list,
+  .spot-status-list {
+    max-height: min(48vh, 420px);
+    overflow: auto;
+  }
+
   .main-menu {
     grid-template-columns: 1fr;
     grid-template-areas:
