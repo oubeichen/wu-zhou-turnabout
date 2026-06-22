@@ -3234,3 +3234,35 @@ Remaining Ace Attorney gap list:
 - Keep rewriting testimony-side helper text, evidence summaries, and late-case prompts that still sound more like feature labels than escalating courtroom pressure.
 - Continue screenshot-first QA on statement cards, record drawer entries, and evidence detail panels.
 - Do not reopen already-fixed `举证` button, hotspot placement, or desktop no-scroll layout unless a fresh screenshot shows a concrete regression.
+
+## 2026-06-23 iteration 110 result
+
+Implemented:
+- Kept this round limited to one small but always-visible court surface: the witness-mood text in the trial header.
+- Rewrote the header mood labels in `game/app.js` from metadata-style words to shorter courtroom-pressure phrases.
+- Scope stayed narrow: no changes to testimony progression, statement logic, controls, or layout structure.
+
+Why this round:
+- After the testimony-strip status pass, the next remaining system-like phrasing on the same screen was the top header mood label.
+- `谨慎 / 强硬 / 决断` was understandable, but it still read like an abstract state enum instead of the pressure the player should feel from the witness or opponent.
+- This was a strong small-round target because that line appears on every testimony block and is easy to validate across all three court sections.
+
+Verified:
+- `npm run check:js`
+- `git diff --check`
+- Ran an escalated local Playwright verification at `1600x960` using the same reproducible court-ready local save snapshot as recent trial-page checks
+- Captured a fresh screenshot:
+  - `output/trial-header-mood-current.png`
+- Live DOM capture confirmed the three testimony headers now render as:
+  - `内廷记录官｜话说得很稳`
+  - `许敬宗｜步步进逼`
+  - `御前书记｜咬死不放`
+- Screenshot inspection confirmed:
+  - the current header fits cleanly on one line;
+  - the right-column header still aligns;
+  - no new clipping or layout drift appeared after the wording change.
+
+Remaining Ace Attorney gap list:
+- Keep rewriting testimony-side helper text, evidence summaries, and late-case prompts that still sound like neutral interface metadata instead of escalating courtroom pressure.
+- Continue screenshot-first QA on trial headers, statement cards, record drawer entries, and evidence detail panels.
+- Do not reopen already-fixed `举证` button, hotspot placement, or desktop no-scroll layout unless a fresh screenshot shows a concrete regression.

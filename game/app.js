@@ -3307,9 +3307,9 @@
 
   function renderTrialHeader(testimony, progress) {
     const moodLabels = {
-      cautious: "谨慎",
-      aggressive: "强硬",
-      decisive: "决断",
+      cautious: "话说得很稳",
+      aggressive: "步步进逼",
+      decisive: "咬死不放",
     };
     return `
       <div class="trial-header">
