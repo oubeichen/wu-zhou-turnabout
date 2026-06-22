@@ -1227,6 +1227,44 @@
     return evidenceById(caseData, `${caseData.id}-ev-pursuit-note`);
   }
 
+  function objectionAftermathCopy(caseData, statement, recordLabel, deduction) {
+    const recordName = recordLabel || "这份记录";
+    const targetName = deduction?.targetName || (statement?.answerProfile ? `${statement.answerProfile}的档案` : "当前证词");
+    const generic = {
+      title: "证人退了一步",
+      reaction: `${caseData.witness || "证人"}没有马上接话。${recordName}已经压到证词最薄的地方，他再往前说一句，就得解释${targetName}为什么会在那里。`,
+      defenseLine: "别急着收手。证词刚裂开时，最容易听见他真正害怕解释的那一段。",
+    };
+    const byCase = {
+      "case-empress-seat": {
+        title: "记录官的笔停住了",
+        reaction: `内廷记录官看着${recordName}，笔尖悬在纸上。他可以继续写“听闻”，却没法解释值夜签为什么偏偏在摇篮旁被改过。`,
+        defenseLine: "现在别让他退回“宫人旧怨”。问清谁先把哭声送进文书，后位案才会露出真正的手。",
+      },
+      "case-crown-shadow": {
+        title: "东宫旧纸翻了面",
+        reaction: `邠王守礼避开${recordName}，声音低了半截。旧臣递账不是终点，真正要命的是谁把账册和${targetName}排到一起。`,
+        defenseLine: "继续压记录流向。只要书记官承认挑选顺序，东宫家事就不再只是家事。",
+      },
+      "case-rebellion-box": {
+        title: "告密声卡住了",
+        reaction: `告密人盯着${recordName}，先前那句“民声”忽然轻了。投书可以进铜匦，却不会自己长出${targetName}。`,
+        defenseLine: "追纸离开铜匦后的路。每转一手，谁加重了罪名，谁就离证人席更近。",
+      },
+      "case-urn": {
+        title: "暗室里的热气回来了",
+        reaction: `周兴的指节停在案沿。${recordName}一摆出来，自愿签押就不再像自愿，倒像有人把${targetName}照着流程逼出来。`,
+        defenseLine: "别和他争一句供词真假。逼他说出那套办法怎样用到人身上。",
+      },
+      "case-half-hour-coup": {
+        title: "半小时安静了下来",
+        reaction: `张易之把目光从${recordName}挪开。若只是夜里仓促，${targetName}不该像提前排好一样准。`,
+        defenseLine: "继续追时间表。越说混乱，越要问谁先知道哪一道门会开、哪一道命令会落下。",
+      },
+    };
+    return { ...generic, ...(byCase[caseData.id] || {}) };
+  }
+
   function visibleStatementEntries(testimony, progress) {
     return testimony.statements
       .map((statement, rawIndex) => ({ statement, rawIndex }))
@@ -2845,7 +2883,7 @@
         ${state.recordOpen ? `<button class="record-scrim" type="button" data-close-record aria-label="关闭法庭记录"></button>` : ""}
         ${renderRecordPanel(caseData, progress, true)}
       </section>
-      ${renderCue()}
+      ${state.objectionReveal ? "" : renderCue()}
       ${renderObjectionReveal()}
       ${renderRecordInspectModal(caseData)}
       ${renderGuidePanel()}${renderSettings()}
@@ -4240,7 +4278,7 @@
           </div>
           <strong>${escapeHtml(step.title)}</strong>
           <p>${escapeHtml(step.body)}</p>
-          ${renderObjectionCutIn(reveal, stepIndex)}
+          ${stepIndex < 3 ? renderObjectionCutIn(reveal, stepIndex) : ""}
           <div class="reveal-record">
             <em>${escapeHtml(step.recordLabel)}</em>
             <small>${escapeHtml(step.targetLabel)}</small>
@@ -4274,6 +4312,8 @@
     const target = reveal.target || "当前证词";
     const deductionText = reveal.deductionText || "";
     const deductionTarget = reveal.deductionTarget || "";
+    const reactionTitle = reveal.reactionTitle || "证人退了一步";
+    const reactionText = reveal.reactionText || "证人没有立刻接话，证词里那块空白终于被法庭看见了。";
     return [
       {
         kicker: "异议切入",
@@ -4295,6 +4335,13 @@
         body: deductionText ? `庭前对照和当前证词咬在同一个缺口上：${target}` : `这份记录击中的不是细枝末节，而是证词的核心前提：${target}`,
         recordLabel: title,
         targetLabel: record,
+      },
+      {
+        kicker: "证人反应",
+        title: reactionTitle,
+        body: reactionText,
+        recordLabel: "证人席",
+        targetLabel: reveal.defenseLine || "趁他退后，继续追问真正回避的地方。",
       },
     ];
   }
@@ -4773,6 +4820,7 @@
   function prepareObjectionReveal(caseData, progress, statement, rawIndex, presentedLabel) {
     const turnabout = !statement.optionalRecovery && pressureLevel(progress) !== "stable" ? turnaboutBeat(caseData) : null;
     const deduction = statement.answerEvidence ? deductionForEvidence(caseData, statement.answerEvidence) : null;
+    const aftermath = objectionAftermathCopy(caseData, statement, presentedLabel, deduction);
     const title = turnabout ? "逆转" : statement.answerProfile ? "档案击破" : "异议成立";
     const subtitle = deduction ? "对照札记补上证物链条" : turnabout ? turnabout.title : statement.answerProfile ? "人物档案刺穿证词" : "证物与证词正面冲突";
     setStage("clash", "异议切入", { left: "confident", right: "stagger" });
@@ -4788,6 +4836,9 @@
       line: subtitle,
       deductionText: deduction?.text || "",
       deductionTarget: deduction?.targetName || "",
+      reactionTitle: aftermath.title,
+      reactionText: aftermath.reaction,
+      defenseLine: aftermath.defenseLine,
     };
     setMessage("辩方", `异议！${presentedLabel || "这份记录"}和这句证词对不上。`, "objection");
     playCue("objection");
@@ -4831,6 +4882,7 @@
     const rescuedFromPressure = !statement.optionalRecovery && pressureLevel(progress) !== "stable";
     const turnabout = rescuedFromPressure ? turnaboutBeat(caseData) : null;
     const deduction = statement.answerEvidence ? deductionForEvidence(caseData, statement.answerEvidence) : null;
+    const aftermath = objectionAftermathCopy(caseData, statement, presentedLabel, deduction);
     progress.solved.push(key);
     setStage("clash", turnabout ? turnabout.title : statement.answerProfile ? "人物档案击中矛盾" : "证物击中矛盾", { left: "shock", right: "stagger" });
     setImpactCue(
@@ -4878,18 +4930,28 @@
       };
       progress.deductionPursuits += 1;
       setStage("clash", "对照追击", { left: "confident", right: "stagger" });
-      setMessage("辩方", "这条札记还可以继续追。不能只让证词倒下，要让证人解释证物之间为什么能对上。", "objection");
+      setMessage("辩方", `${aftermath.reaction} ${aftermath.defenseLine}`, "objection");
       playCue("counter");
       save();
       renderDeductionFollowUp();
       return;
     }
-    finishCorrectPresent(caseData, progress, testimony, statement, key, statement.objection || "", turnabout ? ` ${turnabout.title}：${turnabout.body}${turnabout.opponentLine ? ` ${turnabout.opponentLine}` : ""}` : "");
+    finishCorrectPresent(
+      caseData,
+      progress,
+      testimony,
+      statement,
+      key,
+      statement.objection || "",
+      turnabout ? ` ${turnabout.title}：${turnabout.body}${turnabout.opponentLine ? ` ${turnabout.opponentLine}` : ""}` : "",
+      aftermath
+    );
   }
 
-  function finishCorrectPresent(caseData, progress, testimony, statement, key, objectionText, turnaboutText = "") {
+  function finishCorrectPresent(caseData, progress, testimony, statement, key, objectionText, turnaboutText = "", aftermath = null) {
     if (testimonyFullySolved(testimony, progress.testimonyIndex, progress)) {
-      advanceTestimony(caseData, progress, `${objectionText || statement.objection}${turnaboutText}`);
+      const reactionText = aftermath ? ` ${aftermath.reaction}` : "";
+      advanceTestimony(caseData, progress, `${objectionText || statement.objection}${reactionText}${turnaboutText}`);
     } else {
       state.selectedEvidenceId = "";
       state.selectedProfileName = "";
@@ -4897,7 +4959,8 @@
       if (statement.optionalRecovery) {
         progress.statementIndex = Math.max(0, progress.statementIndex - 1);
       }
-      setMessage("辩方", `${objectionText || statement.objection}${recoveryText}${turnaboutText} 但这段证词还有未解释的矛盾。`, "objection");
+      const reactionText = aftermath ? ` ${aftermath.reaction} ${aftermath.defenseLine}` : "";
+      setMessage("辩方", `${objectionText || statement.objection}${recoveryText}${reactionText}${turnaboutText} 但这段证词还有未解释的矛盾。`, "objection");
       playCue("objection");
       save();
       renderTrial();
@@ -6009,6 +6072,8 @@
       objectionRevealLine: state.objectionReveal?.line || "",
       objectionRevealDeductionText: state.objectionReveal?.deductionText || "",
       objectionRevealDeductionTarget: state.objectionReveal?.deductionTarget || "",
+      objectionRevealReactionTitle: state.objectionReveal?.reactionTitle || "",
+      objectionRevealReactionText: state.objectionReveal?.reactionText || "",
       objectionRevealStep: state.objectionReveal ? Number(state.objectionReveal.step || 0) + 1 : 0,
       objectionRevealStepTitle: state.objectionReveal ? objectionRevealSteps(state.objectionReveal)[Number(state.objectionReveal.step || 0)]?.kicker || "" : "",
       objectionRevealSteps: state.objectionReveal ? objectionRevealSteps(state.objectionReveal).length : 0,

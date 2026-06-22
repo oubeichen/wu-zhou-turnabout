@@ -2473,3 +2473,28 @@ Remaining Ace Attorney gap list:
 - Continue deeper per-character voice work for trial `press` and `objection`; each witness and opponent should expose a different fear, habit, and social position.
 - Add more authored reaction beats after correct objections so the victory moment is not only a mechanical reveal.
 - Mobile record drawer is usable, but should later become a tighter game overlay with less full-page height.
+
+## 2026-06-22 iteration 91 result
+
+Implemented:
+- Added case-specific aftermath copy for correct objections, so a successful contradiction now produces a witness/opponent reaction rooted in the current case instead of only saying the evidence matched.
+- Extended the objection reveal sequence from three beats to four beats by adding a final `证人反应` beat after `异议切入`、`证物对照`、`矛盾揭示`.
+- Connected the same aftermath copy to the post-objection trial message and deduction pursuit entry, so the next step tells the player what the witness is trying to avoid rather than giving a generic instruction.
+- Exposed `objectionRevealReactionTitle` and `objectionRevealReactionText` through `render_game_to_text` so automated browser checks can verify the new narrative beat.
+- Fixed the reveal overlay layering after screenshot review: while the objection reveal modal is open, the separate impact cue no longer renders over it; the fourth beat is readable on desktop and mobile.
+
+Verified:
+- `npm run check:js`
+- `PYTHONPYCACHEPREFIX="/Users/oubeichen/Projects/wuzetian2/.pycache" npm run check:py`
+- `git diff --check`
+- Escalated Chromium screenshot audit at 1600x960 and 390x844 covered the full first-case flow through investigation, record drawer, trial, correct evidence selection, and all four objection reveal beats.
+- Screenshot inspection confirmed:
+  - `/tmp/wz_audit_live/v1600x960-trial-objection-reveal-step-4.png` shows the new desktop `证人反应` beat without the impact card covering the text.
+  - `/tmp/wz_audit_live/v390x844-trial-objection-reveal-step-4.png` shows the same beat on mobile with the title and reaction readable.
+  - The earlier ready-to-present and record drawer states still do not show the premature `异议成立` overlay.
+- `npm run qa:web-game` with escalated Chromium browser access succeeded. The only warning was the external web-game Playwright client being reparsed as an ES module.
+
+Remaining Ace Attorney gap list:
+- Continue deeper per-character voice work for trial `press` and `objection` across later cases, especially prosecutors and hostile witnesses.
+- Add more after-correct-objection branch variety: some wins should unlock new testimony, some should pressure the opponent, and some should change court momentum.
+- Mobile record drawer is usable, but should later become a tighter game overlay with less full-page height.
