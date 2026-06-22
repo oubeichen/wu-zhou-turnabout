@@ -2242,8 +2242,16 @@
 
   function timelineLabel(item, fallbackIndex = 0) {
     const chapter = parseChapterNumber(item?.label || item?.title);
-    if (chapter) return `线索${chapter}`;
-    return `线索${Math.max(1, Number(fallbackIndex) + 1)}`;
+    if (chapter) return "关键线索";
+    return `线索 ${timelineIndexLabel(fallbackIndex)}`;
+  }
+
+  function timelineIndexLabel(index = 0) {
+    const zeroBased = Math.max(0, Number(index) || 0);
+    const cycle = zeroBased % 26;
+    const repeat = Math.floor(zeroBased / 26) + 1;
+    const letter = String.fromCharCode(65 + cycle);
+    return repeat <= 1 ? letter : `${letter}${repeat}`;
   }
 
   function timelineSourceIndex(caseData, item, fallbackIndex = 0) {
@@ -2288,7 +2296,7 @@
               (item) => `
                 <button class="source-tab ${active?.index === item.index ? "active" : ""}" type="button" data-case-source="${item.index}">
                   <strong>${escapeHtml(item.storyTitle)}</strong>
-                  <span>线索 ${item.index + 1}｜${active?.index === item.index ? "正在翻看" : "点击翻看"}</span>
+                  <span>线索卡 ${timelineIndexLabel(item.index)}｜${active?.index === item.index ? "正在翻看" : "点击翻看"}</span>
                 </button>
               `
             )
