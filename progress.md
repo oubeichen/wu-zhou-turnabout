@@ -3297,6 +3297,42 @@ Remaining Ace Attorney gap list:
 - Continue screenshot-first QA on pressure labels, trial headers, statement cards, record drawer entries, and evidence detail panels.
 - Do not reopen already-fixed `举证` button, hotspot placement, or desktop no-scroll layout unless a fresh screenshot shows a concrete regression.
 
+## 2026-06-23 iteration 117 result
+
+Implemented:
+- Kept this round limited to one section title on the case-intro source panel in `game/app.js`.
+- Changed the heading from `先把散开的线头接起来` to `散开的线头`.
+- Left the source-panel body text, source tabs, and case flow untouched.
+
+Why this round:
+- The latest verified case-intro screenshot still had a prominent section title that was directly telling the player what to do.
+- The surrounding copy was already moving closer to scene pressure, so this title had become the next most obvious “说明书口吻” mismatch on that screen.
+- This was a safe small-round target because it is display-only, highly visible, and easy to verify without reopening any settled interaction or layout work.
+
+Verified:
+- `git fetch origin main`
+- confirmed `HEAD` and `origin/main` both pointed to `3fe7a8e826dc9feb051b9d87c7d210703f7a69e9` before this round's commit
+- `npm run check:js`
+- `git diff --check`
+- Used the in-app browser at `http://127.0.0.1:8788/game/` and reopened the current case-intro screen from the persisted case-1 progress state
+- Captured a fresh screenshot:
+  - `output/case-source-header-current.png`
+- Live DOM capture confirmed:
+  - `sectionTitle: 散开的线头`
+  - `bodyHasOldText: false`
+- Screenshot inspection confirmed:
+  - the new heading fits cleanly above the source tabs;
+  - the tabs, right-side detail card, and bottom action buttons remained aligned at `1600x960`;
+  - no new overflow, clipping, or spacing regression appeared.
+
+Notes:
+- Checked `.gitignore` this round; current rules still cover the generated validation artifacts, so no `.gitignore` change was needed.
+
+Remaining Ace Attorney gap list:
+- Keep rewriting case-intro source labels, evidence summaries, and late-case prompts that still sound like neutral interface metadata instead of scene pressure.
+- Continue screenshot-first QA on case-intro source panels, top-bar tags, pressure labels, trial headers, statement cards, record drawer entries, and evidence detail panels.
+- Do not reopen already-fixed `举证` button, hotspot placement, or desktop no-scroll layout unless a fresh screenshot shows a concrete regression.
+
 ## 2026-06-23 iteration 116 result
 
 Implemented:

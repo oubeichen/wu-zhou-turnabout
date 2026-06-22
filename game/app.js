@@ -2541,7 +2541,7 @@
     return `
       <div class="case-source-panel">
         <div class="case-section-title">
-          <strong>先把散开的线头接起来</strong>
+          <strong>散开的线头</strong>
           <span>纸、人、口供一旦摆到一处，总有人会先把话往回吞。</span>
         </div>
         <div class="source-tabs" aria-label="案件线索">
