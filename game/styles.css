@@ -3361,25 +3361,57 @@ button:not(:disabled):hover {
 }
 
 .trial-actions {
-  grid-template-columns: minmax(94px, 0.7fr) minmax(100px, 0.82fr) minmax(90px, 0.64fr) minmax(118px, 1fr);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-areas:
+    "home record"
+    "press present";
   align-items: stretch;
+  gap: 10px;
 }
 
 .trial-actions > button {
   min-height: 42px;
 }
 
-.trial-actions .secondary-button {
-  min-height: 36px;
-  padding: 6px 10px;
+.trial-action-home {
+  grid-area: home;
+}
+
+.trial-action-press {
+  grid-area: press;
+}
+
+.record-open-button {
+  grid-area: record;
+}
+
+.present-button {
+  grid-area: present;
+}
+
+.trial-action-minor {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  padding: 7px 12px;
   font-size: 14px;
+}
+
+.trial-action-major {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 58px;
+  font-size: 21px;
+  font-weight: 900;
 }
 
 .present-button {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 6px 14px;
+  padding: 8px 14px;
   font-weight: 900;
   box-shadow: 0 4px 0 #2c0d0d, inset 0 1px 0 rgba(255, 241, 191, 0.12);
 }
@@ -3394,6 +3426,14 @@ button:not(:disabled):hover {
 .present-button.opportunity {
   outline: 3px solid rgba(221, 171, 61, 0.42);
   box-shadow: 0 4px 0 rgba(92, 29, 24, 0.36), 0 0 0 4px rgba(255, 241, 191, 0.22);
+}
+
+.present-button:disabled {
+  opacity: 1;
+  color: rgba(255, 248, 231, 0.88);
+  background: linear-gradient(180deg, #9a7974, #85625f);
+  border-color: #6b4c48;
+  box-shadow: 0 4px 0 #523a38;
 }
 
 .selected-record-bar {
@@ -6522,9 +6562,17 @@ button:not(:disabled):hover {
   }
 
   .trial-actions {
-    grid-template-columns: repeat(5, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-areas:
+      "home record"
+      "press present";
     gap: 8px;
     margin-top: 8px;
+  }
+
+  .trial-action-major {
+    min-height: 54px;
+    font-size: 19px;
   }
 
   .selected-record-bar {

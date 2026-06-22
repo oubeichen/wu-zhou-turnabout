@@ -2704,3 +2704,44 @@ Remaining Ace Attorney gap list:
 - Keep rewriting later-case testimony `press`, `wrongEvidenceFeedback`, and profile/evidence descriptions that still leak tactics instead of character stance.
 - Continue reducing instructional phrasing inside optional guide content; it is hidden now, but some `steps` lists still read more like workflow than story.
 - When the in-app browser surface is available again, rerun screenshot checks on case intro, investigation, and trial to visually confirm these new lines fit cleanly.
+
+## 2026-06-22 iteration 97 result
+
+Implemented:
+- Focused this round on the courtroom main action area after spotting that the `举证` button looked visually off in trial.
+- Reworked the trial action strip in `game/app.js` and `game/styles.css` instead of tweaking only one color:
+  - split the trial controls into a clearer 2x2 hierarchy,
+  - kept `返回主菜单` and `法庭记录` as smaller secondary controls on the first row,
+  - grouped `追问` and `举证` as the lower main action pair,
+  - widened both main actions to the same width so the right-side control area no longer feels cramped.
+- Gave the disabled `举证` state its own muted red treatment instead of the generic washed-out disabled opacity, so it still reads as an intentional main action rather than a broken button.
+- Tightened the selected-record prompt copy in trial so it reads faster and supports the new action hierarchy:
+  - no selection: `先从记录里挑一件，别让案卷空着。`
+  - selected but not ready: shorter “在手边/还没卡住这句话” phrasing
+  - ready to present: shorter “破口露出来了，把它顶上去。”
+
+Did not reopen this round:
+- Hotspot overlap changes.
+- Investigation layout changes.
+- Previously fixed portrait / objection overlay work.
+
+Verified:
+- `npm run check:js`
+- `PYTHONPYCACHEPREFIX="/Users/oubeichen/Projects/wuzetian2/.pycache" npm run check:py`
+- `git diff --check`
+- Because the in-app browser surface `iab` was still unavailable, switched to an escalated Playwright run for screenshot verification.
+- Desktop 1440x900 screenshot checks confirmed:
+  - disabled `举证` now keeps a deliberate button frame instead of fading into the panel,
+  - `追问 / 举证` now share the same footprint and sit as the clear primary pair,
+  - the selected-record strip no longer reads like a long system prompt.
+- Desktop selected-record screenshot confirmed:
+  - selected evidence keeps `举证` enabled without auto-submitting,
+  - `已选：破损的后位奏章` and the shorter prompt fit cleanly in the sidebar.
+- Mobile 390x844 screenshot confirmed:
+  - no horizontal overflow,
+  - the stacked action area remains readable,
+  - `追问 / 举证` stay visually distinct from `返回主菜单 / 法庭记录`.
+
+Remaining Ace Attorney gap list:
+- Continue the copy-polish pass on later-case testimony, evidence `use`, and profile notes that still sound like tactical notes instead of in-world speech.
+- Revisit courtroom action labels only if a fresh screenshot shows a concrete defect; do not churn this area again without evidence.

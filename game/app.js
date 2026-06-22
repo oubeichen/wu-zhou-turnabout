@@ -2880,11 +2880,15 @@
     const trialDeduction = trialDeductionForStatement(caseData, statement, progress, progress.testimonyIndex, rawIndex);
     const recordPrompt = readyToPresent
       ? selectedLabel
-        ? "破口已经露出。能咬住这句话的记录，已经压到案前。"
+        ? "破口露出来了，把它顶上去。"
         : statement.answerProfile
-          ? "这句站不稳。真正能拆穿它的人，不在证物里，在人物档案里。"
-          : "这句像半块拼图。法庭记录里，总有一处边角能与它咬合。"
-      : "案卷还摊在辩方席上。证物、人物和证词，得在同一处破口上合拢。";
+          ? "这句该拆了，去人物档案里找那个人。"
+          : "这句该拆了，去记录里挑那份对得上的纸。"
+      : selectedLabel
+        ? state.selectedProfileName
+          ? "人已经盯住了，只差等他自己说漏。"
+          : "东西在手边，但还没卡住这句话。"
+        : "先从记录里挑一件，别让案卷空着。";
     state.screen = "trial";
     renderStatus();
     app.innerHTML = `
@@ -2906,10 +2910,10 @@
               <small>${escapeHtml(recordPrompt)}</small>
             </div>
           <div class="action-row trial-actions">
-            <button class="secondary-button compact-button" type="button" data-home>返回主菜单</button>
-            <button class="primary-button" type="button" data-press>追问</button>
-            <button class="secondary-button record-open-button ${readyToPresent ? "opportunity" : ""}" type="button" data-open-record>法庭记录</button>
-            <button class="danger-button present-button ${readyToPresent && selectedLabel ? "opportunity" : ""}" type="button" data-present ${selectedLabel ? "" : "disabled"}>
+            <button class="secondary-button compact-button trial-action-minor trial-action-home" type="button" data-home>返回主菜单</button>
+            <button class="secondary-button record-open-button trial-action-minor ${readyToPresent ? "opportunity" : ""}" type="button" data-open-record>法庭记录</button>
+            <button class="primary-button trial-action-major trial-action-press" type="button" data-press>追问</button>
+            <button class="danger-button present-button trial-action-major ${readyToPresent && selectedLabel ? "opportunity" : ""}" type="button" data-present ${selectedLabel ? "" : "disabled"}>
               <span class="action-label">举证</span>
             </button>
           </div>
