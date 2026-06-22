@@ -2381,6 +2381,33 @@
     return "这段记载";
   }
 
+  function evidenceOriginShort(item) {
+    const source = String(item?.source || "").trim();
+    if (item?.pursuitOnly || /追击/.test(source)) return "追击补进";
+    if (item?.trialOnly || /庭审|追问/.test(source)) return "庭上追加";
+    if (/由(?:本案|该案|本章|相关案件)相关章节归纳/.test(source)) return "辩方整理";
+    return "已收入案卷";
+  }
+
+  function evidenceOriginLong(item) {
+    const source = String(item?.source || "").trim();
+    if (item?.pursuitOnly || /追击/.test(source)) {
+      return "这是追击后补进案卷的一页。分量不在出处名目，而在它正好堵住了证人刚露出的退路。";
+    }
+    if (item?.trialOnly || /庭审|追问/.test(source)) {
+      return "这是庭上追问后新记下的一页。法庭刚听过这道空白，它还热着。";
+    }
+    if (/由(?:本案|该案|本章|相关案件)相关章节归纳/.test(source)) {
+      return "这是辩方把散开的证物和口供重新钉成一条线后的整理页。";
+    }
+    return "这是从现场收进案卷的一页。它先说明谁碰过它，再说明谁想把它遮过去。";
+  }
+
+  function evidenceMetaLine(item) {
+    const type = item?.type || "案卷";
+    return `${type}｜${evidenceOriginShort(item)}`;
+  }
+
   function sourceLabelClean(raw) {
     const text = String(raw || "").trim();
     return text
@@ -3233,7 +3260,7 @@
             <div class="pickup-copy">
               <h2>${escapeHtml(item.name)}</h2>
               <p>${escapeHtml(item.summary || item.detail || "这件物品已经加入法庭记录。")}</p>
-              <small>${escapeHtml(item.type)}｜${escapeHtml(sourceForDisplay(item.source))}</small>
+              <small>${escapeHtml(evidenceMetaLine(item))}</small>
             </div>
           </div>
           <div class="pickup-note">
@@ -3600,7 +3627,7 @@
           ${renderEvidenceThumb(item, true, "large", caseData)}
           <span class="evidence-detail-copy">
             <strong>${escapeHtml(item.name)}</strong>
-            <span>${escapeHtml(item.type)}｜${escapeHtml(sourceForDisplay(item.source))}</span>
+            <span>${escapeHtml(evidenceMetaLine(item))}</span>
             <small>${state.screen === "trial" ? "这件证物已经在手边。它分量不轻，只是眼前这一句还未必接得住它。" : "证物已经归卷。它迟早会落到该落的位置。"} </small>
           </span>
         </div>
@@ -3732,7 +3759,7 @@
     if (!item) return [];
     const specific = specificInspectSpotsForEvidence(item, viewId);
     if (specific.length) return specific;
-    const source = item.source ? `来源：${sourceForDisplay(item.source)}` : "它要么出自现场，要么出自案卷；来路不清，就站不稳。";
+    const source = item ? `来源：${evidenceOriginLong(item)}` : "它要么出自现场，要么出自案卷；来路不清，就站不稳。";
     const risk = item.counterRisk ? ` 慎用点：${item.counterRisk}` : "";
     const common = {
       trace: {
@@ -3803,7 +3830,7 @@
   }
 
   function specificInspectSpotsForEvidence(item, viewId) {
-    const source = item.source ? `来源：${sourceForDisplay(item.source)}` : "这份资料的分量，要看它到底落在谁的证词和哪一段时辰上。";
+    const source = item ? `来源：${evidenceOriginLong(item)}` : "这份资料的分量，要看它到底落在谁的证词和哪一段时辰上。";
     const risk = item.counterRisk ? `慎用点：${item.counterRisk}` : "它一旦亮得太早，争点就会被人带开。";
     const map = {
       board: {
@@ -4207,7 +4234,7 @@
     if (!inspect) return "";
     const { type, item, index, items } = inspect;
     const title = type === "profile" ? item.name : item.name;
-    const subtitle = type === "profile" ? item.role : `${item.type}｜${sourceForDisplay(item.source)}`;
+    const subtitle = type === "profile" ? item.role : evidenceMetaLine(item);
     const spot = type === "evidence" ? activeInspectSpot(item) : null;
     return `
       <div class="modal-scrim record-inspect-scrim" role="dialog" aria-modal="true" aria-label="法庭记录详查">

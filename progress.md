@@ -2920,3 +2920,45 @@ Remaining Ace Attorney gap list:
 - Keep rewriting first-screen-visible evidence summaries and later-case source/evidence blurbs that still sound like condensed historian notes.
 - The investigation beat can now coexist with hotspot clicking, but mobile and desktop should be re-swept later for broader command-flow QA beyond the first case’s first location.
 - Continue treating `举证` button visuals as fixed unless a fresh screenshot shows a new concrete regression.
+
+## 2026-06-22 iteration 101 result
+
+Implemented:
+- This round stayed off the already-fixed `举证` button and the freshly-adjusted investigation hotspot chain.
+- Focused on one player-facing clarity issue still visible in screenshots: evidence surfaces were still exposing raw source/chapter provenance that means little to players, such as chapter-title-like labels on the pickup card.
+- Added three small helpers in `game/app.js`:
+  - `evidenceOriginShort(item)`
+  - `evidenceOriginLong(item)`
+  - `evidenceMetaLine(item)`
+- Replaced raw `sourceForDisplay(item.source)` labels on evidence-facing UI with player-facing origin labels:
+  - pickup card now shows labels like `宫中文书｜已收入案卷`;
+  - selected evidence detail uses the same player-facing line;
+  - evidence inspect modal subtitle now uses the same player-facing line;
+  - inspect observation text now says things like `来源：这是从现场收进案卷的一页……` instead of exposing chapter provenance.
+
+Why this round:
+- The previous round’s real screenshot `output/investigation-hotspot-chain-current.png` still showed a pickup label like `现场记录｜为了对付那个貌美多姿的妃子`, which reads like a book chapter reference rather than usable game information.
+- This was exactly the kind of “普通玩家看不懂 / 不需要知道原书章节名” issue the user had flagged earlier.
+
+Verified:
+- `git ls-remote origin refs/heads/main` matched local HEAD before editing.
+- `npm run check:js`
+- `git diff --check`
+- `npm run qa:web-game`
+- Ran escalated local Playwright flow to capture and inspect:
+  - `output/pickup-origin-copy-current.png`
+  - `output/record-origin-copy-current.png`
+- Playwright text assertions confirmed:
+  - pickup card meta line: `宫中文书｜已收入案卷`
+  - record detail meta line: `宫中文书｜已收入案卷`
+  - inspect modal subtitle: `宫中文书｜已收入案卷`
+  - inspect observation now uses a full player-facing origin sentence instead of chapter provenance.
+- Screenshot inspection confirmed:
+  - no text overflow in the pickup card after the label change;
+  - no text overflow in the record inspect modal after the subtitle/source change;
+  - raw chapter labels no longer leak into these first-seen evidence surfaces.
+
+Remaining Ace Attorney gap list:
+- Keep sweeping player-facing evidence `summary`, `detail`, and `use` lines that still sound more like compressed historian annotation than spoken game-world material.
+- Later-case evidence and timeline surfaces still deserve the same “remove source-provenance tone” pass, but this round intentionally stayed narrow.
+- Continue screenshot-first QA and do not reopen already-fixed button/layout issues unless a fresh screenshot shows a concrete regression.
