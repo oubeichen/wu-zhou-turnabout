@@ -19,6 +19,7 @@ state-*.png
 wuz_audit.js
 *.tmp_audit*.js
 wz_ui_audit*
+.tmp-wz-screens.mjs
 debug-launch.html
 wz_audit_visual.*
 home-desktop.png
