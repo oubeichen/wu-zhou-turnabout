@@ -1638,7 +1638,7 @@
     return `
       <div class="main-menu">
         <div class="menu-copy">
-          <span class="hero-kicker">宫廷法庭推理</span>
+          <span class="hero-kicker">大周疑案</span>
           <h1>${escapeHtml(data.title)}</h1>
           <p>${escapeHtml(heroHint)}</p>
           <div class="menu-progress">

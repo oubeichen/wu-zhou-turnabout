@@ -3447,6 +3447,44 @@ Remaining Ace Attorney gap list:
 - Continue screenshot-first QA on home preview labels, case-intro source panels, scene-card labels, opening kickers, top-bar tags, pressure labels, trial headers, statement cards, record drawer entries, and evidence detail panels.
 - Do not reopen already-fixed `举证` button, hotspot placement, or desktop no-scroll layout unless a fresh screenshot shows a concrete regression.
 
+## 2026-06-23 iteration 121 result
+
+Implemented:
+- Kept this round limited to one visible hero label on the home menu in `game/app.js`.
+- Changed the home hero kicker from `宫廷法庭推理` to `大周疑案`.
+- Left the top-bar brand subtitle, menu buttons, and continue-card content untouched.
+
+Why this round:
+- The latest verified home screenshot still had one prominent genre-style phrase above the title.
+- That phrase explained the product category, but it did not help the player enter the fiction. `大周疑案` keeps the same broad framing while sounding more like the world of the game than a store-page label.
+- This was a safe small-round target because it is display-only, highly visible, and easy to verify on one fresh home screenshot.
+
+Verified:
+- `git fetch origin main`
+- confirmed `HEAD` and `origin/main` both pointed to `dbfa66de8885b28825589be704d9029c35f64490` before this round's commit
+- `npm run check:js`
+- `git diff --check`
+- Used the in-app browser at `http://127.0.0.1:8788/game/` with the cache-busted local entry from the earlier round
+- Captured a fresh screenshot:
+  - `output/home-hero-kicker-current.png`
+- Live DOM capture confirmed:
+  - `heroKicker: 大周疑案`
+  - `bodyHasNew: true`
+- Note:
+  - `bodyHasOld: true` still appeared because the top-bar brand subtitle intentionally remains `宫廷法庭推理` in this round; this pass only changed the large home hero label.
+- Screenshot inspection confirmed:
+  - the new hero kicker fits cleanly above the title;
+  - the H1, summary copy, stat tags, continue card, and right-side menu buttons remained aligned at `1600x960`;
+  - no new clipping, overlap, or spacing regression appeared on the home screen.
+
+Notes:
+- Checked `.gitignore` this round; current rules still cover the generated validation artifacts, so no `.gitignore` change was needed.
+
+Remaining Ace Attorney gap list:
+- Keep rewriting case-intro source labels, evidence summaries, late-case prompts, and remaining top-level UI labels that still sound like neutral interface metadata instead of scene pressure.
+- Continue screenshot-first QA on home hero labels, home preview labels, case-intro source panels, scene-card labels, opening kickers, top-bar tags, pressure labels, trial headers, statement cards, record drawer entries, and evidence detail panels.
+- Do not reopen already-fixed `举证` button, hotspot placement, or desktop no-scroll layout unless a fresh screenshot shows a concrete regression.
+
 ## 2026-06-23 iteration 116 result
 
 Implemented:
