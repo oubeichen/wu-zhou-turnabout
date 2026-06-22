@@ -1241,9 +1241,9 @@
   }
 
   function continueLabel(caseData) {
-    if (caseHasProgress(caseData) && !state.completed.includes(caseData.id)) return "继续审理";
-    if (state.completed.includes(caseData.id)) return "重看终案";
-    return "开始新案";
+    if (caseHasProgress(caseData) && !state.completed.includes(caseData.id)) return "继续这案";
+    if (state.completed.includes(caseData.id)) return "再看一次";
+    return "开始看这案";
   }
 
   function caseDisplayIndex(caseData) {
@@ -1258,7 +1258,7 @@
       return {
         id: "home-gallery",
         title: "案卷选择",
-        body: "先选一件你想捅破的案子。之前的探索不会丢，只会变成你下一次更快的判断。",
+        body: "先选一件你想先追的案件。之前的内容会留着，重回时更容易接上节奏。",
         steps: ["先看案子档案", "进入案件", "有了结果后再回头重看"],
       };
     }
@@ -1268,8 +1268,8 @@
         id: "case-brief",
         title: "庭前整理",
         body: allEvidenceCollected(caseData)
-          ? "案前线索已经能上庭了。庭审里你还可以继续追问，把不稳的地方一口气压出来。"
-          : "先把现场再走一遍：证人、文件、地点和动作都要能互相解释。齐全后再开庭，节奏更稳。",
+          ? "前线索已经够上庭。庭审里再往下追，把每句含混说辞都逼出来。"
+          : "先把现场、证词、证物和动机连在一起，不然法庭会把它们当成彼此不相干的小事。",
         steps: ["开始调查", "查看可疑处", "证物齐后开庭"],
       };
     }
@@ -1278,9 +1278,9 @@
       const location = currentLocation(caseData);
       const commandTips = {
         move: `先从「${location.name}」离开一下，看一眼下一个空间。证据常藏在你没盯上的路口。`,
-        examine: "先把现场发亮的点点亮起。看见的人、看到的物、听见的回音都要先落账再下结论。",
-        talk: "每段对话都可能夹带辩解。挑一个你还不信的角落，把细节问干净。",
-        present: "证物只是线头，不是答案。现在先试探，对方会不自觉暴露他最怕承认的那一段。",
+        examine: "先把现场亮起的点都看一遍。谁出入得最勤、谁最晚离场，常就是关键。",
+        talk: "每句回答都有回避。挑一句你最不放心的话往下追，别让空泛结论过关。",
+        present: "证物是线索，不是结论。先试探反应，再决定是否在法庭里直接拿出来。",
       };
       return {
         id: `investigation-${inv.command}`,
@@ -1321,7 +1321,7 @@
         return {
           id: "trial-recovery",
           title: "补救破绽",
-          body: "对手反制后留下了补救破绽。别再用刚才那件有漏洞的证物，换一件能说明后续动作是谁做的记录，可追回部分信誉。",
+          body: "对手反制后有了新口子。别再硬扛上一次的证物，换一件更能解释后续动作的人物或物证继续追。",
           steps: ["确认补救句", "换正确证物", "追回信誉"],
         };
       }
@@ -1465,12 +1465,15 @@
     const solved = data.cases.filter((entry) => state.completed.includes(entry.id)).length;
     const gold = data.cases.filter((entry) => caseRecord(entry.id).bestMedal === "金章").length;
     const hasProgress = data.cases.some(caseHasProgress);
+    const heroHint = hasProgress
+      ? `你上次把“${caseData ? caseData.title : data.title}”推进到了什么阶段。先把现场、口供、证物串起来，再去庭上压实破绽。`
+      : "你还没开案。先选一件案件，用一句简短开场对话感受现场，再按调查步骤把关键证据补齐。";
     return `
       <div class="main-menu">
         <div class="menu-copy">
           <span class="hero-kicker">宫廷法庭推理</span>
           <h1>${escapeHtml(data.title)}</h1>
-          <p>${escapeHtml(data.subtitle)}。调查现场、询问证人、整理法庭记录，在庭审中追问并举出矛盾。</p>
+          <p>${escapeHtml(heroHint)}</p>
           <div class="menu-progress">
             <span class="tag">结案 ${solved}/${data.cases.length}</span>
             <span class="tag">金章 ${gold}/${data.cases.length}</span>
@@ -1785,7 +1788,7 @@
             <button class="primary-button" type="button" data-mode="investigation">开始调查</button>
             <button class="secondary-button" type="button" data-mode="trial" ${allEvidenceCollected(caseData) ? "" : "disabled"}>进入庭审</button>
           </div>
-          ${allEvidenceCollected(caseData) ? `<p class="hint-text">线索已经够进庭。庭审里还会从证人嘴里逼出新材料。</p>` : `<p class="hint-text">先在现场把能说话的纸、物、人找齐；少一件，庭上就会被堵死。</p>`}
+          ${allEvidenceCollected(caseData) ? `<p class="hint-text">你已经把主线证据补齐。庭审里继续追问，把对方不敢说的地方逼出来。</p>` : `<p class="hint-text">先把“现场、证人、文件”都找齐，别带着空杯直接进法庭。</p>`}
           ${renderCoachCard()}
         </div>
       </section>
@@ -1922,7 +1925,10 @@
   }
 
   function caseMenuHook(caseData) {
-    return caseData.menuHook || caseOpeningStory(caseData).body || caseData.goal || caseData.theme;
+    if (caseData.menuHook) return caseData.menuHook;
+    const body = caseOpeningStory(caseData).body || "";
+    if (!body) return caseData.goal || caseData.theme || "先到现场把关键事实捡清，再决定如何进庭。";
+    return body.length > 44 ? `${body.slice(0, 42)}…` : body;
   }
 
   function caseOpeningStory(caseData) {
@@ -1981,8 +1987,8 @@
     return `
       <div class="case-setup" aria-label="案情导入">
         <div class="case-section-title">
-          <strong>先盯住这三个地方</strong>
-          <span>它们不是任务清单，而是本案一开始就不对劲的地方。</span>
+          <strong>先走这三步，别让对手先把局势带偏</strong>
+          <span>先把“听到的事”变成“可追问的矛盾”。每一步都盯着“谁在最后受益”去问。</span>
         </div>
         ${cards
           .map(
@@ -2164,8 +2170,30 @@
   }
 
   function chapterLabel(title) {
-    const match = String(title).match(/第[一二三四五六七八九十百\d]+章/);
-    return match ? match[0] : "章节";
+    const numeral = parseChapterChinese(String(title || ""));
+    return numeral ? `第${numeral}章` : "线索";
+  }
+
+  function parseChapterChinese(text) {
+    const match = String(text).match(/第([一二三四五六七八九十百\d]+)章/);
+    if (!match) return "";
+    if (/^\d+$/.test(match[1])) return match[1];
+    const map = { 零: 0, 一: 1, 二: 2, 三: 3, 四: 4, 五: 5, 六: 6, 七: 7, 八: 8, 九: 9, 十: 10, 百: 100 };
+    const chars = match[1];
+    let total = 0;
+    let unit = 1;
+    for (let i = chars.length - 1; i >= 0; i--) {
+      const ch = chars[i];
+      const value = map[ch];
+      if (value === undefined) continue;
+      if (value === 10 || value === 100) {
+        unit = value;
+        continue;
+      }
+      total += value * (unit >= 10 ? unit : 1);
+      if (unit >= 10) unit = 1;
+    }
+    return total ? String(total) : "";
   }
 
   function sourceForDisplay(raw) {
@@ -2176,30 +2204,27 @@
   function sourceLabelClean(raw) {
     const text = String(raw || "").trim();
     return text
-      .replace(/^卷宗\s*\d+\s*[：:\-—–]?\s*/, "")
-      .replace(/^第\d+章\s*[：:\-—–]?\s*/, "")
-      .replace(/^第[一二三四五六七八九十百\d]+章\s*[：:\-—–]?\s*/, "")
-      .replace(/^\[?\s*卷宗\s*\d+\s*\]?\s*[：:\-—–]?\s*/, "")
-      .replace(/^\[?\s*第\d+\s*章\s*\]?\s*[：:\-—–]?\s*/, "")
-      .replace(/^\s*[（(]第[一二三四五六七八九十百\d]+章[）)]\s*/, "")
-      .replace(/^\s*[（(]第\d+章[）)]\s*/, "")
+      .replace(/^\s*\[?\s*卷宗\s*\d+\s*\]?\s*[：:\-—–]?\s*/, "")
+      .replace(/^\s*卷宗\d+\s*[：:\-—–]?\s*/, "")
+      .replace(/^\s*\[?\s*第\d+\s*章\s*\]?\s*[：:\-—–]?\s*/, "")
+      .replace(/^\s*[（(]?\s*第\d+章[）)]?\s*[：:\-—–]?\s*/, "")
+      .replace(/^\s*[（(]?\s*[一二三四五六七八九十百\d]+\s*章[）)]?\s*[：:\-—–]?\s*/, "")
       .trim();
   }
 
   function chapterShortTitle(title) {
     return String(title)
-      .replace(/^第\d+章\s*/, "")
-      .replace(/^第[一二三四五六七八九十百\d]+章\s*/, "")
+      .replace(/^\s*卷宗\d+\s*[：:]\s*/, "")
+      .replace(/^\s*第\d+章\s*/, "")
+      .replace(/^\s*[一二三四五六七八九十百]+章\s*/, "")
       .replace(/^[:：]\s*/, "")
-      .replace(/^卷宗\s*\d+\s*[：:]\s*/, "")
-      .replace(/^卷宗\s*\d+\s*/, "")
-      .replace(/^[（(]第\d+章[）)]\s*/, "")
-      .replace(/^\s*[（(]第[一二三四五六七八九十百\d]+章[）)]\s*/, "")
       .slice(0, 14);
   }
 
   function parseChapterNumber(text) {
     const str = String(text || "");
+    const archiveMatch = str.match(/卷宗(\d+)/);
+    if (archiveMatch) return Number(archiveMatch[1]);
     const direct = str.match(/第(\d+)章/);
     if (direct) return Number(direct[1]);
     const map = { 零: 0, 一: 1, 二: 2, 三: 3, 四: 4, 五: 5, 六: 6, 七: 7, 八: 8, 九: 9, 十: 10, 百: 100 };
@@ -2261,8 +2286,8 @@
     return `
       <div class="case-source-panel">
         <div class="case-section-title">
-          <strong>先看一条线索</strong>
-          <span>点开下面的线索，把现场细节和人物说法接在一起。</span>
+          <strong>线索入口（点一个看看）</strong>
+          <span>先看“这条线从哪来”，再去证词里找一段能和它对上的话。</span>
         </div>
         <div class="source-tabs" aria-label="章节线索">
           ${items
@@ -2277,7 +2302,7 @@
             .join("")}
         </div>
         <div class="source-detail">
-          <strong>线索焦点：${escapeHtml(active.storyTitle)}</strong>
+          <strong>当前查看：${escapeHtml(active.storyTitle)}</strong>
           <p>${escapeHtml(active.storyNote)}</p>
           <small>来源：${escapeHtml(sourceForDisplay(active.title))}</small>
         </div>
@@ -2564,19 +2589,19 @@
     if (inv.command === "examine") {
       return `
         <h2>查看</h2>
-        <p class="hint-text">在左侧现场图上点击发光标记。已记录的位置会变成绿色，可随时复查。</p>
+        <p class="hint-text">点亮场景里的可疑点继续看。看过的标记会留痕，回头来可复查。</p>
         <div class="spot-status-list">
       ${location.examineSpots
-          .map((spot, index) => {
-            const key = `${inv.locationIndex}:${index}`;
-            const done = inv.examined.includes(key);
-            return `
+            .map((spot, index) => {
+              const key = `${inv.locationIndex}:${index}`;
+              const done = inv.examined.includes(key);
+              return `
                 <div class="spot-status ${done ? "done" : ""}">
                   <strong>${escapeHtml(spot.name)}</strong>
                   <span>${done ? "已记录" : "待触发"}</span>
                 </div>
               `;
-          })
+            })
             .join("")}
         </div>
       `;
@@ -2645,11 +2670,11 @@
     const trialDeduction = trialDeductionForStatement(caseData, statement, progress, progress.testimonyIndex, rawIndex);
     const recordPrompt = readyToPresent
       ? selectedLabel
-        ? "这句话的破绽已经露头。确认选中的证据和这句对不上，再按 E/Enter 试一发。"
+        ? "这句话里有明显缝。先把你手里的证物和它对应起来，再按 E/Enter 直接冲一口。"
         : statement.answerProfile
-          ? "这段话不稳了。打开人物档案，选一个会把它反咬回来的人。"
-          : "这段话不稳了。打开证物记录，选一件能戳穿它的证物。可按 E 直接提交。"
-      : "法庭记录只是你的手牌。先选好，点下“举证”后才会真正进入法官面前。";
+          ? "这段话有点站不住。先开人物档案，选能揭穿它的人。"
+          : "这段话不完整，先在法庭记录里找一件能把对方说法打掉的线索，选中后可直接按 E 试一下。"
+      : "法庭记录先是你的工作台，别急着交付。先定好要出的线索，点“举证”才会真正上庭。";
     state.screen = "trial";
     renderStatus();
     app.innerHTML = `
