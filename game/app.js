@@ -918,10 +918,10 @@
   }
 
   function setInvestigationBeat(kind, speaker, text, result, evidenceNames = [], followUps = []) {
-    const lines = [{ speaker: speaker || "调查", text: text || "" }].concat(followUps.filter((line) => line?.text));
+    const lines = [{ speaker: speaker || "辩方", text: text || "" }].concat(followUps.filter((line) => line?.text));
     state.investigationBeat = {
       kind,
-      speaker: speaker || "调查",
+      speaker: speaker || "辩方",
       text: text || "",
       result: result || "",
       evidenceNames,
@@ -2608,7 +2608,7 @@
     app.innerHTML = `
       <section class="play-layout investigation-layout record-drawer-layout">
         <div>
-          ${renderScene(location.name, state.speaker || "调查", state.message || "先别听风声。桌上的纸、地上的灰，常比人嘴诚实。", "investigation")}
+          ${renderScene(location.name, state.speaker || "辩方", state.message || "先别听风声。桌上的纸、地上的灰，常比人嘴诚实。", "investigation")}
           ${renderInvestigationMap(inv, location)}
           ${renderClueBoard(caseData, inv, location)}
           <div class="panel command-panel">
@@ -4613,7 +4613,7 @@
       }
       state.recordOpen = false;
       clearInvestigationBeat();
-      setMessage("调查", "殿里的话都收回去了，剩下的只看痕迹。", "");
+      setMessage("辩方", "人都把话吞回去了。那就别听嘴，先听痕迹。", "");
       renderInvestigation();
     } else {
       const caseData = currentCase();
@@ -4651,7 +4651,7 @@
     clearEvidencePickup();
     clearPursuitUnlockCue();
     clearInventoryCue();
-    setMessage("调查", commandSceneLine(command, currentLocation(caseData)), "");
+    setMessage("辩方", commandSceneLine(command, currentLocation(caseData)), "");
     save();
     renderInvestigation();
   }
@@ -4663,10 +4663,10 @@
   function commandSceneLine(command, location) {
     const place = location?.name || "这里";
     const lines = {
-      move: `${place}的风声已经记住了。下一处门后，或许还有人没来得及收回表情。`,
-      examine: `${place}安静下来以后，桌角、封蜡和脚印反而比人更诚实。`,
-      talk: `${place}里的人都把话说得很轻。停顿、改口和没说完的半句，全都留在空气里。`,
-      present: `手里的记录一亮出来，${place}里先变的往往不是供词，而是看它的人。`,
+      move: `${place}这边先记一笔。换个地方，也许还有人没把表情收干净。`,
+      examine: `${place}一静下来，桌角、封蜡和脚印就比人嘴肯说真话。`,
+      talk: `${place}里的人都把嗓子压得很低。越怕说漏的人，越容易在半句话里露馅。`,
+      present: `把证物亮出去，${place}里先发慌的那张脸，往往比供词更有用。`,
     };
     return lines[command] || `${place}的痕迹还没散。`;
   }
@@ -4680,7 +4680,7 @@
     clearEvidencePickup();
     clearInventoryCue();
     clearPursuitUnlockCue();
-    setMessage("调查", `转到${location.name}。${location.description}`, "");
+    setMessage("辩方", `先去${location.name}看看。${location.description}`, "");
     save();
     renderInvestigation();
   }
@@ -4697,17 +4697,17 @@
     const gainedItems = collectEvidenceFromLocation(caseData, location, index);
     const gainedNames = gainedItems.map((item) => item.name);
     if (gainedItems.length) setEvidencePickup(caseData, gainedItems);
-    const suffix = gainedNames.length ? ` 取得证物：${gainedNames.join("、")}。` : " 没有新的证物。";
-    setMessage("调查", `${spot.text}${suffix}`, gainedNames.length ? "objection" : "");
+    const suffix = gainedNames.length ? ` 新东西到手：${gainedNames.join("、")}。` : " 这一处先记下，暂时没翻出新东西。";
+    setMessage("辩方", `${spot.text}${suffix}`, gainedNames.length ? "objection" : "");
     setInvestigationBeat(
       "查看",
-      "调查",
+      "辩方",
       spot.text,
       gainedNames.length ? "证物取得" : "没有新的证物",
       gainedNames,
       [
         {
-          speaker: gainedNames.length ? "辩方" : "调查",
+          speaker: "辩方",
           text: gainedNames.length
             ? `这件东西已经归卷。它眼下不出声，不等于它以后不会压住谁。`
             : "这里的痕迹已经记下了。它没再多说，可碰过它的人显然不止一个。",

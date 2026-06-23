@@ -3338,6 +3338,47 @@ Remaining Ace Attorney gap list:
 - Push more investigation interaction into the scene itself, especially people/talk beats, instead of relying so heavily on command lists in the right panel.
 - Keep rewriting investigation and case-intro copy that still sounds like archival summary text rather than character-voiced dramatic play.
 
+## 2026-06-23 iteration 127 result
+
+Implemented:
+- Kept this round tightly scoped to the investigation screen's default voice, not its layout.
+- Replaced the generic investigation fallback speaker from `调查` with `辩方` in the main scene render and in the investigation-beat fallback path.
+- Rewrote the most common investigation fallback lines in `game/app.js` so they read like the defense side thinking on their feet, instead of a system panel narrating mode changes.
+- Updated the command-switch lines (`move` / `examine` / `talk` / `present`), the enter-investigation line after the opening cutscene, the location-change line, and the no-voice examine result line.
+
+Why this round:
+- After the previous UI cleanup, the most visible remaining “说明书感” on the investigation screen was the large bottom box still speaking as `调查`.
+- The user explicitly asked for more human, less high-above dialogue and description. This was the next safest high-frequency fix because it changed wording, not flow.
+- Keeping the round copy-only also avoided reopening already-settled layout, button sizing, hotspot placement, and evidence submission behavior.
+
+Verified:
+- `npm run check:js`
+- `git diff --check`
+- Ran the required web-game Playwright client with escalated browser permissions again:
+  - `output/web-game-iteration127/shot-0.png`
+  - `output/web-game-iteration127/state-0.json`
+- Ran a second escalated Playwright pass into case 1 investigation and captured:
+  - `output/investigation-voice-current.png`
+- Live DOM capture confirmed:
+  - `screen: investigation`
+  - `speaker: 辩方`
+  - `message: 人都把话吞回去了。那就别听嘴，先听痕迹。`
+  - `hotspotsVisible: true`
+  - `hotspotsInteractive: true`
+- Screenshot inspection confirmed:
+  - the bottom investigation box now reads as protagonist-side inner casework rather than a system narrator;
+  - the new sentences fit cleanly on the desktop layout;
+  - the right-side command area, clue board, and hotspot markers remained aligned.
+
+Notes:
+- Checked `.gitignore` again this round; existing `output/` rules still covered the new validation artifacts, so no `.gitignore` change was needed.
+- The baked-in palace background arc identified last round still remains an asset problem, not a copy/layout problem. This round intentionally did not reopen that image issue.
+
+Remaining Ace Attorney gap list:
+- Replace the most obviously polluted investigation backgrounds, starting with `location-bg-palace-site.png`.
+- Move more talk interaction into the background scene itself instead of leaning on the right-side list for every conversation beat.
+- Keep revising case-intro and evidence-summary prose that still reads closer to dossier summary than live dramatic play.
+
 ## 2026-06-23 iteration 122 result
 
 Implemented:
