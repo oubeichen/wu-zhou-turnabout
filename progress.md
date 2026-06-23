@@ -3431,6 +3431,57 @@ Remaining Ace Attorney gap list:
 - Move more talk interaction into direct scene interaction instead of relying so heavily on the right command list.
 - Keep revising case-intro and evidence-summary prose that still sounds more archival than player-spoken.
 
+## 2026-06-23 iteration 129 result
+
+Implemented:
+- Kept this round limited to the second investigation location of case 1: `史官案牍房`.
+- Replaced `game/assets/location-bg-palace-archive.png`, which was still effectively an old UI mock baked into a “background” image, with a clean image-generated archive room background.
+- Retuned only the first case / second location hotspot coordinates in `game/app.js` so `新蜡封口` and `被抽走的一页` land back on the foreground archive desk instead of floating on the shelf/window zone.
+- Reused the same full-height hotspot field rule already introduced for case 1 by extending it to this location only; no other case hotspots changed.
+
+Why this round:
+- After fixing `立政殿`, the next most obvious non-game-like background in the same case was `案牍房`: it literally contained cards and bottom bars inside the bitmap.
+- This was another clean small-round asset task because it stayed inside case 1 and followed the exact same repair pattern as the prior round: replace one broken background, then fix only the hotspots it invalidates.
+- Not touching the third `辩护席` image in the same round kept the risk bounded and made validation straightforward.
+
+Verified:
+- `npm run check:js`
+- `git diff --check`
+- Ran the required web-game Playwright client before and after hotspot retuning:
+  - `output/web-game-iteration129/shot-0.png`
+  - `output/web-game-iteration129/state-0.json`
+  - `output/web-game-iteration129b/shot-0.png`
+  - `output/web-game-iteration129b/state-0.json`
+- Ran a focused escalated Playwright pass into case 1 investigation, moved to `史官案牍房`, switched back to `查看`, and captured:
+  - `output/investigation-palace-archive-bg-current.png`
+  - `output/investigation-palace-archive-hotspot-fixed-current.png`
+- Live DOM capture on the final archive-room screenshot confirmed:
+  - `screen: investigation`
+  - `location: 史官案牍房`
+  - `command: examine`
+  - `hotspotsVisible: true`
+  - hotspot bounds:
+    - `新蜡封口` at approximately `(537, 755)`
+    - `被抽走的一页` at approximately `(422, 721)`
+- Screenshot inspection confirmed:
+  - the old baked-in cards/panels are gone from the archive-room background;
+  - the scene now reads as a real records office instead of a UI mock background;
+  - both hotspots sit on the foreground archive desk rather than on the shelving/window area;
+  - the bottom dialogue box, right summary card, clue board, and action buttons remained aligned.
+
+Asset source:
+- Generated with the image tool this round and copied from:
+  - `/Users/oubeichen/.codex/generated_images/019ecf74-c816-7533-b322-848453ce7320/ig_08ac6797ccceb415016a39fd5ff910819aab52dc2279761f7c.png`
+
+Notes:
+- Checked `.gitignore` again this round; existing `output/` rules still covered all new verification artifacts, so no `.gitignore` change was needed.
+- The third first-case background, `location-bg-palace-defense.png`, still uses the older baked UI treatment and should be handled in a separate round rather than bundled here.
+
+Remaining Ace Attorney gap list:
+- Replace `location-bg-palace-defense.png` and then continue outward to other cases with the same old baked-overlay problem.
+- Move more talk interaction into direct scene interaction instead of relying so heavily on the right-side command list.
+- Keep revising case-intro and evidence-summary prose that still sounds more archival than player-spoken.
+
 ## 2026-06-23 iteration 122 result
 
 Implemented:

@@ -12,7 +12,7 @@
   const investigationHotspotLayoutByCase = {
     "case-empress-seat": [
       [{ left: "17%", top: "61%" }, { left: "66%", top: "55%" }],
-      [{ left: "10%", top: "62%" }, { left: "60%", top: "48%" }],
+      [{ left: "46%", top: "77%" }, { left: "34%", top: "72%" }],
       [{ left: "16%", top: "52%" }, { left: "56%", top: "29%" }],
     ],
     "case-crown-shadow": [
@@ -2579,7 +2579,7 @@
   }
 
   function investigationHotspotUsesTallField(caseData, locationIndex) {
-    return caseData?.id === "case-empress-seat" && Number(locationIndex) === 0;
+    return caseData?.id === "case-empress-seat" && (Number(locationIndex) === 0 || Number(locationIndex) === 1);
   }
 
   function renderOpeningLines(caseData) {
