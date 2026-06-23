@@ -2101,7 +2101,7 @@
 
   function caseDeckline(caseData) {
     const opening = caseOpeningStory(caseData);
-    const text = opening.title || opening.stakes || caseData.goal || caseData.theme || "案卷已经翻开，真相还没站稳。";
+    const text = caseData.cardDeckline || opening.title || opening.stakes || caseData.goal || caseData.theme || "案卷已经翻开，真相还没站稳。";
     return text.length > 40 ? `${text.slice(0, 38)}…` : text;
   }
 
