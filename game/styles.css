@@ -2030,6 +2030,12 @@ button:not(:disabled):hover {
   --scene-glow: rgba(129, 108, 191, 0.3);
 }
 
+.scene.investigation {
+  background:
+    linear-gradient(rgba(31, 28, 25, 0.14), var(--scene-veil)),
+    var(--location-art, var(--episode-art, url("./assets/investigation-room-v1.png"))) center / cover;
+}
+
 .scene.trial {
   background:
     linear-gradient(rgba(31, 28, 25, 0.1), rgba(31, 28, 25, 0.7)),
@@ -2689,18 +2695,15 @@ button:not(:disabled):hover {
 }
 
 .location-map {
-  --map-veil: rgba(31, 28, 25, 0.78);
-  --map-glow: rgba(221, 171, 61, 0.2);
+  --map-panel: rgba(52, 35, 28, 0.94);
+  --map-edge: rgba(255, 241, 191, 0.36);
   position: relative;
   min-height: 190px;
   margin: 12px 0;
   overflow: hidden;
   padding: 16px;
   color: #fff8e7;
-  background:
-    radial-gradient(circle at 78% 28%, var(--map-glow), transparent 26%),
-    linear-gradient(rgba(31, 28, 25, 0.18), var(--map-veil)),
-    var(--map-art, url("./assets/investigation-room-v1.png")) center / cover;
+  background: linear-gradient(180deg, rgba(31, 28, 25, 0.9), var(--map-panel));
   border: 2px solid var(--line);
   border-radius: 8px;
   box-shadow: 0 10px 26px var(--shadow);
@@ -2711,45 +2714,58 @@ button:not(:disabled):hover {
 }
 
 .location-map.scene-palace {
-  --map-veil: rgba(84, 32, 28, 0.82);
-  --map-glow: rgba(221, 171, 61, 0.32);
+  --map-panel: rgba(84, 32, 28, 0.94);
+  --map-edge: rgba(221, 171, 61, 0.4);
 }
 
 .location-map.scene-east-palace {
-  --map-veil: rgba(26, 49, 70, 0.82);
-  --map-glow: rgba(122, 168, 190, 0.34);
+  --map-panel: rgba(26, 49, 70, 0.94);
+  --map-edge: rgba(122, 168, 190, 0.42);
 }
 
 .location-map.scene-bronze-urn {
-  --map-veil: rgba(76, 53, 29, 0.84);
-  --map-glow: rgba(191, 120, 46, 0.34);
+  --map-panel: rgba(76, 53, 29, 0.94);
+  --map-edge: rgba(191, 120, 46, 0.42);
 }
 
 .location-map.scene-censorate {
-  --map-veil: rgba(23, 45, 39, 0.86);
-  --map-glow: rgba(86, 139, 116, 0.34);
+  --map-panel: rgba(23, 45, 39, 0.94);
+  --map-edge: rgba(86, 139, 116, 0.42);
 }
 
 .location-map.scene-night-gate {
-  --map-veil: rgba(21, 24, 52, 0.88);
-  --map-glow: rgba(129, 108, 191, 0.36);
-}
-
-.location-map.variant-archive {
-  filter: saturate(0.88);
-}
-
-.location-map.variant-defense {
-  filter: contrast(1.08);
+  --map-panel: rgba(21, 24, 52, 0.94);
+  --map-edge: rgba(129, 108, 191, 0.44);
 }
 
 .location-map strong,
+.location-map p,
 .location-map span,
 .location-map small,
 .location-map em {
   display: block;
   position: relative;
   z-index: 2;
+}
+
+.location-map-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--map-edge);
+}
+
+.location-map-head span {
+  color: #fff1bf;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.location-map p {
+  margin: 12px 0 0;
+  line-height: 1.65;
 }
 
 .location-map small,

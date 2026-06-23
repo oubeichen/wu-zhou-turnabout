@@ -3297,6 +3297,47 @@ Remaining Ace Attorney gap list:
 - Continue screenshot-first QA on pressure labels, trial headers, statement cards, record drawer entries, and evidence detail panels.
 - Do not reopen already-fixed `举证` button, hotspot placement, or desktop no-scroll layout unless a fresh screenshot shows a concrete regression.
 
+## 2026-06-23 iteration 126 result
+
+Implemented:
+- Kept this round focused on the investigation screen, specifically the parts that still felt like decorative UI instead of a playable scene.
+- Removed the extra CSS glow layer from the main investigation stage so the background art reads more directly instead of carrying an added radial flourish on top.
+- Reworked the top-right `location-map` card into a text-only `现场摘要` panel and stopped reusing a second copy of the same scene background there.
+- Rewrote the high-frequency investigation hints in `game/app.js` so they read more like a person working a scene (`先看东西，别先信嘴`, `把证物递出去，谁先接不住，谁心里最虚`) instead of system-flavored rule text.
+
+Why this round:
+- The latest user direction explicitly asked to stop leaning on meaningless SVG/CSS decoration and to let scene art and direct scene interaction carry the investigation feel.
+- The investigation screen still had two concrete offenders: a duplicated mini-background in the summary card, and overly abstract helper copy that read like interface copy more than live casework.
+- This was a safe small-round target because it stayed inside the investigation layout and copy layer without reopening already-settled evidence, trial, or hotspot submission behavior.
+
+Verified:
+- `npm run check:js`
+- `git diff --check`
+- Ran the required web-game Playwright client with escalated browser permissions because Chromium still hits the local `MachPortRendezvous` sandbox restriction here:
+  - `output/web-game-iteration126/shot-0.png`
+  - `output/web-game-iteration126/state-0.json`
+- Ran a second escalated Playwright pass that actually entered case 1 investigation and captured:
+  - `output/investigation-summary-no-ornament-current.png`
+- Live DOM capture on that investigation screenshot confirmed:
+  - `screen: investigation`
+  - `investigationCommand: examine`
+  - `hotspotsVisible: true`
+  - `hotspotsInteractive: true`
+  - `location: 立政殿`
+- Screenshot inspection confirmed:
+  - the top-right summary card no longer repeats another miniature scene background;
+  - the investigation stage now reads cleaner and more like one scene plus one control column;
+  - the command buttons, clue board, hotspot positions, and footer actions remained aligned on desktop.
+
+Notes:
+- Checked `.gitignore` again this round; existing `output/` rules already covered the new validation artifacts, so no `.gitignore` change was needed.
+- Important follow-up finding: the large translucent arc still visible on the left side of the palace investigation scene is baked into `game/assets/location-bg-palace-site.png` itself, not left over from the CSS glow layer. That needs an asset replacement round, not another style-only tweak.
+
+Remaining Ace Attorney gap list:
+- Replace the worst baked-in background images (starting with `location-bg-palace-site.png`) with cleaner scene art that does not carry abstract arcs or pseudo-UI shapes.
+- Push more investigation interaction into the scene itself, especially people/talk beats, instead of relying so heavily on command lists in the right panel.
+- Keep rewriting investigation and case-intro copy that still sounds like archival summary text rather than character-voiced dramatic play.
+
 ## 2026-06-23 iteration 122 result
 
 Implemented:

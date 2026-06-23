@@ -2608,7 +2608,7 @@
     app.innerHTML = `
       <section class="play-layout investigation-layout record-drawer-layout">
         <div>
-          ${renderScene(location.name, state.speaker || "调查", state.message || "地上的痕、桌上的纸、人的沉默，都比传闻老实。", "investigation")}
+          ${renderScene(location.name, state.speaker || "调查", state.message || "先别听风声。桌上的纸、地上的灰，常比人嘴诚实。", "investigation")}
           ${renderInvestigationMap(inv, location)}
           ${renderClueBoard(caseData, inv, location)}
           <div class="panel command-panel">
@@ -2645,8 +2645,7 @@
     const caseData = currentCase();
     const sceneKey = caseData.scene?.key || "archive";
     const variant = location.sceneVariant || "site";
-    const mapArt = locationBackgroundFile(caseData, location);
-    const locationSignature = `${caseData.id}|${inv.locationIndex}|${sceneKey}|${variant}|${mapArt}`;
+    const locationSignature = `${caseData.id}|${inv.locationIndex}|${sceneKey}|${variant}|summary`;
     const transitionClass = sceneTransitionState.lastLocationMapSignature && sceneTransitionState.lastLocationMapSignature !== locationSignature
       ? " scene-crossfade"
       : "";
@@ -2657,30 +2656,30 @@
     const canPresent = inv.command === "present";
     const canInspect = inv.command === "examine" && !state.evidencePickup;
     const commandName = {
-      move: "移动现场",
-      examine: "查看可疑点",
-      talk: "交谈线索",
-      present: "出示证物",
+      move: "换地方",
+      examine: "盯现场",
+      talk: "听他说",
+      present: "递证物",
     };
-    const mapArtStyle = mapArt ? `style="--map-art: url('./assets/${escapeHtml(mapArt)}');"` : "";
     const quickHint = canMove
-      ? "这一处的灰还没散，另一处的门槛未必干净。"
+      ? "别在一处磨太久，换个地方，线索可能自己冒头。"
       : canTalk
-      ? "话说得越圆，留出的空就越大。"
+      ? "先听他怎么圆。圆得越顺，缝反而越好找。"
       : canPresent
-      ? "东西一递出去，认得它的人会先变脸。"
+      ? "把东西递到眼前，谁先变脸，谁就先露怯。"
       : canInspect
-      ? "亮出来的痕迹，不会替任何人改口。"
-      : "可疑处已经暗下去，殿里只剩风声。";
+      ? "先拿眼睛盯现场，别急着替谁下结论。"
+      : "这一处先静下来了，换个角度再逼它开口。";
     return `
-      <div class="location-map scene-${sceneKey} variant-${variant}${transitionClass}" ${mapArtStyle}>
-        <div>
+      <div class="location-map scene-${sceneKey} variant-${variant}${transitionClass}">
+        <div class="location-map-head">
           <strong>${escapeHtml(location.name)}</strong>
-          <span>${escapeHtml(location.description)}</span>
-          <small>${escapeHtml(location.visualNote || caseData.scene?.tone || "")}</small>
-          <em>当前：${escapeHtml(commandName[inv.command] || "调查进行中")}。</em>
-          <small class="location-hint">${escapeHtml(quickHint)}（${inspected}/${location.examineSpots.length} 处已检视）</small>
+          <span>现场摘要</span>
         </div>
+        <p>${escapeHtml(location.description)}</p>
+        <small>${escapeHtml(location.visualNote || caseData.scene?.tone || "")}</small>
+        <em>现在先做：${escapeHtml(commandName[inv.command] || "继续调查")}</em>
+        <small class="location-hint">${escapeHtml(quickHint)}（${inspected}/${location.examineSpots.length} 处已摸过）</small>
       </div>
     `;
   }
@@ -2829,7 +2828,7 @@
     if (inv.command === "move") {
       return `
         <h2>移动</h2>
-        <p class="hint-text">同一件事，不会只留在一处地方。</p>
+        <p class="hint-text">别在一处死盯，换个地方，话头可能自己露出来。</p>
         <div class="location-list">
           ${caseData.locations
             .map(
@@ -2847,7 +2846,7 @@
     if (inv.command === "examine") {
       return `
         <h2>查看</h2>
-        <p class="hint-text">纸、墨、脚步，都比人嘴硬。</p>
+        <p class="hint-text">先看东西，别先信嘴。纸墨脚印，比谁都嘴硬。</p>
         <div class="spot-status-list">
       ${location.examineSpots
             .map((spot, index) => {
@@ -2867,7 +2866,7 @@
     if (inv.command === "talk") {
       return `
         <h2>交谈</h2>
-        <p class="hint-text">越想遮掩的人，话越说不满。</p>
+        <p class="hint-text">让他多说两句。说得越顺，破绽越容易往外跑。</p>
         <div class="location-list">
           ${location.talkTopics
             .map((topic, index) => {
@@ -2887,7 +2886,7 @@
     const owned = collectedEvidence(caseData);
     return `
       <h2>出示</h2>
-      <p class="hint-text">东西递出去，谁先接不住，谁就心里有数。</p>
+      <p class="hint-text">把证物递出去，谁先接不住，谁心里最虚。</p>
       <div class="location-list">
         ${owned
       .map(
