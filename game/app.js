@@ -2659,21 +2659,21 @@
     const canTalk = inv.command === "talk";
     const canPresent = inv.command === "present";
     const canInspect = inv.command === "examine" && !state.evidencePickup;
-    const commandName = {
-      move: "换地方",
-      examine: "盯现场",
-      talk: "听他说",
-      present: "递证物",
+    const commandFocus = {
+      move: "不同地点留下的是不同口径。",
+      examine: "桌上的纸页、封蜡和磨痕都在场。",
+      talk: "名字都藏在没说完的话里。",
+      present: "证物一出，场面就得改口。",
     };
     const quickHint = canMove
-      ? "别在一处磨太久，换个地方，线索可能自己冒头。"
+      ? "殿门内外、案桌前后，说的未必是一回事。"
       : canTalk
-      ? "先听他怎么圆。圆得越顺，缝反而越好找。"
+      ? "越不肯点名，越像有人把名字咽了回去。"
       : canPresent
-      ? "把东西递到眼前，谁先变脸，谁就先露怯。"
+      ? "证物真假之外，更要看谁见了它就心虚。"
       : canInspect
-      ? "先拿眼睛盯现场，别急着替谁下结论。"
-      : "这一处先静下来了，换个角度再逼它开口。";
+      ? "封蜡、纸页和桌角的磨痕，都是自己留下的口供。"
+      : "这一处的东西都还在，只差有人肯认。";
     return `
       <div class="location-map scene-${sceneKey} variant-${variant}${transitionClass}">
         <div class="location-map-head">
@@ -2682,8 +2682,8 @@
         </div>
         <p>${escapeHtml(location.description)}</p>
         <small>${escapeHtml(location.visualNote || caseData.scene?.tone || "")}</small>
-        <em>现在先做：${escapeHtml(commandName[inv.command] || "继续调查")}</em>
-        <small class="location-hint">${escapeHtml(quickHint)}（${inspected}/${location.examineSpots.length} 处已摸过）</small>
+        <em>${escapeHtml(commandFocus[inv.command] || "线头都还压在案里。")}</em>
+        <small class="location-hint">${escapeHtml(quickHint)}（${inspected}/${location.examineSpots.length} 处已记下）</small>
       </div>
     `;
   }
@@ -2835,7 +2835,7 @@
     if (inv.command === "move") {
       return `
         <h2>移动</h2>
-        <p class="hint-text">别在一处死盯，换个地方，话头可能自己露出来。</p>
+        <p class="hint-text">同一件事，在不同地方会留下不同版本。</p>
         <div class="location-list">
           ${caseData.locations
             .map(
@@ -2853,7 +2853,7 @@
     if (inv.command === "examine") {
       return `
         <h2>查看</h2>
-        <p class="hint-text">先看东西，别先信嘴。纸墨脚印，比谁都嘴硬。</p>
+        <p class="hint-text">纸页、封蜡、脚印，全都在这里。</p>
         <div class="spot-status-list">
       ${location.examineSpots
             .map((spot, index) => {
@@ -2862,7 +2862,7 @@
               return `
                 <div class="spot-status ${done ? "done" : ""}">
                   <strong>${escapeHtml(spot.name)}</strong>
-                  <span>${done ? "已记录" : "待触发"}</span>
+                  <span>${done ? "已记下" : "还没细看"}</span>
                 </div>
               `;
             })
@@ -2873,7 +2873,7 @@
     if (inv.command === "talk") {
       return `
         <h2>交谈</h2>
-        <p class="hint-text">让他多说两句。说得越顺，破绽越容易往外跑。</p>
+        <p class="hint-text">话都没说满，人也没站干净。</p>
         <div class="location-list">
           ${location.talkTopics
             .map((topic, index) => {
@@ -2893,7 +2893,7 @@
     const owned = collectedEvidence(caseData);
     return `
       <h2>出示</h2>
-      <p class="hint-text">把证物递出去，谁先接不住，谁心里最虚。</p>
+      <p class="hint-text">证物一亮，嘴硬的人反而最先露馅。</p>
       <div class="location-list">
         ${owned
       .map(

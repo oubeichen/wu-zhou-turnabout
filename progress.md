@@ -3482,6 +3482,55 @@ Remaining Ace Attorney gap list:
 - Move more talk interaction into direct scene interaction instead of relying so heavily on the right-side command list.
 - Keep revising case-intro and evidence-summary prose that still sounds more archival than player-spoken.
 
+## 2026-06-23 iteration 130 result
+
+Implemented:
+- Kept this round limited to one copy problem on the investigation screen: the right-side summary card and command-panel helper text were still speaking like a tutorial.
+- Rewrote the investigation summary emphasis line in `game/app.js` so it no longer says `现在先做：...`.
+- Rewrote the four command helper lines (`移动` / `查看` / `交谈` / `出示`) to describe the scene and stakes directly instead of telling the player what to do.
+- Changed the examine-state labels from `待触发` / `已记录` style system wording to `还没细看` / `已记下`, which fits the scene better and reads less like a trigger debugger.
+
+Why this round:
+- The user's most recent complaint was explicit: the game still had too many “说明书式” lines like “换个做法：查看” and “先看谁的反应最不自然”.
+- After the recent asset cleanup rounds, the archive-room screenshot made the next obvious offender very clear:
+  - `现在先做：盯现场`
+  - `先看东西，别先信嘴。纸墨脚印，比谁都嘴硬。`
+- This was a good small-round target because it is high-frequency, player-facing, and screenshot-verifiable without reopening any layout or hotspot logic.
+
+Verified:
+- `npm run check:js`
+- `git diff --check`
+- Ran the required web-game Playwright client with escalated browser permissions:
+  - `output/web-game-iteration130/shot-0.png`
+  - `output/web-game-iteration130/state-0.json`
+- Ran a focused escalated Playwright pass into case 1 investigation, moved to `史官案牍房`, switched back to `查看`, and captured:
+  - `output/investigation-copy-de-instruction-current.png`
+- Live DOM capture confirmed:
+  - `screen: investigation`
+  - `location: 史官案牍房`
+  - `command: examine`
+  - `locationMapText` now includes:
+    - `桌上的纸页、封蜡和磨痕都在场。`
+    - `封蜡、纸页和桌角的磨痕，都是自己留下的口供。`
+  - `hintText` now renders as:
+    - `纸页、封蜡、脚印，全都在这里。`
+  - status labels now render as:
+    - `还没细看`
+    - `还没细看`
+- Screenshot inspection confirmed:
+  - the right summary card no longer contains `现在先做：...` style tutorial phrasing;
+  - the command helper text now reads as direct scene description rather than player instruction;
+  - the new copy fits cleanly without overflow or alignment drift.
+
+Notes:
+- Checked `.gitignore` again this round; existing `output/` rules still covered the new verification artifacts, so no `.gitignore` change was needed.
+- This round intentionally did not touch the bottom dialogue box, courtroom text, or the remaining `辩护席` background asset. Those remain for separate focused rounds.
+
+Remaining Ace Attorney gap list:
+- Replace `location-bg-palace-defense.png` and then continue outward to other cases with the same old baked-overlay problem.
+- Move more talk interaction into direct scene interaction instead of relying so heavily on the right-side command list.
+- Keep revising case-intro and evidence-summary prose that still sounds more archival than player-spoken.
+
 ## 2026-06-23 iteration 122 result
 
 Implemented:
