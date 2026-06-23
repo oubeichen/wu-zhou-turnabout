@@ -3335,6 +3335,55 @@ Remaining Ace Attorney gap list:
 - Continue screenshot-first QA on dialogue hints, topbar copy, trial headers, statement cards, record drawer entries, and evidence detail panels.
 - Do not reopen already-fixed `举证` button, hotspot placement, or desktop no-scroll layout unless a fresh screenshot shows a concrete regression.
 
+## 2026-06-23 iteration 123 result
+
+Implemented:
+- Kept this round limited to one case-intro readability pass plus one boot reliability fix that was blocking fresh-browser verification.
+- Shortened two line-source titles in `game/game-data.js` and the matching fallback copy in `game/app.js`:
+  - `诏稿上盖住的名字` -> `诏稿遮住谁`
+  - `宝座终于空出缺口` -> `后位空出缺口`
+- Replaced the `document.write(...)` asset boot path in `game/index.html` with sequential DOM-based asset loading so fresh in-app browser tabs render the full game instead of sometimes stopping at a topbar-only shell.
+
+Why this round:
+- The latest case-intro screenshot still had two visible source tabs clipped into ellipses on desktop, which meant a player had to guess what the later clues were about before clicking them.
+- This was a clear usability problem, not just style polish: those tabs are a high-frequency navigation surface on the case-intro page.
+- At the same time, fresh browser tabs had become unreliable after the earlier cache-busting pass, so a small boot-path hardening change was necessary to make screenshot-first QA trustworthy again.
+
+Verified:
+- `git fetch origin main`
+- confirmed `HEAD` and `origin/main` both pointed to `d1876b4a3f02ce9433afcaa3dc258f3f1fec2111` before this round's commit
+- `npm run check:js`
+- `git diff --check`
+- Opened a fresh in-app browser tab at:
+  - `http://127.0.0.1:8788/game/?v=bootfix-20260623`
+- Captured and inspected:
+  - `output/bootfix-home-snapshot.md`
+  - `output/bootfix-home-current.png`
+- Fresh-home verification confirmed:
+  - the home screen now renders full main content again in a new tab, not just the topbar shell;
+  - the brand subtitle still renders as `宫门翻案`.
+- Used the local debug entry only for validation:
+  - `http://127.0.0.1:8788/debug-launch.html?scenario=case&case=0&v=casefix2-20260623`
+- Captured and inspected:
+  - `output/case-tab-short-title-snapshot.md`
+  - `output/case-tab-short-title-current.png`
+- Live DOM snapshot on the case-intro page confirmed the later source tabs now render as:
+  - `诏稿遮住谁`
+  - `后位空出缺口`
+- Screenshot inspection confirmed:
+  - the two revised tabs now show fully without ellipsis on the desktop case-intro layout;
+  - the source row, right-side detail card, and bottom action buttons stayed aligned;
+  - no new clipping or overlap appeared in that case-intro pass.
+
+Notes:
+- Checked `.gitignore` this round; existing rules already covered the generated verification artifacts, so no `.gitignore` change was needed.
+- Local `debug-launch.html` was adjusted only as a temporary validation surface and remains ignored; the tracked product change for boot reliability lives in `game/index.html`.
+
+Remaining Ace Attorney gap list:
+- Keep rewriting case-intro source labels, evidence summaries, and late-case prompts that still sound like archive annotation instead of scene pressure.
+- Continue screenshot-first QA on case-intro source rows, home/current-case summary copy, trial headers, statement cards, and evidence detail panels.
+- Do not reopen already-fixed `举证` button, hotspot placement, or desktop no-scroll layout unless a fresh screenshot shows a concrete regression.
+
 ## 2026-06-23 iteration 117 result
 
 Implemented:
