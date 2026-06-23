@@ -11,7 +11,7 @@
   const evidenceSheetRows = 5;
   const investigationHotspotLayoutByCase = {
     "case-empress-seat": [
-      [{ left: "8%", top: "30%" }, { left: "64%", top: "52%" }],
+      [{ left: "17%", top: "61%" }, { left: "66%", top: "55%" }],
       [{ left: "10%", top: "62%" }, { left: "60%", top: "48%" }],
       [{ left: "16%", top: "52%" }, { left: "56%", top: "29%" }],
     ],
@@ -2571,11 +2571,15 @@
     const byLocation = byCase[Number(locationIndex)] || null;
     const style = byLocation?.[Number(spotIndex)] || null;
     if (!style || !style.left || !style.top) return null;
-    const safeTop = clampPercent(style.top, 16, 56);
+    const safeTop = clampPercent(style.top, 16, investigationHotspotUsesTallField(caseData, locationIndex) ? 76 : 56);
     return {
       left: clampPercent(style.left, 8, 90),
       top: safeTop,
     };
+  }
+
+  function investigationHotspotUsesTallField(caseData, locationIndex) {
+    return caseData?.id === "case-empress-seat" && Number(locationIndex) === 0;
   }
 
   function renderOpeningLines(caseData) {
@@ -2697,8 +2701,11 @@
         : "证物刚收进案卷，先让这句话落稳。";
       return `<div class="scene-hotspots scene-hotspots-dormant" aria-label="现场可疑处" data-inactive-spots="1"><i>${escapeHtml(inactiveText)}</i></div>`;
     }
+    const containerStyle = investigationHotspotUsesTallField(caseData, inv.locationIndex)
+      ? `style="height:100%;bottom:0;"`
+      : "";
     return `
-      <div class="scene-hotspots" aria-label="现场可疑处">
+      <div class="scene-hotspots" aria-label="现场可疑处" ${containerStyle}>
         ${location.examineSpots
           .map((spot, index) => {
             const key = `${inv.locationIndex}:${index}`;

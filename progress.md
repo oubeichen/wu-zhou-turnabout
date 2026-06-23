@@ -3379,6 +3379,58 @@ Remaining Ace Attorney gap list:
 - Move more talk interaction into the background scene itself instead of leaning on the right-side list for every conversation beat.
 - Keep revising case-intro and evidence-summary prose that still reads closer to dossier summary than live dramatic play.
 
+## 2026-06-23 iteration 128 result
+
+Implemented:
+- Kept this round limited to one concrete asset problem on the first investigation screen: the polluted `location-bg-palace-site.png` background.
+- Generated a fresh palace investigation background image specifically for the first case and replaced `game/assets/location-bg-palace-site.png`.
+- Because the new image changed the visual layout, also retuned only the first case / first location hotspot field in `game/app.js` so the two clickable points land back on the desk area and the folding-screen area instead of floating on a pillar.
+- Added a narrow helper path in `game/app.js` so only `case-empress-seat` location 0 uses a full-height hotspot field; other cases keep their previous hotspot behavior untouched this round.
+
+Why this round:
+- The previous round had already proven that the ugly translucent arc on the left side of the palace scene was baked into the bitmap itself, not caused by CSS.
+- That made this a good small-round target: replace one bad asset instead of reopening unrelated layout systems.
+- The first screenshot after replacement showed the old hotspot coordinates no longer matched the new art, so fixing those two points in the same round was necessary to avoid shipping a prettier but less playable screen.
+
+Verified:
+- `npm run check:js`
+- `git diff --check`
+- Ran the required web-game Playwright client with escalated browser permissions:
+  - `output/web-game-iteration128/shot-0.png`
+  - `output/web-game-iteration128/state-0.json`
+- After hotspot retuning, ran it again:
+  - `output/web-game-iteration128b/shot-0.png`
+  - `output/web-game-iteration128b/state-0.json`
+- Ran a focused escalated Playwright pass into case 1 investigation and captured:
+  - `output/investigation-palace-bg-replaced-current.png`
+  - `output/investigation-palace-bg-hotspot-fixed-current.png`
+- Live DOM capture on the final screenshot confirmed:
+  - `screen: investigation`
+  - `location: 立政殿`
+  - `command: examine`
+  - `hotspotsVisible: true`
+  - hotspot bounds:
+    - `压着诏稿的镇纸` at approximately `(259, 625)`
+    - `屏风后的绣鞋印` at approximately `(729, 573)`
+- Screenshot inspection confirmed:
+  - the previous baked-in giant translucent arc is gone;
+  - the replacement art still reads as the same room type the scene copy describes;
+  - the two hotspots now sit near the desk and the screen-side search area instead of on empty architecture;
+  - the dialogue box, right-side summary card, clue board, and action buttons remained aligned.
+
+Asset source:
+- Generated with the image tool this round and copied from:
+  - `/Users/oubeichen/.codex/generated_images/019ecf74-c816-7533-b322-848453ce7320/ig_03fbe324badaecb1016a39f3f6e5d48191a8da28374025b447.png`
+
+Notes:
+- Checked `.gitignore` again this round; existing `output/` rules already covered the new validation artifacts, so no `.gitignore` change was needed.
+- This round intentionally did not touch the archive or defense variants of the palace scene yet. Those should be reviewed separately rather than blindly replaced in a batch.
+
+Remaining Ace Attorney gap list:
+- Continue replacing the other investigation backgrounds that still carry old pseudo-UI or muddy overlays.
+- Move more talk interaction into direct scene interaction instead of relying so heavily on the right command list.
+- Keep revising case-intro and evidence-summary prose that still sounds more archival than player-spoken.
+
 ## 2026-06-23 iteration 122 result
 
 Implemented:
