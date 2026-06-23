@@ -3384,6 +3384,44 @@ Remaining Ace Attorney gap list:
 - Continue screenshot-first QA on case-intro source rows, home/current-case summary copy, trial headers, statement cards, and evidence detail panels.
 - Do not reopen already-fixed `举证` button, hotspot placement, or desktop no-scroll layout unless a fresh screenshot shows a concrete regression.
 
+## 2026-06-23 iteration 124 result
+
+Implemented:
+- Kept this round limited to the case-selection gallery cards.
+- Simplified each card in `game/app.js` from two stacked preview paragraphs down to a single short deckline.
+- Left the card title, poster, status tags, `案件简报` button, and primary entry button unchanged.
+
+Why this round:
+- The latest case-selection screenshot showed every card trying to carry two separate preview paragraphs at once.
+- That produced exactly the wrong reading experience for a game menu: duplicated setup, multiple ellipses, and too much vertical text noise before the player even picks a case.
+- This was a good small-round target because it reduced clutter on one high-frequency screen without reopening settled layout or navigation work.
+
+Verified:
+- `git fetch origin main`
+- confirmed `HEAD` and `origin/main` both pointed to `d8598fb7c6e7d5e7b42da0ec92ee54c25fe3f00c` before this round's commit
+- `npm run check:js`
+- `git diff --check`
+- Ran a fresh local Playwright verification at `1600x960` against:
+  - `http://127.0.0.1:8788/game/?v=case-shell-20260623b`
+- The script opened `案件选择`, captured:
+  - `output/case-selection-single-hook-current.png`
+- Live DOM capture confirmed:
+  - `cardParagraphCounts: [1,1,1,1,1]`
+  - first card preview: `婴儿死讯还没传出宫门，废后的名字已经先进了诏稿。`
+- Screenshot inspection confirmed:
+  - each case card now shows one preview paragraph instead of two;
+  - the card column reads more cleanly at desktop width;
+  - the `案件简报` and `开始查案` buttons remained aligned and unchanged.
+
+Notes:
+- Checked `.gitignore` this round; existing rules already covered generated verification artifacts, so no `.gitignore` change was needed.
+- This verification used a fresh browser profile, so the screenshot reflects layout and card density rather than carried-over case progress state.
+
+Remaining Ace Attorney gap list:
+- Keep rewriting home/current-case summary copy, case-intro evidence summaries, and late-case prompts that still sound too archival or explanatory.
+- Continue screenshot-first QA on case-selection cards, home/current-case panels, trial headers, statement cards, and evidence detail panels.
+- Do not reopen already-fixed `举证` button, hotspot placement, or desktop no-scroll layout unless a fresh screenshot shows a concrete regression.
+
 ## 2026-06-23 iteration 117 result
 
 Implemented:

@@ -1778,8 +1778,7 @@
           ${record.clears ? `<span class="tag">结案 ${record.clears} 次</span>` : ""}
         </div>
         <h2>${escapeHtml(caseTitleForDisplay(caseData.title))}</h2>
-        <p>${escapeHtml(cardHook)}</p>
-        <p class="case-hook">${escapeHtml(caseDeckline(caseData))}</p>
+        <p class="case-hook">${escapeHtml(caseDeckline(caseData) || cardHook)}</p>
         <div class="case-actions">
           <button class="secondary-button" type="button" data-focus-case="${index}">案件简报</button>
           <button class="case-button" type="button" data-open-case="${index}">${label}</button>
