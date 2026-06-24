@@ -1493,7 +1493,7 @@
         return {
           id: "trial-counter-risk",
           title: "还压不住",
-          body: selected?.counterRisk || "这张纸现在还压不住他。亮得太早，反倒送他一句转身的话。",
+          body: selected?.counterRisk || "这张纸分量还不够，他眼下还撑得住。",
           steps: ["旁注", "证词", "别的记录"],
         };
       }
@@ -3554,7 +3554,7 @@
 
   function lockedEvidenceSummary(item) {
     if (item?.pursuitOnly) return "证人还没失口，这页还没露面。";
-    if (item?.trialOnly) return "庭上那道口子还没裂开，这页还翻不出来。";
+    if (item?.trialOnly) return "那层纸还没破，这一页还埋在底下。";
     return "这页还没到辩方手里。";
   }
 
@@ -3581,8 +3581,8 @@
         </div>
         ${
           selectedProfile
-            ? `<div class="evidence-detail profile-detail"><strong>${escapeHtml(selectedProfile.name)}</strong><span>${escapeHtml(selectedProfile.role)}</span><p>${escapeHtml(selectedProfile.note)}</p><small>${state.screen === "trial" ? "人物档案已在辩方手边；证席上绕不开的人，可能就是他。" : "人物不只是旁观者。有些矛盾，落在人身上才看得清。"}</small><div class="detail-actions"><button class="secondary-button" type="button" data-inspect-record="profile">详查人物</button></div>${renderRecordReturnAction()}</div>`
-            : `<p class="hint-text">人物不只是旁观者。有些矛盾，落在人身上才看得清。</p>`
+            ? `<div class="evidence-detail profile-detail"><strong>${escapeHtml(selectedProfile.name)}</strong><span>${escapeHtml(selectedProfile.role)}</span><p>${escapeHtml(selectedProfile.note)}</p><small>${state.screen === "trial" ? "这个名字已经摆到案边，再装无关也晚了。" : "纸会藏话，人却很难一直装没事。"}</small><div class="detail-actions"><button class="secondary-button" type="button" data-inspect-record="profile">详查人物</button></div>${renderRecordReturnAction()}</div>`
+            : `<p class="hint-text">纸会藏话，人却很难一直装没事。</p>`
         }
       `;
     }
@@ -3796,7 +3796,7 @@
     if (!item) return [];
     const specific = specificInspectSpotsForEvidence(item, viewId);
     if (specific.length) return specific;
-    const source = item ? `来源：${evidenceOriginLong(item)}` : "来路要是说不清，再硬的纸也站不住。";
+    const source = item ? `来源：${evidenceOriginLong(item)}` : "来路一乱，再硬的纸也站不住。";
     const risk = item.counterRisk ? ` 慎用点：${item.counterRisk}` : "";
     const common = {
       trace: {
@@ -3818,7 +3818,7 @@
           id: "source",
           label: "来源标记",
           title: "背面留下什么出处",
-          text: `${source} 这道来路要是说不清，庭上谁都能把它往外推。`,
+          text: `${source} 来路一乱，庭上谁都能把它往外推。`,
         },
         {
           id: "gap",
@@ -3840,7 +3840,7 @@
           id: "risk",
           label: "分量轻重",
           title: "单靠它够不够",
-          text: risk ? risk.trim() : "光凭这一页，还镇不住整案。",
+          text: risk ? risk.trim() : "这一页扎得很深，可还不够把整桩事钉死。",
         },
       ];
     }
@@ -3868,7 +3868,7 @@
 
   function specificInspectSpotsForEvidence(item, viewId) {
     const source = item ? `来源：${evidenceOriginLong(item)}` : "这份东西的来路和落点，都得能对上庭上的话。";
-    const risk = item.counterRisk ? `慎用点：${item.counterRisk}` : "亮得太早，话头就容易被人带开。";
+    const risk = item.counterRisk ? `慎用点：${item.counterRisk}` : "它该压轴的时候，分量才真正落得下来。";
     const map = {
       board: {
         front: [
@@ -4237,7 +4237,7 @@
     const compare = state.recordInspectCompare?.sourceId === item.id ? state.recordInspectCompare : null;
     const deduction = deductionForEvidence(caseData, item.id);
     if (!isRecordInspectComplete(item)) {
-      return `<div class="inspect-compare locked"><b>二次推理</b><span>这页还没照全。正面、背面和边角都还留着没露面的东西。当前：${escapeHtml(progress.label)}</span></div>`;
+      return `<div class="inspect-compare locked"><b>二次推理</b><span>这页还没看齐。正面、背面和边角都还压着话。当前：${escapeHtml(progress.label)}</span></div>`;
     }
     if (!options.length) {
       return `<div class="inspect-compare locked"><b>二次推理</b><span>眼下还没有第二份能和它对上的记录。</span></div>`;
@@ -4423,21 +4423,21 @@
       {
         kicker: "异议切入",
         title,
-        body: deductionText ? "辩方一声截断证词，法庭的目光被拉回案卷；这不是临场猜测，札记早已把两份记录对上。" : "辩方一声截断证词，法庭的目光从证人脸上落回记录本身。",
+        body: deductionText ? "辩方一句截住他，堂上立刻静了。那两页纸，早就已经对上了。" : "辩方一句截住他，堂上的眼一下都落回了那张纸。",
         recordLabel: "辩方发声",
         targetLabel: line,
       },
       {
         kicker: "证物对照",
         title: record,
-        body: deductionText ? `札记写得很清楚：${deductionText}` : "证物与证词并排，空白处自己露了出来。",
+        body: deductionText ? `札记上早就写着：${deductionText}` : "证物和证词一并排，中间那道空白自己就露了出来。",
         recordLabel: record,
         targetLabel: deductionTarget || target,
       },
       {
         kicker: "矛盾揭示",
         title: line,
-        body: deductionText ? `庭前对照和当前证词咬在同一个缺口上：${target}` : `掀开的不是旁枝末节，而是这段证词站住的根：${target}`,
+        body: deductionText ? `庭前那页对照，早把这道口子钉死了：${target}` : `他不是在小处说岔了，他从根上就在遮这件事：${target}`,
         recordLabel: title,
         targetLabel: record,
       },
@@ -4779,7 +4779,7 @@
       "case-half-hour-coup": "人人都说那夜太乱，可命令、换岗和赏赐偏偏都赶在一起。",
     };
     if (topic?.speaker?.includes("史官") || topic?.speaker?.includes("小吏") || topic?.speaker?.includes("书记")) {
-      return "写字的人少写半句，往往比多写一句更说明问题。";
+      return "写字的人少半句，往往比多一句更露怯。";
     }
     return byCase[caseData.id] || "他嘴上说得轻，现场摆出来的却是另一回事。";
   }
@@ -4956,7 +4956,7 @@
       reactionText: aftermath.reaction,
       defenseLine: aftermath.defenseLine,
     };
-    setMessage("辩方", `异议！${presentedLabel || "这份记录"}和他这套说法对不上。`, "objection");
+    setMessage("辩方", `异议！${presentedLabel || "这张纸"}和他这套说法对不上。`, "objection");
     playCue("objection");
     save();
     renderTrial();
@@ -5584,7 +5584,7 @@
       state.selectedProfileName = target.dataset.selectProfile;
       state.selectedEvidenceId = "";
       state.recordOpen = state.screen === "trial" ? false : state.recordOpen;
-      setMessage("人物档案", `${target.dataset.selectProfile}的档案已加入本次推理参考。`, "");
+      setMessage("人物档案", `翻到${target.dataset.selectProfile}这页，很多话就没法再装成无关了。`, "");
       rerender();
     }
     if (target.dataset.recordTab) {
