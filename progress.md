@@ -4779,3 +4779,78 @@ Remaining Ace Attorney gap list:
   - `举证` button styling
   - hotspot geometry
   - desktop single-window no-scroll layout
+
+## 2026-06-24 iteration 143 result
+
+Implemented:
+- 这一轮继续只收文案，不碰已经稳定的按钮和布局。
+- 重点处理了三类最像“系统在教玩家操作”的高频句子，并且只改生成源，再重新生成前端数据：
+  - [scripts/build_game_content.py](/Users/oubeichen/Projects/wuzetian2/scripts/build_game_content.py)
+  - [game/game-data.js](/Users/oubeichen/Projects/wuzetian2/game/game-data.js)
+- 本轮改动分成三批：
+  - 改掉五案辩护席里的标题和对话，例如 `先别急着拍诏稿`、`别被家事挡住`、`别被混乱骗了`、`让周兴解释步骤` 这类显然在“教玩家操作”的标题。
+  - 改掉共享的庭审 `press` / `wrongEvidenceFeedback` 模板，例如 `翻开法庭记录，把刚记下的追击补记拍到他面前`、`别拿普通证物去碰`、`最后一击需要...` 这些攻略腔。
+  - 再补掉五案第一段证词和终盘推理里最常见的一批写死句子，让它们从“继续问 / 拿出 / 先...”改成“眼前暴露了什么 / 这句话在藏什么 / 哪条线已经露出来”。
+
+Examples:
+- `记录官只敢说自己听见哭声，却不敢说谁先把哭声和废后连在一起。继续逼他回到当晚。`
+  -> `记录官把哭声说得很轻，却把最先喊出“废后”的人藏了起来。当晚那口气，他还没吐干净。`
+- `这是追击之后才逼出来的新口供。翻开法庭记录，把刚记下的追击补记拍到他面前。`
+  -> `这番补话不是临时想起，是被追到退无可退才漏出来的。案边那页追击补记，已经和它扣在一起。`
+- `别拿普通证物去碰，碰了也只会让他往回缩。`
+  -> `他这会儿改口，不是普通证物能轻轻带过去的。案边那页追击补记，正压着他新漏出来的话。`
+
+Why this round:
+- 用户最新要求更明确了：游戏界面应当就事论事，不要反复指挥玩家“该怎么做”。
+- 上一轮虽然清掉了 `这句 / 上一句` 之类的说明书腔，但 `press` 提示、错证物反馈和辩护席话题仍旧大量保留“继续问 / 先追问 / 拿出证物”这类攻略句。
+- 这类反馈出现频率极高，体感上比长段正文更像说明书，所以这一轮专门先打这三层。
+
+Verified:
+- `git fetch origin main`
+- confirmed `HEAD` and `origin/main` both pointed to `d1b0b150f664b1a997d22cc7a8cb725d890d7883` before this round's commit
+- `python3 scripts/build_game_content.py`
+- `npm run check:py`
+- `npm run check:js`
+- `git diff --check`
+- `rg -n "先别急着拍诏稿|别被家事挡住|别被混乱骗了|让周兴解释步骤|辩护策略|继续逼他回到当晚|翻开法庭记录，把刚记下的追击补记拍到他面前|别拿普通证物去碰，碰了也只会让他往回缩|最后一击需要庭上追问后的总结记录|最后一击需要庭上追问记录|供词可疑还不够，必须拿出能说明逼供办法反咬自己的证物|继续问那本账册为什么偏偏那晚出现|继续问纸离开铜匦以后经过了谁的手|继续问供状为什么太干净|继续问快到什么程度" scripts/build_game_content.py game/game-data.js` returned no matches
+- 浏览器与客户端验证：
+  - [iteration143-current-tab.png](/Users/oubeichen/Projects/wuzetian2/iteration143-current-tab.png)
+  - [iteration143-after-continue.png](/Users/oubeichen/Projects/wuzetian2/iteration143-after-continue.png)
+  - [iteration143-trial-pressed.png](/Users/oubeichen/Projects/wuzetian2/iteration143-trial-pressed.png)
+  - [shot-0.png](/Users/oubeichen/Projects/wuzetian2/output/iteration143-web-client/shot-0.png)
+  - [state-0.json](/Users/oubeichen/Projects/wuzetian2/output/iteration143-web-client/state-0.json)
+- 页面复查确认：
+  - 首页、案件续玩页、庭审页都没有新增重叠、裁切或滚动回归；
+  - [iteration143-trial-pressed.png](/Users/oubeichen/Projects/wuzetian2/iteration143-trial-pressed.png) 里，追问后的右栏提示已经变成 `记录官把哭声说得很轻，却把最先喊出“废后”的人藏了起来。当晚那口气，他还没吐干净。`，不再是“继续追问 / 拿出证物”；
+  - 案件续玩页里的辩护席和线索页没有再出现这轮锁定的那批标题式教程腔。
+
+Notes:
+- 这轮只改了生成源和生成产物，没有重开 `game/app.js` 的结构层，也没有碰 `.gitignore`。
+- 网络风格参考上，这轮只借鉴了《逆转裁判》台词“正文就事论事、说明单独分层”的做法，没有复制原文。
+
+Remaining Ace Attorney gap list:
+- 继续逐案清 `case_testimony_script` 里剩下的策略腔，尤其是 `人物档案的用法`、`最后问谁受益`、`真正藏着的是...`、`需要能显示...` 这类还在教玩家判断证物的句子。
+- 继续检查庭上追问记录、追击补记和部分 `summary/use` 字段，减少 `追问后...`、`它盯住的是...` 这类半说明半总结的表达。
+- 不要重开已经稳定的 `举证` 按钮、热点位置和桌面单屏无滚动布局，除非新截图证明回归。
+
+## Latest handoff
+
+- Most recent completed round: `2026-06-24 iteration 143 result`
+- Round scope: rewrote the most visible directive-sounding courtroom feedback and defense-desk topic copy in the content generator, then regenerated live game data.
+- Verified artifacts:
+  - `iteration143-current-tab.png`
+  - `iteration143-after-continue.png`
+  - `iteration143-trial-pressed.png`
+  - `output/iteration143-web-client/shot-0.png`
+  - `output/iteration143-web-client/state-0.json`
+- Verified commands:
+  - `git fetch origin main`
+  - `python3 scripts/build_game_content.py`
+  - `npm run check:py`
+  - `npm run check:js`
+  - `git diff --check`
+  - `rg -n "先别急着拍诏稿|别被家事挡住|别被混乱骗了|让周兴解释步骤|辩护策略|继续逼他回到当晚|翻开法庭记录，把刚记下的追击补记拍到他面前|别拿普通证物去碰，碰了也只会让他往回缩|最后一击需要庭上追问后的总结记录|最后一击需要庭上追问记录|供词可疑还不够，必须拿出能说明逼供办法反咬自己的证物|继续问那本账册为什么偏偏那晚出现|继续问纸离开铜匦以后经过了谁的手|继续问供状为什么太干净|继续问快到什么程度" scripts/build_game_content.py game/game-data.js`
+- Do not reopen in the next round unless a fresh screenshot proves regression:
+  - `举证` button styling
+  - hotspot geometry
+  - desktop single-window no-scroll layout

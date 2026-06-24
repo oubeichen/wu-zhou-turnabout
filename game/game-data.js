@@ -285,14 +285,14 @@ window.WUZHOU_GAME_DATA = {
           ],
           "talkTopics": [
             {
-              "title": "先别急着拍诏稿",
+              "title": "诏稿压得太早",
               "speaker": "辩方",
-              "text": "诏稿最刺眼，但太早出示只会让对手说这是朝廷决定。先让证人承认哭声、值夜和名册不是同一双手能解释的。"
+              "text": "诏稿最刺眼，可真正要命的不是它摆在案上，而是哭声、值夜和名册为什么会一起往它身上靠。"
             },
             {
-              "title": "宫人的沉默",
+              "title": "宫人为什么闭嘴",
               "speaker": "书记助手",
-              "text": "她不是不知道，她是不敢知道。逼她说人名之前，先拿到能替她挡住许敬宗的纸证。"
+              "text": "她不是不知道，她是不敢知道。谁的名字一旦从她嘴里出来，她多半就活不到天亮。"
             }
           ],
           "examineSpots": [
@@ -302,7 +302,7 @@ window.WUZHOU_GAME_DATA = {
             },
             {
               "name": "折起的元老名单",
-              "text": "名单折在最外侧。最后一击不能只替宫人辩白，还要证明有人急着让元老闭嘴。"
+              "text": "名单折在最外侧。它不只替宫人留下一口气，也把有人急着让元老闭嘴这件事翻了出来。"
             }
           ]
         }
@@ -352,14 +352,14 @@ window.WUZHOU_GAME_DATA = {
           "statements": [
             {
               "text": "我在殿门外听见哭声，随后就有人说这是废后旧怨。宫里这种话，传得比脚步还快。",
-              "press": "记录官只敢说自己听见哭声，却不敢说谁先把哭声和废后连在一起。继续逼他回到当晚。",
-              "wrongEvidenceFeedback": "眼下还只是风声，不是能拍案的硬伤。等他把话说满，再把证物亮出来。",
+              "press": "记录官把哭声说得很轻，却把最先喊出“废后”的人藏了起来。当晚那口气，他还没吐干净。",
+              "wrongEvidenceFeedback": "眼下还只是风声。案上的纸还没碰到真正伤人的地方。",
               "answerEvidence": null
             },
             {
               "text": "那名宫人本来就怨气深，婴儿夭折也好、废后传闻也好，都和后位更替没有关系。",
-              "press": "证人急着把一切压到宫人身上。拿出能说明当晚名单被动过手脚的证物。",
-              "wrongEvidenceFeedback": "这还不能打中“宫人私怨”。要找能把当晚在场顺序拉回来的记录。",
+              "press": "他急着把风波全压到宫人身上，倒把那张动过手脚的名单晾在了案外。",
+              "wrongEvidenceFeedback": "这份记录还够不着“宫人私怨”那层说法。当晚谁在场、谁被挪走，还没被它扯出来。",
               "answerEvidence": "case-empress-seat-ev-2",
               "pursuitUnlockStatementId": "case-empress-seat-pursuit-surface",
               "pursuitUnlockLabel": "追击后的补充证词",
@@ -367,18 +367,18 @@ window.WUZHOU_GAME_DATA = {
             },
             {
               "text": "记录官低声补了一句：哭声传到案前时，废后两个字已经夹在里面了。",
-              "press": "这是追击之后才逼出来的新口供。翻开法庭记录，把刚记下的追击补记拍到他面前。",
+              "press": "这番补话不是临时想起，是被追到退无可退才漏出来的。案边那页追击补记，已经和它扣在一起。",
               "hiddenUntilPressed": "case-empress-seat-pursuit-surface",
               "revealLabel": "追击后的补充证词",
               "requiredAfterUnlock": true,
-              "wrongEvidenceFeedback": "他这会儿是被追击补记逼出来的。别拿普通证物去碰，碰了也只会让他往回缩。",
+              "wrongEvidenceFeedback": "他这会儿改口，不是普通证物能轻轻带过去的。案边那页追击补记，正压着他新漏出来的话。",
               "answerEvidence": "case-empress-seat-ev-pursuit-note",
               "objection": "异议成立。追击补记：哭声入诏已经把他刚改的口供钉死了，证人别想再退回去。"
             },
             {
               "text": "至于谁后来升上去、谁被排出去，我一个记录官只照听见的话写，不敢多想。",
-              "press": "他说“不敢多想”，不是“不知道”。先把这点扣住，等他后面把文书说成顺理成章，再当庭拆穿。",
-              "wrongEvidenceFeedback": "这里只是露出时间上的缝，还不是翻盘的时候。证物先别急着亮。",
+              "press": "他嘴上说不敢多想，心里却早知道这份文书不是自己长出来的。",
+              "wrongEvidenceFeedback": "这里只露了一道缝，还没碰到案子最硬的骨头。",
               "answerEvidence": null
             }
           ]
@@ -421,18 +421,18 @@ window.WUZHOU_GAME_DATA = {
             },
             {
               "text": "许敬宗说漏了嘴：元老折子不是没到，是到了以后被人压在诏稿下面。",
-              "press": "这是追击之后才逼出来的新口供。翻开法庭记录，把刚记下的追击补记拍到他面前。",
+              "press": "这番补话不是临时想起，是被追到退无可退才漏出来的。案边那页追击补记，已经和它扣在一起。",
               "hiddenUntilPressed": "case-empress-seat-pursuit-legality",
               "revealLabel": "追击后的补充证词",
               "requiredAfterUnlock": true,
-              "wrongEvidenceFeedback": "他这会儿是被追击补记逼出来的。别拿普通证物去碰，碰了也只会让他往回缩。",
+              "wrongEvidenceFeedback": "他这会儿改口，不是普通证物能轻轻带过去的。案边那页追击补记，正压着他新漏出来的话。",
               "answerEvidence": "case-empress-seat-ev-pursuit-note",
               "objection": "异议成立。追击补记：哭声入诏已经把他刚改的口供钉死了，证人别想再退回去。"
             },
             {
               "text": "最后写进诏书的，就是法庭该承认的事实。纸上已经定了，辩方何必再翻旧账？",
               "press": "许敬宗把结果当成原因。胜出者留下的纸，正需要反过来追问是谁推动它胜出。",
-              "wrongEvidenceFeedback": "这话听着滑，可还不是这段证词最要命的地方。先别把力气砸偏。",
+              "wrongEvidenceFeedback": "这番话滑得很，可真正伤人的地方还不在这里。",
               "answerEvidence": null
             }
           ]
@@ -444,15 +444,15 @@ window.WUZHOU_GAME_DATA = {
           "statements": [
             {
               "text": "哭声、名册、折子、诏稿，辩方若只会一个个念名字，本庭听不到它们之间的线。",
-              "press": "这是最后推理入口。追问后，让书记把证人说不清的连接写入庭审记录。",
+              "press": "他说案卷只是一堆散纸，可哭声、名册、折子和诏稿早就挤到同一条线上了。",
               "pressUnlockEvidence": "case-empress-seat-ev-court-note",
-              "wrongEvidenceFeedback": "他这是逼辩方先交底，还没露出能一击打穿的口子。先追问，把庭上记录逼出来。",
+              "wrongEvidenceFeedback": "案上的线还没拢成一处，这份记录压不住整场风波。",
               "answerEvidence": null
             },
             {
               "text": "这些纸只是凑巧落在同一案里。没有同一个受益者，也没有同一个人被推出去挡刀。",
-              "press": "把谁受益、谁沉默、谁背罪放在同一张图上，后位案就不再像巧合。",
-              "wrongEvidenceFeedback": "最后一击需要庭上追问后的总结记录，单件证物只会被拆开解释。",
+              "press": "受益的人、沉默的人、背罪的人一站齐，后位案就不可能只是巧合。",
+              "wrongEvidenceFeedback": "单件纸证各有分量，可还压不住整条后位链。",
               "answerEvidence": "case-empress-seat-ev-court-note",
               "pursuitUnlockStatementId": "case-empress-seat-pursuit-final",
               "pursuitUnlockLabel": "追击后的补充证词",
@@ -460,18 +460,18 @@ window.WUZHOU_GAME_DATA = {
             },
             {
               "text": "御前书记重新摊开补记：哭声、值夜签和诏稿之间，确实少不了一只传话的手。",
-              "press": "这是追击之后才逼出来的新口供。翻开法庭记录，把刚记下的追击补记拍到他面前。",
+              "press": "这番补话不是临时想起，是被追到退无可退才漏出来的。案边那页追击补记，已经和它扣在一起。",
               "hiddenUntilPressed": "case-empress-seat-pursuit-final",
               "revealLabel": "追击后的补充证词",
               "requiredAfterUnlock": true,
-              "wrongEvidenceFeedback": "他这会儿是被追击补记逼出来的。别拿普通证物去碰，碰了也只会让他往回缩。",
+              "wrongEvidenceFeedback": "他这会儿改口，不是普通证物能轻轻带过去的。案边那页追击补记，正压着他新漏出来的话。",
               "answerEvidence": "case-empress-seat-ev-pursuit-note",
               "objection": "异议成立。追击补记：哭声入诏已经把他刚改的口供钉死了，证人别想再退回去。"
             },
             {
               "text": "若辩方还不能说清这条线，废后风波就到此封卷。",
-              "press": "这是判决压力，不是矛盾本身。回头咬住他那套“凑巧”的说法。",
-              "wrongEvidenceFeedback": "这是审判压力，不是矛盾本身。把注意力拉回他嘴里的“偶然事件”。",
+              "press": "他把封卷的话先抬出来，可那套“凑巧”的说法还悬着。",
+              "wrongEvidenceFeedback": "法官在催结果，可证词真正站不住的地方，还没被这份记录碰到。",
               "answerEvidence": null
             }
           ]
@@ -756,9 +756,9 @@ window.WUZHOU_GAME_DATA = {
           ],
           "talkTopics": [
             {
-              "title": "别被家事挡住",
+              "title": "家事底下那只手",
               "speaker": "辩方",
-              "text": "对手会说皇子之间本来就复杂。我们要问的是：谁把复杂整理成对旧臣最不利的顺序？"
+              "text": "对手爱把东宫案说成家事。可家事不会自己排成那个顺序，更不会只把旧臣一个人推到风口上。"
             },
             {
               "title": "人物档案的用法",
@@ -813,14 +813,14 @@ window.WUZHOU_GAME_DATA = {
           "statements": [
             {
               "text": "东宫旧臣递账那晚，廊灯一直亮着。可我只看见他抱着账册，没看见有人逼他来。",
-              "press": "邠王守礼把自己放在旁观位置。继续问那本账册为什么偏偏那晚出现。",
-              "wrongEvidenceFeedback": "眼下还只是风声，不是能拍案的硬伤。等他把话说满，再把证物亮出来。",
+              "press": "邠王守礼把自己摘得很干净，可那本账册偏偏挑在那一夜上桌，不会只是巧合。",
+              "wrongEvidenceFeedback": "眼下还只是风声。案上的纸还没碰到真正伤人的地方。",
               "answerEvidence": null
             },
             {
               "text": "旧臣借账册议论储位，本就是他自己惹出的祸，和皇子待遇、病榻传话没什么关系。",
-              "press": "证人急着把账册说成个人越界。拿出能显示东宫记录被改写的证物。",
-              "wrongEvidenceFeedback": "要打的不是账册本身，是他死咬的“和病榻传话无关”。得拿能把账册和后手连上的证物。",
+              "press": "他急着把账册说成旧臣一个人的祸，倒把东宫改过的旧记录晾了出来。",
+              "wrongEvidenceFeedback": "这份记录还碰不到“病榻传话无关”那层说法。后手还藏在账册后面。",
               "answerEvidence": "case-crown-shadow-ev-2",
               "pursuitUnlockStatementId": "case-crown-shadow-pursuit-surface",
               "pursuitUnlockLabel": "追击后的补充证词",
@@ -828,18 +828,18 @@ window.WUZHOU_GAME_DATA = {
             },
             {
               "text": "邠王守礼承认，旧账册在入庭前曾被书记官借走半日。",
-              "press": "这是追击之后才逼出来的新口供。翻开法庭记录，把刚记下的追击补记拍到他面前。",
+              "press": "这番补话不是临时想起，是被追到退无可退才漏出来的。案边那页追击补记，已经和它扣在一起。",
               "hiddenUntilPressed": "case-crown-shadow-pursuit-surface",
               "revealLabel": "追击后的补充证词",
               "requiredAfterUnlock": true,
-              "wrongEvidenceFeedback": "他这会儿是被追击补记逼出来的。别拿普通证物去碰，碰了也只会让他往回缩。",
+              "wrongEvidenceFeedback": "他这会儿改口，不是普通证物能轻轻带过去的。案边那页追击补记，正压着他新漏出来的话。",
               "answerEvidence": "case-crown-shadow-ev-pursuit-note",
               "objection": "异议成立。追击补记：旧账流向已经把他刚改的口供钉死了，证人别想再退回去。"
             },
             {
               "text": "我只知道最后旧臣被押走。至于谁先挑出这些记录，我不便多说。",
-              "press": "他不是不知道，是不便说。先记住“谁先挑出记录”这个问题。",
-              "wrongEvidenceFeedback": "这里只是露出时间上的缝，还不是翻盘的时候。证物先别急着亮。",
+              "press": "他不是不知道，是不敢把谁先挑出记录这件事说穿。",
+              "wrongEvidenceFeedback": "这里只露了一道缝，还没碰到案子最硬的骨头。",
               "answerEvidence": null
             }
           ]
@@ -882,29 +882,29 @@ window.WUZHOU_GAME_DATA = {
             },
             {
               "text": "书记官改口说，那些空白日期不是漏写，而是等人决定该留下哪种说法。",
-              "press": "这是追击之后才逼出来的新口供。翻开法庭记录，把刚记下的追击补记拍到他面前。",
+              "press": "这番补话不是临时想起，是被追到退无可退才漏出来的。案边那页追击补记，已经和它扣在一起。",
               "hiddenUntilPressed": "case-crown-shadow-pursuit-legality",
               "revealLabel": "追击后的补充证词",
               "requiredAfterUnlock": true,
-              "wrongEvidenceFeedback": "他这会儿是被追击补记逼出来的。别拿普通证物去碰，碰了也只会让他往回缩。",
+              "wrongEvidenceFeedback": "他这会儿改口，不是普通证物能轻轻带过去的。案边那页追击补记，正压着他新漏出来的话。",
               "answerEvidence": "case-crown-shadow-ev-pursuit-note",
               "objection": "异议成立。追击补记：旧账流向已经把他刚改的口供钉死了，证人别想再退回去。"
             },
             {
               "text": "宫廷书记官反制后留下了一个缺口：他只证明刚才那件证物不够，却没有解释后续动作是谁做的。",
-              "press": "别跟着他绕回刚才那个坑里。换一件能咬住后手的证物，再把人逼回来。",
+              "press": "他刚躲过去的，不是结尾，是后手。那块空白还晾在案上。",
               "hiddenUntilPressed": "case-crown-shadow-counter-recovery",
               "revealLabel": "反制后的补救破绽",
               "optionalRecovery": true,
               "recoveryCredibility": 1,
-              "wrongEvidenceFeedback": "补救追问需要能说明后续动作的证物，不能再回到刚被反制的那份记录。",
+              "wrongEvidenceFeedback": "刚才那道空白还挂在后面，没必要再回去碰已经塌掉的那页。",
               "answerEvidence": "case-crown-shadow-ev-4",
               "objection": "补救成立。病榻旁的传位记录避开刚才的漏洞，直接说明公开说法背后还有人动手整理。"
             },
             {
               "text": "既然最后旧臣承担了罪名，东宫这场风波就该按旧记录结案。",
               "press": "旧记录也可能是胜者留下的记录。胜负不能自动证明记录可靠。",
-              "wrongEvidenceFeedback": "这话听着滑，可还不是这段证词最要命的地方。先别把力气砸偏。",
+              "wrongEvidenceFeedback": "这番话滑得很，可真正伤人的地方还不在这里。",
               "answerEvidence": null
             }
           ]
@@ -916,15 +916,15 @@ window.WUZHOU_GAME_DATA = {
           "statements": [
             {
               "text": "辩方拿出许多旧纸，却还没说明旧臣为什么会突然站到风口上。",
-              "press": "这是总结入口。追问后，把证人说不清的关系写成庭审记录。",
+              "press": "他说旧臣忽然站到风口上，可那阵风分明是有人一页页扇起来的。",
               "pressUnlockEvidence": "case-crown-shadow-ev-court-note",
-              "wrongEvidenceFeedback": "他这是逼辩方先交底，还没露出能一击打穿的口子。先追问，把庭上记录逼出来。",
+              "wrongEvidenceFeedback": "案上的线还没拢成一处，这份记录压不住整场风波。",
               "answerEvidence": null
             },
             {
               "text": "皇子待遇、病榻传话和旧臣被押，只是同一时期的三件事，没有同一只手。",
-              "press": "把待遇、传话和被押顺序合在一起，就能看出谁把家事整理成罪名。",
-              "wrongEvidenceFeedback": "最后一击需要庭上追问记录，不是某一张旧纸。",
+              "press": "待遇、传话、被押这三件事一并排开，谁把家事写成罪名就躲不掉了。",
+              "wrongEvidenceFeedback": "单件旧纸各说各话，还压不住这条东宫线。",
               "answerEvidence": "case-crown-shadow-ev-court-note",
               "pursuitUnlockStatementId": "case-crown-shadow-pursuit-final",
               "pursuitUnlockLabel": "追击后的补充证词",
@@ -932,18 +932,18 @@ window.WUZHOU_GAME_DATA = {
             },
             {
               "text": "御前书记沉声补道：旧臣不是自己走到风口，是账册先被人递到了那里。",
-              "press": "这是追击之后才逼出来的新口供。翻开法庭记录，把刚记下的追击补记拍到他面前。",
+              "press": "这番补话不是临时想起，是被追到退无可退才漏出来的。案边那页追击补记，已经和它扣在一起。",
               "hiddenUntilPressed": "case-crown-shadow-pursuit-final",
               "revealLabel": "追击后的补充证词",
               "requiredAfterUnlock": true,
-              "wrongEvidenceFeedback": "他这会儿是被追击补记逼出来的。别拿普通证物去碰，碰了也只会让他往回缩。",
+              "wrongEvidenceFeedback": "他这会儿改口，不是普通证物能轻轻带过去的。案边那页追击补记，正压着他新漏出来的话。",
               "answerEvidence": "case-crown-shadow-ev-pursuit-note",
               "objection": "异议成立。追击补记：旧账流向已经把他刚改的口供钉死了，证人别想再退回去。"
             },
             {
               "text": "若这条线连不起来，东宫案就只能维持旧臣有罪。",
-              "press": "这是最后压力。真正的破口，还在他死咬的“没有同一只手”。",
-              "wrongEvidenceFeedback": "这是审判压力，不是矛盾本身。把注意力拉回他嘴里的“偶然事件”。",
+              "press": "他把“没有同一只手”挂在嘴边，可那只手的影子已经落在纸上了。",
+              "wrongEvidenceFeedback": "法官在催结果，可证词真正站不住的地方，还没被这份记录碰到。",
               "answerEvidence": null
             }
           ]
@@ -1318,14 +1318,14 @@ window.WUZHOU_GAME_DATA = {
           "statements": [
             {
               "text": "我只把纸投进铜匦。后来街上怎么喊、官府怎么抓，我一个告密人管不了。",
-              "press": "告密人把自己停在投入口。继续问纸离开铜匦以后经过了谁的手。",
-              "wrongEvidenceFeedback": "眼下还只是风声，不是能拍案的硬伤。等他把话说满，再把证物亮出来。",
+              "press": "告密人只肯认自己投过书，却不肯认那张纸后来经过了谁的手。",
+              "wrongEvidenceFeedback": "眼下还只是风声。案上的纸还没碰到真正伤人的地方。",
               "answerEvidence": null
             },
             {
               "text": "被告本来就心虚，投书只是把旧臣谋反揭出来，和谁扩大案情没有关系。",
-              "press": "证人把投书当成完整事实。拿出能说明投书之后罪名被加重的证物。",
-              "wrongEvidenceFeedback": "要打“投书等于谋反”，需要显示投书离开铜匦后发生变化的记录。",
+              "press": "他把投书说成完整真相，倒把后面添上的罪名一起带了出来。",
+              "wrongEvidenceFeedback": "这份记录还只碰到投书的入口，后面那层加罪的手还没被扯出来。",
               "answerEvidence": "case-rebellion-box-ev-2",
               "pursuitUnlockStatementId": "case-rebellion-box-pursuit-surface",
               "pursuitUnlockLabel": "追击后的补充证词",
@@ -1333,18 +1333,18 @@ window.WUZHOU_GAME_DATA = {
             },
             {
               "text": "告密人终于承认，他再见原札时，纸边已经多了官府标注。",
-              "press": "这是追击之后才逼出来的新口供。翻开法庭记录，把刚记下的追击补记拍到他面前。",
+              "press": "这番补话不是临时想起，是被追到退无可退才漏出来的。案边那页追击补记，已经和它扣在一起。",
               "hiddenUntilPressed": "case-rebellion-box-pursuit-surface",
               "revealLabel": "追击后的补充证词",
               "requiredAfterUnlock": true,
-              "wrongEvidenceFeedback": "他这会儿是被追击补记逼出来的。别拿普通证物去碰，碰了也只会让他往回缩。",
+              "wrongEvidenceFeedback": "他这会儿改口，不是普通证物能轻轻带过去的。案边那页追击补记，正压着他新漏出来的话。",
               "answerEvidence": "case-rebellion-box-ev-pursuit-note",
               "objection": "异议成立。追击补记：投书转手已经把他刚改的口供钉死了，证人别想再退回去。"
             },
             {
               "text": "我只记得榜文贴得很快。快不快，那是官府的事，不是我的事。",
-              "press": "他承认榜文太快，却把责任推开。先记住速度问题，后面追到来俊臣身上。",
-              "wrongEvidenceFeedback": "这里只是露出时间上的缝，还不是翻盘的时候。证物先别急着亮。",
+              "press": "他嘴上把榜文的事往外推，可“太快”两个字已经露了底。",
+              "wrongEvidenceFeedback": "这里只露了一道缝，还没碰到案子最硬的骨头。",
               "answerEvidence": null
             }
           ]
@@ -1358,7 +1358,7 @@ window.WUZHOU_GAME_DATA = {
               "text": "告密入匦以后就是官府记录，辩方再问谁转手，是在替乱臣找路。",
               "press": "告密札只是入口，真正该问的是谁把一张纸变成一场大案。",
               "unlockStatementId": "case-rebellion-box-legality-branch",
-              "wrongEvidenceFeedback": "来俊臣正在封住转手路线。先追问，让隐藏证词出现。",
+              "wrongEvidenceFeedback": "来俊臣把转手那段路压得很死。真正露风的地方，还藏在他没肯明说的那半截里。",
               "answerEvidence": null
             },
             {
@@ -1387,29 +1387,29 @@ window.WUZHOU_GAME_DATA = {
             },
             {
               "text": "来俊臣避开了转手路线，只说标注是办案常例，却不说是谁先添的字。",
-              "press": "这是追击之后才逼出来的新口供。翻开法庭记录，把刚记下的追击补记拍到他面前。",
+              "press": "这番补话不是临时想起，是被追到退无可退才漏出来的。案边那页追击补记，已经和它扣在一起。",
               "hiddenUntilPressed": "case-rebellion-box-pursuit-legality",
               "revealLabel": "追击后的补充证词",
               "requiredAfterUnlock": true,
-              "wrongEvidenceFeedback": "他这会儿是被追击补记逼出来的。别拿普通证物去碰，碰了也只会让他往回缩。",
+              "wrongEvidenceFeedback": "他这会儿改口，不是普通证物能轻轻带过去的。案边那页追击补记，正压着他新漏出来的话。",
               "answerEvidence": "case-rebellion-box-ev-pursuit-note",
               "objection": "异议成立。追击补记：投书转手已经把他刚改的口供钉死了，证人别想再退回去。"
             },
             {
               "text": "来俊臣反制后留下了一个缺口：他只证明刚才那件证物不够，却没有解释后续动作是谁做的。",
-              "press": "别跟着他绕回刚才那个坑里。换一件能咬住后手的证物，再把人逼回来。",
+              "press": "他刚躲过去的，不是结尾，是后手。那块空白还晾在案上。",
               "hiddenUntilPressed": "case-rebellion-box-counter-recovery",
               "revealLabel": "反制后的补救破绽",
               "optionalRecovery": true,
               "recoveryCredibility": 1,
-              "wrongEvidenceFeedback": "补救追问需要能说明后续动作的证物，不能再回到刚被反制的那份记录。",
+              "wrongEvidenceFeedback": "刚才那道空白还挂在后面，没必要再回去碰已经塌掉的那页。",
               "answerEvidence": "case-rebellion-box-ev-4",
               "objection": "补救成立。酷吏审讯名册避开刚才的漏洞，直接说明公开说法背后还有人动手整理。"
             },
             {
               "text": "既然最后抓到了许多人，就说明原先那封投书没有错。",
               "press": "抓得多不能证明原札准，只可能说明网撒得大。别被结果带走。",
-              "wrongEvidenceFeedback": "这话听着滑，可还不是这段证词最要命的地方。先别把力气砸偏。",
+              "wrongEvidenceFeedback": "这番话滑得很，可真正伤人的地方还不在这里。",
               "answerEvidence": null
             }
           ]
@@ -1421,15 +1421,15 @@ window.WUZHOU_GAME_DATA = {
           "statements": [
             {
               "text": "辩方说了铜匦、榜文、名册，却还没说清一张纸怎么变成一张网。",
-              "press": "这是最终推理入口。追问后取得庭上记录。",
+              "press": "他说不清一张纸怎么变成一张网，可那张网的结已经一处处露出来了。",
               "pressUnlockEvidence": "case-rebellion-box-ev-court-note",
-              "wrongEvidenceFeedback": "他这是逼辩方先交底，还没露出能一击打穿的口子。先追问，把庭上记录逼出来。",
+              "wrongEvidenceFeedback": "案上的线还没拢成一处，这份记录压不住整场风波。",
               "answerEvidence": null
             },
             {
               "text": "投书、榜文、缉捕令只是案情自然推进，没有同一个人借机加罪。",
-              "press": "把转手路线连起来，就能看出谁每次都在罪名变重的地方出现。",
-              "wrongEvidenceFeedback": "最后一击要用庭上追问记录，单件证物会被说成流程一环。",
+              "press": "投书、榜文、缉捕令一旦按转手顺序排开，谁在一路加罪就藏不住了。",
+              "wrongEvidenceFeedback": "单件纸证能咬住一步，咬不住整条加罪的路。",
               "answerEvidence": "case-rebellion-box-ev-court-note",
               "pursuitUnlockStatementId": "case-rebellion-box-pursuit-final",
               "pursuitUnlockLabel": "追击后的补充证词",
@@ -1437,18 +1437,18 @@ window.WUZHOU_GAME_DATA = {
             },
             {
               "text": "御前书记写下补记：投书每转一次手，罪名就比原来重一层。",
-              "press": "这是追击之后才逼出来的新口供。翻开法庭记录，把刚记下的追击补记拍到他面前。",
+              "press": "这番补话不是临时想起，是被追到退无可退才漏出来的。案边那页追击补记，已经和它扣在一起。",
               "hiddenUntilPressed": "case-rebellion-box-pursuit-final",
               "revealLabel": "追击后的补充证词",
               "requiredAfterUnlock": true,
-              "wrongEvidenceFeedback": "他这会儿是被追击补记逼出来的。别拿普通证物去碰，碰了也只会让他往回缩。",
+              "wrongEvidenceFeedback": "他这会儿改口，不是普通证物能轻轻带过去的。案边那页追击补记，正压着他新漏出来的话。",
               "answerEvidence": "case-rebellion-box-ev-pursuit-note",
               "objection": "异议成立。追击补记：投书转手已经把他刚改的口供钉死了，证人别想再退回去。"
             },
             {
               "text": "若辩方无法说明这条路，告密案就按谋反定案。",
-              "press": "这是判决压力。破口还在他嘴里的“自然推进”。",
-              "wrongEvidenceFeedback": "这是审判压力，不是矛盾本身。把注意力拉回他嘴里的“偶然事件”。",
+              "press": "他把“自然推进”挂在嘴边，可这条路分明有人一段段铺过。",
+              "wrongEvidenceFeedback": "法官在催结果，可证词真正站不住的地方，还没被这份记录碰到。",
               "answerEvidence": null
             }
           ]
@@ -1552,7 +1552,7 @@ window.WUZHOU_GAME_DATA = {
         "evidenceIndex": 2,
         "notice": "酷吏话术反制",
         "risk": "这份供词只能指出一处破绽，不能直接证明逼供办法已经害到办案者自己。",
-        "feedback": "周兴把辩方引向单个供词破绽：供词可疑还不够，必须拿出能说明逼供办法反咬自己的证物。"
+        "feedback": "周兴老想把人拽回单份供词的真假上。可只盯着那张纸，瓮、手册和逼供的顺序就都要被他撇开了。"
       },
       "index": 4,
       "badEnding": "若无法推翻这组证词，酷吏反噬、狄仁杰与魏元忠、继承争议会被写成单一罪名。狄仁杰的沉默将成为定案理由，真正该查的人会躲在案卷后面。",
@@ -1739,14 +1739,14 @@ window.WUZHOU_GAME_DATA = {
           ],
           "talkTopics": [
             {
-              "title": "别只说供状假",
+              "title": "供状为什么不像供状",
               "speaker": "辩方",
-              "text": "说假很容易，被驳也很快。要让法庭看见供状为什么会长成这样：瓮、火、手册，一个都不能少。"
+              "text": "只说它是假，周兴立刻能把话推回来。瓮、火、手册和笔迹一并排，供状才会自己露出不是自愿写成的样子。"
             },
             {
-              "title": "让周兴解释步骤",
+              "title": "那套步骤是谁的",
               "speaker": "书记助手",
-              "text": "他熟悉恐吓流程，就会下意识替流程辩护。等他替流程说话，再让手册咬住他。"
+              "text": "周兴越熟那套恐吓流程，越像亲手用惯了它。手册一摊开，他就得把每一步怎么来的说清楚。"
             }
           ],
           "examineSpots": [
@@ -1801,14 +1801,14 @@ window.WUZHOU_GAME_DATA = {
           "statements": [
             {
               "text": "我看见供状时，签押已经在上面。暗室里发生过什么，周兴说只是照规矩问话。",
-              "press": "魏元忠只看见结果，不等于过程清白。继续问供状为什么太干净。",
-              "wrongEvidenceFeedback": "眼下还只是风声，不是能拍案的硬伤。等他把话说满，再把证物亮出来。",
+              "press": "魏元忠看见的是签押后的结果，可那份供状干净得太假，像有人先把路扫平了。",
+              "wrongEvidenceFeedback": "眼下还只是风声。案上的纸还没碰到真正伤人的地方。",
               "answerEvidence": null
             },
             {
               "text": "狄仁杰既已签押认罪，供状就是他自己的意思，和空瓮、手册都没有关系。",
-              "press": "证人被迫承认供状，却还没把刑具和签押连起来。拿出能显示供状异常的证物。",
-              "wrongEvidenceFeedback": "要打“自愿签押”，需要先指出供状本身不自然。",
+              "press": "他把供状、空瓮和手册硬生生拆开，倒把那股不自然一起晾了出来。",
+              "wrongEvidenceFeedback": "这份记录还没碰到“自愿签押”最要命的那层假。",
               "answerEvidence": "case-urn-ev-2",
               "pursuitUnlockStatementId": "case-urn-pursuit-surface",
               "pursuitUnlockLabel": "追击后的补充证词",
@@ -1816,18 +1816,18 @@ window.WUZHOU_GAME_DATA = {
             },
             {
               "text": "魏元忠补充说，签押前那口瓮已经被拖到供案旁边。",
-              "press": "这是追击之后才逼出来的新口供。翻开法庭记录，把刚记下的追击补记拍到他面前。",
+              "press": "这番补话不是临时想起，是被追到退无可退才漏出来的。案边那页追击补记，已经和它扣在一起。",
               "hiddenUntilPressed": "case-urn-pursuit-surface",
               "revealLabel": "追击后的补充证词",
               "requiredAfterUnlock": true,
-              "wrongEvidenceFeedback": "他这会儿是被追击补记逼出来的。别拿普通证物去碰，碰了也只会让他往回缩。",
+              "wrongEvidenceFeedback": "他这会儿改口，不是普通证物能轻轻带过去的。案边那页追击补记，正压着他新漏出来的话。",
               "answerEvidence": "case-urn-ev-pursuit-note",
               "objection": "异议成立。追击补记：瓮前签押已经把他刚改的口供钉死了，证人别想再退回去。"
             },
             {
               "text": "我只知道他活着走出了审讯，不知道他在里面听见了什么。",
-              "press": "活着走出来不等于没有被逼供。把暗室里的物件和供状放到一起看。",
-              "wrongEvidenceFeedback": "这里只是露出时间上的缝，还不是翻盘的时候。证物先别急着亮。",
+              "press": "人是活着走出来了，可那股暗室里的火气还没从供状上散掉。",
+              "wrongEvidenceFeedback": "这里只露了一道缝，还没碰到案子最硬的骨头。",
               "answerEvidence": null
             }
           ]
@@ -1861,7 +1861,7 @@ window.WUZHOU_GAME_DATA = {
               "counterEvidence": "case-urn-ev-3",
               "counterRecoveryId": "case-urn-counter-recovery",
               "counterNotice": "酷吏话术反制",
-              "counterFeedback": "周兴把辩方引向单个供词破绽：供词可疑还不够，必须拿出能说明逼供办法反咬自己的证物。",
+              "counterFeedback": "周兴老想把人拽回单份供词的真假上。可只盯着那张纸，瓮、手册和逼供的顺序就都要被他撇开了。",
               "counterPenalty": 2,
               "answerEvidence": "case-urn-ev-4",
               "pursuitUnlockStatementId": "case-urn-pursuit-legality",
@@ -1870,29 +1870,29 @@ window.WUZHOU_GAME_DATA = {
             },
             {
               "text": "周兴说那只是旧法，却没有解释手册折角为什么正停在恐吓那页。",
-              "press": "这是追击之后才逼出来的新口供。翻开法庭记录，把刚记下的追击补记拍到他面前。",
+              "press": "这番补话不是临时想起，是被追到退无可退才漏出来的。案边那页追击补记，已经和它扣在一起。",
               "hiddenUntilPressed": "case-urn-pursuit-legality",
               "revealLabel": "追击后的补充证词",
               "requiredAfterUnlock": true,
-              "wrongEvidenceFeedback": "他这会儿是被追击补记逼出来的。别拿普通证物去碰，碰了也只会让他往回缩。",
+              "wrongEvidenceFeedback": "他这会儿改口，不是普通证物能轻轻带过去的。案边那页追击补记，正压着他新漏出来的话。",
               "answerEvidence": "case-urn-ev-pursuit-note",
               "objection": "异议成立。追击补记：瓮前签押已经把他刚改的口供钉死了，证人别想再退回去。"
             },
             {
               "text": "周兴反制后留下了一个缺口：他只证明刚才那件证物不够，却没有解释后续动作是谁做的。",
-              "press": "别跟着他绕回刚才那个坑里。换一件能咬住后手的证物，再把人逼回来。",
+              "press": "他刚躲过去的，不是结尾，是后手。那块空白还晾在案上。",
               "hiddenUntilPressed": "case-urn-counter-recovery",
               "revealLabel": "反制后的补救破绽",
               "optionalRecovery": true,
               "recoveryCredibility": 1,
-              "wrongEvidenceFeedback": "补救追问需要能说明后续动作的证物，不能再回到刚被反制的那份记录。",
+              "wrongEvidenceFeedback": "刚才那道空白还挂在后面，没必要再回去碰已经塌掉的那页。",
               "answerEvidence": "case-urn-ev-4",
               "objection": "补救成立。周兴审讯手册避开刚才的漏洞，直接说明公开说法背后还有人动手整理。"
             },
             {
               "text": "最后留下签押的人是狄仁杰，这就足够证明供状有效。",
               "press": "签押是结果，不是过程。过程若被逼出来，签押反而成了逼供留下的痕迹。",
-              "wrongEvidenceFeedback": "这话听着滑，可还不是这段证词最要命的地方。先别把力气砸偏。",
+              "wrongEvidenceFeedback": "这番话滑得很，可真正伤人的地方还不在这里。",
               "answerEvidence": null
             }
           ]
@@ -1904,15 +1904,15 @@ window.WUZHOU_GAME_DATA = {
           "statements": [
             {
               "text": "辩方摆出空瓮、供状、手册，却还没说明它们怎样合成一场逼供。",
-              "press": "这是总结入口。追问后，把证人承认解释不了的地方写入庭审记录。",
+              "press": "他说三件证物还连不成一场逼供，可它们彼此咬住的地方已经摆在案上。",
               "pressUnlockEvidence": "case-urn-ev-court-note",
-              "wrongEvidenceFeedback": "他这是逼辩方先交底，还没露出能一击打穿的口子。先追问，把庭上记录逼出来。",
+              "wrongEvidenceFeedback": "案上的线还没拢成一处，这份记录压不住整场风波。",
               "answerEvidence": null
             },
             {
               "text": "空瓮、供状和手册只是同案材料，没有同一套逼供步骤把它们连起来。",
-              "press": "把恐吓、签押、手册折角按顺序排开，它们就不是散落材料。",
-              "wrongEvidenceFeedback": "最后一击要用庭上追问记录，单件证物会被周兴拆开解释。",
+              "press": "恐吓、签押、手册折角一旦排成顺序，所谓散落材料就站不住了。",
+              "wrongEvidenceFeedback": "单件证物各自发声，还压不住整套流程。",
               "answerEvidence": "case-urn-ev-court-note",
               "pursuitUnlockStatementId": "case-urn-pursuit-final",
               "pursuitUnlockLabel": "追击后的补充证词",
@@ -1920,18 +1920,18 @@ window.WUZHOU_GAME_DATA = {
             },
             {
               "text": "御前书记把顺序写清：先是瓮，再是手册，最后才是供状。",
-              "press": "这是追击之后才逼出来的新口供。翻开法庭记录，把刚记下的追击补记拍到他面前。",
+              "press": "这番补话不是临时想起，是被追到退无可退才漏出来的。案边那页追击补记，已经和它扣在一起。",
               "hiddenUntilPressed": "case-urn-pursuit-final",
               "revealLabel": "追击后的补充证词",
               "requiredAfterUnlock": true,
-              "wrongEvidenceFeedback": "他这会儿是被追击补记逼出来的。别拿普通证物去碰，碰了也只会让他往回缩。",
+              "wrongEvidenceFeedback": "他这会儿改口，不是普通证物能轻轻带过去的。案边那页追击补记，正压着他新漏出来的话。",
               "answerEvidence": "case-urn-ev-pursuit-note",
               "objection": "异议成立。追击补记：瓮前签押已经把他刚改的口供钉死了，证人别想再退回去。"
             },
             {
               "text": "若不能证明流程存在，供状仍按有效记录处理。",
-              "press": "这是最后压力。真正要命的是他死不认流程。",
-              "wrongEvidenceFeedback": "这是审判压力，不是矛盾本身。把注意力拉回他嘴里的“偶然事件”。",
+              "press": "他死咬没有流程，可那套流程已经从纸和瓮口里冒出来了。",
+              "wrongEvidenceFeedback": "法官在催结果，可证词真正站不住的地方，还没被这份记录碰到。",
               "answerEvidence": null
             }
           ]
@@ -2200,9 +2200,9 @@ window.WUZHOU_GAME_DATA = {
           ],
           "talkTopics": [
             {
-              "title": "别被混乱骗了",
+              "title": "混乱背后的顺序",
               "speaker": "辩方",
-              "text": "越是混乱，越要相信时间。更漏牌不会站队，能帮我们拆穿谁早就知道下一步。"
+              "text": "越是人人都喊乱，越要去看时辰。更漏牌不替谁说话，却会把谁早知道后手这件事照得很亮。"
             },
             {
               "title": "最后问谁受益",
@@ -2252,14 +2252,14 @@ window.WUZHOU_GAME_DATA = {
           "statements": [
             {
               "text": "夜门那半小时乱得没人能看清。我只知道张氏兄弟倒下后，新命令很快就来了。",
-              "press": "玄宗旧部强调混乱，却承认命令来得很快。继续问快到什么程度。",
-              "wrongEvidenceFeedback": "眼下还只是风声，不是能拍案的硬伤。等他把话说满，再把证物亮出来。",
+              "press": "玄宗旧部口口声声说乱，可命令来得那样快，快得像有人早把时辰掐好了。",
+              "wrongEvidenceFeedback": "眼下还只是风声。案上的纸还没碰到真正伤人的地方。",
               "answerEvidence": null
             },
             {
               "text": "禁军只是临时应变，赏赐和换岗都是事后补办，和谁预先安排没有关系。",
-              "press": "证人把整齐说成临时。拿出能显示时间顺序异常的证物。",
-              "wrongEvidenceFeedback": "要打“事后补办”，需要能证明半小时内已经出现安排的证物。",
+              "press": "他把过分整齐的顺序说成临时应变，反倒让那张时间表更扎眼。",
+              "wrongEvidenceFeedback": "这份记录还没碰到“事后补办”最要命的那层假。",
               "answerEvidence": "case-half-hour-coup-ev-2",
               "pursuitUnlockStatementId": "case-half-hour-coup-pursuit-surface",
               "pursuitUnlockLabel": "追击后的补充证词",
@@ -2267,18 +2267,18 @@ window.WUZHOU_GAME_DATA = {
             },
             {
               "text": "玄宗旧部承认，夜门撞开前，侧门已经先收到一道换岗口令。",
-              "press": "这是追击之后才逼出来的新口供。翻开法庭记录，把刚记下的追击补记拍到他面前。",
+              "press": "这番补话不是临时想起，是被追到退无可退才漏出来的。案边那页追击补记，已经和它扣在一起。",
               "hiddenUntilPressed": "case-half-hour-coup-pursuit-surface",
               "revealLabel": "追击后的补充证词",
               "requiredAfterUnlock": true,
-              "wrongEvidenceFeedback": "他这会儿是被追击补记逼出来的。别拿普通证物去碰，碰了也只会让他往回缩。",
+              "wrongEvidenceFeedback": "他这会儿改口，不是普通证物能轻轻带过去的。案边那页追击补记，正压着他新漏出来的话。",
               "answerEvidence": "case-half-hour-coup-ev-pursuit-note",
               "objection": "异议成立。追击补记：夜门先令已经把他刚改的口供钉死了，证人别想再退回去。"
             },
             {
               "text": "我只看见门开、人散、命令传来。谁先知道结局，我不敢说。",
-              "press": "他不敢说的正是关键：谁先知道结局，谁就可能先写好安排。",
-              "wrongEvidenceFeedback": "这里只是露出时间上的缝，还不是翻盘的时候。证物先别急着亮。",
+              "press": "他不敢说谁先知道结局，可那份心虚已经先从话里漏出来了。",
+              "wrongEvidenceFeedback": "这里只露了一道缝，还没碰到案子最硬的骨头。",
               "answerEvidence": null
             }
           ]
@@ -2321,29 +2321,29 @@ window.WUZHOU_GAME_DATA = {
             },
             {
               "text": "张易之说是临时补救，却说不清罪名纸条为何先写结论。",
-              "press": "这是追击之后才逼出来的新口供。翻开法庭记录，把刚记下的追击补记拍到他面前。",
+              "press": "这番补话不是临时想起，是被追到退无可退才漏出来的。案边那页追击补记，已经和它扣在一起。",
               "hiddenUntilPressed": "case-half-hour-coup-pursuit-legality",
               "revealLabel": "追击后的补充证词",
               "requiredAfterUnlock": true,
-              "wrongEvidenceFeedback": "他这会儿是被追击补记逼出来的。别拿普通证物去碰，碰了也只会让他往回缩。",
+              "wrongEvidenceFeedback": "他这会儿改口，不是普通证物能轻轻带过去的。案边那页追击补记，正压着他新漏出来的话。",
               "answerEvidence": "case-half-hour-coup-ev-pursuit-note",
               "objection": "异议成立。追击补记：夜门先令已经把他刚改的口供钉死了，证人别想再退回去。"
             },
             {
               "text": "张易之反制后留下了一个缺口：他只证明刚才那件证物不够，却没有解释后续动作是谁做的。",
-              "press": "别跟着他绕回刚才那个坑里。换一件能咬住后手的证物，再把人逼回来。",
+              "press": "他刚躲过去的，不是结尾，是后手。那块空白还晾在案上。",
               "hiddenUntilPressed": "case-half-hour-coup-counter-recovery",
               "revealLabel": "反制后的补救破绽",
               "optionalRecovery": true,
               "recoveryCredibility": 1,
-              "wrongEvidenceFeedback": "补救追问需要能说明后续动作的证物，不能再回到刚被反制的那份记录。",
+              "wrongEvidenceFeedback": "刚才那道空白还挂在后面，没必要再回去碰已经塌掉的那页。",
               "answerEvidence": "case-half-hour-coup-ev-4",
               "objection": "补救成立。禁军换岗令避开刚才的漏洞，直接说明公开说法背后还有人动手整理。"
             },
             {
               "text": "最后新政令顺利传下，说明前面所有判断都是必要的。",
               "press": "顺利只说明胜者动作快，不能证明动作没有预先安排。",
-              "wrongEvidenceFeedback": "这话听着滑，可还不是这段证词最要命的地方。先别把力气砸偏。",
+              "wrongEvidenceFeedback": "这番话滑得很，可真正伤人的地方还不在这里。",
               "answerEvidence": null
             }
           ]
@@ -2355,15 +2355,15 @@ window.WUZHOU_GAME_DATA = {
           "statements": [
             {
               "text": "辩方拆了更漏、赏赐、罪名、换岗，却还没说清谁把半小时排成了结局。",
-              "press": "这是最终推理入口。追问后取得庭上记录。",
+              "press": "他说不清谁把半小时排成结局，可每一段时辰都已经朝同一个方向靠过去了。",
               "pressUnlockEvidence": "case-half-hour-coup-ev-court-note",
-              "wrongEvidenceFeedback": "他这是逼辩方先交底，还没露出能一击打穿的口子。先追问，把庭上记录逼出来。",
+              "wrongEvidenceFeedback": "案上的线还没拢成一处，这份记录压不住整场风波。",
               "answerEvidence": null
             },
             {
               "text": "这些安排只是混乱中接连发生，没有同一个受益者，也没有同一张时间表。",
-              "press": "把半小时拆成开门、换岗、定罪、赏赐，就能看出它们准得过分。",
-              "wrongEvidenceFeedback": "最后一击需要庭上追问记录，单件证物会被说成混乱片段。",
+              "press": "开门、换岗、定罪、赏赐一并排开，整齐得已经不像混乱。",
+              "wrongEvidenceFeedback": "单件证物各自有分量，还压不住这半小时的整张表。",
               "answerEvidence": "case-half-hour-coup-ev-court-note",
               "pursuitUnlockStatementId": "case-half-hour-coup-pursuit-final",
               "pursuitUnlockLabel": "追击后的补充证词",
@@ -2371,18 +2371,18 @@ window.WUZHOU_GAME_DATA = {
             },
             {
               "text": "御前书记补记：半小时不是混乱的空白，而是一张被提前排好的表。",
-              "press": "这是追击之后才逼出来的新口供。翻开法庭记录，把刚记下的追击补记拍到他面前。",
+              "press": "这番补话不是临时想起，是被追到退无可退才漏出来的。案边那页追击补记，已经和它扣在一起。",
               "hiddenUntilPressed": "case-half-hour-coup-pursuit-final",
               "revealLabel": "追击后的补充证词",
               "requiredAfterUnlock": true,
-              "wrongEvidenceFeedback": "他这会儿是被追击补记逼出来的。别拿普通证物去碰，碰了也只会让他往回缩。",
+              "wrongEvidenceFeedback": "他这会儿改口，不是普通证物能轻轻带过去的。案边那页追击补记，正压着他新漏出来的话。",
               "answerEvidence": "case-half-hour-coup-ev-pursuit-note",
               "objection": "异议成立。追击补记：夜门先令已经把他刚改的口供钉死了，证人别想再退回去。"
             },
             {
               "text": "若辩方说不清这张时间表，夜门案就只能按既成事实封卷。",
-              "press": "这是最后压力。别被他带偏，盯住他嘴里的“没有时间表”。",
-              "wrongEvidenceFeedback": "这是审判压力，不是矛盾本身。把注意力拉回他嘴里的“偶然事件”。",
+              "press": "他把“没有时间表”挂在嘴边，可那张表早就在夜门前摊开了。",
+              "wrongEvidenceFeedback": "法官在催结果，可证词真正站不住的地方，还没被这份记录碰到。",
               "answerEvidence": null
             }
           ]
