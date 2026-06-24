@@ -4523,3 +4523,64 @@ Remaining Ace Attorney gap list:
   - `举证` button styling
   - hotspot geometry
   - desktop single-window no-scroll layout
+
+## 2026-06-24 iteration 139 result
+
+Implemented:
+- 继续把庭审最常见的“系统评语腔”往下压，这一轮只改 [game/app.js](/Users/oubeichen/Projects/wuzetian2/game/app.js) 里的高频庭审提示。
+- 收紧了试探性提示与状态句，包括：
+  - 右侧庭审面板未选中证物时的默认提示；
+  - 左下对话框上方的开场评语；
+  - 进入庭审时审判长的通用提示；
+  - 打开法庭记录后的状态提示；
+  - 选中证物后的说明短句；
+  - “带回庭审”上方的返回提示。
+- 这些句子都改成就事论事的口吻，不再像系统在评审玩家、分步教玩家操作。
+
+Why this round:
+- 上一轮已经把法庭记录里“用于说明 / 最后用它”这一层打法提示腔压下去了。
+- 这一轮继续处理更高频、每次进庭都能看见的庭审评语层，它们比单件证物说明更常出现，体感影响更大。
+- 参考了 [《逆转裁判》法庭记录资料页](https://aceattorney.huijiwiki.com/wiki/%E6%B3%95%E5%BA%AD%E8%AE%B0%E5%BD%95) 和 [Turnabout Sisters Transcript](https://aceattorney.fandom.com/wiki/Turnabout_Sisters_-_Transcript) 这种“教程独立、正文就事论事”的分层思路，但没有照搬原文。
+
+Verified:
+- `git fetch origin main`
+- confirmed `HEAD` and `origin/main` both pointed to `36bf49d24211dfe2b20403825c22d8e2acf4ce92` before this round's commit
+- `npm run check:js`
+- `npm run check:py`
+- `git diff --check`
+- `rg -n '开头说得稳|真正见血|证人既然开口|还没有呈上法庭|案上还没摆出能顶住他这番话的那一页|它迟早会撞上该撞的那句话' game/app.js` returned no matches
+- Playwright 打开 `http://127.0.0.1:8788/game/?v=iteration139-copy`，续接现有庭审存档并检查：
+  - 庭审起始页面
+  - 展开法庭记录后的状态提示
+  - 选中证物后的右侧状态句
+- 截图：
+  - `output/iteration139-trial-phrasing.png`
+- 页面复查确认：
+  - 左下对话框提示、右侧默认提示、法庭记录状态句都不再像系统教学；
+  - 右侧面板、按钮区和底部对话框没有新增错位或重叠；
+  - 没有重新引入上一轮已清掉的法庭记录“打法提示腔”。
+
+Notes:
+- `.gitignore` 这轮无需改动；验证产物规则仍然够用。
+
+Remaining Ace Attorney gap list:
+- 继续逐块压缩剩余的策略提示腔，优先处理“已追问 / 露破绽 / 还没逼问”这类证词状态标签和其他高频面板术语。
+- 继续截图检查调查页、追击页、详查页，重点看局部文案是否仍有说明书味，以及是否有被截断或遮挡。
+- 不要重开已经稳定的 `举证` 按钮、热点位置和桌面单屏无滚动布局，除非新截图证明回归。
+
+## Latest handoff
+
+- Most recent completed round: `2026-06-24 iteration 139 result`
+- Round scope: rewrote the trial-side helper/status phrasing in `game/app.js` so the always-visible courtroom commentary now reads like in-scene pressure rather than system coaching.
+- Verified artifacts:
+  - `output/iteration139-trial-phrasing.png`
+- Verified commands:
+  - `git fetch origin main`
+  - `npm run check:js`
+  - `npm run check:py`
+  - `git diff --check`
+  - `rg -n '开头说得稳|真正见血|证人既然开口|还没有呈上法庭|案上还没摆出能顶住他这番话的那一页|它迟早会撞上该撞的那句话' game/app.js`
+- Do not reopen in the next round unless a fresh screenshot proves regression:
+  - `举证` button styling
+  - hotspot geometry
+  - desktop single-window no-scroll layout

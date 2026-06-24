@@ -2943,7 +2943,7 @@
         ? state.selectedProfileName
           ? "人是盯住了，可他嘴里的破绽还没真正落下来。"
           : "这份记录还没戳到他疼的地方。"
-        : "庭上还只听见一阵口风，真正见血的那页纸还没翻出来。";
+        : "庭上眼下还只有风声，最重的那页纸还没压到案桌中央。";
     state.screen = "trial";
     renderStatus();
     app.innerHTML = `
@@ -2961,7 +2961,7 @@
             ${renderCoachCard()}
             ${renderTrialDeductionPanel(trialDeduction)}
             <div class="selected-record-bar ${selectedLabel ? "ready" : ""} ${readyToPresent ? "opportunity" : ""}">
-              <span>${selectedLabel ? `案上：${escapeHtml(selectedLabel)}` : "案上还没摆出能顶住他这番话的那一页"}</span>
+              <span>${selectedLabel ? `案上：${escapeHtml(selectedLabel)}` : "案上还空着最重的那一页"}</span>
               <small>${escapeHtml(recordPrompt)}</small>
             </div>
           <div class="action-row trial-actions">
@@ -3160,7 +3160,7 @@
           ? "他这段话前后咬得不紧，缝已经露出来了。"
           : "话已经落到案上，轻重只差一页纸。"
         : hasNextStatement
-          ? "开头说得稳，真正会失手的地方还在后头。"
+          ? "他眼下还在压着话，真正露风的地方还没到。"
           : "话已经落到案上，轻重只差一页纸。"
       : "";
     const sceneSignature = `${caseData.id}|${mode}|${sceneKey}|${locationArt || "default"}`;
@@ -3677,7 +3677,7 @@
           <span class="evidence-detail-copy">
             <strong>${escapeHtml(item.name)}</strong>
             <span>${escapeHtml(evidenceMetaLine(item))}</span>
-            <small>${state.screen === "trial" ? "这件证物已经在手边。分量不轻，只是他眼下还未必接得住。" : "证物已经归卷。它迟早会落到该落的位置。"} </small>
+            <small>${state.screen === "trial" ? "这页已经压到案边，只差一句证词把它逼上桌面。" : "证物已经归卷，纸上的裂口不会自己合上。"} </small>
           </span>
         </div>
         <p>${escapeHtml(item.detail)}</p>
@@ -4331,7 +4331,7 @@
     if (state.screen !== "trial") return "";
     return `
       <div class="record-return-action">
-        <span>这份记录已经握稳。回到证席，它迟早会撞上该撞的那句话。</span>
+        <span>这页已经归到手边，纸上那道破口还在等人把它说出来。</span>
         <button class="primary-button" type="button" data-return-to-trial>带回庭审</button>
       </div>
     `;
@@ -4645,7 +4645,7 @@
       state.recordOpen = false;
       setStage("witness", `${testimony.speaker}入庭`, { left: "enter", right: "observe" });
       playCue("transition");
-      setMessage("审判长", "证人既然开口，庭上就听他说到头。真站不住的地方，自己藏不住。", "");
+      setMessage("审判长", "证词既然摆上来了，是真是假，纸和人都会自己露风。", "");
       renderTrial();
     }
   }
@@ -5589,7 +5589,7 @@
       state.selectedProfileName = "";
       state.recordTab = "evidence";
       state.recordOpen = state.screen === "trial" ? false : state.recordOpen;
-      setMessage("法庭记录", "证物已放到辩方手边，还没有呈上法庭。", "");
+      setMessage("法庭记录", "这页已经压到辩方手边，庭上还没看见它。", "");
       rerender();
     }
     if (target.dataset.selectProfile) {
