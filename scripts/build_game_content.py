@@ -223,7 +223,7 @@ CASE_BLUEPRINTS = [
             {"title": "酷吏的名单", "note": "审讯名单写得太满，像不是为了查清谁说谎，而是为了让每个人都害怕开口。"},
             {"title": "缉捕令的墨迹", "note": "墨还没干，抓人的命令已经发出。有人把审理变成了追捕。"},
             {"title": "兵败后的空白", "note": "兵败之后，最先消失的不是人，而是能替人说清楚前因后果的记录。"},
-            {"title": "疾风里的证人", "note": "越是人人自保的时候，敢留下只字片语的人越少。那些小字，也许比高声控诉更可靠。"},
+            {"title": "疾风里的证人", "note": "人人都忙着自保，肯留下话的人反倒更少。案边那几行小字，就是这么熬下来的。"},
             {"title": "舆论先判了案", "note": "百姓听到的是结论，不是过程。法庭若也只听结论，真正加罪的人就永远不用上庭。"},
         ],
         "openingLines": [
@@ -450,8 +450,8 @@ EVIDENCE_KITS = {
             "name": "摇篮旁的值夜签",
             "type": "现场记录",
             "summary": "值夜签上有涂改，说明婴儿死亡那晚有人反复改过在场名单。",
-            "detail": "名单里少了一个最要紧的时辰，却多出后来才补上的名字。谁要是只肯讲传闻，这张签就会把他拖回当晚。",
-            "use": "先看清那晚谁真在摇篮边，许多谎就站不住了。",
+            "detail": "名单里少了一个最要紧的时辰，却多出后来才补上的名字。谁真站过摇篮边，这张签压得很死。",
+            "use": "摇篮边到底站过谁，值夜签比嘴更清楚。",
         },
         {
             "name": "密封的内廷名册",
@@ -606,7 +606,7 @@ EVIDENCE_KITS = {
             "type": "罪名草稿",
             "summary": "纸条上先写结论，后补理由，几处词语被反复替换。",
             "detail": "理由是后补的，结论却写在前头。比起时辰，这张纸更像有人早早想好的说辞。",
-            "use": "最要命的不是罪名，是有人先把结论写好了。",
+            "use": "纸上先落的是结论，后头才补上罪名。",
         },
         {
             "name": "禁军换岗令",
@@ -783,7 +783,7 @@ EVIDENCE_VOICE_COPY = {
         {
             "summary": "罪名纸条先写结论，后补理由，几个词被反复换掉。",
             "detail": "它不像证据，更像给结局贴上的标签。越短，越方便把任何人塞进去。",
-            "use": "最要命的不是罪名，是有人先把结论写好了。",
+            "use": "纸上先落的是结论，后头才补上罪名。",
         },
         {
             "summary": "禁军换岗令签押很急，路线却安排得过于顺手。",
@@ -802,7 +802,7 @@ EVIDENCE_VOICE_COPY = {
 COURT_NOTE_COPY = {
     "case-empress-seat": {
         "summary": "记录官终于承认：哭声、值夜签和诏稿之间，他说不出谁先谁后。",
-        "detail": "这份庭上记录不是新证物，而是证人当场露出的空白。它把宫人私怨的说法撕开了一道口子。",
+        "detail": "他刚才那一下停住，已经够说明问题了。若真只是宫人斗气，哭声、值夜签和诏稿不会乱成这样。",
         "use": "宫人背罪、后位得利、元老失声，这回全被拢到一处了。",
     },
     "case-crown-shadow": {
@@ -832,7 +832,7 @@ PURSUIT_NOTE_COPY = {
     "case-empress-seat": {
         "name": "追击补记：哭声入诏",
         "summary": "记录官被逼到最后，承认哭声传闻进入诏稿前，曾有人先把废后两个字递到案边。",
-        "detail": "这份补记写在追击之后：证人没能说出递话的人名，却说出了传闻不是自己走进文书的。",
+        "detail": "他嘴上还不敢点名，可话已经漏出来了：那两个字不是自己跑进诏稿里的，是有人硬塞进去的。",
         "use": "哭声不是自己走进后位文书的。",
     },
     "case-crown-shadow": {
@@ -941,7 +941,7 @@ def make_evidence(case: dict[str, object], lookup: dict[int, dict[str, object]])
 CASE_INVESTIGATION_SCRIPTS = {
     "case-empress-seat": {
         "site": {
-            "description": "立政殿门槛还压着散朝后的灰。宫人们站得很远，像谁靠近那张诏稿，谁就会被拖进婴儿死讯里。",
+            "description": "立政殿门槛还压着散朝后的灰。宫人们站得很远，谁都不肯靠近那张诏稿。",
             "talkTopics": [
                 {
                     "title": "哭声从哪来",
@@ -1043,7 +1043,7 @@ CASE_INVESTIGATION_SCRIPTS = {
             ],
         },
         "archive": {
-            "description": "东宫旧档被摊成两排。一排写皇子待遇，一排写高宗病势，中间偏偏空着几日。",
+            "description": "东宫旧档被摊成两排。一排写皇子待遇，一排写高宗病势，中间空着几日。",
             "talkTopics": [
                 {
                     "title": "空出来的日子",
@@ -1383,7 +1383,7 @@ def make_locations(case: dict[str, object], evidence: list[dict[str, str]]) -> l
             "name": "史官案牍房",
             "description": archive_script.get(
                 "description",
-                "旧记录按日期堆在案几上。把前后几天连起来看，许多“偶然”就没那么偶然。",
+                "旧档一摞摞压在案几上，单看都像巧合，可把前后几天串起来，谁动过手就藏不住了。",
             ),
             "sceneVariant": "archive",
             "visualNote": "案牍房里有旧账、旁注和被重新装订的纸页。",
@@ -1486,7 +1486,7 @@ def case_testimony_script(case: dict[str, object], evidence: list[dict[str, str]
                 {
                     "text": "那名宫人本来就怨气深，婴儿夭折也好、废后传闻也好，都和后位更替没有关系。",
                     "press": "他急着把风波全压到宫人身上，倒把那张动过手脚的名单晾在了案外。",
-                    "wrong": "这份记录还够不着“宫人私怨”那层说法。当晚谁在场、谁被挪走，还没被它扯出来。",
+                    "wrong": "光凭这个，还拆不开“宫人私怨”那层遮羞布。当晚谁在场、谁被挪走，还没人肯说实话。",
                     "objection": f"异议成立。{evidence_a}说明当晚在场名单被改过，废后传闻不是一名宫人自己能推成的事。",
                 },
                 {
@@ -1543,7 +1543,7 @@ def case_testimony_script(case: dict[str, object], evidence: list[dict[str, str]
                 {
                     "text": "旧臣借账册议论储位，本就是他自己惹出的祸，和皇子待遇、病榻传话没什么关系。",
                     "press": "他急着把账册说成旧臣一个人的祸，倒把东宫改过的旧记录晾了出来。",
-                    "wrong": "这份记录还碰不到“病榻传话无关”那层说法。后手还藏在账册后面。",
+                    "wrong": "光凭这个，还掀不掉“病榻传话无关”那块遮布。后手还藏在账册后头。",
                     "objection": f"异议成立。{evidence_a}显示东宫记录前后不一致，旧臣不是凭空把储位卷进来的。",
                 },
                 {
@@ -1657,7 +1657,7 @@ def case_testimony_script(case: dict[str, object], evidence: list[dict[str, str]
                 {
                     "text": "狄仁杰既已签押认罪，供状就是他自己的意思，和空瓮、手册都没有关系。",
                     "press": "他把供状、空瓮和手册硬生生拆开，倒把那股不自然一起晾了出来。",
-                    "wrong": "这份记录还没碰到“自愿签押”最要命的那层假。",
+                    "wrong": "光凭这个，还戳不穿“自愿签押”那层最硬的假话。",
                     "objection": f"异议成立。{evidence_a}显示供状后半突然潦草，签押并不像证人说的那样从容自愿。",
                 },
                 {
@@ -1714,7 +1714,7 @@ def case_testimony_script(case: dict[str, object], evidence: list[dict[str, str]
                 {
                     "text": "禁军只是临时应变，赏赐和换岗都是事后补办，和谁预先安排没有关系。",
                     "press": "他把过分整齐的顺序说成临时应变，反倒让那张时间表更扎眼。",
-                    "wrong": "这份记录还没碰到“事后补办”最要命的那层假。",
+                    "wrong": "光凭这个，还戳不穿“事后补办”那层最硬的假话。",
                     "objection": f"异议成立。{evidence_a}记录半小时内连换口令，禁军行动不是事后才补出来的。",
                 },
                 {
@@ -1805,11 +1805,11 @@ def pursuit_statement(case: dict[str, object], section: str) -> dict[str, object
     )
     return {
         "text": text,
-        "press": "这番补话不是临时想起，是被追到退无可退才漏出来的。案边那页追击补记，已经和它扣在一起。",
+        "press": "他不是刚想起来，是被追到没路才漏了口风。再逼一步，他前头藏的东西就得全掉出来。",
         "hiddenUntilPressed": unlock_id,
         "revealLabel": "追击后的补充证词",
         "requiredAfterUnlock": True,
-        "wrongEvidenceFeedback": "他这会儿改口，不是普通证物能轻轻带过去的。案边那页追击补记，正压着他新漏出来的话。",
+        "wrongEvidenceFeedback": "他刚改口，追击补记正好咬在这儿。",
         "answerEvidence": note_id,
         "objection": f"异议成立。{note_name}已经把他刚改的口供钉死了，证人别想再退回去。",
     }
@@ -1850,7 +1850,7 @@ def make_testimony(case: dict[str, object], evidence: list[dict[str, str]]) -> l
                 {
                     "text": line("surface", 1, "text", f"{case['defendant']}只是因为私怨才惹出麻烦，和谁上位、谁失势没有关系。"),
                     "press": line("surface", 1, "press", "他把案子往一个人身上压，倒把前后那点安排露出来了。"),
-                    "wrongEvidenceFeedback": line("surface", 1, "wrong", "这份记录还碰不到“只是私怨”那层说法。前后站位和得失，还没被它扯出来。"),
+                    "wrongEvidenceFeedback": line("surface", 1, "wrong", "光拿这个还压不住他。要拆掉“只是私怨”这套话，还得把谁得利、谁失势一起翻出来。"),
                     "answerEvidence": contradiction_a,
                     "pursuitUnlockStatementId": f"{case['id']}-pursuit-surface",
                     "pursuitUnlockLabel": "追击后的补充证词",
@@ -1936,7 +1936,7 @@ def make_testimony(case: dict[str, object], evidence: list[dict[str, str]]) -> l
                     "text": line("final", 0, "text", "庭上已经听够了证物名字，辩方还没有说明它们到底怎么连在一起。"),
                     "press": line("final", 0, "press", "他把全案说成散线，可案边那页补记已经把线头拢到一起。"),
                     "pressUnlockEvidence": court_note,
-                    "wrongEvidenceFeedback": "案上的线还没拢成一处，这份记录压不住整场风波。",
+                    "wrongEvidenceFeedback": "案上的线还没拢成一处，光靠眼下这点压不住整场风波。",
                     "answerEvidence": None,
                 },
                 {
@@ -1952,7 +1952,7 @@ def make_testimony(case: dict[str, object], evidence: list[dict[str, str]]) -> l
                 {
                     "text": line("final", 2, "text", "辩方若不能说清这条线，本庭就维持原判。"),
                     "press": line("final", 2, "press", "他把判词抬出来压人，可那套“偶然事件”的说法还悬在半空。"),
-                    "wrongEvidenceFeedback": line("final", 2, "wrong", "法官在催结果，可证词真正站不住的地方，还没被这份记录碰到。"),
+                    "wrongEvidenceFeedback": line("final", 2, "wrong", "还不是这里。他最怕人追问的地方，还没被掀开。"),
                     "answerEvidence": None,
                 },
             ],
