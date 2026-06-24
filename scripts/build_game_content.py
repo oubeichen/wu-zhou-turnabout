@@ -92,7 +92,7 @@ CASE_BLUEPRINTS = [
             "revealLabel": "后位诏书背后的署名",
             "triggerPress": "对方越说一切都是旧规矩，越要问清楚是谁把废后的话写进奏章。",
             "hiddenText": "立后的文书只是照旧例写成，没有人主动把元老反对压下去。",
-            "hiddenPress": "这句把写奏章的人藏起来了。人物档案能说明谁在替新说法背书。",
+            "hiddenPress": "他把写奏章的人藏到纸后头了。翻人物档案，看看是谁在替这套新说法撑腰。",
         },
     },
     {
@@ -168,7 +168,7 @@ CASE_BLUEPRINTS = [
             "revealLabel": "东宫记录的改写人",
             "triggerPress": "只说储位会自然交接，正好遮住了谁整理记录、谁借记录说话。",
             "hiddenText": "东宫风波只是皇子命运起落，书记官没有把小事写成大案。",
-            "hiddenPress": "这句把书记官说成旁观者，但人物档案显示他一直在挑选该留下哪些话。",
+            "hiddenPress": "他把自己说成看客，可人物档案明明写着，他一直在挑哪些话能留下。",
         },
         "trap": {
             "evidenceIndex": 0,
@@ -253,7 +253,7 @@ CASE_BLUEPRINTS = [
             "revealLabel": "铜匦告密后的加工者",
             "triggerPress": "告密札只是入口，真正该问的是谁把一张纸变成一场大案。",
             "hiddenText": "铜匦收来的告密天然可信，来俊臣只是照章转呈，没有添油加醋。",
-            "hiddenPress": "这句假装酷吏只是传声筒。人物档案能证明他一直在把恐惧做成案子。",
+            "hiddenPress": "他装得像个传话的，可人物档案能看出，正是他把人心里的怕劲做成了案子。",
         },
         "trap": {
             "evidenceIndex": 0,
@@ -336,7 +336,7 @@ CASE_BLUEPRINTS = [
             "revealLabel": "瓮中审讯的设计者",
             "triggerPress": "审讯越说得像普通问案，越要追问是谁设计了那口瓮。",
             "hiddenText": "御史台只是按旧例问案，周兴没有把逼供术当成办案诀窍。",
-            "hiddenPress": "这句把逼供说成惯例。人物档案正好能指出设计者是谁。",
+            "hiddenPress": "他把逼供说成旧例，可人物档案一翻，就知道这套法子是谁琢磨出来的。",
         },
         "trap": {
             "evidenceIndex": 2,
@@ -417,7 +417,7 @@ CASE_BLUEPRINTS = [
             "revealLabel": "夜门沉默的受益者",
             "triggerPress": "半小时的沉默不是空白，而是在掩护谁从宠臣变成众矢之的。",
             "hiddenText": "迎仙宫夜门的沉默与张易之无关，他只是被局势裹挟的旁观者。",
-            "hiddenPress": "这句把最大受益者说成旁观者。人物档案能指出沉默指向谁。",
+            "hiddenPress": "他把自己摆成看热闹的，可真正得利的人，从头到尾都没离开这盘局。翻档案。",
         },
         "trap": {
             "evidenceIndex": 0,
@@ -1491,7 +1491,7 @@ def case_testimony_script(case: dict[str, object], evidence: list[dict[str, str]
                 },
                 {
                     "text": "至于谁后来升上去、谁被排出去，我一个记录官只照听见的话写，不敢多想。",
-                    "press": "他说“不敢多想”，不是“不知道”。这句先记下，后面等他把文书说成自然结果再反击。",
+                    "press": "他说“不敢多想”，不是“不知道”。先把这点扣住，等他后面把文书说成顺理成章，再当庭拆穿。",
                 },
             ],
             "legality": [
@@ -1543,7 +1543,7 @@ def case_testimony_script(case: dict[str, object], evidence: list[dict[str, str]
                 {
                     "text": "旧臣借账册议论储位，本就是他自己惹出的祸，和皇子待遇、病榻传话没什么关系。",
                     "press": "证人急着把账册说成个人越界。拿出能显示东宫记录被改写的证物。",
-                    "wrong": "这句要打“和病榻传话无关”。需要能把账册和后续记录连起来的证物。",
+                    "wrong": "要打的不是账册本身，是那句“和病榻传话无关”。得拿能把账册和后手连上的证物。",
                     "objection": f"异议成立。{evidence_a}显示东宫记录前后不一致，旧臣不是凭空把储位卷进来的。",
                 },
                 {
@@ -1560,7 +1560,7 @@ def case_testimony_script(case: dict[str, object], evidence: list[dict[str, str]
                 {
                     "text": str(case["branch"]["hiddenText"]),
                     "press": str(case["branch"]["hiddenPress"]),
-                    "wrong": "这句藏的是书记官本人。用人物档案，不要用证物绕远。",
+                    "wrong": "藏起来的是书记官本人。翻人物档案，比绕着证物兜圈子更准。",
                     "objection": f"异议成立。{case['opponent']}一直在决定哪些话留下，不能把自己说成只会誊录的笔。",
                 },
                 {
@@ -1617,7 +1617,7 @@ def case_testimony_script(case: dict[str, object], evidence: list[dict[str, str]
                 {
                     "text": str(case["branch"]["hiddenText"]),
                     "press": str(case["branch"]["hiddenPress"]),
-                    "wrong": "这句藏的是来俊臣的角色。人物档案比证物更能直接打中旁观者伪装。",
+                    "wrong": "这里要揪出来的是来俊臣本人。人物档案比旁的证物更能撕掉他的看客样。",
                     "objection": f"异议成立。{case['opponent']}不是接到案子才出现，他一直在把告发改造成大案。",
                 },
                 {
@@ -1674,7 +1674,7 @@ def case_testimony_script(case: dict[str, object], evidence: list[dict[str, str]
                 {
                     "text": str(case["branch"]["hiddenText"]),
                     "press": str(case["branch"]["hiddenPress"]),
-                    "wrong": "这句要打周兴本人，不是打某件器物。先用人物档案拆他的旁观姿态。",
+                    "wrong": "这里该咬住的是周兴本人，不是哪件器物。先翻人物档案，拆掉他的旁听姿态。",
                     "objection": f"异议成立。{case['opponent']}熟悉这套逼供办法，不能说自己只是按旧例旁听。",
                 },
                 {
@@ -1731,7 +1731,7 @@ def case_testimony_script(case: dict[str, object], evidence: list[dict[str, str]
                 {
                     "text": str(case["branch"]["hiddenText"]),
                     "press": str(case["branch"]["hiddenPress"]),
-                    "wrong": "这句藏的是张易之的受益位置。人物档案比单件证物更直接。",
+                    "wrong": "真正藏着的是张易之拿好处的位置。翻人物档案，比单件证物更见血。",
                     "objection": f"异议成立。{case['opponent']}不是被局势裹挟的旁观者，他的名牌一直压在赏赐记录上。",
                 },
                 {
@@ -1801,17 +1801,17 @@ def pursuit_statement(case: dict[str, object], section: str) -> dict[str, object
     note_name = PURSUIT_NOTE_COPY.get(str(case["id"]), {}).get("name", "追击补记")
     text = PURSUIT_TESTIMONY_COPY.get(str(case["id"]), {}).get(
         section,
-        "证人被对照札记逼出补充说法，但这句话必须用追击补记才能钉住。",
+        "证人被对照札记逼得改了口，想钉死这段新说法，还得靠追击补记。",
     )
     return {
         "text": text,
-        "press": "这是对照追击后才出现的补充证词。打开法庭记录，使用刚写入的追击补记击破它。",
+        "press": "这是追击之后才逼出来的新口供。翻开法庭记录，把刚记下的追击补记拍到他面前。",
         "hiddenUntilPressed": unlock_id,
         "revealLabel": "追击后的补充证词",
         "requiredAfterUnlock": True,
-        "wrongEvidenceFeedback": "这句来自追击补记，普通证物只能说明背景，不能钉住证人刚补出来的话。",
+        "wrongEvidenceFeedback": "他这会儿是被追击补记逼出来的。别拿普通证物去碰，碰了也只会让他往回缩。",
         "answerEvidence": note_id,
-        "objection": f"异议成立。{note_name}把这句补充证词钉住了，证人不能再退回原来的说法。",
+        "objection": f"异议成立。{note_name}已经把他刚改的口供钉死了，证人别想再退回去。",
     }
 
 
@@ -1843,7 +1843,7 @@ def make_testimony(case: dict[str, object], evidence: list[dict[str, str]]) -> l
                 {
                     "text": line("surface", 0, "text", "那天乱得很，我只听见旁人说，这是宫里积下的旧怨一下子爆了。"),
                     "press": line("surface", 0, "press", "证人没有说自己亲眼看见什么，只是在重复传闻。继续追问传闻从哪里来。"),
-                    "wrongEvidenceFeedback": "这句只是传闻入口，还不是最硬的矛盾。等证人把责任说死，再出示证物。",
+                    "wrongEvidenceFeedback": "眼下还只是风声，不是能拍案的硬伤。等他把话说满，再把证物亮出来。",
                     "answerEvidence": None,
                 },
                 {
@@ -1858,8 +1858,8 @@ def make_testimony(case: dict[str, object], evidence: list[dict[str, str]]) -> l
                 pursuit_statement(case, "surface"),
                 {
                     "text": line("surface", 2, "text", "我只记得最后的结果，前面有没有人铺路，我真的不清楚。"),
-                    "press": line("surface", 2, "press", "这句承认了证人不知道前因。先记下，后面遇到绝对断言再反击。"),
-                    "wrongEvidenceFeedback": "这句是在提示时间顺序，不是正式矛盾点。证物要留给更绝对的说法。",
+                    "press": line("surface", 2, "press", "他已经认了自己不清楚前因。先把这口子留着，等他后面说得太满，再回头掀开。"),
+                    "wrongEvidenceFeedback": "这里只是露出时间上的缝，还不是翻盘的时候。证物先别急着亮。",
                     "answerEvidence": None,
                 },
             ],
@@ -1881,7 +1881,7 @@ def make_testimony(case: dict[str, object], evidence: list[dict[str, str]]) -> l
                     "press": line("legality", 1, "press", branch["hiddenPress"]),
                     "hiddenUntilPressed": branch_id,
                     "revealLabel": branch["revealLabel"],
-                    "wrongEvidenceFeedback": line("legality", 1, "wrong", "这句藏的是人，不是物。应该查看人物档案，找出谁并非旁观者。"),
+                    "wrongEvidenceFeedback": line("legality", 1, "wrong", "他藏的是自己，不是哪件东西。先翻人物档案，看清谁根本不是看客。"),
                     "answerProfile": case["opponent"],
                     "answerEvidence": None,
                     "objection": line("legality", 1, "objection", f"异议成立。{case['opponent']}的人物档案说明他一直在推动这套说法，不能把自己装成旁观者。"),
@@ -1889,7 +1889,7 @@ def make_testimony(case: dict[str, object], evidence: list[dict[str, str]]) -> l
                 {
                     "text": line("legality", 2, "text", "公开贴出来的说法都是真话，没有人借告示、审讯或传闻逼别人改口。"),
                     "press": line("legality", 2, "press", "对方把公开说法当成天然可信。问清这套说法从哪里来、谁把它传出去。"),
-                    "wrongEvidenceFeedback": line("legality", 2, "wrong", "要反驳这句，需要能显示有人借公告、审讯或传闻推动案情的证物。"),
+                    "wrongEvidenceFeedback": line("legality", 2, "wrong", "要拆穿这套话，得拿出能证明有人借公告、审讯或传闻推着案子往前跑的证物。"),
                     "counterEvidence": trap_evidence,
                     "counterRecoveryId": recovery_id,
                     "counterNotice": trap.get("notice", ""),
@@ -1905,7 +1905,7 @@ def make_testimony(case: dict[str, object], evidence: list[dict[str, str]]) -> l
                     [
                         {
                             "text": f"{case['opponent']}反制后留下了一个缺口：他只证明刚才那件证物不够，却没有解释后续动作是谁做的。",
-                            "press": "这句是补救入口。不要再纠缠刚才被抓住的证物，改用真正能说明后续动作的证物。",
+                            "press": "别跟着他绕回刚才那个坑里。换一件能咬住后手的证物，再把人逼回来。",
                             "hiddenUntilPressed": recovery_id,
                             "revealLabel": "反制后的补救破绽",
                             "optionalRecovery": True,
@@ -1921,7 +1921,7 @@ def make_testimony(case: dict[str, object], evidence: list[dict[str, str]]) -> l
                 {
                     "text": line("legality", 3, "text", "反正最后赢的一方留下了记录，这就说明前面的判断都没错。"),
                     "press": line("legality", 3, "press", "胜负不能自动证明记录可靠。赢的人也可能改写说法。"),
-                    "wrongEvidenceFeedback": line("legality", 3, "wrong", "这句话很可疑，但它是逻辑偷换，不是本段要击破的核心事实。"),
+                    "wrongEvidenceFeedback": line("legality", 3, "wrong", "这话听着滑，可还不是这段证词最要命的地方。先别把力气砸偏。"),
                     "answerEvidence": None,
                 },
             ],
@@ -1935,7 +1935,7 @@ def make_testimony(case: dict[str, object], evidence: list[dict[str, str]]) -> l
                     "text": line("final", 0, "text", "庭上已经听够了证物名字，辩方还没有说明它们到底怎么连在一起。"),
                     "press": line("final", 0, "press", "这正是最后推理的入口。追问后，把证人承认说不清的地方写成庭审记录。"),
                     "pressUnlockEvidence": court_note,
-                    "wrongEvidenceFeedback": "这句话是在要求辩方总结，还没形成可击破的断言。先追问，取得庭上追问记录。",
+                    "wrongEvidenceFeedback": "他这是逼辩方先交底，还没露出能一击打穿的口子。先追问，把庭上记录逼出来。",
                     "answerEvidence": None,
                 },
                 {

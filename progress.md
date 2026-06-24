@@ -4416,3 +4416,56 @@ Remaining Ace Attorney gap list:
   - `举证` button styling
   - hotspot geometry
   - desktop single-window no-scroll layout
+
+## 2026-06-24 iteration 137 result
+
+Implemented:
+- Kept this round scoped to one copy pass on high-frequency courtroom feedback that still sounded like a system manual.
+- Rewrote the generated testimony hints, pursuit feedback, branch/profile prompts, and several branch reveal nudges in `scripts/build_game_content.py`.
+- Regenerated `game/game-data.js` so the live court text no longer opens with `这句……` / `这句话……` style phrasing.
+
+Why this round:
+- The latest user feedback was precise: normal people do not talk like `这句……`.
+- This phrasing was still leaking through some of the most repeated courtroom surfaces: wrong evidence feedback, pursuit follow-up, and hidden-identity prompts.
+- It was the right small-round target because it improves tone across many repeated interactions without reopening stable UI layout work.
+
+Verified:
+- `git fetch origin main`
+- confirmed `HEAD` and `origin/main` both pointed to `3dcde79326bb7e181227b787d463038ff12ab34e` before this round's commit
+- `python3 scripts/build_game_content.py`
+- `npm run check:js`
+- `npm run check:py`
+- `git diff --check`
+- `rg -n '这句|这句话' scripts/build_game_content.py game/game-data.js game/app.js` returned no matches
+- Opened `http://127.0.0.1:8788/game/?v=iteration137-copy` in Playwright, resumed the existing court-ready case state, entered the trial page, and captured:
+  - `output/iteration137-trial-copy.png`
+- Visual check on the fresh trial screenshot confirmed:
+  - the visible testimony feedback copy no longer uses `这句……` style scaffolding;
+  - the right panel, bottom dialogue box, and trial actions remained aligned;
+  - no new clipping or overlap appeared in this pass.
+
+Notes:
+- `.gitignore` did not need a change this round; the generated verification output was already covered.
+
+Remaining Ace Attorney gap list:
+- Continue rewriting evidence detail, record-inspect, and case-summary copy that still sounds like neutral metadata instead of live scene speech.
+- Keep screenshot-first QA on investigation hotspots, record detail panels, and courtroom helper text.
+- Do not reopen already-stable `举证` button styling, hotspot geometry, or desktop no-scroll layout unless a fresh screenshot proves regression.
+
+## Latest handoff
+
+- Most recent completed round: `2026-06-24 iteration 137 result`
+- Round scope: removed `这句……` / `这句话……` style scaffolding from high-frequency courtroom feedback, pursuit prompts, and branch/profile guidance by editing the content generator and regenerating live game data.
+- Verified artifacts:
+  - `output/iteration137-trial-copy.png`
+- Verified commands:
+  - `git fetch origin main`
+  - `python3 scripts/build_game_content.py`
+  - `npm run check:js`
+  - `npm run check:py`
+  - `git diff --check`
+  - `rg -n '这句|这句话' scripts/build_game_content.py game/game-data.js game/app.js`
+- Do not reopen in the next round unless a fresh screenshot proves regression:
+  - `举证` button styling
+  - hotspot geometry
+  - desktop single-window no-scroll layout
