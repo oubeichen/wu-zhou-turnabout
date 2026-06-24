@@ -2422,6 +2422,7 @@ button:not(:disabled):hover {
 .scene-atmosphere {
   position: relative;
   z-index: 20;
+  pointer-events: none;
   width: fit-content;
   max-width: min(720px, 100%);
   padding: 8px 12px;

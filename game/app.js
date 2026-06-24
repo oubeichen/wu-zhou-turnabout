@@ -1181,7 +1181,7 @@
 
   function deductionPursuitCopy(caseData, testimony, statement, deduction, recordLabel) {
     const targetName = deduction?.targetName || "另一份证物";
-    const recordName = recordLabel || "这份记录";
+    const recordName = recordLabel || "这张纸";
     const speaker = testimony?.speaker || caseData.witness || "证人";
     const generic = {
       title: "对照札记打开了新缺口",
@@ -1246,7 +1246,7 @@
   }
 
   function objectionAftermathCopy(caseData, testimony, statement, recordLabel, deduction) {
-    const recordName = recordLabel || "这份记录";
+    const recordName = recordLabel || "这张纸";
     const targetName = deduction?.targetName || (statement?.answerProfile ? `${statement.answerProfile}的档案` : "当前证词");
     const speaker = testimony?.speaker || caseData.witness || "证人";
     const generic = {
@@ -1493,7 +1493,7 @@
         return {
           id: "trial-counter-risk",
           title: "还压不住",
-          body: selected?.counterRisk || "这份记录不轻，可眼下还压不住他。太早亮出来，只会让对手借题转身。",
+          body: selected?.counterRisk || "这张纸现在还压不住他。亮得太早，反倒送他一句转身的话。",
           steps: ["旁注", "证词", "别的记录"],
         };
       }
@@ -2394,15 +2394,15 @@
   function evidenceOriginLong(item) {
     const source = String(item?.source || "").trim();
     if (item?.pursuitOnly || /追击/.test(source)) {
-      return "这是追击后补进案卷的一页。证人刚退半步，它就落进案卷里了。";
+      return "这是庭上逼出来的一页。证人一改口，它就跟着露了面。";
     }
     if (item?.trialOnly || /庭审|追问/.test(source)) {
-      return "这是庭上刚添进案卷的一页，墨迹还新着。";
+      return "这是庭上刚记下的一页，墨迹还没干。";
     }
     if (/由(?:本案|该案|本章|相关案件)相关章节归纳/.test(source)) {
-      return "这是辩方把散开的证物和口供重新钉成一条线后的整理页。";
+      return "这些散纸散话原本各说各的，如今总算被拢成了一条线。";
     }
-    return "这是从现场收进案卷的一页。它先说明谁碰过它，再说明谁想把它遮过去。";
+    return "这是现场留下来的东西。谁碰过它，谁想遮它，纸上都有脾气。";
   }
 
   function evidenceMetaLine(item) {
@@ -2485,7 +2485,7 @@
   function timelineStoryForRow(caseData, item, fallbackIndex = 0) {
     return timelineSourceSummary(caseData, item) || {
       storyTitle: sourceForDisplay(item?.title) || `线索 ${timelineIndexLabel(fallbackIndex)}`,
-      storyNote: item?.note || "这条线索还没被辩方说透。",
+      storyNote: item?.note || "这条线索还没露出最要紧的那半句。",
     };
   }
 
@@ -2531,7 +2531,7 @@
       <div class="case-source-panel">
         <div class="case-section-title">
           <strong>散开的线头</strong>
-          <span>纸、人、口供一旦摆到一处，总有人会先把话往回吞。</span>
+          <span>纸、人、口供一撞上，先心虚的那个多半躲不住。</span>
         </div>
         <div class="source-tabs" aria-label="案件线索">
           ${items
@@ -2548,7 +2548,7 @@
         <div class="source-detail">
           <strong>${escapeHtml(active.storyTitle)}</strong>
           <p>${escapeHtml(active.storyNote)}</p>
-          <small>这一页一露到庭上，先心虚的人就该坐不住了。</small>
+          <small>先坐不住的，往往不是冤的那个。</small>
         </div>
       </div>
     `;
@@ -2651,14 +2651,14 @@
       move: "同一件事，换个地方再听，话头常会变。",
       examine: "纸页、封蜡和磨痕都还摆在这儿。",
       talk: "没说完的话，往往比说出口的更重。",
-      present: "东西一摆上桌，谁心里有鬼就先慌。",
+      present: "东西一摆上桌，屋里的那口气就变了。",
     };
     const quickHint = canMove
       ? "殿门内外、案桌前后，听到的未必是同一种说法。"
       : canTalk
       ? "越不肯点名，越像心里正压着一个人。"
       : canPresent
-      ? "证物摆上桌，先变脸的人往往更有事。"
+      ? "证物一摆出来，屋里立刻静了一层。"
       : canInspect
       ? "封蜡、纸页和桌角的磨痕，都不会替谁圆话。"
       : "这一处的东西都还在，沉默比嘴更重。";
@@ -2930,7 +2930,7 @@
       : selectedLabel
         ? state.selectedProfileName
           ? "人是盯住了，可他嘴里的破绽还没真正落下来。"
-          : "这份记录还没戳到他疼的地方。"
+          : "不是这页。他最怕见光的东西，还藏在别处。"
         : "庭上眼下还只有风声，最重的那页纸还没摆上来。";
     state.screen = "trial";
     renderStatus();
@@ -3259,7 +3259,7 @@
     if (!view) return "";
     const { item, index, items } = view;
     const hasNext = index < items.length - 1;
-    const counterCopy = item.counterRisk ? `案卷批注：${item.counterRisk}` : "这份东西先收进案卷。它和证词一碰面，躲话的人自然会变声。";
+    const counterCopy = item.counterRisk ? `案卷批注：${item.counterRisk}` : "先收进案卷。纸还没开口，已经够让人坐不安稳了。";
     return `
       <div class="evidence-pickup-layer" aria-live="assertive">
         <section class="evidence-pickup-card" data-advance-pickup-panel role="button" tabindex="0" aria-label="${hasNext ? "收下下一件证物" : "合上证物记录"}">
@@ -3553,9 +3553,9 @@
   }
 
   function lockedEvidenceSummary(item) {
-    if (item?.pursuitOnly) return "还得把他追到失口，这页才会落进案卷。";
-    if (item?.trialOnly) return "得先在庭上戳开这道缝，这页记录才会掉下来。";
-    return "这页东西还没落到辩方手里。";
+    if (item?.pursuitOnly) return "证人还没失口，这页还没露面。";
+    if (item?.trialOnly) return "庭上那道口子还没裂开，这页还翻不出来。";
+    return "这页还没到辩方手里。";
   }
 
   function renderRecordBody(caseData, progress, selectable) {
@@ -3655,7 +3655,7 @@
   function renderSelectedEvidence(caseData) {
     const item = state.selectedEvidenceId ? evidenceById(caseData, state.selectedEvidenceId) : null;
     if (!item) {
-      return `<p class="hint-text">手边还空着一页。案上的风还没把最重的那张纸翻出来。</p>`;
+      return `<p class="hint-text">手边还空着一页。最要紧的那张纸还没露面。</p>`;
     }
     const deduction = deductionForEvidence(caseData, item.id);
     return `
@@ -3665,7 +3665,7 @@
           <span class="evidence-detail-copy">
             <strong>${escapeHtml(item.name)}</strong>
             <span>${escapeHtml(evidenceMetaLine(item))}</span>
-            <small>${state.screen === "trial" ? "这页已经压到案边。证人只要再漏半步，它就得摆上桌面。" : "证物已经归卷，纸上的裂口不会自己合上。"} </small>
+            <small>${state.screen === "trial" ? "这页已经压在案边，等的就是证人再漏半句。" : "证物已经归卷，可话还没说圆。"} </small>
           </span>
         </div>
         <p>${escapeHtml(item.detail)}</p>
@@ -3796,7 +3796,7 @@
     if (!item) return [];
     const specific = specificInspectSpotsForEvidence(item, viewId);
     if (specific.length) return specific;
-    const source = item ? `来源：${evidenceOriginLong(item)}` : "这页东西要站上庭，先得把来路说清。";
+    const source = item ? `来源：${evidenceOriginLong(item)}` : "来路要是说不清，再硬的纸也站不住。";
     const risk = item.counterRisk ? ` 慎用点：${item.counterRisk}` : "";
     const common = {
       trace: {
@@ -3839,8 +3839,8 @@
         {
           id: "risk",
           label: "分量轻重",
-          title: "这一页压不压得住",
-          text: risk ? risk.trim() : "这份记录分量不轻，可单靠这一页，还压不成整案。",
+          title: "单靠它够不够",
+          text: risk ? risk.trim() : "光凭这一页，还镇不住整案。",
         },
       ];
     }
@@ -4437,7 +4437,7 @@
       {
         kicker: "矛盾揭示",
         title: line,
-        body: deductionText ? `庭前对照和当前证词咬在同一个缺口上：${target}` : `这份记录击中的不是细枝末节，而是证词的核心前提：${target}`,
+        body: deductionText ? `庭前对照和当前证词咬在同一个缺口上：${target}` : `掀开的不是旁枝末节，而是这段证词站住的根：${target}`,
         recordLabel: title,
         targetLabel: record,
       },
@@ -5235,7 +5235,7 @@
       }
       if (countered) {
         setStage("opponent", statement.counterNotice || "对手反制", { left: "stagger", right: "confident" });
-        const recoveryHint = statement.counterRecoveryId ? " 但这次反制留下了新的补救破绽，继续查看证词条。" : "";
+        const recoveryHint = statement.counterRecoveryId ? " 但他这一挡，也把后手露出来了。" : "";
         setImpactCue("penalty", "反制", presentedLabel, caseData.opponent);
         setMessage(caseData.opponent, `${statement.counterFeedback || "对手抓住了这份证物的漏洞，辩方信誉受到重创。"}${recoveryHint}`, "penalty");
         playCue("counter");
