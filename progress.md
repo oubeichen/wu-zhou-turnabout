@@ -4469,3 +4469,57 @@ Remaining Ace Attorney gap list:
   - `举证` button styling
   - hotspot geometry
   - desktop single-window no-scroll layout
+
+## 2026-06-24 iteration 138 result
+
+Implemented:
+- 把高频证物/卷宗 `use` 文案从“用于说明 / 最后用它 / 先用它”改成就事论事的句子，只说这张纸咬住什么、揭开什么、压住哪条线。
+- 修改了 [scripts/build_game_content.py](/Users/oubeichen/Projects/wuzetian2/scripts/build_game_content.py) 里的五章证物说明、五个线索板、五个庭上追问记录、五个追击补记的 `use` 文案。
+- 顺手收了一遍 [game/app.js](/Users/oubeichen/Projects/wuzetian2/game/app.js) 详查面板的通用提示，把 `如果……就……`、`它一旦太早……` 这类教学口吻压成直接描述。
+- 重新生成 [game/game-data.js](/Users/oubeichen/Projects/wuzetian2/game/game-data.js) 让实际游戏内容同步更新。
+
+Why this round:
+- 用户最新要求很明确：游戏界面不要处处教玩家做事，文案应直接说重点，说这件东西本身意味着什么。
+- 上一轮已经清掉了 `这句……` 系统腔，这一轮接着处理法庭记录和详查里最常见的“打法提示腔”。
+- 这是一块高频表层，改完能同时覆盖证物列表、选中证物详情、法庭记录详查和后续庭审引用。
+
+Verified:
+- `git fetch origin main`
+- confirmed `HEAD` and `origin/main` both pointed to `3a57c7870de34a223d15a4edfa6713325ce0dd71` before this round's commit
+- `python3 scripts/build_game_content.py`
+- `npm run check:js`
+- `npm run check:py`
+- `git diff --check`
+- `rg -n '用于说明|用于追查|用于证明|最后用它|先用它|不要用它|把它当|提醒玩家|让玩家|玩家' game/game-data.js game/app.js` returned no matches
+- Playwright 打开 `http://127.0.0.1:8788/game/?v=iteration138-copy`，续接现有庭审存档，展开法庭记录并选中证物，截图：
+  - `output/iteration138-record-copy.png`
+- 页面复查确认：
+  - 证物说明已改成“这张纸咬住什么”的直述口吻；
+  - 右侧庭审面板、法庭记录抽屉和操作按钮没有出现新的重叠或错位；
+  - 没有重新引入之前已经修掉的 `这句……` 或 `用于说明……` 口吻。
+
+Notes:
+- `.gitignore` 这轮无需改动；验证产物规则仍然够用。
+
+Remaining Ace Attorney gap list:
+- 继续逐块改庭审即时反馈和记录详查里的“策略提示腔”，把剩余的“先……再……”式打法提示压缩回可隐藏引导层。
+- 继续截图检查调查页、详查页、追击页，重点看文字是否挤压、遮挡或局部滚动。
+- 不要重开已经稳定的 `举证` 按钮、热点位置和桌面单屏无滚动布局，除非新截图证明回归。
+
+## Latest handoff
+
+- Most recent completed round: `2026-06-24 iteration 138 result`
+- Round scope: rewrote court-record evidence `use` copy and inspect-panel helper text so evidence descriptions now state what the paper itself points to instead of coaching the player how to use it.
+- Verified artifacts:
+  - `output/iteration138-record-copy.png`
+- Verified commands:
+  - `git fetch origin main`
+  - `python3 scripts/build_game_content.py`
+  - `npm run check:js`
+  - `npm run check:py`
+  - `git diff --check`
+  - `rg -n '用于说明|用于追查|用于证明|最后用它|先用它|不要用它|把它当|提醒玩家|让玩家|玩家' game/game-data.js game/app.js`
+- Do not reopen in the next round unless a fresh screenshot proves regression:
+  - `举证` button styling
+  - hotspot geometry
+  - desktop single-window no-scroll layout
