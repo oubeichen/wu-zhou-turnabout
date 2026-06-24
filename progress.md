@@ -3297,6 +3297,51 @@ Remaining Ace Attorney gap list:
 - Continue screenshot-first QA on pressure labels, trial headers, statement cards, record drawer entries, and evidence detail panels.
 - Do not reopen already-fixed `举证` button, hotspot placement, or desktop no-scroll layout unless a fresh screenshot shows a concrete regression.
 
+## 2026-06-24 iteration 133 result
+
+Implemented:
+- Kept this round strictly on the user's latest copy rule: normal people should not keep calling testimony fragments `这句/这一句/这句话` in live scene text.
+- Rewrote the remaining courtroom runtime copy in `game/game-data.js` across all five cases, one feedback cluster at a time: hidden-branch prompts,追击补记提示, wrong-evidence feedback, final-warning prompts, and profile-hit reminders now all use person-in-scene phrasing such as `漏了口风` / `前头那句` / `那番话` instead of explanation-manual wording.
+- Rewrote the last visible trial helper lines in `game/app.js`, including:
+  - the hidden-statement black-card body;
+  - the ready-to-present extra hint after pressing;
+  - the judge line shown after a statement has already been broken.
+- Left system-operation labels such as `上一句` / `继续查看证词下一句` untouched, because those are control UI, not spoken or narrated scene text.
+
+Why this round:
+- The user explicitly tightened the language rule again: people do not speak like `这句……` unless it is a manual or system description.
+- The previous round had already cleared the currently visible court screenshot, but the source still contained many dormant courtroom lines that would surface later in other cases and branches.
+- This was the right small-round target because it closes a real recurring tone defect without reopening layout, art, or interaction code that the user told me not to touch this round.
+
+Verified:
+- `npm run check:js`
+- `git diff --check`
+- Source scan confirmed no remaining non-system `这句` / `这句话` / `这一句` strings in:
+  - `game/game-data.js`
+  - `game/app.js`
+- Only the system controls still contain:
+  - `继续查看证词下一句`
+  - `上一句`
+- Refreshed the browser to `http://127.0.0.1:8788/game/?v=iteration133-human`, continued into case 1, then entered court.
+- Captured and inspected:
+  - `output/iteration133-human-after-continue.png`
+  - `output/iteration133-human-trial-verified.png`
+  - `output/iteration133-human-trial-snapshot.md`
+- Screenshot inspection confirmed:
+  - the trial page still fits in one PC window with no new overflow from the rewritten lines;
+  - the right panel, bottom dialogue box, and action buttons remain aligned;
+  - the visible trial prompt now reads like a person reacting in court rather than a system describing sentence fragments.
+- `git check-ignore -v output/iteration133-human-trial-verified.png` confirmed `.gitignore` already covers this round's screenshots, so no ignore-rule change was needed.
+
+Notes:
+- This round intentionally did not reopen `举证` button styling, hotspot layout, or portrait staging. The user had already asked not to keep re-fixing surfaces that were not newly broken.
+- I kept one narrator-style line as `御前书记又补了一句` because that is natural spoken/narrated Chinese, unlike the old `这句……` courtroom helper phrasing.
+
+Remaining Ace Attorney gap list:
+- Keep rewriting evidence-detail footers, record-drawer descriptions, and late-case helper cards one sentence at a time until the whole game consistently sounds like people in the room.
+- Continue screenshot-first QA on investigation/court screens after each copy pass so wording changes do not create clipping in dense panels.
+- Replace more older case/trial backdrops that still read like generated placeholders, but do that in a separate art-only round.
+
 ## 2026-06-24 iteration 131 result
 
 Implemented:

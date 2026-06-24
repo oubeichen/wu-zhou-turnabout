@@ -1455,7 +1455,7 @@
         return {
           id: "trial-hidden",
           title: "堵住的话",
-          body: "这一句像楔子卡在整段证词里。它一松，后面压着的话就藏不住了。",
+          body: "他这话像楔子卡在整段证词里。只要一松，后面压着的东西就藏不住了。",
           steps: ["当前句", "追问", "新证词"],
         };
       }
@@ -4916,7 +4916,7 @@
     }
     const ready = statementReadyToPresent(statement, progress, progress.testimonyIndex, rawIndex);
     const extra = ready
-      ? " 他刚才多补的这一句已经让证词漏风了。法庭记录里，有东西正好咬住这道风口。"
+      ? " 他刚才多补那番话，已经让整段证词漏风了。法庭记录里，正有东西咬住这道风口。"
       : statementHasAnswer(statement)
         ? " 他的话开始发紧，但还差一口气。它和手边记录，总有一处接不上。"
         : "";
@@ -5228,7 +5228,7 @@
     }
     if (progress.solved.includes(key)) {
       setStage("witness", "证词已击破", { left: "stagger", right: "observe" });
-      setMessage("审判长", "这一句已经倒了。证人若还想站稳，只能往下一句里躲。", "");
+      setMessage("审判长", "他刚才那套说法已经站不住了。证人若还想硬撑，只能再换个说法。", "");
       renderTrial();
       return;
     }
