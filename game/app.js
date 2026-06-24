@@ -1273,7 +1273,7 @@
       "case-urn": {
         title: "暗室里的热气回来了",
         reaction: `周兴的指节停在案沿。${recordName}一摆出来，自愿签押就不再像自愿，倒像有人把${targetName}照着流程逼出来。`,
-        defenseLine: "别和他争一句供词真假。逼他说出那套办法怎样用到人身上。",
+        defenseLine: "供词是真是假先放一边。真正躲不掉的，是那套办法怎样用到人身上。",
       },
       "case-half-hour-coup": {
         title: "半小时安静了下来",
@@ -2660,20 +2660,20 @@
     const canPresent = inv.command === "present";
     const canInspect = inv.command === "examine" && !state.evidencePickup;
     const commandFocus = {
-      move: "不同地点留下的是不同口径。",
-      examine: "桌上的纸页、封蜡和磨痕都在场。",
-      talk: "名字都藏在没说完的话里。",
-      present: "证物一出，场面就得改口。",
+      move: "同一件事，换个地方听，口径常常就变了。",
+      examine: "纸页、封蜡和磨痕都还留在桌上。",
+      talk: "没说完的话，往往比说出口的更响。",
+      present: "东西一摆出来，场面往往就会变。",
     };
     const quickHint = canMove
-      ? "殿门内外、案桌前后，说的未必是一回事。"
+      ? "殿门内外、案桌前后，听到的未必是同一种说法。"
       : canTalk
-      ? "越不肯点名，越像有人把名字咽了回去。"
+      ? "越不肯点名，越像心里正压着一个人。"
       : canPresent
-      ? "证物真假之外，更要看谁见了它就心虚。"
+      ? "证物真假之外，谁先变脸往往更说明问题。"
       : canInspect
-      ? "封蜡、纸页和桌角的磨痕，都是自己留下的口供。"
-      : "这一处的东西都还在，只差有人肯认。";
+      ? "封蜡、纸页和桌角的磨痕，都不会替谁圆话。"
+      : "这一处的东西都还在，沉默比嘴更重。";
     return `
       <div class="location-map scene-${sceneKey} variant-${variant}${transitionClass}">
         <div class="location-map-head">
@@ -2935,15 +2935,15 @@
     const trialDeduction = trialDeductionForStatement(caseData, statement, progress, progress.testimonyIndex, rawIndex);
     const recordPrompt = readyToPresent
       ? selectedLabel
-        ? "他这番话已经撞上硬纸，这份记录正压在缝上。"
+        ? "他这番话已经撞上硬纸，这份记录正好压在那道裂口上。"
         : statement.answerProfile
-          ? "碰上的不是纸，是人。案卷里那张脸不会一直沉默。"
-          : "他把话说得太满，案卷里总有一页会让他改口。"
+          ? "碰上的不是纸，是人。案卷里那张脸已经躲不过去了。"
+          : "他把话说得太满，案卷里正有一页等着让他改口。"
       : selectedLabel
         ? state.selectedProfileName
-          ? "人已经被盯住了，他还在等那半句能把自己卖出来的话。"
-          : "这份记录还压不到他嘴边那道缝。"
-        : "眼下还只是口风，能压住他的那页纸还没碰上来。";
+          ? "人是盯住了，可他嘴里的破绽还没真正落下来。"
+          : "这份记录还没戳到他疼的地方。"
+        : "庭上还只听见一阵口风，真正见血的那页纸还没翻出来。";
     state.screen = "trial";
     renderStatus();
     app.innerHTML = `
@@ -3667,7 +3667,7 @@
   function renderSelectedEvidence(caseData) {
     const item = state.selectedEvidenceId ? evidenceById(caseData, state.selectedEvidenceId) : null;
     if (!item) {
-      return `<p class="hint-text">手边还空着一页。待会儿谁和谁撞上，庭上自然听得出来。</p>`;
+      return `<p class="hint-text">手边还空着一页。案上的风还没把最重的那张纸翻出来。</p>`;
     }
     const deduction = deductionForEvidence(caseData, item.id);
     return `
@@ -4645,7 +4645,7 @@
       state.recordOpen = false;
       setStage("witness", `${testimony.speaker}入庭`, { left: "enter", right: "observe" });
       playCue("transition");
-      setMessage("审判长", "证人既然开口，就把话说清楚。真站不住的地方，庭上自然听得出来。", "");
+      setMessage("审判长", "证人既然开口，庭上就听他说到头。真站不住的地方，自己藏不住。", "");
       renderTrial();
     }
   }
@@ -4670,10 +4670,10 @@
   function commandSceneLine(command, location) {
     const place = location?.name || "这里";
     const lines = {
-      move: `${place}这边的气还没散。换个地方，口风也许就变了。`,
-      examine: `${place}一静下来，桌角、封蜡和脚印就比人嘴肯说真话。`,
-      talk: `${place}里的人都把嗓子压得很低。越怕说漏的人，越容易在半句话里露馅。`,
-      present: `把证物亮出去，${place}里先发慌的那张脸，往往比供词更有用。`,
+      move: `${place}这边的话差不多了。真有别的口径，多半已经落到别处。`,
+      examine: `${place}一静下来，桌角、封蜡和脚印就比人嘴更肯作证。`,
+      talk: `${place}里的人都把嗓子压得很低。越怕提名字的人，越容易把自己露出来。`,
+      present: `把证物摆上桌，${place}里谁先变脸，谁心里就最有数。`,
     };
     return lines[command] || `${place}的痕迹还没散。`;
   }
@@ -5817,7 +5817,7 @@
           state.recordOpen = true;
           setMessage(
             "法庭记录",
-            "案前还空着。法庭记录里得有一件能压住他这番话的证物或档案。",
+            "案前还是空的，桌上还没摆出能让他变脸的那一页。",
             ""
           );
           rerender();
@@ -5826,7 +5826,7 @@
         if (!readyToPresent) {
           setMessage(
             "法庭记录",
-            "他的话还没露底。现在把记录压上去，他也只会顺势绕开。",
+            "他嘴还硬着，这时候把案卷摔上去，他也只会顺着滑过去。",
             "penalty"
           );
           renderTrial();
@@ -6056,7 +6056,7 @@
       investigationHotspotCount: location.examineSpots.length,
       investigationHotspotVisible: state.screen === "investigation" && inv.command === "examine" && !state.investigationBeat,
       investigationHotspotInteractive: state.screen === "investigation" && inv.command === "examine" && !state.investigationBeat,
-      investigationHotspotDormantPrompt: state.screen === "investigation" && inv.command !== "examine" ? "切到 查看 模式后可点位检视" : "",
+      investigationHotspotDormantPrompt: state.screen === "investigation" && inv.command !== "examine" ? "人一开口，桌上的痕迹反倒安静下去了。" : "",
       activeClue: activeClue?.name || "",
       closeupType: closeup.type,
       closeupTitle: closeup.title,

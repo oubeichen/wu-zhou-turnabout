@@ -3297,6 +3297,79 @@ Remaining Ace Attorney gap list:
 - Continue screenshot-first QA on pressure labels, trial headers, statement cards, record drawer entries, and evidence detail panels.
 - Do not reopen already-fixed `举证` button, hotspot placement, or desktop no-scroll layout unless a fresh screenshot shows a concrete regression.
 
+## Latest handoff
+
+- Most recent completed round: `2026-06-24 iteration 134 result`
+- Round scope: rewrote high-frequency investigation/trial shell copy in `game/app.js` so command-switch, scene-summary, record-prompt, and judge/empty-record lines sound less like instructions and more like in-scene reactions.
+- Verified artifacts:
+  - `output/iteration134-investigation-present.png`
+  - `output/iteration134-trial-updated-b.png`
+  - `output/iteration134-trial-snapshot.md`
+- Verified commands:
+  - `npm run check:js`
+  - `git diff --check`
+- Do not reopen in the next round unless a fresh screenshot proves regression:
+  - `举证` button styling
+  - hotspot geometry
+  - desktop single-window no-scroll layout
+
+## 2026-06-24 iteration 134 result
+
+Implemented:
+- Kept this round limited to one copy cluster the user explicitly keeps objecting to: main gameplay surfaces still sounding like they are teaching the player what to do.
+- Rewrote the investigation command-switch lines in `game/app.js` so `移动 / 查看 / 交谈 / 出示` now read like scene pressure and witness reaction, not like control coaching.
+- Rewrote the investigation scene-summary microcopy (`commandFocus` + `quickHint`) so it talks about the room, the people, and the evidence instead of nudging the player toward a preferred action.
+- Rewrote trial-side record feedback in `renderTrial()` and the keyboard present guard:
+  - no selection;
+  - selected but not ready;
+  - ready-to-present;
+  - profile-targeted contradictions.
+- Rewrote one still too directive courtroom reaction line in `objectionAftermathCopy()` for the `case-urn` path.
+- After screenshot review, did one same-round tightening pass on two still-visible trial lines:
+  - the judge's opening courtroom line;
+  - the empty selected-record hint text.
+- Synced the text-only automation field `investigationHotspotDormantPrompt` so it no longer reports the old `切到 查看 模式后可点位检视` instruction wording.
+
+Why this round:
+- The user's latest complaint was narrower than “rewrite everything”: stop letting the game UI keep instructing the player in every panel and button-adjacent hint.
+- The most visible remaining offenders were not deep case scripts, but high-frequency chrome around investigation mode switching and trial record guidance.
+- This was a good small round because it stayed inside one file, touched no gameplay logic, and could be verified quickly on both investigation and trial screens.
+
+Verified:
+- `npm run check:js`
+- `git diff --check`
+- Source scan confirmed the old target strings no longer exist in `game/app.js`, including:
+  - `切到 查看 模式后可点位检视`
+  - `案前还空着。法庭记录里得有一件能压住他这番话的证物或档案。`
+  - `他的话还没露底。现在把记录压上去，他也只会顺势绕开。`
+  - `别和他争一句供词真假。逼他说出那套办法怎样用到人身上。`
+  - `换个地方，口风也许就变了。`
+- Used the in-app browser with a fresh cache-busting URL:
+  - `http://127.0.0.1:8788/game/?v=iteration134-copy-b`
+- Captured and inspected investigation:
+  - `output/iteration134-investigation-present.png`
+- Investigation screenshot confirmed:
+  - the command box now reads `把证物摆上桌，史官案牍房里谁先变脸，谁心里就最有数。`
+  - the summary panel reads like scene observation rather than a mini tutorial;
+  - no new crowding or overflow appeared in the right panel.
+- Captured and inspected trial:
+  - `output/iteration134-trial-updated-b.png`
+  - `output/iteration134-trial-snapshot.md`
+- Trial screenshot/snapshot confirmed:
+  - the visible judge line now reads `证人既然开口，庭上就听他说到头。真站不住的地方，自己藏不住。`
+  - the right-panel empty-record hint and related prompt text remain within the same layout width;
+  - no new clipping, overlap, or button misalignment appeared after the copy pass.
+- `git check-ignore -v output/iteration134-trial-updated-b.png output/iteration134-investigation-present.png` confirmed `.gitignore` still covers this round's screenshots.
+
+Notes:
+- I deliberately did not reopen already stabilized issues such as `举证` button styling, hotspot geometry, or desktop single-window layout.
+- This round also did not start another broad testimony rewrite in `game/game-data.js`; the target was the gameplay-shell copy players hit constantly before deeper case text.
+
+Remaining Ace Attorney gap list:
+- Keep rewriting deeper evidence-detail footers, record-drawer blurbs, and testimony feedback one sentence at a time until the whole game speaks like people in the room instead of commentary around the room.
+- Continue screenshot-first QA on investigation and courtroom microcopy after each pass so short lines do not regress into clipping in dense right-side panels.
+- Leave already fixed layout and button issues alone unless a fresh screenshot shows a real regression.
+
 ## 2026-06-24 iteration 133 result
 
 Implemented:
@@ -4190,7 +4263,7 @@ Verified:
 - `git diff --check`
 - Used the in-app browser at `http://127.0.0.1:8788/game/` with a reproducible local save snapshot for case 1 court-ready state
 - Captured a fresh screenshot:
-  - `output/trial-meter-heading-current.png`
+- `output/trial-meter-heading-current.png`
 - Live DOM capture confirmed the meter now renders as:
   - `庭上风向 / 还压得住`
 - Screenshot inspection confirmed:
@@ -4205,3 +4278,19 @@ Remaining Ace Attorney gap list:
 - Keep rewriting testimony-side helper text, evidence summaries, and late-case prompts that still sound like neutral interface metadata instead of escalating courtroom pressure.
 - Continue screenshot-first QA on pressure labels, trial headers, statement cards, record drawer entries, and evidence detail panels.
 - Do not reopen already-fixed `举证` button, hotspot placement, or desktop no-scroll layout unless a fresh screenshot shows a concrete regression.
+
+## Latest handoff
+
+- Most recent completed round: `2026-06-24 iteration 134 result`
+- Round scope: rewrote high-frequency investigation/trial shell copy in `game/app.js` so command-switch, scene-summary, record-prompt, and judge/empty-record lines sound less like instructions and more like in-scene reactions.
+- Verified artifacts:
+  - `output/iteration134-investigation-present.png`
+  - `output/iteration134-trial-updated-b.png`
+  - `output/iteration134-trial-snapshot.md`
+- Verified commands:
+  - `npm run check:js`
+  - `git diff --check`
+- Do not reopen in the next round unless a fresh screenshot proves regression:
+  - `举证` button styling
+  - hotspot geometry
+  - desktop single-window no-scroll layout
