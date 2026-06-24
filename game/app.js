@@ -1621,8 +1621,8 @@
     const gold = data.cases.filter((entry) => caseRecord(entry.id).bestMedal === "金章").length;
     const hasProgress = data.cases.some(caseHasProgress);
     const heroHint = hasProgress
-      ? `“${caseData ? caseTitleForDisplay(caseData.title) : data.title}”那卷案子还没合上。有人先把话说出口，也有人还在把名字往回吞。`
-      : "每一卷案子，都从一句说不全的话开始。";
+      ? `“${caseData ? caseTitleForDisplay(caseData.title) : data.title}”那卷案子还没合上。该认的名字还没认，先落下去的罪却已经写在前头。`
+      : "每一卷案子，都是先有人背了罪，后头的人才慢慢露脸。";
     return `
       <div class="main-menu">
         <div class="menu-copy">
@@ -2394,10 +2394,10 @@
   function evidenceOriginLong(item) {
     const source = String(item?.source || "").trim();
     if (item?.pursuitOnly || /追击/.test(source)) {
-      return "这是追击后补进案卷的一页。证人刚想往后退，它就把路堵上了。";
+      return "这是追击后补进案卷的一页。证人刚退半步，它就落进案卷里了。";
     }
     if (item?.trialOnly || /庭审|追问/.test(source)) {
-      return "这是庭上刚添进案卷的一页，墨都还没干。";
+      return "这是庭上刚添进案卷的一页，墨迹还新着。";
     }
     if (/由(?:本案|该案|本章|相关案件)相关章节归纳/.test(source)) {
       return "这是辩方把散开的证物和口供重新钉成一条线后的整理页。";
@@ -4586,7 +4586,7 @@
     clearEvidencePickup();
     clearInventoryCue();
     clearPursuitUnlockCue();
-    setMessage("书记", "案卷已经展开。现场还没说完的话，会在庭上变成第一道裂缝。", "");
+    setMessage("书记", "案卷摊开了。那一夜没说完的话，还压在现场和纸页里。", "");
     renderCaseIntro();
   }
 
@@ -4779,7 +4779,7 @@
       "case-half-hour-coup": "夜门的人只敢说乱。可越是乱，越藏不住哪一道命令走得比人还快。",
     };
     if (topic?.speaker?.includes("史官") || topic?.speaker?.includes("小吏") || topic?.speaker?.includes("书记")) {
-      return "写字的人习惯替自己留退路。他避开的那个词，迟早会从纸缝里露出来。";
+      return "写字的人最爱藏半句，偏偏那半句最要命。";
     }
     return byCase[caseData.id] || "他说得轻，可一旦和现场摆到一起，躲话的人就会先变脸。";
   }
