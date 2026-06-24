@@ -3297,15 +3297,73 @@ Remaining Ace Attorney gap list:
 - Continue screenshot-first QA on pressure labels, trial headers, statement cards, record drawer entries, and evidence detail panels.
 - Do not reopen already-fixed `举证` button, hotspot placement, or desktop no-scroll layout unless a fresh screenshot shows a concrete regression.
 
+## 2026-06-24 iteration 135 result
+
+Implemented:
+- Kept this round focused on one visible tone problem cluster: case-intro `stakes` / source notes still using `你要...` / `若法庭只...` / `别被...` style player-direction copy.
+- Updated the source generator in `scripts/build_game_content.py` instead of only touching the built payload, so future rebuilds keep the new wording.
+- Rewrote five high-frequency case-intro lines across the case-opening layer:
+  - case 1 `openingStory.body` and `openingStory.stakes`
+  - case 2 `openingStory.stakes`
+  - case 3 `openingStory.body` and `openingStory.stakes`
+  - case 4 `openingStory.stakes` plus `用贤也会招祸` source note
+  - case 5 `openingStory.stakes` plus `辩护席` location description
+- Regenerated `game/game-data.js` from the updated source script.
+- Tightened three `game/app.js` hidden trial-guide lines that still sounded like system coaching:
+  - `trial-hidden`
+  - `trial-deduction`
+  - `trial-profile`
+- Synced the fallback `caseOpeningStory()` and `caseSourceItems()` copy in `game/app.js` so the runtime fallback path cannot resurrect the old wording.
+
+Why this round:
+- The previous round cleaned the gameplay shell. The next most obvious mismatch was the case-opening surface still telling the player what to pursue instead of letting the case itself speak.
+- These intro/stakes lines are high frequency because every player hits them before entering a case, and they heavily shape whether the game reads like fiction or like an annotated puzzle.
+- Editing the generator source was the right scope because these texts are generated content and would otherwise drift back later.
+
+Verified:
+- `python3 scripts/build_game_content.py`
+- `npm run check:js`
+- `git diff --check`
+- Source scan confirmed the targeted old phrasing no longer exists in source/runtime files, including:
+  - `你要追的不是`
+  - `若法庭只`
+  - `别被混乱骗走视线`
+  - `只要顺序一乱`
+  - `只要把这个名字摆出来`
+  - `他眼下若再硬撑`
+- Ran a data-level runtime check against generated `game/game-data.js` and confirmed the new strings are live for:
+  - case 1 stakes
+  - case 2 stakes
+  - case 3 body / stakes
+  - case 4 stakes / `用贤也会招祸`
+  - case 5 stakes / `辩护席` description
+- Used the in-app browser with a fresh cache-busting URL:
+  - `http://127.0.0.1:8788/game/?v=iteration135-copy`
+- Captured and inspected:
+  - `output/iteration135-case-page.png`
+- Case-page screenshot confirmed:
+  - the revised first-case bottom stakes line now reads like courtroom pressure, not a task briefing;
+  - the longer sentence still fits cleanly inside the lower story strip;
+  - no new overflow or button misalignment appeared on the case page after the rewrite.
+- `.gitignore` still covers generated screenshots under `output/`.
+
+Notes:
+- I did not reopen already stabilized UI issues such as `举证` button styling, hotspot geometry, or the desktop no-scroll layout.
+- I also did not start another broad `game/game-data.js` testimony rewrite in this round; the target stayed on case-opening and source-note surfaces plus a few trial guide leftovers in `game/app.js`.
+
+Remaining Ace Attorney gap list:
+- Keep rewriting evidence-detail `use` / `counterRisk` copy and deeper testimony feedback one sentence at a time until those panels stop sounding like annotated puzzle hints.
+- Continue screenshot-first QA on case-intro, court-record, and trial microcopy so text revisions do not create clipping in dense panels.
+- Leave already fixed layout and button issues alone unless a fresh screenshot proves regression.
+
 ## Latest handoff
 
-- Most recent completed round: `2026-06-24 iteration 134 result`
-- Round scope: rewrote high-frequency investigation/trial shell copy in `game/app.js` so command-switch, scene-summary, record-prompt, and judge/empty-record lines sound less like instructions and more like in-scene reactions.
+- Most recent completed round: `2026-06-24 iteration 135 result`
+- Round scope: rewrote case-intro `stakes` / source-note copy at the generator level, regenerated `game/game-data.js`, and cleaned a few remaining hidden trial-guide lines/fallbacks in `game/app.js`.
 - Verified artifacts:
-  - `output/iteration134-investigation-present.png`
-  - `output/iteration134-trial-updated-b.png`
-  - `output/iteration134-trial-snapshot.md`
+  - `output/iteration135-case-page.png`
 - Verified commands:
+  - `python3 scripts/build_game_content.py`
   - `npm run check:js`
   - `git diff --check`
 - Do not reopen in the next round unless a fresh screenshot proves regression:
