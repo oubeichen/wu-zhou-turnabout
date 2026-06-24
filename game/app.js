@@ -1194,31 +1194,31 @@
         title: "哭声被写进了诏书",
         defenseLine: `婴儿的哭声可以是传闻，但“${recordName}”和“${targetName}”对上以后，废后的话就不再是宫人随口一说。谁把哭声送进文书？`,
         witnessLine: "内廷记录官的手指停在案卷边上。他能说听见哭声，却不敢说是谁先把废后的字写下来。",
-        button: "追问文书来源",
+        button: "文书来源",
       },
       "case-crown-shadow": {
         title: "家事被整理成罪名",
         defenseLine: `如果这只是皇子之间的家事，“${recordName}”为什么会和“${targetName}”扣在同一条线上？谁把问安、名册和传位记录排成了罪证？`,
         witnessLine: "邠王守礼垂下眼。他避开了高宗病榻，也避开了谁最早拿走那些记录。",
-        button: "追问记录流向",
+        button: "记录流向",
       },
       "case-rebellion-box": {
         title: "投书途中被加了罪",
         defenseLine: `铜匦里的纸本来只是告发。可“${recordName}”一旦和“${targetName}”对上，谋反二字就是途中被人加重的。谁接过这张纸？`,
         witnessLine: "告密人的声音低了下去。他敢说自己投书，却不敢说投书离开铜匦后经过了谁的手。",
-        button: "追问加罪之手",
+        button: "加罪之手",
       },
       "case-urn": {
         title: "供词照着刑具长出来",
         defenseLine: `自愿供词不会和“${targetName}”贴得这么紧。“${recordName}”对上以后，问题不再是谁签字，而是谁照着手册逼他签。`,
         witnessLine: "魏元忠盯着瓮口烙痕，声音发哑：同样的话，他在暗室外听过不止一次。",
-        button: "追问逼供步骤",
+        button: "逼供步骤",
       },
       "case-half-hour-coup": {
         title: "半小时早被人排好",
         defenseLine: `若真是仓促政变，“${recordName}”和“${targetName}”不该刚好咬住同一个时辰。谁在夜门撞开前就安排了结局？`,
         witnessLine: "玄宗旧部不再看张易之。他知道更漏牌不会替任何人圆谎。",
-        button: "追问半小时安排",
+        button: "半小时安排",
       },
     };
     const copy = { ...generic, ...(byCase[caseData.id] || {}) };
@@ -1227,7 +1227,7 @@
         title: "折子从诏稿下翻出来",
         defenseLine: `许敬宗刚才把反对声说成没有。“${recordName}”和“${targetName}”一对上，问题就变成：谁把元老折子压到诏稿下面？`,
         witnessLine: "许敬宗的袖口压住案边。他还想谈旧例，却不肯再看折子上的联名。",
-        button: "追问压折子的人",
+        button: "压折子的人",
       };
     }
     if (caseData.id === "case-empress-seat" && speaker.includes("书记")) {
@@ -1235,7 +1235,7 @@
         title: "散开的纸被写成一线",
         defenseLine: `“${recordName}”已经把哭声、名册和诏稿压到同一张桌上。书记不能再把它们拆成几件巧合。`,
         witnessLine: "御前书记的笔停在最后一行。他等着法庭给结论，却先写下了证人答不上来的停顿。",
-        button: "追问谁把线串起",
+        button: "谁把线串起",
       };
     }
     return copy;
@@ -1500,7 +1500,7 @@
       return {
         id: "trial-scan",
         title: "交叉询问",
-        body: "他说得越满，留给自己的退路就越少。真正站不稳的那番话，迟早会从整段证词里凸出来。",
+        body: "他说得越满，破绽就越不肯老实待着。真正站不稳的那句，迟早会自己冒出来。",
         steps: ["证词", "追问", "举证"],
       };
     }
@@ -2158,8 +2158,8 @@
     return `
       <div class="case-setup" aria-label="案情导入">
         <div class="case-section-title">
-          <strong>谁先开口，谁先退场</strong>
-          <span>每个人都站在自己的阴影里，矛盾会从立场最紧的地方露出来。</span>
+          <strong>案情先压上桌</strong>
+          <span>哭声、旧账、投书、供状，都不会自己长成定案。</span>
         </div>
         ${cards
           .map(
@@ -2232,7 +2232,7 @@
           body: "几份供状的语气一模一样，连停笔的位置都像照着抄。人会害怕，笔不会；笔迹会把审讯者留下来。",
         },
         {
-          title: "周兴不怕喊冤，他怕被追问细节",
+          title: "供状一细看，夜里的火味就出来了",
           body: "他会把供词拍在案上。可嗓门再大，也盖不住瓮口、笔迹和副本里那股火味。",
         },
       ],
@@ -2339,7 +2339,7 @@
         { title: "赏赐簿先动了", note: "赏赐来得太早，像是在事情结束前就知道谁会赢。" },
         { title: "罪名纸条", note: "纸条字少，分量却重。越含糊的罪名，越方便把人推下去。" },
         { title: "禁军换岗令", note: "换岗不是混乱里的小事。谁离开岗位，谁留下缺口，半小时里都有人算过。" },
-        { title: "终局前的沉默", note: "等所有人都说尘埃落定，真正该问的是：谁最早知道尘埃会落向哪里。" },
+        { title: "终局前的沉默", note: "等所有人都说尘埃落定，最早知道尘埃会落向哪里的人，反倒一直没开口。" },
       ],
     };
     return byCase[caseId] || [];
@@ -2394,10 +2394,10 @@
   function evidenceOriginLong(item) {
     const source = String(item?.source || "").trim();
     if (item?.pursuitOnly || /追击/.test(source)) {
-      return "这是追击后补进案卷的一页。分量不在出处名目，而在它正好堵住了证人刚露出的退路。";
+      return "这是追击后补进案卷的一页。证人刚想往后退，它就把路堵上了。";
     }
     if (item?.trialOnly || /庭审|追问/.test(source)) {
-      return "这是庭上追问后新记下的一页。法庭刚听过这道空白，它还热着。";
+      return "这是庭上刚添进案卷的一页，墨都还没干。";
     }
     if (/由(?:本案|该案|本章|相关案件)相关章节归纳/.test(source)) {
       return "这是辩方把散开的证物和口供重新钉成一条线后的整理页。";
@@ -4126,7 +4126,7 @@
     if (kind === "bronze_box") return `${source.name}和${target.name}对上后，投书入口和案情扩大的步骤被分开了。`;
     if (kind === "jar" || kind === "confession" || kind === "manual") return `${source.name}和${target.name}连起来后，逼供不再只是传闻，而成了办案流程的破绽。`;
     if (kind === "order") return `${source.name}和${target.name}对上后，“临时发生”的说法站不住了。`;
-    return `${source.name}和${target.name}互相印证，可以作为庭上追问的下一层依据。`;
+    return `${source.name}和${target.name}一对上，庭上那番话就还能再往下压一层。`;
   }
 
   function deductionStoreForCase(caseId) {
@@ -5114,7 +5114,7 @@
     const unlockText = unlocked
       ? ` ${unlocked}已经写入法庭记录。`
       : followUp.unlockEvidenceName
-        ? ` ${followUp.unlockEvidenceName}已经在法庭记录中，可以直接查看。`
+        ? ` ${followUp.unlockEvidenceName}已经写进法庭记录。`
         : "";
     const statementText = unlockedStatement ? ` 证人又补了一句：${unlockedStatement}。` : "";
     const stageMessage = `${followUp.chaseLine || "对照札记已经把证词推到新的缺口上。"} ${followUp.witnessLine || ""}${unlockText}${statementText} ${followUp.objectionText || statement?.objection || ""}`.trim();

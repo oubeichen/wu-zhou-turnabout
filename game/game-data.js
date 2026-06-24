@@ -97,9 +97,9 @@ window.WUZHOU_GAME_DATA = {
       "verdict": "后位案背后的关键不是一件孤证，而是宫廷证词、元老态度和权力收益彼此咬合。",
       "branch": {
         "revealLabel": "后位诏书背后的署名",
-        "triggerPress": "对方越说一切都是旧规矩，越要问清楚是谁把废后的话写进奏章。",
+        "triggerPress": "他越把一切说成旧规矩，奏章上那支笔就越像有人故意藏起来。",
         "hiddenText": "立后的文书只是照旧例写成，没有人主动把元老反对压下去。",
-        "hiddenPress": "他把写奏章的人藏到纸后头了。翻人物档案，看看是谁在替这套新说法撑腰。"
+        "hiddenPress": "他把写奏章的人藏到纸后头了。替这套新说法撑腰的名字，就压在人物档案里。"
       },
       "index": 1,
       "badEnding": "若无法推翻这组证词，宫廷后位之争、婴儿死亡疑云与元老反对会被写成单一罪名。被卷入废后风波的宫人证词的沉默将成为定案理由，真正该查的人会躲在案卷后面。",
@@ -390,14 +390,14 @@ window.WUZHOU_GAME_DATA = {
           "statements": [
             {
               "text": "后位文书有印有押，辩方再问谁补字、谁压折子，只是在给旧臣找借口。",
-              "press": "对方越说一切都是旧规矩，越要问清楚是谁把废后的话写进奏章。",
+              "press": "他越把一切说成旧规矩，奏章上那支笔就越像有人故意藏起来。",
               "unlockStatementId": "case-empress-seat-legality-branch",
               "wrongEvidenceFeedback": "许敬宗把话压得太死了，后头那道署名还没被他吐出来。",
               "answerEvidence": null
             },
             {
               "text": "立后的文书只是照旧例写成，没有人主动把元老反对压下去。",
-              "press": "他把写奏章的人藏到纸后头了。翻人物档案，看看是谁在替这套新说法撑腰。",
+              "press": "他把写奏章的人藏到纸后头了。替这套新说法撑腰的名字，就压在人物档案里。",
               "hiddenUntilPressed": "case-empress-seat-legality-branch",
               "revealLabel": "后位诏书背后的署名",
               "wrongEvidenceFeedback": "他躲在文书后头不肯露面，可那只真正写字的手，早就在文书上留了名。",
@@ -431,7 +431,7 @@ window.WUZHOU_GAME_DATA = {
             },
             {
               "text": "最后写进诏书的，就是法庭该承认的事实。纸上已经定了，辩方何必再翻旧账？",
-              "press": "许敬宗把结果当成原因。胜出者留下的纸，正需要反过来追问是谁推动它胜出。",
+              "press": "许敬宗把结果当成原因。纸能留下来，不等于没人先替它开路。",
               "wrongEvidenceFeedback": "这番话滑得很，可真正伤人的地方还不在这里。",
               "answerEvidence": null
             }
@@ -694,7 +694,7 @@ window.WUZHOU_GAME_DATA = {
             {
               "title": "账册是谁递的",
               "speaker": "邠王守礼",
-              "text": "旧臣递账时手在抖。他怕的不是账册本身，是有人等他递出来，再说他借账册议储。"
+              "text": "旧臣递账时手一直在抖。不是那本账册吓人，是账册一递出去，储位的脏水就全往他身上泼。"
             },
             {
               "title": "问安为何成罪",
@@ -1049,9 +1049,9 @@ window.WUZHOU_GAME_DATA = {
       "verdict": "告密制度把疑惧变成案件原料，酷吏再把案件加工成威慑。",
       "branch": {
         "revealLabel": "铜匦告密后的加工者",
-        "triggerPress": "告密札只是入口，真正该问的是谁把一张纸变成一场大案。",
+        "triggerPress": "告密札只是入口，把一张纸养成大案的人，还躲在后头。",
         "hiddenText": "铜匦收来的告密天然可信，来俊臣只是照章转呈，没有添油加醋。",
-        "hiddenPress": "他装得像个传话的，可人物档案能看出，正是他把人心里的怕劲做成了案子。"
+        "hiddenPress": "他装得像个传话的，可人物档案里写得明白：把人心里的怕劲做成案子的，就是他。"
       },
       "trap": {
         "evidenceIndex": 0,
@@ -1356,14 +1356,14 @@ window.WUZHOU_GAME_DATA = {
           "statements": [
             {
               "text": "告密入匦以后就是官府记录，辩方再问谁转手，是在替乱臣找路。",
-              "press": "告密札只是入口，真正该问的是谁把一张纸变成一场大案。",
+              "press": "告密札只是入口，把一张纸养成大案的人，还躲在后头。",
               "unlockStatementId": "case-rebellion-box-legality-branch",
               "wrongEvidenceFeedback": "来俊臣把转手那段路压得很死。真正露风的地方，还藏在他没肯明说的那半截里。",
               "answerEvidence": null
             },
             {
               "text": "铜匦收来的告密天然可信，来俊臣只是照章转呈，没有添油加醋。",
-              "press": "他装得像个传话的，可人物档案能看出，正是他把人心里的怕劲做成了案子。",
+              "press": "他装得像个传话的，可人物档案里写得明白：把人心里的怕劲做成案子的，就是他。",
               "hiddenUntilPressed": "case-rebellion-box-legality-branch",
               "revealLabel": "铜匦告密后的加工者",
               "wrongEvidenceFeedback": "他装得像个传话的，可人人心里那股怕劲，偏偏就是他拿来做成大案的。",
@@ -1544,9 +1544,9 @@ window.WUZHOU_GAME_DATA = {
       "verdict": "真正被审判的是酷吏政治：它能制造恐惧，却无法长期制造合法性。",
       "branch": {
         "revealLabel": "瓮中审讯的设计者",
-        "triggerPress": "审讯越说得像普通问案，越要追问是谁设计了那口瓮。",
+        "triggerPress": "他越把审讯说得像普通问案，瓮口上那股火气就越压不住。",
         "hiddenText": "御史台只是按旧例问案，周兴没有把逼供术当成办案诀窍。",
-        "hiddenPress": "他把逼供说成旧例，可人物档案一翻，就知道这套法子是谁琢磨出来的。"
+        "hiddenPress": "他把逼供说成旧例，可人物档案里明明写着，这套法子是谁琢磨出来的。"
       },
       "trap": {
         "evidenceIndex": 2,
@@ -1839,14 +1839,14 @@ window.WUZHOU_GAME_DATA = {
           "statements": [
             {
               "text": "御史台问案自有旧法，辩方不必把每一件刑具都说成逼供。",
-              "press": "审讯越说得像普通问案，越要追问是谁设计了那口瓮。",
+              "press": "他越把审讯说得像普通问案，瓮口上那股火气就越压不住。",
               "unlockStatementId": "case-urn-legality-branch",
               "wrongEvidenceFeedback": "周兴把这套东西说成旧法，可他熟得太顺口了。",
               "answerEvidence": null
             },
             {
               "text": "御史台只是按旧例问案，周兴没有把逼供术当成办案诀窍。",
-              "press": "他把逼供说成旧例，可人物档案一翻，就知道这套法子是谁琢磨出来的。",
+              "press": "他把逼供说成旧例，可人物档案里明明写着，这套法子是谁琢磨出来的。",
               "hiddenUntilPressed": "case-urn-legality-branch",
               "revealLabel": "瓮中审讯的设计者",
               "wrongEvidenceFeedback": "周兴老想躲在器物后头，可这套办法本来就带着他的手气。",
@@ -2019,7 +2019,7 @@ window.WUZHOU_GAME_DATA = {
         "revealLabel": "夜门沉默的受益者",
         "triggerPress": "半小时的沉默不是空白，而是在掩护谁从宠臣变成众矢之的。",
         "hiddenText": "迎仙宫夜门的沉默与张易之无关，他只是被局势裹挟的旁观者。",
-        "hiddenPress": "他把自己摆成看热闹的，可真正得利的人，从头到尾都没离开这盘局。翻档案。"
+        "hiddenPress": "他把自己摆成看热闹的，可真正得利的人，从头到尾都没离开这盘局，名字也一直没挪开。"
       },
       "trap": {
         "evidenceIndex": 0,
@@ -2063,7 +2063,7 @@ window.WUZHOU_GAME_DATA = {
           "source": "第42章：第四十二章 两个男情妇",
           "summary": "夜门更漏牌记下半小时，口令却在半小时内换了三次。",
           "detail": "它只证明时间太准，还不能证明罪名从哪来。若太早出示，张易之会把它说成临时应变。",
-          "use": "先把这半小时卡住，后头谁撒谎都会露怯。",
+          "use": "这半小时一旦咬住，谁撒谎都要露怯。",
           "counterRisk": "这份时间线只能证明行动很快，不能直接说明罪名是谁编出来的。",
           "counterNotice": "夜门时间反制"
         },
@@ -2297,7 +2297,7 @@ window.WUZHOU_GAME_DATA = {
             },
             {
               "text": "迎仙宫夜门的沉默与张易之无关，他只是被局势裹挟的旁观者。",
-              "press": "他把自己摆成看热闹的，可真正得利的人，从头到尾都没离开这盘局。翻档案。",
+              "press": "他把自己摆成看热闹的，可真正得利的人，从头到尾都没离开这盘局，名字也一直没挪开。",
               "hiddenUntilPressed": "case-half-hour-coup-legality-branch",
               "revealLabel": "夜门沉默的受益者",
               "wrongEvidenceFeedback": "张易之想把自己藏在乱局里，可那几笔好处偏偏都压在他名下。",
