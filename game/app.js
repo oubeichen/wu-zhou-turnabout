@@ -1418,8 +1418,8 @@
         id: "case-brief",
         title: "庭前整理",
         body: allEvidenceCollected(caseData)
-          ? "线索已经勾到一条线。庭上一开口，含糊的话就会先露出缝。"
-          : "现场、证词和证物还散着。对手最喜欢把散开的碎片说成互不相干。",
+          ? "该收的线已经收住了，剩下就看谁先在庭上改口。"
+          : "现场、证词和证物还没并到一起，现在上庭，只会被说成各不相干。",
         steps: ["现场", "证物", "庭审"],
       };
     }
@@ -1500,7 +1500,7 @@
       return {
         id: "trial-scan",
         title: "交叉询问",
-        body: "他说得越满，破绽就越不肯老实待着。真正站不稳的那句，迟早会自己冒出来。",
+        body: "话说得越满，改口时的动静就越大。真正站不稳的那句，很快就会自己露头。",
         steps: ["证词", "追问", "举证"],
       };
     }
@@ -1943,8 +1943,8 @@
             <button class="secondary-button" type="button" data-mode="trial" ${allEvidenceCollected(caseData) ? "" : "disabled"}>进入庭审</button>
           </div>
           ${allEvidenceCollected(caseData)
-            ? `<p class="hint-text">案卷已经接上，剩下的只看谁会先在庭上失口。</p>`
-            : `<p class="hint-text">案卷还缺几页。空白一旦带上庭，就会先被对手拿去写结论。</p>`}
+            ? `<p class="hint-text">案卷已经接上，剩下就看谁会先在庭上说漏嘴。</p>`
+            : `<p class="hint-text">案卷还没收齐，现在上庭，只会让对手先开口。</p>`}
           ${renderCoachCard()}
         </div>
       </section>
@@ -2648,17 +2648,17 @@
     const canPresent = inv.command === "present";
     const canInspect = inv.command === "examine" && !state.evidencePickup;
     const commandFocus = {
-      move: "同一件事，换个地方听，口径常常就变了。",
-      examine: "纸页、封蜡和磨痕都还留在桌上。",
-      talk: "没说完的话，往往比说出口的更响。",
-      present: "东西一摆出来，场面往往就会变。",
+      move: "同一件事，换个地方再听，话头常会变。",
+      examine: "纸页、封蜡和磨痕都还摆在这儿。",
+      talk: "没说完的话，往往比说出口的更重。",
+      present: "东西一摆上桌，谁心里有鬼就先慌。",
     };
     const quickHint = canMove
       ? "殿门内外、案桌前后，听到的未必是同一种说法。"
       : canTalk
       ? "越不肯点名，越像心里正压着一个人。"
       : canPresent
-      ? "证物真假之外，谁先变脸往往更说明问题。"
+      ? "证物摆上桌，先变脸的人往往更有事。"
       : canInspect
       ? "封蜡、纸页和桌角的磨痕，都不会替谁圆话。"
       : "这一处的东西都还在，沉默比嘴更重。";
@@ -4126,7 +4126,7 @@
     if (kind === "bronze_box") return `${source.name}和${target.name}对上后，投书入口和案情扩大的步骤被分开了。`;
     if (kind === "jar" || kind === "confession" || kind === "manual") return `${source.name}和${target.name}连起来后，逼供不再只是传闻，而成了办案流程的破绽。`;
     if (kind === "order") return `${source.name}和${target.name}对上后，“临时发生”的说法站不住了。`;
-    return `${source.name}和${target.name}一对上，庭上那番话就还能再往下压一层。`;
+    return `${source.name}和${target.name}摆到一起，庭上那句空话就站不住了。`;
   }
 
   function deductionStoreForCase(caseId) {
@@ -4772,16 +4772,16 @@
 
   function investigationTalkFollowUp(caseData, topic) {
     const byCase = {
-      "case-empress-seat": "宫里人最会把名字吞回去。她不敢说谁递了话，纸上被改过的地方就要替她说。",
-      "case-crown-shadow": "东宫的人说话都绕着储位走。越是绕开的人名，越可能正压在账册或名册下面。",
-      "case-rebellion-box": "告密人怕的不是那张纸，是纸离手以后多出来的罪。街上的喊声越响，越说明转手那一路不干净。",
-      "case-urn": "御史台的人把恐惧说成规矩。顺序一旦被他说顺了，刑具也会披上公文的皮。",
-      "case-half-hour-coup": "夜门的人只敢说乱。可越是乱，越藏不住哪一道命令走得比人还快。",
+      "case-empress-seat": "她不肯认第一个递话的人，可值夜签和改过的名册还摆在那儿。",
+      "case-crown-shadow": "东宫的人都绕着储位说话，账册和名册上却把名字压得很实。",
+      "case-rebellion-box": "纸一离手，罪名就变了样。街上喊得越响，转手那一路就越脏。",
+      "case-urn": "周兴把恐惧说成旧规矩，可瓮口、手册和供状偏偏排得太顺。",
+      "case-half-hour-coup": "人人都说那夜太乱，可命令、换岗和赏赐偏偏都赶在一起。",
     };
     if (topic?.speaker?.includes("史官") || topic?.speaker?.includes("小吏") || topic?.speaker?.includes("书记")) {
-      return "写字的人最爱藏半句，偏偏那半句最要命。";
+      return "写字的人少写半句，往往比多写一句更说明问题。";
     }
-    return byCase[caseData.id] || "他说得轻，可一旦和现场摆到一起，躲话的人就会先变脸。";
+    return byCase[caseData.id] || "他嘴上说得轻，现场摆出来的却是另一回事。";
   }
 
   function investigationPresentResponse(caseData, item) {
