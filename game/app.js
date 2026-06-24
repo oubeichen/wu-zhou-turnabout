@@ -2923,15 +2923,15 @@
     const trialDeduction = trialDeductionForStatement(caseData, statement, progress, progress.testimonyIndex, rawIndex);
     const recordPrompt = readyToPresent
       ? selectedLabel
-        ? "他这番话已经撞上硬纸，这份记录正好压在那道裂口上。"
+        ? "他这番话已经撞上这页记录，裂口就在眼前。"
         : statement.answerProfile
           ? "碰上的不是纸，是人。案卷里那张脸已经躲不过去了。"
-          : "他把话说得太满，案卷里正有一页等着让他改口。"
+          : "他把话说得太满，案卷里正好有一页能让他改口。"
       : selectedLabel
         ? state.selectedProfileName
           ? "人是盯住了，可他嘴里的破绽还没真正落下来。"
           : "这份记录还没戳到他疼的地方。"
-        : "庭上眼下还只有风声，最重的那页纸还没压到案桌中央。";
+        : "庭上眼下还只有风声，最重的那页纸还没摆上来。";
     state.screen = "trial";
     renderStatus();
     app.innerHTML = `
@@ -3796,7 +3796,7 @@
     if (!item) return [];
     const specific = specificInspectSpotsForEvidence(item, viewId);
     if (specific.length) return specific;
-    const source = item ? `来源：${evidenceOriginLong(item)}` : "它要么出自现场，要么出自案卷；来路不清，就站不稳。";
+    const source = item ? `来源：${evidenceOriginLong(item)}` : "这页东西要站上庭，先得把来路说清。";
     const risk = item.counterRisk ? ` 慎用点：${item.counterRisk}` : "";
     const common = {
       trace: {
@@ -3807,8 +3807,8 @@
       },
       logic: {
         id: "logic",
-        label: "庭审结论",
-        title: "它能推翻哪种说法",
+        label: "案情去向",
+        title: "它卡住哪句话",
         text: `${item.use} ${item.detail}${risk}`,
       },
     };
@@ -3818,13 +3818,13 @@
           id: "source",
           label: "来源标记",
           title: "背面留下什么出处",
-          text: `${source} 背面写着它从哪里来，也写着它够不够资格站上庭。`,
+          text: `${source} 这道来路要是说不清，庭上谁都能把它往外推。`,
         },
         {
           id: "gap",
           label: "缺漏位置",
           title: "哪里故意没写清楚",
-          text: `${item.detail} 这段空白本身就在喊：纸上少了一步。`,
+          text: `${item.detail} 这段空白不是疏漏，是有人故意少写了一步。`,
         },
       ];
     }
@@ -3838,8 +3838,8 @@
         },
         {
           id: "risk",
-          label: "出示风险",
-          title: "什么时候不能乱拍",
+          label: "分量轻重",
+          title: "这一页压不压得住",
           text: risk ? risk.trim() : "这份记录分量不轻，可单靠这一页，还压不成整案。",
         },
       ];
@@ -3867,8 +3867,8 @@
   }
 
   function specificInspectSpotsForEvidence(item, viewId) {
-    const source = item ? `来源：${evidenceOriginLong(item)}` : "这份资料的分量，要看它到底落在谁的证词和哪一段时辰上。";
-    const risk = item.counterRisk ? `慎用点：${item.counterRisk}` : "它一旦亮得太早，争点就会被人带开。";
+    const source = item ? `来源：${evidenceOriginLong(item)}` : "这份东西的来路和落点，都得能对上庭上的话。";
+    const risk = item.counterRisk ? `慎用点：${item.counterRisk}` : "亮得太早，话头就容易被人带开。";
     const map = {
       board: {
         front: [
@@ -4240,14 +4240,14 @@
       return `<div class="inspect-compare locked"><b>二次推理</b><span>这页还没照全。正面、背面和边角都还留着没露面的东西。当前：${escapeHtml(progress.label)}</span></div>`;
     }
     if (!options.length) {
-      return `<div class="inspect-compare locked"><b>二次推理</b><span>案卷还薄，暂时没有能与它相咬的旁证。</span></div>`;
+      return `<div class="inspect-compare locked"><b>二次推理</b><span>眼下还没有第二份能和它对上的记录。</span></div>`;
     }
     const target = compare?.targetId ? evidenceById(caseData, compare.targetId) : null;
     return `
       <div class="inspect-compare ${compare?.result === "match" ? "matched" : compare?.result === "miss" ? "missed" : ""}">
         <div>
           <b>${compare?.result === "match" ? "推理确认" : "证物对照"}</b>
-          <span>${compare ? escapeHtml(compare.text) : deduction ? escapeHtml(deduction.text) : "另一份记录若能与它咬合，案卷里的空白就会少一块。"}</span>
+          <span>${compare ? escapeHtml(compare.text) : deduction ? escapeHtml(deduction.text) : "再对上一份记录，这里的空白就能补上。"}</span>
           ${target ? `<small>已对照：${escapeHtml(target.name)}</small>` : ""}
           ${!target && deduction ? `<small>已写入：${escapeHtml(deduction.targetName)}</small>` : ""}
         </div>
