@@ -1030,7 +1030,7 @@
     if (revealed) {
       return {
         focus: "clash",
-        notice: "新证词冒出来",
+        notice: "又漏一句",
         pose: { left: "shock", right: "observe" },
       };
     }
@@ -3069,7 +3069,7 @@
             <div class="pursuit-unlock-copy">
               <p>${escapeHtml(cue.unlockText || "证人改口后，案卷里多了一条能回咬旧证词的线。")}</p>
               ${cue.unlockEvidenceName ? `<span class="pursuit-unlock-evidence">${escapeHtml(cue.unlockEvidenceName)} · 已归入案卷</span>` : ""}
-              ${cue.unlockStatementText ? `<span>新证词追加：${escapeHtml(cue.unlockStatementText)}</span>` : ""}
+              ${cue.unlockStatementText ? `<span>证人又补了一句：${escapeHtml(cue.unlockStatementText)}</span>` : ""}
             </div>
           </div>
           <div class="pursuit-unlock-actions">
@@ -3319,9 +3319,9 @@
 
   function renderTrialHeader(testimony, progress) {
     const moodLabels = {
-      cautious: "话说得很稳",
-      aggressive: "步步进逼",
-      decisive: "咬死不放",
+      cautious: "口风很紧",
+      aggressive: "逼得很急",
+      decisive: "咬得很死",
     };
     return `
       <div class="trial-header">
@@ -3345,7 +3345,7 @@
             const revealed = Boolean(statement.hiddenUntilPressed);
             const suspicious = statementHasAnswer(statement);
             const ready = statementReadyToPresent(statement, progress, progress.testimonyIndex, rawIndex);
-            const status = solved ? "已突破" : ready ? "露破绽" : pressed ? "已追问" : revealed ? "新证词" : suspicious ? "话头发虚" : "还没逼问";
+            const status = solved ? "已拆穿" : ready ? "露了口子" : pressed ? "已松口" : revealed ? "补出一句" : suspicious ? "口风发虚" : "口风未松";
             return `
               <button class="statement-card ${active ? "active" : ""} ${pressed ? "pressed" : ""} ${solved ? "solved" : ""} ${revealed ? "revealed" : ""} ${suspicious ? "suspicious" : ""} ${ready ? "ready-present" : ""}" type="button" data-jump-statement="${index}">
                 <span>${index + 1}</span>
@@ -4921,7 +4921,7 @@
         ? " 他的话开始发紧，但还差一口气。它和手边记录，总有一处接不上。"
         : "";
     const unlockText = unlocked ? ` 新线索已加入法庭记录：${unlocked}。` : "";
-    const revealText = unlockedStatement ? ` 新证词被逼出来了：${unlockedStatement}。` : "";
+    const revealText = unlockedStatement ? ` 证人又漏了一句：${unlockedStatement}。` : "";
     if (unlocked) {
       setStage("record", "新线索落到手边", { left: "thinking", right: "observe" });
     } else if (unlockedStatement) {
@@ -5128,7 +5128,7 @@
       : followUp.unlockEvidenceName
         ? ` ${followUp.unlockEvidenceName}已经在法庭记录中，可以直接查看。`
         : "";
-    const statementText = unlockedStatement ? ` 新证词追加：${unlockedStatement}。` : "";
+    const statementText = unlockedStatement ? ` 证人又补了一句：${unlockedStatement}。` : "";
     const stageMessage = `${followUp.chaseLine || "对照札记已经把证词推到新的缺口上。"} ${followUp.witnessLine || ""}${unlockText}${statementText} ${followUp.objectionText || statement?.objection || ""}`.trim();
     const finalPayload = {
       testimonyIndex: Number(followUp.testimonyIndex) || progress.testimonyIndex,

@@ -4584,3 +4584,69 @@ Remaining Ace Attorney gap list:
   - `举证` button styling
   - hotspot geometry
   - desktop single-window no-scroll layout
+
+## 2026-06-24 iteration 140 result
+
+Implemented:
+- 继续只改 [game/app.js](/Users/oubeichen/Projects/wuzetian2/game/app.js) 里的高频庭审术语层，重点收紧证词列表和追击补句里最像系统状态的短标签。
+- 改写了庭审头部的语气标签：
+  - `话说得很稳` -> `口风很紧`
+  - `步步进逼` -> `逼得很急`
+  - `咬死不放` -> `咬得很死`
+- 改写了证词列表里的状态标签：
+  - `已突破` -> `已拆穿`
+  - `露破绽` -> `露了口子`
+  - `已追问` -> `已松口`
+  - `新证词` -> `补出一句`
+  - `话头发虚` -> `口风发虚`
+  - `还没逼问` -> `口风未松`
+- 同步收紧了追击补句相关提示，把 `新证词追加`、`新证词被逼出来了`、`新证词冒出来` 这类系统条目式说法改成更像庭上反应的句子。
+
+Why this round:
+- 上一轮已经把庭审页的大块评语腔压下去了，但证词列表上的小标签仍然非常高频，而且最容易露出“系统状态栏”的味道。
+- 这些标签每次切句、追问、解锁新句都会出现，体感频率甚至高过一些段落正文。
+- 因此这一轮专门把它们收成更短、更贴场景的口风词，不去扩到别的模块。
+
+Verified:
+- `git fetch origin main`
+- confirmed `HEAD` and `origin/main` both pointed to `c170e4a2e31dc41d845922bda0ea4ca5bb27ae52` before this round's commit
+- `npm run check:js`
+- `npm run check:py`
+- `git diff --check`
+- `rg -n '已突破|露破绽|已追问|新证词追加|新证词被逼出来了|新证词冒出来|话头发虚|还没逼问|话说得很稳|步步进逼|咬死不放' game/app.js` returned no matches
+- Playwright 打开 `http://127.0.0.1:8788/game/?v=iteration140-copy`，续接现有庭审存档并检查：
+  - 头部说话强度标签
+  - 三条证词卡片右侧的小状态词
+  - 进入庭审后的左下提示与右侧默认状态句是否仍然保持上一轮改动
+- 截图：
+  - `output/iteration140-trial-status-tags.png`
+- 页面复查确认：
+  - `口风很紧 / 口风未松 / 口风发虚` 这类新标签已在真实庭审页生效；
+  - 它们比上一版更像证词状态，不像系统按钮提示；
+  - 右侧面板、证词卡片、底部对话框没有新增截断、重叠或错位。
+
+Notes:
+- 这轮继续参考 [《逆转裁判》法庭记录资料页](https://aceattorney.huijiwiki.com/wiki/%E6%B3%95%E5%BA%AD%E8%AE%B0%E5%BD%95) 和 [Turnabout Sisters Transcript](https://aceattorney.fandom.com/wiki/Turnabout_Sisters_-_Transcript) 的“教程与正文分层”思路，但没有复制原作文本。
+- `.gitignore` 这轮无需改动。
+
+Remaining Ace Attorney gap list:
+- 继续逐块压缩剩余的系统术语，优先检查追击弹层、坏结局复盘、调查指令提示和其他高频小标签。
+- 继续截图检查调查页、追击页、详查页，避免文案换短后出现新的留白、截断或视觉失衡。
+- 不要重开已经稳定的 `举证` 按钮、热点位置和桌面单屏无滚动布局，除非新截图证明回归。
+
+## Latest handoff
+
+- Most recent completed round: `2026-06-24 iteration 140 result`
+- Round scope: rewrote the always-visible courtroom status tags in `game/app.js` so testimony chips and header labels now read like live口风变化 rather than UI workflow states.
+- Verified artifacts:
+  - `output/iteration140-trial-status-tags.png`
+- Verified commands:
+  - `git fetch origin main`
+  - `npm run check:js`
+  - `npm run check:py`
+  - `git diff --check`
+  - `rg -n '已突破|露破绽|已追问|新证词追加|新证词被逼出来了|新证词冒出来|话头发虚|还没逼问|话说得很稳|步步进逼|咬死不放' game/app.js`
+- Do not reopen in the next round unless a fresh screenshot proves regression:
+  - `举证` button styling
+  - hotspot geometry
+  - desktop single-window no-scroll layout
