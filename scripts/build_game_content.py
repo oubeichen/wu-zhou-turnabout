@@ -304,7 +304,7 @@ CASE_BLUEPRINTS = [
         "sourceStoryItems": [
             {"title": "空瓮留在暗室", "note": "刑具没有说话，却比供状诚实。它告诉你：有人曾在这里等一个人崩溃。"},
             {"title": "供状上的笔锋", "note": "笔画一顺到底，像写字的人没有停顿，也没有犹豫。真正的供词不该这样干净。"},
-            {"title": "副本里的同一句话", "note": "几份供状像互相照抄，错也错在同一处。恐惧会重复，伪造也会。"},
+            {"title": "副本里一模一样的话", "note": "几份供状像互相照抄，错也错在同一处。恐惧会重复，伪造也会。"},
             {"title": "审讯手册的折角", "note": "手册折在逼供那一页，说明这不是一场偶然失控，而是一套被反复使用的方法。"},
             {"title": "救援纸条迟到了", "note": "有人想把狄仁杰救出来，却来得太晚。迟到的纸条也许正能证明供词来得太快。"},
             {"title": "用贤也会招祸", "note": "有才能的人未必安全。有人怕他活着，供状就更像替别人写好的自白。"},
@@ -1200,7 +1200,7 @@ CASE_INVESTIGATION_SCRIPTS = {
             "description": "供状副本摊开后，几处停笔像刻意排练过。真正乱的不是纸，是纸背后的审讯。",
             "talkTopics": [
                 {
-                    "title": "同一句话反复出现",
+                    "title": "一模一样的话反复出现",
                     "speaker": "史官",
                     "text": "三份供状都在同一个地方说‘自愿’。越是拼命强调自愿，越像怕别人看见不自愿。",
                 },
@@ -1213,7 +1213,7 @@ CASE_INVESTIGATION_SCRIPTS = {
             "examineSpots": [
                 {
                     "name": "供状副本的停笔",
-                    "text": "停笔位置像被同一句话卡住。不是犯人想不起，而是写字的人在等别人点头。",
+                    "text": "停笔位置像被一套说辞卡住。不是犯人想不起，而是写字的人在等别人点头。",
                 },
                 {
                     "name": "审讯手册折角",
@@ -1530,7 +1530,7 @@ def case_testimony_script(case: dict[str, object], evidence: list[dict[str, str]
                 },
                 {
                     "text": "若辩方还不能说清这条线，废后风波就到此封卷。",
-                    "press": "这是判决压力，不是矛盾本身。回到上一句的“凑巧”。",
+                    "press": "这是判决压力，不是矛盾本身。回头咬住他那套“凑巧”的说法。",
                 },
             ],
         },
@@ -1543,7 +1543,7 @@ def case_testimony_script(case: dict[str, object], evidence: list[dict[str, str]
                 {
                     "text": "旧臣借账册议论储位，本就是他自己惹出的祸，和皇子待遇、病榻传话没什么关系。",
                     "press": "证人急着把账册说成个人越界。拿出能显示东宫记录被改写的证物。",
-                    "wrong": "要打的不是账册本身，是那句“和病榻传话无关”。得拿能把账册和后手连上的证物。",
+                    "wrong": "要打的不是账册本身，是他死咬的“和病榻传话无关”。得拿能把账册和后手连上的证物。",
                     "objection": f"异议成立。{evidence_a}显示东宫记录前后不一致，旧臣不是凭空把储位卷进来的。",
                 },
                 {
@@ -1587,7 +1587,7 @@ def case_testimony_script(case: dict[str, object], evidence: list[dict[str, str]
                 },
                 {
                     "text": "若这条线连不起来，东宫案就只能维持旧臣有罪。",
-                    "press": "这是最后压力。真正矛盾还在上一句的“没有同一只手”。",
+                    "press": "这是最后压力。真正的破口，还在他死咬的“没有同一只手”。",
                 },
             ],
         },
@@ -1644,7 +1644,7 @@ def case_testimony_script(case: dict[str, object], evidence: list[dict[str, str]
                 },
                 {
                     "text": "若辩方无法说明这条路，告密案就按谋反定案。",
-                    "press": "这是判决压力。矛盾仍在上一句的“自然推进”。",
+                    "press": "这是判决压力。破口还在他嘴里的“自然推进”。",
                 },
             ],
         },
@@ -1678,7 +1678,7 @@ def case_testimony_script(case: dict[str, object], evidence: list[dict[str, str]
                     "objection": f"异议成立。{case['opponent']}熟悉这套逼供办法，不能说自己只是按旧例旁听。",
                 },
                 {
-                    "text": "供状副本和手册只是办案材料，没有人照着它们逼人说同一句话。",
+                    "text": "供状副本和手册只是办案材料，没有人照着它们逼人说出一模一样的供词。",
                     "press": "他否认材料之间的关系。要反击，就指出手册和供状的步骤对得太整齐。",
                     "wrong": "需要能证明逼供流程被照着使用的证物。",
                     "objection": f"异议成立。{evidence_b}把恐吓和认罪排成固定步骤，供状不是凭空写成的。",
@@ -1701,7 +1701,7 @@ def case_testimony_script(case: dict[str, object], evidence: list[dict[str, str]
                 },
                 {
                     "text": "若不能证明流程存在，供状仍按有效记录处理。",
-                    "press": "这是最后压力。真正矛盾是上一句否认流程。",
+                    "press": "这是最后压力。真正要命的是他死不认流程。",
                 },
             ],
         },
@@ -1758,7 +1758,7 @@ def case_testimony_script(case: dict[str, object], evidence: list[dict[str, str]
                 },
                 {
                     "text": "若辩方说不清这张时间表，夜门案就只能按既成事实封卷。",
-                    "press": "这是最后压力。矛盾在上一句的“没有时间表”。",
+                    "press": "这是最后压力。别被他带偏，盯住他嘴里的“没有时间表”。",
                 },
             ],
         },
@@ -1774,8 +1774,8 @@ PURSUIT_TESTIMONY_COPY = {
     },
     "case-crown-shadow": {
         "surface": "邠王守礼承认，旧账册在入庭前曾被书记官借走半日。",
-        "legality": "书记官改口说，那些空白日期不是漏写，而是等人决定该留下哪一句。",
-        "final": "御前书记补上一句：旧臣不是自己走到风口，是账册先被人递到了那里。",
+        "legality": "书记官改口说，那些空白日期不是漏写，而是等人决定该留下哪种说法。",
+        "final": "御前书记沉声补道：旧臣不是自己走到风口，是账册先被人递到了那里。",
     },
     "case-rebellion-box": {
         "surface": "告密人终于承认，他再见原札时，纸边已经多了官府标注。",
@@ -1951,7 +1951,7 @@ def make_testimony(case: dict[str, object], evidence: list[dict[str, str]]) -> l
                 {
                     "text": line("final", 2, "text", "辩方若不能说清这条线，本庭就维持原判。"),
                     "press": line("final", 2, "press", "这是最后机会。选择能概括全案的证据。"),
-                    "wrongEvidenceFeedback": line("final", 2, "wrong", "这是审判压力，不是矛盾本身。把注意力放回上一句的“偶然事件”。"),
+                    "wrongEvidenceFeedback": line("final", 2, "wrong", "这是审判压力，不是矛盾本身。把注意力拉回他嘴里的“偶然事件”。"),
                     "answerEvidence": None,
                 },
             ],

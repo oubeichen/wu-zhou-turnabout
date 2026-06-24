@@ -1030,7 +1030,7 @@
     if (revealed) {
       return {
         focus: "clash",
-        notice: "又漏一句",
+        notice: "又露口风",
         pose: { left: "shock", right: "observe" },
       };
     }
@@ -1185,7 +1185,7 @@
     const speaker = testimony?.speaker || caseData.witness || "证人";
     const generic = {
       title: "对照札记打开了新缺口",
-      defenseLine: `札记把“${recordName}”和“${targetName}”压到同一行。证人席上的沉默，比刚才那句证词更重。`,
+      defenseLine: `札记把“${recordName}”和“${targetName}”压到同一行。证人席上的沉默，比方才那番辩解更重。`,
       witnessLine: `${speaker}刚才只解释单件证物，却避开了两件证物为什么会互相咬合。`,
       button: "追击证人",
     };
@@ -1267,7 +1267,7 @@
       },
       "case-rebellion-box": {
         title: "告密声卡住了",
-        reaction: `告密人盯着${recordName}，先前那句“民声”忽然轻了。投书可以进铜匦，却不会自己长出${targetName}。`,
+        reaction: `告密人盯着${recordName}，先前挂在嘴边的“民声”忽然轻了。投书可以进铜匦，却不会自己长出${targetName}。`,
         defenseLine: "纸离开铜匦后，每多过一只手，罪名就多一层墨。证人席离那层新墨并不远。",
       },
       "case-urn": {
@@ -1430,7 +1430,7 @@
         move: `「${location.name}」的风声还没散，下一处门后也许留着同一串脚步。`,
         examine: "亮起的可疑处不替任何人圆谎。谁出入最勤、谁最晚离场，痕迹会说。",
         talk: "每句回答都有自己护住的部分。停顿和改口，常比完整供词更响。",
-        present: "证物一亮出来，人会先替自己护住最怕被看见的那句话。",
+        present: "证物一亮出来，人会先护住自己最怕见光的心思。",
       };
       return {
         id: `investigation-${inv.command}`,
@@ -1442,7 +1442,7 @@
     if (state.screen === "trial-interlude") {
       return {
         id: "trial-interlude",
-        title: "新漏的一句",
+        title: "新露出来的口风",
         body: "他后面补出来的话，比前面整段证词都更伤人。新缝一开，旧说法就没那么稳了。",
         steps: ["新句", "旧口供", "裂缝"],
       };
@@ -1500,7 +1500,7 @@
       return {
         id: "trial-scan",
         title: "交叉询问",
-        body: "他说得越满，留给自己的退路就越少。真正站不稳的那一句，迟早会从整段证词里凸出来。",
+        body: "他说得越满，留给自己的退路就越少。真正站不稳的那番话，迟早会从整段证词里凸出来。",
         steps: ["证词", "追问", "举证"],
       };
     }
@@ -1521,19 +1521,7 @@
   }
 
   function renderCoachCard() {
-    if (state.settings.hideGuides) return "";
-    const guide = currentGuideContext();
-    const seen = state.guideSeen[guide.id];
-    return `
-      <div class="coach-card ${seen ? "" : "new"}">
-        <strong>案旁札记：${escapeHtml(guide.title)}</strong>
-        <p>${escapeHtml(guide.body)}</p>
-        <div class="coach-actions">
-          <button class="coach-link" type="button" data-toggle-guide>展开札记</button>
-          <button class="coach-link ghost" type="button" data-hide-guides>收起札记</button>
-        </div>
-      </div>
-    `;
+    return "";
   }
 
   function renderGuidePanel() {
@@ -1983,7 +1971,7 @@
         title: sources[0]?.storyTitle ? `第一条线索：${sources[0].storyTitle}` : "第一条线索已经露出",
         body: sources[0]?.storyNote || story.stakes,
         speaker: lines[1]?.speaker || "辩方",
-        line: lines[1]?.text || "纸、物、人都在这儿。谁最怕它们摆到一处，谁就最怕庭上那一句。",
+        line: lines[1]?.text || "纸、物、人都在这儿。谁最怕它们摆到一处，谁就最怕庭上有人把话说穿。",
         focus: "defense",
       },
       {
@@ -2240,7 +2228,7 @@
           body: "狄仁杰的签押干净得反常。御史台暗室里却还留着空瓮、烙痕和没有收好的笔，像有人匆忙把夜里的事盖住。",
         },
         {
-          title: "同一句话，被写了太多遍",
+          title: "同样的话，被抄了太多遍",
           body: "几份供状的语气一模一样，连停笔的位置都像照着抄。人会害怕，笔不会；笔迹会把审讯者留下来。",
         },
         {
@@ -2341,7 +2329,7 @@
       "case-urn": [
         { title: "空瓮留在暗室", note: "刑具没有说话，却比供状诚实。它告诉你：有人曾在这里等一个人崩溃。" },
         { title: "供状上的笔锋", note: "笔画一顺到底，像写字的人没有停顿，也没有犹豫。真正的供词不该这样干净。" },
-        { title: "副本里的同一句话", note: "几份供状像互相照抄，错也错在同一处。恐惧会重复，伪造也会。" },
+        { title: "副本里一模一样的话", note: "几份供状像互相照抄，错也错在同一处。恐惧会重复，伪造也会。" },
         { title: "审讯手册的折角", note: "手册折在逼供那一页，说明这不是一场偶然失控，而是一套被反复使用的方法。" },
         { title: "救援纸条迟到了", note: "有人想把狄仁杰救出来，却来得太晚。迟到的纸条也许正能证明供词来得太快。" },
         { title: "用贤也会招祸", note: "有才能的人未必安全。有人怕他活着，供状就更像替别人写好的自白。" },
@@ -2767,7 +2755,7 @@
           <div>
             <span>现场判断</span>
             <strong>${collectedHere.length === locationEvidence.length ? "证物齐了" : "还少一页"}</strong>
-            <small>${escapeHtml(location.visualNote || caseData.scene?.tone || "现场还没把最后一句话吐出来。")}</small>
+            <small>${escapeHtml(location.visualNote || caseData.scene?.tone || "现场还没把最后那点实情吐出来。")}</small>
           </div>
         </div>
       </div>
@@ -3593,7 +3581,7 @@
         </div>
         ${
           selectedProfile
-            ? `<div class="evidence-detail profile-detail"><strong>${escapeHtml(selectedProfile.name)}</strong><span>${escapeHtml(selectedProfile.role)}</span><p>${escapeHtml(selectedProfile.note)}</p><small>${state.screen === "trial" ? "人物档案已在辩方手边；证席上的那句话，可能正绕着他打转。" : "人物不只是旁观者。有些矛盾，落在人身上才看得清。"}</small><div class="detail-actions"><button class="secondary-button" type="button" data-inspect-record="profile">详查人物</button></div>${renderRecordReturnAction()}</div>`
+            ? `<div class="evidence-detail profile-detail"><strong>${escapeHtml(selectedProfile.name)}</strong><span>${escapeHtml(selectedProfile.role)}</span><p>${escapeHtml(selectedProfile.note)}</p><small>${state.screen === "trial" ? "人物档案已在辩方手边；证席上绕不开的人，可能就是他。" : "人物不只是旁观者。有些矛盾，落在人身上才看得清。"}</small><div class="detail-actions"><button class="secondary-button" type="button" data-inspect-record="profile">详查人物</button></div>${renderRecordReturnAction()}</div>`
             : `<p class="hint-text">人物不只是旁观者。有些矛盾，落在人身上才看得清。</p>`
         }
       `;
@@ -3677,7 +3665,7 @@
           <span class="evidence-detail-copy">
             <strong>${escapeHtml(item.name)}</strong>
             <span>${escapeHtml(evidenceMetaLine(item))}</span>
-            <small>${state.screen === "trial" ? "这页已经压到案边，只差一句证词把它逼上桌面。" : "证物已经归卷，纸上的裂口不会自己合上。"} </small>
+            <small>${state.screen === "trial" ? "这页已经压到案边。证人只要再漏半步，它就得摆上桌面。" : "证物已经归卷，纸上的裂口不会自己合上。"} </small>
           </span>
         </div>
         <p>${escapeHtml(item.detail)}</p>
@@ -3977,7 +3965,7 @@
         ],
         edge: [
           ["wear", "传递折痕", "一路传过几手", "边缘折痕说明它被匆忙传递，不像事后慢慢归档。"],
-          ["risk", "分量", "它压哪句口供", `${risk} 它真正伤人的地方，在“临时起意”那句口供上。`],
+          ["risk", "分量", "它冲着哪段口供", `${risk} 它真正伤人的地方，在“临时起意”那套说法上。`],
         ],
       },
       petition: {
@@ -4005,7 +3993,7 @@
         ],
         edge: [
           ["wear", "卷轴边", "是否反复展开", "边缘被压平，说明这份文书不只是收藏品，而是被拿出来核对过。"],
-          ["risk", "分量", "最伤那句旧话", `${risk} 它越适合压断那种“记录从来没变过”的说法。`],
+          ["risk", "分量", "最伤旧说法", `${risk} 它越适合压断那种“记录从来没变过”的说法。`],
         ],
       },
       notice: {
@@ -4921,7 +4909,7 @@
         ? " 他的话开始发紧，但还差一口气。它和手边记录，总有一处接不上。"
         : "";
     const unlockText = unlocked ? ` 新线索已加入法庭记录：${unlocked}。` : "";
-    const revealText = unlockedStatement ? ` 证人又漏了一句：${unlockedStatement}。` : "";
+    const revealText = unlockedStatement ? ` 证人又露了口风：${unlockedStatement}。` : "";
     if (unlocked) {
       setStage("record", "新线索落到手边", { left: "thinking", right: "observe" });
     } else if (unlockedStatement) {

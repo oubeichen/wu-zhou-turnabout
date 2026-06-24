@@ -470,8 +470,8 @@ window.WUZHOU_GAME_DATA = {
             },
             {
               "text": "若辩方还不能说清这条线，废后风波就到此封卷。",
-              "press": "这是判决压力，不是矛盾本身。回到上一句的“凑巧”。",
-              "wrongEvidenceFeedback": "这是审判压力，不是矛盾本身。把注意力放回上一句的“偶然事件”。",
+              "press": "这是判决压力，不是矛盾本身。回头咬住他那套“凑巧”的说法。",
+              "wrongEvidenceFeedback": "这是审判压力，不是矛盾本身。把注意力拉回他嘴里的“偶然事件”。",
               "answerEvidence": null
             }
           ]
@@ -820,7 +820,7 @@ window.WUZHOU_GAME_DATA = {
             {
               "text": "旧臣借账册议论储位，本就是他自己惹出的祸，和皇子待遇、病榻传话没什么关系。",
               "press": "证人急着把账册说成个人越界。拿出能显示东宫记录被改写的证物。",
-              "wrongEvidenceFeedback": "要打的不是账册本身，是那句“和病榻传话无关”。得拿能把账册和后手连上的证物。",
+              "wrongEvidenceFeedback": "要打的不是账册本身，是他死咬的“和病榻传话无关”。得拿能把账册和后手连上的证物。",
               "answerEvidence": "case-crown-shadow-ev-2",
               "pursuitUnlockStatementId": "case-crown-shadow-pursuit-surface",
               "pursuitUnlockLabel": "追击后的补充证词",
@@ -881,7 +881,7 @@ window.WUZHOU_GAME_DATA = {
               "objection": "异议成立。病榻旁的传位记录显示病榻传话被换过纸，所谓旧档已经被人重新安排过。"
             },
             {
-              "text": "书记官改口说，那些空白日期不是漏写，而是等人决定该留下哪一句。",
+              "text": "书记官改口说，那些空白日期不是漏写，而是等人决定该留下哪种说法。",
               "press": "这是追击之后才逼出来的新口供。翻开法庭记录，把刚记下的追击补记拍到他面前。",
               "hiddenUntilPressed": "case-crown-shadow-pursuit-legality",
               "revealLabel": "追击后的补充证词",
@@ -931,7 +931,7 @@ window.WUZHOU_GAME_DATA = {
               "objection": "异议成立。庭上追问记录说明三件事不是同时发生而已，而是有人挑出记录，把旧臣推到前面。"
             },
             {
-              "text": "御前书记补上一句：旧臣不是自己走到风口，是账册先被人递到了那里。",
+              "text": "御前书记沉声补道：旧臣不是自己走到风口，是账册先被人递到了那里。",
               "press": "这是追击之后才逼出来的新口供。翻开法庭记录，把刚记下的追击补记拍到他面前。",
               "hiddenUntilPressed": "case-crown-shadow-pursuit-final",
               "revealLabel": "追击后的补充证词",
@@ -942,8 +942,8 @@ window.WUZHOU_GAME_DATA = {
             },
             {
               "text": "若这条线连不起来，东宫案就只能维持旧臣有罪。",
-              "press": "这是最后压力。真正矛盾还在上一句的“没有同一只手”。",
-              "wrongEvidenceFeedback": "这是审判压力，不是矛盾本身。把注意力放回上一句的“偶然事件”。",
+              "press": "这是最后压力。真正的破口，还在他死咬的“没有同一只手”。",
+              "wrongEvidenceFeedback": "这是审判压力，不是矛盾本身。把注意力拉回他嘴里的“偶然事件”。",
               "answerEvidence": null
             }
           ]
@@ -1447,8 +1447,8 @@ window.WUZHOU_GAME_DATA = {
             },
             {
               "text": "若辩方无法说明这条路，告密案就按谋反定案。",
-              "press": "这是判决压力。矛盾仍在上一句的“自然推进”。",
-              "wrongEvidenceFeedback": "这是审判压力，不是矛盾本身。把注意力放回上一句的“偶然事件”。",
+              "press": "这是判决压力。破口还在他嘴里的“自然推进”。",
+              "wrongEvidenceFeedback": "这是审判压力，不是矛盾本身。把注意力拉回他嘴里的“偶然事件”。",
               "answerEvidence": null
             }
           ]
@@ -1511,7 +1511,7 @@ window.WUZHOU_GAME_DATA = {
           "note": "笔画一顺到底，像写字的人没有停顿，也没有犹豫。真正的供词不该这样干净。"
         },
         {
-          "title": "副本里的同一句话",
+          "title": "副本里一模一样的话",
           "note": "几份供状像互相照抄，错也错在同一处。恐惧会重复，伪造也会。"
         },
         {
@@ -1707,7 +1707,7 @@ window.WUZHOU_GAME_DATA = {
           ],
           "talkTopics": [
             {
-              "title": "同一句话反复出现",
+              "title": "一模一样的话反复出现",
               "speaker": "史官",
               "text": "三份供状都在同一个地方说‘自愿’。越是拼命强调自愿，越像怕别人看见不自愿。"
             },
@@ -1720,7 +1720,7 @@ window.WUZHOU_GAME_DATA = {
           "examineSpots": [
             {
               "name": "供状副本的停笔",
-              "text": "停笔位置像被同一句话卡住。不是犯人想不起，而是写字的人在等别人点头。"
+              "text": "停笔位置像被一套说辞卡住。不是犯人想不起，而是写字的人在等别人点头。"
             },
             {
               "name": "审讯手册折角",
@@ -1855,7 +1855,7 @@ window.WUZHOU_GAME_DATA = {
               "objection": "异议成立。周兴熟悉这套逼供办法，不能说自己只是按旧例旁听。"
             },
             {
-              "text": "供状副本和手册只是办案材料，没有人照着它们逼人说同一句话。",
+              "text": "供状副本和手册只是办案材料，没有人照着它们逼人说出一模一样的供词。",
               "press": "他否认材料之间的关系。要反击，就指出手册和供状的步骤对得太整齐。",
               "wrongEvidenceFeedback": "需要能证明逼供流程被照着使用的证物。",
               "counterEvidence": "case-urn-ev-3",
@@ -1930,8 +1930,8 @@ window.WUZHOU_GAME_DATA = {
             },
             {
               "text": "若不能证明流程存在，供状仍按有效记录处理。",
-              "press": "这是最后压力。真正矛盾是上一句否认流程。",
-              "wrongEvidenceFeedback": "这是审判压力，不是矛盾本身。把注意力放回上一句的“偶然事件”。",
+              "press": "这是最后压力。真正要命的是他死不认流程。",
+              "wrongEvidenceFeedback": "这是审判压力，不是矛盾本身。把注意力拉回他嘴里的“偶然事件”。",
               "answerEvidence": null
             }
           ]
@@ -2381,8 +2381,8 @@ window.WUZHOU_GAME_DATA = {
             },
             {
               "text": "若辩方说不清这张时间表，夜门案就只能按既成事实封卷。",
-              "press": "这是最后压力。矛盾在上一句的“没有时间表”。",
-              "wrongEvidenceFeedback": "这是审判压力，不是矛盾本身。把注意力放回上一句的“偶然事件”。",
+              "press": "这是最后压力。别被他带偏，盯住他嘴里的“没有时间表”。",
+              "wrongEvidenceFeedback": "这是审判压力，不是矛盾本身。把注意力拉回他嘴里的“偶然事件”。",
               "answerEvidence": null
             }
           ]

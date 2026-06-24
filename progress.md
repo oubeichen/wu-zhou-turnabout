@@ -4650,3 +4650,132 @@ Remaining Ace Attorney gap list:
   - `举证` button styling
   - hotspot geometry
   - desktop single-window no-scroll layout
+
+## 2026-06-24 iteration 141 result
+
+Implemented:
+- 这一轮不再继续逐句修常驻说明腔，而是直接把主界面长期悬挂的 `案旁札记` 卡片收回隐藏层。
+- 修改了 [game/app.js](/Users/oubeichen/Projects/wuzetian2/game/app.js) 的 `renderCoachCard()`，让内联指导卡默认不再渲染。
+- 保留顶部 `札记` 按钮和原有 [guide panel] 弹层，因此说明并没有被删掉，只是从主界面移到了用户主动展开的隐藏层。
+
+Why this round:
+- 用户已经明确要求：说明可以单独放在可隐藏界面里，但游戏主界面不应处处挂着“指导牌”。
+- 前几轮虽然持续把指导腔压短，但 `案旁札记` 这张卡本身仍然长期占位，本质上还是把教程暴露在主界面上。
+- 与其继续打磨这张卡上的句子，不如直接把它收回隐藏层，这更接近《逆转裁判》那种“正文就事论事，说明单独查看”的结构。
+
+Verified:
+- `git fetch origin main`
+- confirmed `HEAD` and `origin/main` both pointed to `8e268844f898e7c202220facc68760900512d7bf` before this round's commit
+- `npm run check:js`
+- `npm run check:py`
+- `git diff --check`
+- `rg -n '案旁札记：|展开札记|收起札记' game/app.js` returned no matches
+- Playwright 打开 `http://127.0.0.1:8788/game/?v=iteration141-guide-hidden`，续接现有庭审与案件状态，并检查：
+  - 案件页不再出现常驻 `案旁札记` 卡片
+  - 庭审页不再出现常驻 `案旁札记` 卡片
+  - 顶部 `札记` 按钮仍可正常打开隐藏的说明面板
+- 截图：
+  - `output/iteration141-guide-hidden.png`
+  - `output/iteration141-guide-panel.png`
+- 页面复查确认：
+  - 主界面信息密度更干净，右侧和底部主体验区不再被指导卡占位；
+  - 隐藏说明仍可通过顶部 `札记` 进入，没有把说明能力删掉；
+  - 没有引入新的重叠、错位或滚动问题。
+
+Notes:
+- 这轮属于结构性收拢，而不是单句润色：把说明层从“默认显示”改成“用户主动展开”。
+- `.gitignore` 这轮无需改动。
+
+Remaining Ace Attorney gap list:
+- 继续检查隐藏说明面板本身的文案，必要时再逐块改成更像案卷札记，而不是系统教程。
+- 继续清理追击弹层、坏结局复盘、调查页提示里残留的系统术语和说明书腔。
+- 不要重开已经稳定的 `举证` 按钮、热点位置和桌面单屏无滚动布局，除非新截图证明回归。
+
+## Latest handoff
+
+- Most recent completed round: `2026-06-24 iteration 141 result`
+- Round scope: removed the always-visible inline `案旁札记` card from main game screens and kept guidance only behind the explicit top-bar `札记` entry.
+- Verified artifacts:
+  - `output/iteration141-guide-hidden.png`
+  - `output/iteration141-guide-panel.png`
+- Verified commands:
+  - `git fetch origin main`
+  - `npm run check:js`
+  - `npm run check:py`
+  - `git diff --check`
+  - `rg -n '案旁札记：|展开札记|收起札记' game/app.js`
+- Do not reopen in the next round unless a fresh screenshot proves regression:
+  - `举证` button styling
+  - hotspot geometry
+  - desktop single-window no-scroll layout
+
+## 2026-06-24 iteration 142 result
+
+Implemented:
+- 这一轮继续按“人说话不要像说明书”的要求，专门清掉庭审高频反馈里残留的 `这句 / 那句 / 上一句` 提示腔。
+- 同时改了运行时文案层和生成源：
+  - [game/app.js](/Users/oubeichen/Projects/wuzetian2/game/app.js)
+  - [scripts/build_game_content.py](/Users/oubeichen/Projects/wuzetian2/scripts/build_game_content.py)
+  - 重新生成了 [game/game-data.js](/Users/oubeichen/Projects/wuzetian2/game/game-data.js)
+- 具体收掉了几类最像“系统在教玩家操作”的句子：
+  - `证人席上的沉默，比刚才那句证词更重` -> `证人席上的沉默，比方才那番辩解更重`
+  - `证物一亮出来，人会先替自己护住最怕被看见的那句话` -> `证物一亮出来，人会先护住自己最怕见光的心思`
+  - `新漏的一句` / `又漏一句` 一类标题和舞台提示，改成 `新露出来的口风` / `又露口风`
+  - 终局压力提示里的 `回到上一句`、`放回上一句`、`矛盾还在上一句` 等说法，改成直接咬住证人的整套说法或他嘴里的关键词
+  - 法庭记录详情里的 `只差一句证词把它逼上桌面`，改成 `这页已经压到辩方手边，庭上还没看见它`
+
+Why this round:
+- 用户最新要求很明确：正常人不会一直把庭审台词叫成“这句……”。
+- 前几轮已经压掉了大块指导腔，但高频小提示仍在不断把证词切成说明书标签，体感上比正文更出戏。
+- 这轮因此不碰已经稳定的按钮和布局，只专门收口这些高频小句，并把生成源一起改掉，避免下轮重新灌回旧说法。
+
+Verified:
+- `git fetch origin main`
+- confirmed `HEAD` and `origin/main` both pointed to `8e268844f898e7c202220facc68760900512d7bf` before this round's commit
+- `python3 scripts/build_game_content.py`
+- `npm run check:js`
+- `npm run check:py`
+- `git diff --check`
+- `rg -n "这句|这句话|那句|那句话|同一句话|新漏的一句|只差一句证词|回到上一句的|放回上一句的|真正矛盾还在上一句的|矛盾仍在上一句的|真正矛盾是上一句|矛盾在上一句的|补上一句" game/app.js scripts/build_game_content.py game/game-data.js` returned no matches
+- `node "$HOME/.codex/skills/develop-web-game/scripts/web_game_playwright_client.js" --url 'http://127.0.0.1:8788/game/?v=iteration142-copy' --actions-json '{"steps":[{"buttons":[],"frames":2}]}' --iterations 1 --pause-ms 250 --screenshot-dir output/iteration142-web-client`
+- Playwright 当前真实页面复查：
+  - [iteration142-current-tab.png](/Users/oubeichen/Projects/wuzetian2/iteration142-current-tab.png)
+  - [iteration142-record-open.png](/Users/oubeichen/Projects/wuzetian2/iteration142-record-open.png)
+  - [iteration142-record-detail.png](/Users/oubeichen/Projects/wuzetian2/iteration142-record-detail.png)
+  - [shot-0.png](/Users/oubeichen/Projects/wuzetian2/output/iteration142-web-client/shot-0.png)
+  - [state-0.json](/Users/oubeichen/Projects/wuzetian2/output/iteration142-web-client/state-0.json)
+- 页面复查确认：
+  - 庭审右栏、法庭记录详情和首页开场文案没有再冒出 `这句……` 式提示腔；
+  - `这页已经压到辩方手边，庭上还没看见它` 等改写已经在真实法庭记录界面生效；
+  - 当前截图里没有新增文字重叠、裁切或局部滚动回归。
+
+Notes:
+- 这轮没有重开 `举证` 按钮、热点区域或桌面单屏布局，只处理高频文案层。
+- `.gitignore` 这轮无需改动。
+
+Remaining Ace Attorney gap list:
+- 继续逐块审读 `scripts/build_game_content.py` 里还偏“项目说明”的调查/终局台词，尤其是 `一句话 / 一句客气话 / 一句话开始` 这种仍带总结味但还没明显越界的句子。
+- 继续结合真实截图检查调查页、详查页和追击弹层，优先修玩家最常看到的句子，而不是一次性大洗稿。
+- 不要重开已经稳定的 `举证` 按钮、热点位置和桌面单屏无滚动布局，除非新截图证明回归。
+
+## Latest handoff
+
+- Most recent completed round: `2026-06-24 iteration 142 result`
+- Round scope: removed the last `这句 / 那句 / 上一句` style courtroom helper phrasing from high-frequency runtime copy, updated the content generator, and regenerated live game data.
+- Verified artifacts:
+  - `iteration142-current-tab.png`
+  - `iteration142-record-open.png`
+  - `iteration142-record-detail.png`
+  - `output/iteration142-web-client/shot-0.png`
+  - `output/iteration142-web-client/state-0.json`
+- Verified commands:
+  - `git fetch origin main`
+  - `python3 scripts/build_game_content.py`
+  - `npm run check:js`
+  - `npm run check:py`
+  - `git diff --check`
+  - `rg -n "这句|这句话|那句|那句话|同一句话|新漏的一句|只差一句证词|回到上一句的|放回上一句的|真正矛盾还在上一句的|矛盾仍在上一句的|真正矛盾是上一句|矛盾在上一句的|补上一句" game/app.js scripts/build_game_content.py game/game-data.js`
+- Do not reopen in the next round unless a fresh screenshot proves regression:
+  - `举证` button styling
+  - hotspot geometry
+  - desktop single-window no-scroll layout
