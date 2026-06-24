@@ -3346,6 +3346,61 @@ Remaining Ace Attorney gap list:
 - Keep rewriting courtroom helper copy one sentence at a time, especially black-card prompts and record-drawer descriptions that still sound more like editorial narration than someone in the scene.
 - Recheck portrait scaling on mobile separately after the next focused asset/layout round; this round verified desktop first because that was the user’s concrete complaint surface.
 
+## 2026-06-24 iteration 132 result
+
+Implemented:
+- Kept this round narrowly focused on one cluster of investigation auto-feedback lines that still sounded like instructions instead of someone working the scene.
+- Rewrote the default investigation fallback line in `renderInvestigation()` from `先别听风声...` to `桌上的纸、地上的灰，都比风声实在。`
+- Rewrote the dormant hotspot text in `renderInvestigationHotspots()` so it no longer says `此刻先听人说话...` / `先让这句话落稳` and instead describes what the scene feels like when attention shifts off the physical evidence.
+- Rewrote the `commandSceneLine()` move variant from `先记一笔` style phrasing to `这边的气还没散。换个地方，口风也许就变了。`
+- Rewrote `moveLocation()` from `先去...看看` to a scene-grounded line: `...那边的动静还没落下。`
+- Tightened the no-new-evidence suffix in `examineSpot()` from `这一处先记下，暂时没翻出新东西。` to `这一处的痕迹记下了，东西倒没多出一件。`
+- After the user explicitly called out `这句...` as non-human speech, did a second same-round pass over visible trial runtime copy and removed the remaining `这句/这句话` phrasing from player-facing courtroom surfaces.
+- That second pass covered the trial dialogue footer, right-side evidence prompt, vulnerability cue, selected-evidence helper line, objection line, judge penalty lines, and other visible runtime text that was still talking about testimony like a system debugger.
+
+Why this round:
+- After the palace trial-stage cleanup, the next obvious player-facing mismatch was not layout but tone.
+- The user explicitly asked to stop letting game text boss the player around. These investigation state lines were still doing that in a high-frequency surface the player hits constantly.
+- This was a good small-round target because the strings all live in one local interaction loop and can be verified directly through one investigation path instead of broad regression hunting.
+- Mid-round, the user tightened the rule further: even outside button labels, normal human speech should not keep referring to testimony as `这句...`. That became the round's second concrete target, still inside the same copy-only scope.
+
+Verified:
+- `npm run check:js`
+- `git diff --check`
+- Used Playwright at `1600x960` and advanced from home -> case -> opening -> investigation.
+- DOM capture in investigation confirmed:
+  - `message: 立政殿这边的气还没散。换个地方，口风也许就变了。`
+  - `dormant: 人一开口，桌上的痕迹反倒安静下去了。`
+  - after moving locations:
+    - `message: 史官案牍房那边的动静还没落下。案牍房里，后妃名册被重新穿线。新蜡盖住旧孔，却盖不住翻动过的顺序。`
+- Captured and inspected:
+  - `output/investigation-command-copy-current.png`
+- Screenshot inspection confirmed:
+  - the left-side floating scene line now reads like an observation, not a tutorial;
+  - the main dialogue box line after moving to `史官案牍房` reads like a person speaking in-scene;
+  - the right command body still fits cleanly with no overflow or button crowding.
+- Ran a second Playwright court pass at `1600x960` and verified a fresh visible-text scan on the current trial screen:
+  - `visibleThisJuCount: 0`
+  - `footer: 开头说得稳，真正会失手的地方还在后头。`
+  - right-side visible small text now includes:
+    - `话头发虚`
+    - `眼下还只是口风，能压住他的那页纸还没碰上来。`
+- Captured and inspected:
+  - `output/trial-copy-no-thisju-current.png`
+- Screenshot inspection confirmed:
+  - the currently visible courtroom text no longer contains `这句` / `这句话`;
+  - the revised black-card and footer copy still fits inside the same layout;
+  - no new overlap or crowding appeared after the wording change.
+
+Notes:
+- Checked `.gitignore` implicitly through current output behavior again; generated screenshots remain ignored under `output/`, so no rule change was needed this round.
+- I briefly tested a courtroom present-flow branch while verifying related copy surfaces, and explicitly removed any unverified detour edits before finalizing this round.
+
+Remaining Ace Attorney gap list:
+- Continue replacing the remaining older case/trial backdrops that still carry abstract imagegen artifacts or staged overlay noise.
+- Keep rewriting investigation and courtroom helper copy one sentence at a time, especially evidence-detail footers, black-card prompts, and record-drawer descriptions that still sound more like editorial narration than someone in the room.
+- Recheck portrait scaling on mobile separately after the next focused stage/layout round; desktop remains the verified baseline for the recent courtroom fixes.
+
 ## 2026-06-23 iteration 126 result
 
 Implemented:

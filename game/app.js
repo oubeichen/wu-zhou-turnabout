@@ -1009,7 +1009,7 @@
     if (solved) {
       return {
         focus: "witness",
-        notice: "这句已经倒下",
+        notice: "口风已经倒了",
         pose: { left: "stagger", right: "observe" },
       };
     }
@@ -1023,7 +1023,7 @@
     if (hasAnswer) {
       return {
         focus: "clash",
-        notice: action === "press" ? "这句话不肯站稳" : "证词里有硬伤",
+        notice: action === "press" ? "口风开始打晃" : "证词里有硬伤",
         pose: { left: "tense", right: "thinking" },
       };
     }
@@ -1443,7 +1443,7 @@
       return {
         id: "trial-interlude",
         title: "新漏的一句",
-        body: "他补出来的这句话，比前面整段证词都更伤人。新缝一开，旧说法就没那么稳了。",
+        body: "他后面补出来的话，比前面整段证词都更伤人。新缝一开，旧说法就没那么稳了。",
         steps: ["新句", "旧口供", "裂缝"],
       };
     }
@@ -1463,7 +1463,7 @@
         return {
           id: "trial-press-first",
           title: "吞下去的半句",
-          body: "这句话说得太滑，像故意不肯落地。真正要紧的那半句，还卡在他喉咙里。",
+          body: "这番话说得太滑，像故意不肯落地。真正要紧的那半句，还卡在他喉咙里。",
           steps: ["当前句", "补话", "裂口"],
         };
       }
@@ -1481,10 +1481,10 @@
           id: trialDeduction ? "trial-deduction" : statement.answerProfile ? "trial-profile" : "trial-evidence",
           title: trialDeduction ? "两张纸咬上了" : statement.answerProfile ? "旁观者露面" : "纸面碰上了",
           body: trialDeduction
-            ? `庭前对照早把两份记录压到了一处：${trialDeduction.deduction.text} 眼前这句若再硬撑，露出来的就不是巧合。`
+            ? `庭前对照早把两份记录压到了一处：${trialDeduction.deduction.text} 他眼下若再硬撑，露出来的就不是巧合。`
             : statement.answerProfile
               ? "这处破绽不落在纸上，落在人身上。只要把这个名字摆出来，他就再难装成旁观者。"
-              : "这句话已经说得太满。能让它折回来的那张纸，就躺在法庭记录里。",
+              : "他已经把话说得太满。能让他折回来的那张纸，就躺在法庭记录里。",
           steps: statement.answerProfile ? ["人物", "档案", "举证"] : ["证物", "记录", "举证"],
         };
       }
@@ -1493,7 +1493,7 @@
         return {
           id: "trial-counter-risk",
           title: "还压不住",
-          body: selected?.counterRisk || "这份记录不轻，可眼下还压不住这句。太早亮出来，只会让对手借题转身。",
+          body: selected?.counterRisk || "这份记录不轻，可眼下还压不住他。太早亮出来，只会让对手借题转身。",
           steps: ["旁注", "证词", "别的记录"],
         };
       }
@@ -2612,7 +2612,7 @@
     app.innerHTML = `
       <section class="play-layout investigation-layout record-drawer-layout">
         <div>
-          ${renderScene(location.name, state.speaker || "辩方", state.message || "先别听风声。桌上的纸、地上的灰，常比人嘴诚实。", "investigation")}
+          ${renderScene(location.name, state.speaker || "辩方", state.message || "桌上的纸、地上的灰，都比风声实在。", "investigation")}
           ${renderInvestigationMap(inv, location)}
           ${renderClueBoard(caseData, inv, location)}
           <div class="panel command-panel">
@@ -2697,8 +2697,8 @@
     const canInspect = inv.command === "examine" && !blockedByPickup;
     if (!canInspect) {
       const inactiveText = inv.command !== "examine"
-        ? "此刻先听人说话，可疑处已经收起来了。"
-        : "证物刚收进案卷，先让这句话落稳。";
+        ? "人一开口，桌上的痕迹反倒安静下去了。"
+        : "证物刚收进案卷，眼前这一处也跟着沉下去了。";
       return `<div class="scene-hotspots scene-hotspots-dormant" aria-label="现场可疑处" data-inactive-spots="1"><i>${escapeHtml(inactiveText)}</i></div>`;
     }
     const containerStyle = investigationHotspotUsesTallField(caseData, inv.locationIndex)
@@ -2935,15 +2935,15 @@
     const trialDeduction = trialDeductionForStatement(caseData, statement, progress, progress.testimonyIndex, rawIndex);
     const recordPrompt = readyToPresent
       ? selectedLabel
-        ? "这句话已经撞上硬纸，这份记录正压在缝上。"
+        ? "他这番话已经撞上硬纸，这份记录正压在缝上。"
         : statement.answerProfile
-          ? "这句碰到的不是纸，是人。案卷里那张脸不会一直沉默。"
-          : "这句话已经碰上纸证，案卷里总有一页会让它改口。"
+          ? "碰上的不是纸，是人。案卷里那张脸不会一直沉默。"
+          : "他把话说得太满，案卷里总有一页会让他改口。"
       : selectedLabel
         ? state.selectedProfileName
-          ? "人已经被盯住了，他还在等一句能把自己卖出来的话。"
-          : "这份记录还压不到这一句，证人嘴里的缝还没张开。"
-        : "这句眼下还只是口风，能压住它的那页纸还没碰上来。";
+          ? "人已经被盯住了，他还在等那半句能把自己卖出来的话。"
+          : "这份记录还压不到他嘴边那道缝。"
+        : "眼下还只是口风，能压住他的那页纸还没碰上来。";
     state.screen = "trial";
     renderStatus();
     app.innerHTML = `
@@ -2961,7 +2961,7 @@
             ${renderCoachCard()}
             ${renderTrialDeductionPanel(trialDeduction)}
             <div class="selected-record-bar ${selectedLabel ? "ready" : ""} ${readyToPresent ? "opportunity" : ""}">
-              <span>${selectedLabel ? `案上：${escapeHtml(selectedLabel)}` : "案上还没摆出能顶住这句话的那一页"}</span>
+              <span>${selectedLabel ? `案上：${escapeHtml(selectedLabel)}` : "案上还没摆出能顶住他这番话的那一页"}</span>
               <small>${escapeHtml(recordPrompt)}</small>
             </div>
           <div class="action-row trial-actions">
@@ -3158,10 +3158,10 @@
       ? hasPrevStatement
         ? hasNextStatement
           ? "他这段话前后咬得不紧，缝已经露出来了。"
-          : "这句话已经落到案上，轻重只差一页纸。"
+          : "话已经落到案上，轻重只差一页纸。"
         : hasNextStatement
-          ? "开头这句说得稳，真正会失手的地方还在后头。"
-          : "这句话已经落到案上，轻重只差一页纸。"
+          ? "开头说得稳，真正会失手的地方还在后头。"
+          : "话已经落到案上，轻重只差一页纸。"
       : "";
     const sceneSignature = `${caseData.id}|${mode}|${sceneKey}|${locationArt || "default"}`;
     const sceneTransitionClass = sceneTransitionState.lastSceneSignature && sceneTransitionState.lastSceneSignature !== sceneSignature
@@ -3228,8 +3228,8 @@
     return `
       <div class="vulnerability-cue" aria-live="polite">
         <strong>破绽已现</strong>
-        <span>${escapeHtml(target)}正压在这句话的破口上</span>
-        <small>证人已经退了一步，这句话再往下说，只会撞上那份记录。</small>
+        <span>${escapeHtml(target)}正压在那道破口上</span>
+        <small>证人已经退了一步，再往下说，只会撞上那份记录。</small>
       </div>
     `;
   }
@@ -3345,7 +3345,7 @@
             const revealed = Boolean(statement.hiddenUntilPressed);
             const suspicious = statementHasAnswer(statement);
             const ready = statementReadyToPresent(statement, progress, progress.testimonyIndex, rawIndex);
-            const status = solved ? "已突破" : ready ? "露破绽" : pressed ? "已追问" : revealed ? "新证词" : suspicious ? "这句发虚" : "还没逼问";
+            const status = solved ? "已突破" : ready ? "露破绽" : pressed ? "已追问" : revealed ? "新证词" : suspicious ? "话头发虚" : "还没逼问";
             return `
               <button class="statement-card ${active ? "active" : ""} ${pressed ? "pressed" : ""} ${solved ? "solved" : ""} ${revealed ? "revealed" : ""} ${suspicious ? "suspicious" : ""} ${ready ? "ready-present" : ""}" type="button" data-jump-statement="${index}">
                 <span>${index + 1}</span>
@@ -3667,7 +3667,7 @@
   function renderSelectedEvidence(caseData) {
     const item = state.selectedEvidenceId ? evidenceById(caseData, state.selectedEvidenceId) : null;
     if (!item) {
-      return `<p class="hint-text">卷里还空着手边那一页。眼前这句要不要塌，就看谁和它撞上。</p>`;
+      return `<p class="hint-text">手边还空着一页。待会儿谁和谁撞上，庭上自然听得出来。</p>`;
     }
     const deduction = deductionForEvidence(caseData, item.id);
     return `
@@ -3677,7 +3677,7 @@
           <span class="evidence-detail-copy">
             <strong>${escapeHtml(item.name)}</strong>
             <span>${escapeHtml(evidenceMetaLine(item))}</span>
-            <small>${state.screen === "trial" ? "这件证物已经在手边。它分量不轻，只是眼前这一句还未必接得住它。" : "证物已经归卷。它迟早会落到该落的位置。"} </small>
+            <small>${state.screen === "trial" ? "这件证物已经在手边。分量不轻，只是他眼下还未必接得住。" : "证物已经归卷。它迟早会落到该落的位置。"} </small>
           </span>
         </div>
         <p>${escapeHtml(item.detail)}</p>
@@ -4670,7 +4670,7 @@
   function commandSceneLine(command, location) {
     const place = location?.name || "这里";
     const lines = {
-      move: `${place}这边先记一笔。换个地方，也许还有人没把表情收干净。`,
+      move: `${place}这边的气还没散。换个地方，口风也许就变了。`,
       examine: `${place}一静下来，桌角、封蜡和脚印就比人嘴肯说真话。`,
       talk: `${place}里的人都把嗓子压得很低。越怕说漏的人，越容易在半句话里露馅。`,
       present: `把证物亮出去，${place}里先发慌的那张脸，往往比供词更有用。`,
@@ -4687,7 +4687,7 @@
     clearEvidencePickup();
     clearInventoryCue();
     clearPursuitUnlockCue();
-    setMessage("辩方", `先去${location.name}看看。${location.description}`, "");
+    setMessage("辩方", `${location.name}那边的动静还没落下。${location.description}`, "");
     save();
     renderInvestigation();
   }
@@ -4704,7 +4704,7 @@
     const gainedItems = collectEvidenceFromLocation(caseData, location, index);
     const gainedNames = gainedItems.map((item) => item.name);
     if (gainedItems.length) setEvidencePickup(caseData, gainedItems);
-    const suffix = gainedNames.length ? ` 新东西到手：${gainedNames.join("、")}。` : " 这一处先记下，暂时没翻出新东西。";
+    const suffix = gainedNames.length ? ` 新东西到手：${gainedNames.join("、")}。` : " 这一处的痕迹记下了，东西倒没多出一件。";
     setMessage("辩方", `${spot.text}${suffix}`, gainedNames.length ? "objection" : "");
     setInvestigationBeat(
       "查看",
@@ -4793,7 +4793,7 @@
     if (topic?.speaker?.includes("史官") || topic?.speaker?.includes("小吏") || topic?.speaker?.includes("书记")) {
       return "写字的人习惯替自己留退路。他避开的那个词，迟早会从纸缝里露出来。";
     }
-    return byCase[caseData.id] || "这句话听着轻，可一旦和现场摆到一起，躲话的人就会先变脸。";
+    return byCase[caseData.id] || "他说得轻，可一旦和现场摆到一起，躲话的人就会先变脸。";
   }
 
   function investigationPresentResponse(caseData, item) {
@@ -4918,7 +4918,7 @@
     const extra = ready
       ? " 他刚才多补的这一句已经让证词漏风了。法庭记录里，有东西正好咬住这道风口。"
       : statementHasAnswer(statement)
-        ? " 这句话开始发紧，但还差一口气。它和手边记录，总有一处接不上。"
+        ? " 他的话开始发紧，但还差一口气。它和手边记录，总有一处接不上。"
         : "";
     const unlockText = unlocked ? ` 新线索已加入法庭记录：${unlocked}。` : "";
     const revealText = unlockedStatement ? ` 新证词被逼出来了：${unlockedStatement}。` : "";
@@ -4968,7 +4968,7 @@
       reactionText: aftermath.reaction,
       defenseLine: aftermath.defenseLine,
     };
-    setMessage("辩方", `异议！${presentedLabel || "这份记录"}和这句证词对不上。`, "objection");
+    setMessage("辩方", `异议！${presentedLabel || "这份记录"}和他这套说法对不上。`, "objection");
     playCue("objection");
     save();
     renderTrial();
@@ -5218,10 +5218,10 @@
     }
     if (statementHasAnswer(statement) && !progress.pressed.includes(key)) {
       setStage("opponent", "举证时机不足", { left: "stagger", right: "attack" });
-      setImpactCue("penalty", "追问不足", presentedLabel, "这句还站得住");
+      setImpactCue("penalty", "追问不足", presentedLabel, "口风还没散");
       state.selectedEvidenceId = "";
       state.selectedProfileName = "";
-      setMessage("审判长", "这句还站得住。眼下硬压证物，只会显得辩方抢着定案。", "penalty");
+      setMessage("审判长", "他这套说法眼下还站得住。现在硬压证物，只会显得辩方抢着定案。", "penalty");
       playCue("penalty");
       renderTrial();
       return;
@@ -5253,8 +5253,8 @@
         playCue("counter");
       } else {
         setStage("opponent", "异议被驳回", { left: "stagger", right: "attack" });
-        setImpactCue("penalty", "驳回", presentedLabel, "证物没有击中这句证词");
-        setMessage("审判长", statement.wrongEvidenceFeedback || "这件证物压不住这句话。真正露口的地方还不在这里。", "penalty");
+        setImpactCue("penalty", "驳回", presentedLabel, "证物没击中他说法");
+        setMessage("审判长", statement.wrongEvidenceFeedback || "这件证物压不住他这番话。真正露口的地方还不在这里。", "penalty");
       }
       if (progress.credibility <= 0) {
         progress.failed = true;
@@ -5817,7 +5817,7 @@
           state.recordOpen = true;
           setMessage(
             "法庭记录",
-            "案前还空着。法庭记录里得有一件能压住这句话的证物或档案。",
+            "案前还空着。法庭记录里得有一件能压住他这番话的证物或档案。",
             ""
           );
           rerender();
@@ -5826,7 +5826,7 @@
         if (!readyToPresent) {
           setMessage(
             "法庭记录",
-            "这句话还没露底。现在把记录压上去，他也只会顺势绕开。",
+            "他的话还没露底。现在把记录压上去，他也只会顺势绕开。",
             "penalty"
           );
           renderTrial();
