@@ -3371,6 +3371,70 @@ Remaining Ace Attorney gap list:
   - hotspot geometry
   - desktop single-window no-scroll layout
 
+## 2026-06-24 iteration 136 result
+
+Implemented:
+- Kept this round limited to one visible copy layer on the case page: `menuHook`, homepage case-opening人物卡, and one still-too-guiding intro card.
+- Updated `scripts/build_game_content.py` so the source copy for those case-page lines no longer talks to the player like a puzzle coach.
+- Rewrote these high-frequency lines at the generator source:
+  - case 1 `menuHook`
+  - case 1 first `introCards.body`
+  - case 1 `openingLines` for `辩方`
+  - case 2 `openingLines` for `辩方`
+  - case 3 `menuHook`
+  - case 3 `openingLines` for `辩方`
+  - case 4 `menuHook`
+  - case 4 `openingLines` for `辩方`
+- Regenerated `game/game-data.js` from the updated script so the new case-page copy is the actual runtime payload.
+
+Why this round:
+- After the previous round cleaned up case-page `stakes`, the next obvious mismatch was the speaker-card layer still sounding like it was teaching the player how to solve the case.
+- Those lines are extremely high-frequency because every player sees them before entering a scene or opening the court.
+- This was a safe small round because it stayed on the case-page narrative surface and required only one visible screenshot to verify layout safety.
+
+Verified:
+- `python3 scripts/build_game_content.py`
+- `npm run check:js`
+- `git diff --check`
+- Data-level check confirmed the regenerated runtime now contains the new lines for:
+  - case 1 intro card / `辩方` opening line
+  - case 2 `辩方` opening line
+  - case 3 `menuHook` / `辩方` opening line
+  - case 4 `menuHook` / `辩方` opening line
+- Used the in-app browser with:
+  - `http://127.0.0.1:8788/game/?v=iteration136-copy`
+- Captured and inspected:
+  - `output/iteration136-case-page.png`
+- Screenshot inspection confirmed:
+  - the revised first-case `辩方` card now reads like someone in the room, not a prompt telling the player what to do;
+  - the revised card and lower note still fit the same case-page layout;
+  - no new overflow or button misalignment appeared.
+- `.gitignore` still covers generated screenshots under `output/`.
+
+Notes:
+- I deliberately did not reopen already stabilized issues such as `举证` button styling, hotspot geometry, or desktop no-scroll layout.
+- This round also did not widen into evidence-detail or testimony-branch copy; it stayed on the case-page narrative shell only.
+
+Remaining Ace Attorney gap list:
+- Keep rewriting evidence-detail `use` / `counterRisk` / `detail` copy and deeper testimony feedback one sentence at a time until those panels stop sounding like annotated solution hints.
+- Continue screenshot-first QA on case-intro, court-record, and trial microcopy so wording changes do not create clipping in dense panels.
+- Leave already fixed layout and button issues alone unless a fresh screenshot proves regression.
+
+## Latest handoff
+
+- Most recent completed round: `2026-06-24 iteration 136 result`
+- Round scope: rewrote case-page人物卡/开场钩子 source copy in `scripts/build_game_content.py`, regenerated `game/game-data.js`, and verified the case page visually.
+- Verified artifacts:
+  - `output/iteration136-case-page.png`
+- Verified commands:
+  - `python3 scripts/build_game_content.py`
+  - `npm run check:js`
+  - `git diff --check`
+- Do not reopen in the next round unless a fresh screenshot proves regression:
+  - `举证` button styling
+  - hotspot geometry
+  - desktop single-window no-scroll layout
+
 ## 2026-06-24 iteration 134 result
 
 Implemented:
