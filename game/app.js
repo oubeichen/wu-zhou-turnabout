@@ -2943,7 +2943,7 @@
         ? state.selectedProfileName
           ? "人已经被盯住了，他还在等一句能把自己卖出来的话。"
           : "这份记录还压不到这一句，证人嘴里的缝还没张开。"
-        : "先让他把话说满。真要把它顶回去，得从卷里翻出一页硬证。";
+        : "这句眼下还只是口风，能压住它的那页纸还没碰上来。";
     state.screen = "trial";
     renderStatus();
     app.innerHTML = `
@@ -3157,11 +3157,11 @@
     const trialAdvanceHint = mode === "trial"
       ? hasPrevStatement
         ? hasNextStatement
-          ? "他的话还没说尽，这一句也还来得及回头咬住。"
-          : "这句话还悬在案上。现在可以逼问，也可以让案卷开口。"
+          ? "他这段话前后咬得不紧，缝已经露出来了。"
+          : "这句话已经落到案上，轻重只差一页纸。"
         : hasNextStatement
-          ? "先让他往下说。下一句也许就会自己露风。"
-          : "这句话还悬在案上。现在可以逼问，也可以让案卷开口。"
+          ? "开头这句说得稳，真正会失手的地方还在后头。"
+          : "这句话已经落到案上，轻重只差一页纸。"
       : "";
     const sceneSignature = `${caseData.id}|${mode}|${sceneKey}|${locationArt || "default"}`;
     const sceneTransitionClass = sceneTransitionState.lastSceneSignature && sceneTransitionState.lastSceneSignature !== sceneSignature
@@ -3208,7 +3208,7 @@
   function trialBackgroundFile(caseData) {
     const sceneKey = caseData.scene?.key || "palace";
     const trialMap = {
-      palace: "episode-art-palace.png",
+      palace: "episode-art-palace-v2.png",
       "east-palace": "episode-art-east-palace.png",
       "bronze-urn": "episode-art-bronze-urn.png",
       censorate: "episode-art-censorate.png",
@@ -3667,7 +3667,7 @@
   function renderSelectedEvidence(caseData) {
     const item = state.selectedEvidenceId ? evidenceById(caseData, state.selectedEvidenceId) : null;
     if (!item) {
-      return `<p class="hint-text">卷里还没抽出证物。先听他把话说满，再决定哪一页该拍上案桌。</p>`;
+      return `<p class="hint-text">卷里还空着手边那一页。眼前这句要不要塌，就看谁和它撞上。</p>`;
     }
     const deduction = deductionForEvidence(caseData, item.id);
     return `
@@ -4645,7 +4645,7 @@
       state.recordOpen = false;
       setStage("witness", `${testimony.speaker}入庭`, { left: "enter", right: "observe" });
       playCue("transition");
-      setMessage("审判长", "证人既然开口，就让他把每个字都落稳。站不住的地方，用不着多久就会自己裂开。", "");
+      setMessage("审判长", "证人既然开口，就把话说清楚。真站不住的地方，庭上自然听得出来。", "");
       renderTrial();
     }
   }

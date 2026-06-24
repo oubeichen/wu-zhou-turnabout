@@ -3297,6 +3297,55 @@ Remaining Ace Attorney gap list:
 - Continue screenshot-first QA on pressure labels, trial headers, statement cards, record drawer entries, and evidence detail panels.
 - Do not reopen already-fixed `举证` button, hotspot placement, or desktop no-scroll layout unless a fresh screenshot shows a concrete regression.
 
+## 2026-06-24 iteration 131 result
+
+Implemented:
+- Kept this round focused on the exact庭审画面问题 the user pointed out in the screenshot, instead of继续散改别处。
+- Added a new image-generated palace trial backdrop at `game/assets/episode-art-palace-v2.png`, then switched both `trialBackgroundFile()` in `game/app.js` and `.scene-palace` in `game/styles.css` to that new filename so the browser could not keep serving the old cached asset.
+- The new background removes the old abstract glow wedge, floating boxes, and empty gold-outline panels that were making the scene look like a broken mockup instead of a place.
+- Reworked trial-stage portrait layering in `game/styles.css`: the portrait layer now sits behind the dialogue box, the portraits are smaller, the extra CSS frame/border is gone, and the dialogue box z-index is raised so the text surface stays clean.
+- Rewrote one still-too-systemic courtroom line in `game/app.js` from `证人既然开口，就让他把每个字都落稳...` to `证人既然开口，就把话说清楚。真站不住的地方，庭上自然听得出来。`
+
+Why this round:
+- The user provided a marked-up screenshot showing three concrete visual failures:
+  - trial portraits were colliding with the bottom text surface;
+  - the background still contained meaningless generated geometry;
+  - the scene was still leaning on decorative fake-picture structure instead of one coherent bitmap background.
+- This was the right next round because the bug was visible, screenshot-specific, and not a matter of taste alone: the stage really was reading as a broken layered composite.
+- I also kept the copy scope narrow: one visible high-frequency courtroom sentence, not a bulk rewrite pass.
+
+Verified:
+- `npm run check:js`
+- `git diff --check`
+- `.gitignore` still already ignores `output/`, confirmed with:
+  - `git check-ignore -v output/trial-stage-clean-v2-current.png`
+  - `git check-ignore -v output/trial-record-empty-copy-current.png`
+- Generated the replacement backdrop with the built-in image tool, then copied the selected result into the workspace as:
+  - `game/assets/episode-art-palace-v2.png`
+- Fresh desktop courtroom screenshot after switching to the new asset filename:
+  - `output/trial-stage-clean-v2-current.png`
+- Fresh courtroom record screenshot:
+  - `output/trial-record-empty-copy-current.png`
+- Screenshot inspection confirmed:
+  - the old abstract wedge and floating outlined shapes are gone from the palace trial backdrop;
+  - the dialogue text is no longer visually covered by the portraits;
+  - the portraits now read as stage-side figures instead of UI cards sitting on top of the text box.
+- Live DOM capture on the refreshed court page confirmed:
+  - `bg: linear-gradient(...), url("http://127.0.0.1:8788/game/assets/episode-art-palace-v2.png")`
+  - `footer: 开头这句说得稳，真正会失手的地方还在后头。`
+  - `coach: 证人既然开口，就把话说清楚。真站不住的地方，庭上自然听得出来。`
+  - record-side prompt includes:
+    - `这句眼下还只是口风，能压住它的那页纸还没碰上来。`
+
+Notes:
+- I deliberately restored the accidentally overwritten old `game/assets/episode-art-palace.png` and kept the real replacement in `episode-art-palace-v2.png`, so this round stays reviewable and does not mix in a redundant asset overwrite.
+- This round did not yet replace the other older `episode-art-*` backdrops or rebuild the portrait strip itself. The user’s screenshot only proved the palace trial scene was the urgent failure.
+
+Remaining Ace Attorney gap list:
+- Continue replacing the remaining older case/trial backdrops that still carry abstract imagegen artifacts or staged overlay noise.
+- Keep rewriting courtroom helper copy one sentence at a time, especially black-card prompts and record-drawer descriptions that still sound more like editorial narration than someone in the scene.
+- Recheck portrait scaling on mobile separately after the next focused asset/layout round; this round verified desktop first because that was the user’s concrete complaint surface.
+
 ## 2026-06-23 iteration 126 result
 
 Implemented:

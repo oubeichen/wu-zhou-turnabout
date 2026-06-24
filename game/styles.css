@@ -2001,7 +2001,7 @@ button:not(:disabled):hover {
 }
 
 .scene-palace {
-  --episode-art: url("./assets/episode-art-palace.png");
+  --episode-art: url("./assets/episode-art-palace-v2.png");
   --scene-veil: rgba(68, 28, 27, 0.72);
   --scene-glow: rgba(221, 171, 61, 0.26);
 }
@@ -2071,6 +2071,7 @@ button:not(:disabled):hover {
 .stage-layer {
   position: absolute;
   inset: 0;
+  z-index: 1;
   pointer-events: none;
 }
 
@@ -2138,9 +2139,14 @@ button:not(:disabled):hover {
 }
 
 .scene.trial .portrait {
-  z-index: 31;
-  bottom: clamp(52px, 12vw, 86px);
-  width: clamp(88px, min(17vw, calc((100% - 72px) / 2)), 184px);
+  z-index: 6;
+  bottom: clamp(16px, 4vw, 30px);
+  width: clamp(82px, min(14vw, calc((100% - 84px) / 2)), 156px);
+  background-color: transparent;
+  border: none;
+  border-radius: 0;
+  box-shadow: 0 14px 26px rgba(0, 0, 0, 0.26);
+  opacity: 0.94;
 }
 
 .scene.trial .pose-cue {
@@ -2617,7 +2623,7 @@ button:not(:disabled):hover {
 
 .dialogue-box {
   position: relative;
-  z-index: 20;
+  z-index: 40;
   padding: 20px 22px;
   color: #1d1814;
   background: rgba(255, 250, 240, 0.98);
